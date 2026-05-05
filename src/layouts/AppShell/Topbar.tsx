@@ -9,10 +9,15 @@ export const Topbar = () => {
   const { sidebarOpen, toggleSidebar, notify } = useUiStore()
   const [profileOpen, setProfileOpen] = useState(false)
 
+  console.log('user:', user);
+  
   const handleLogout = () => {
     clearUser()
     notify('Logout successful!', 'success')
   }
+
+  const userFullName = user ? `${user.first_name} ${user.last_name}` : 'User'
+  const userRole = user?.roles?.[0]?.name || user?.user_type || 'User'
 
   return (
     <header className="h-20 flex items-center justify-between px-8 shrink-0 relative">
@@ -49,7 +54,7 @@ export const Topbar = () => {
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-3 pl-4 pr-1.5 py-1.5 bg-white rounded-2xl shadow-sm border border-gray-50 hover:bg-gray-50 transition-colors"
           >
-            <span className="text-sm font-bold text-gray-400">Admin</span>
+            <span className="text-sm font-bold text-gray-400 capitalize">{userRole}</span>
             <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 overflow-hidden border border-gray-200">
                <UserIcon className="h-5 w-5" />
             </div>
@@ -60,8 +65,8 @@ export const Topbar = () => {
               <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)}></div>
               <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-50 py-3 z-50 animate-in fade-in zoom-in duration-200">
                 <div className="px-5 py-2 border-b border-gray-50 mb-2 text-center">
-                  <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.2em]">Super Admin</p>
-                  <p className="text-sm font-extrabold text-gray-700">{user?.name || 'Kazi Sakib'}</p>
+                  <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.2em]">{userRole}</p>
+                  <p className="text-sm font-extrabold text-gray-700">{userFullName}</p>
                 </div>
                 <button className="w-full flex items-center gap-4 px-5 py-2.5 text-sm text-gray-500 hover:bg-gray-50 transition-colors font-bold">
                   <UserIcon className="h-4 w-4" />

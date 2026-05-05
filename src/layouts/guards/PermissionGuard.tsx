@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAuthStore } from '@/store/useAuthStore'
+import { usePermissions } from '@/hooks/usePermissions'
 
 interface PermissionGuardProps {
   permission: string
@@ -8,10 +8,9 @@ interface PermissionGuardProps {
 }
 
 export const PermissionGuard = ({ permission, fallback, children }: PermissionGuardProps) => {
-  const permissions = useAuthStore((state) => state.permissions)
-  const hasPermission = permissions.includes(permission)
+  const { hasPermission } = usePermissions()
 
-  if (!hasPermission) {
+  if (!hasPermission(permission)) {
     return <>{fallback || <div className="p-8 text-center text-gray-500">You don't have permission to view this content.</div>}</>
   }
 

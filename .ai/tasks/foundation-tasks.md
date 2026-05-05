@@ -18,6 +18,9 @@
 - [x] **Task 3.6**: Enhance `useLogin` and `LoginPage` to properly handle and display API errors.
 - [x] **Task 3.3**: Implement `src/store/useAuthStore.ts` with persist middleware.
 - [x] **Task 3.4**: Create `AuthLayout` layout and modular `Auth` view components.
+- [x] **Task 3.7**: Implement dynamic user data handling (first_name, last_name, roles array) in Topbar.
+- [x] **Task 3.8**: Implement dynamic welcome message with user's full name in Dashboard.
+- [x] **Task 3.9**: Implement real-time clock and date display in Dashboard.
 
 ## Task Group 4: Verification
 - [x] **Task 4.1**: Verify environment variables loading.

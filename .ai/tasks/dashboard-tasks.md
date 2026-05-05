@@ -13,6 +13,9 @@
 ## Task Group 3: Core Dashboard Module
 - [x] **Task 3.1**: Create `src/modules/dashboard/` structure.
 - [x] **Task 3.2**: Implement a basic summary grid in `DashboardPage.tsx`.
+- [x] **Task 3.3**: Refactor Dashboard grid to match high-fidelity sample (tall right card).
+- [x] **Task 3.4**: Implement SVG-based high-fidelity chart mockups (Donut, Bar, Area).
+- [x] **Task 3.5**: Polish Dashboard styling (Glassmorphism borders, soft shadows).
 
 ## Task Group 4: Global Helpers
 - [ ] **Task 4.1**: Implement `src/utils/formatters.ts`.

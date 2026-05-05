@@ -14,8 +14,8 @@ export const useLogin = () => {
     mutationFn: (values: LoginFormValues) => login({ email: values.email, password: values.password }),
     onSuccess: (response) => {
       if (response.success) {
-        const { user, token, permissions } = response.data
-        setUser(user, token, permissions)
+        const { user, token, permissions, expires_in } = response.data
+        setUser(user, token, permissions, expires_in)
         notify('Login successful!', 'success')
         navigate({ to: '/' })
       } else {

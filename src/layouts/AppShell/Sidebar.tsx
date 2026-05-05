@@ -12,6 +12,7 @@ import {
   FileText
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
+import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
 
 const menuItems = [
@@ -24,21 +25,27 @@ const menuItems = [
   {
     group: 'INVENTORY',
     items: [
-      { name: 'Sale', icon: ShoppingCart, to: '/inventory/sale' },
-      { name: 'Vendor', icon: Users, to: '/inventory/vendor' },
-      { name: 'Product', icon: Package, to: '/inventory/product' },
-      { name: 'Warehouse', icon: Warehouse, to: '/inventory/warehouse' },
-      { name: 'Purchase', icon: Truck, to: '/inventory/purchase' },
-      { name: 'Merchant', icon: Store, to: '/inventory/merchant' },
-      { name: 'Return', icon: RotateCcw, to: '/inventory/return' },
-      { name: 'Service', icon: Wrench, to: '/inventory/service' },
-      { name: 'Quotation', icon: FileText, to: '/inventory/quotation' },
+      { name: 'Sale', icon: ShoppingCart, to: '/inventory/sale', permission: 'view_sales' },
+      { name: 'Vendor', icon: Users, to: '/inventory/vendor', permission: 'view_supplier' },
+      { name: 'Product', icon: Package, to: '/inventory/product', permission: 'view_product' },
+      { name: 'Warehouse', icon: Warehouse, to: '/inventory/warehouse', permission: 'view_warehouse' },
+      { name: 'Purchase', icon: Truck, to: '/inventory/purchase', permission: 'view_purchase' },
+      { name: 'Merchant', icon: Store, to: '/inventory/merchant', permission: 'view_merchant' },
+      { name: 'Return', icon: RotateCcw, to: '/inventory/return', permission: 'sales_return' },
+      { name: 'Service', icon: Wrench, to: '/inventory/service', permission: 'view_service' },
+      { name: 'Quotation', icon: FileText, to: '/inventory/quotation', permission: 'view_quotation' },
     ]
   }
 ]
 
 export const Sidebar = () => {
   const { sidebarOpen } = useUiStore()
+  const { hasPermission } = usePermissions()
+
+  const filteredMenuItems = menuItems.map(group => ({
+    ...group,
+    items: group.items.filter(item => !item.permission || hasPermission(item.permission))
+  })).filter(group => group.items.length > 0)
 
   return (
     <aside 
@@ -62,7 +69,7 @@ export const Sidebar = () => {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar px-3 mt-4">
-        {menuItems.map((group, idx) => (
+        {filteredMenuItems.map((group, idx) => (
           <div key={idx} className="mb-6">
             {sidebarOpen && (
               <h3 className="px-4 text-[10px] font-black text-white/40 mb-3 tracking-[0.2em] uppercase">

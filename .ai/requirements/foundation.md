@@ -22,6 +22,8 @@ This document outlines the requirements for setting up the initial foundation of
 - [x] Create a visual notification (Toast) component to display messages from the UI store.
 - [x] Ensure the login system properly handles and displays backend validation and authentication errors.
 - [x] Create basic global layout components (AuthLayout).
+- [x] Implement dynamic user data handling (first_name, last_name, roles) in Topbar and Dashboard.
+- [x] Implement real-time clock and date display in Dashboard.
 
 ## 4. Authentication Foundation
 - [x] Create `useAuthStore` with support for JWT persistence in `localStorage`.

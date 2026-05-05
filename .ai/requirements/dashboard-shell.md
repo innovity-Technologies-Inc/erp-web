@@ -13,6 +13,9 @@
 ## 3. Dashboard Homepage
 - [x] Create a basic `DashboardPage` view.
 - [x] Implement summary widgets (total products, active employees, etc.).
+- [x] Integrate high-fidelity card design with soft borders and shadows.
+- [x] Implement complex grid layout (Tall Best Sale card, Full-width Monthly Report).
+- [x] Create high-fidelity visual mockups (SVG Donut, Bars, and Area charts).
 
 ## 4. Shared Domain Utilities
 - [ ] Implement currency formatters (BDT).
