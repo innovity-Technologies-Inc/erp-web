@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #0052cc;
+  --color-primary-hover: #0040a3;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-sidebar-bg: #0052cc; /* Match the vibrant blue in update2 */
+  --color-sidebar-text: #ffffff;
+  --color-border: #eef1f6;
+  --color-main-bg: #004799; /* The background behind the rounded content area */
+  --color-card-bg: #f0f2f8; /* Light grayish-purple for cards */
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-main-bg: var(--color-main-bg);
+  --color-sidebar-bg: var(--color-sidebar-bg);
+  --color-card-bg: var(--color-card-bg);
+}
+
+@layer base {
+  body {
+    @apply bg-main-bg text-gray-900;
+  }
+}
+
+@layer components {
+  .erp-input {
+    @apply w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/20 transition-all bg-white;
+  }
+  
+  .erp-btn-primary {
+    @apply px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
