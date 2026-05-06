@@ -9,8 +9,6 @@ export const Topbar = () => {
   const { sidebarOpen, toggleSidebar, notify } = useUiStore()
   const [profileOpen, setProfileOpen] = useState(false)
 
-  console.log('user:', user);
-  
   const handleLogout = () => {
     clearUser()
     notify('Logout successful!', 'success')
