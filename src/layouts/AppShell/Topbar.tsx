@@ -54,7 +54,18 @@ export const Topbar = () => {
           >
             <span className="text-sm font-bold text-gray-400 capitalize">{userRole}</span>
             <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 overflow-hidden border border-gray-200">
-               <UserIcon className="h-5 w-5" />
+               {user?.image ? (
+                 <img 
+                   src={`${import.meta.env.VITE_STORAGE_URL}/${user.image}`} 
+                   alt={userFullName} 
+                   className="w-full h-full object-cover"
+                   onError={(e) => {
+                     (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userFullName)
+                   }}
+                 />
+               ) : (
+                 <UserIcon className="h-5 w-5" />
+               )}
             </div>
           </button>
 
