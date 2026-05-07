@@ -15,8 +15,14 @@
 - [x] Implement summary widgets (total products, active employees, etc.).
 - [x] Integrate high-fidelity card design with soft borders and shadows.
 - [x] Implement complex grid layout (Tall Best Sale card, Full-width Monthly Report).
+## 3. High-Fidelity Dashboard
 - [x] Create high-fidelity visual mockups (SVG Donut, Bars, and Area charts).
-
+- [x] Implement interactive hover tooltips for Monthly Sales & Purchase chart.
+- [x] Add dynamic report tables (Overview, Sales Due, Daily Sales) and metric blocks.
+- [x] Connect user profile images with backend storage and auto-avatar fallbacks.
+- [x] Integrate `useGetDashboardAnalytics` hook for real-time data synchronization.
+- [x] Implement dynamic Y-axis scaling for trend charts based on live data.
+- [x] Add robust loading states for a polished SPA experience.
 ## 4. Shared Domain Utilities
 - [ ] Implement currency formatters (BDT).
 - [ ] Implement date/time formatters consistent with ERP standards.

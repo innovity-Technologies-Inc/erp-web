@@ -9,11 +9,14 @@ import {
   PieChart as PieChartIcon,
   Search,
   Calendar,
-  ChevronDown
+  ChevronDown,
+  Loader2
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useState, useEffect } from 'react'
+import { useGetDashboardAnalytics } from '../api/dashboard.api'
+import type { MonthlyTrendItem } from '../api/types'
 
 interface StatCardProps {
   name: string
@@ -39,31 +42,81 @@ const StatCard = ({ name, value, icon: Icon, color, className }: StatCardProps) 
   </div>
 )
 
-const DonutChartMock = () => (
-  <div className="relative w-40 h-40 flex items-center justify-center shrink-0">
-    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-      {/* Outer Thin Ring */}
-      <circle cx="50" cy="50" r="46" stroke="#f3f4f6" strokeWidth="1.5" fill="transparent" />
-      <circle cx="50" cy="50" r="46" stroke="#FF7D5E" strokeWidth="1.5" strokeDasharray="289" strokeDashoffset="200" fill="transparent" strokeLinecap="round" />
-      <circle cx="50" cy="50" r="46" stroke="#4ADE80" strokeWidth="1.5" strokeDasharray="289" strokeDashoffset="240" fill="transparent" strokeLinecap="round" />
-      
-      {/* Inner Thick Ring */}
-      <circle cx="50" cy="50" r="34" stroke="#f3f4f6" strokeWidth="12" fill="transparent" />
-      {/* Total Purchase (Coral) */}
-      <circle cx="50" cy="50" r="34" stroke="#FF7D5E" strokeWidth="12" strokeDasharray="213.6" strokeDashoffset="140" fill="transparent" />
-      {/* Total Sale (Green) */}
-      <circle cx="50" cy="50" r="34" stroke="#4ADE80" strokeWidth="12" strokeDasharray="213.6" strokeDashoffset="185" fill="transparent" />
-      {/* Total Expense (Yellow) */}
-      <circle cx="50" cy="50" r="34" stroke="#FACC15" strokeWidth="12" strokeDasharray="213.6" strokeDashoffset="200" fill="transparent" />
-      {/* Employee Salary (Blue) */}
-      <circle cx="50" cy="50" r="34" stroke="#3B82F6" strokeWidth="12" strokeDasharray="213.6" strokeDashoffset="208" fill="transparent" />
-      {/* Service (Light Blue) */}
-      <circle cx="50" cy="50" r="34" stroke="#BFDBFE" strokeWidth="12" strokeDasharray="213.6" strokeDashoffset="212" fill="transparent" />
-    </svg>
-  </div>
-)
+const DonutChartMock = ({ expenseData }: { expenseData?: any }) => {
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const total = Object.values(expenseData || {}).reduce((acc: number, curr: any) => acc + (Number(curr) || 0), 0) || 1;
+  const values = [
+    { key: 'total_purchase', label: 'Purchase', color: '#FF7D5E' },
+    { key: 'total_sales', label: 'Sales', color: '#4ADE80' },
+    { key: 'total_expense', label: 'Expense', color: '#FACC15' },
+    { key: 'total_salary', label: 'Salary', color: '#3B82F6' },
+    { key: 'total_service', label: 'Service', color: '#BFDBFE' },
+  ];
 
-const LegendItem = ({ label, value, percent, color }: { label: string, value: string, percent: string, color: string }) => (
+  let cumulativePercent = 0;
+  const circumference = 213.6; // 2 * PI * 34
+
+  return (
+    <div className="relative w-40 h-40 flex items-center justify-center shrink-0 group">
+      <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="34" stroke="#f3f4f6" strokeWidth="12" fill="transparent" />
+        {values.map((item) => {
+          const val = Number(expenseData?.[item.key]) || 0;
+          const percent = (val / total) * 100;
+          const offset = circumference - (percent / 100) * circumference;
+          const rotation = (cumulativePercent / 100) * 360;
+          cumulativePercent += percent;
+
+          if (percent === 0) return null;
+
+          return (
+            <circle
+              key={item.key}
+              cx="50" cy="50" r="34"
+              stroke={item.color}
+              strokeWidth={hoveredKey === item.key ? 15 : 12}
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              fill="transparent"
+              style={{ 
+                transform: `rotate(${rotation}deg)`, 
+                transformOrigin: 'center',
+                transition: 'stroke-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 0.4s ease'
+              }}
+              onMouseEnter={() => setHoveredKey(item.key)}
+              onMouseLeave={() => setHoveredKey(null)}
+              className="cursor-pointer outline-none"
+            />
+          );
+        })}
+      </svg>
+
+      {/* Smooth Centered Data */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className={clsx(
+          "flex flex-col items-center transition-all duration-500 ease-out",
+          hoveredKey ? "opacity-100 scale-100" : "opacity-0 scale-95 translate-y-1"
+        )}>
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] leading-none">
+            {values.find(v => v.key === hoveredKey)?.label}
+          </span>
+          <span className="text-[16px] font-black text-gray-700 tracking-tighter mt-1">
+            ${hoveredKey ? Number(expenseData?.[hoveredKey]).toLocaleString() : 0}
+          </span>
+        </div>
+        
+        {/* Default View (when not hovered) */}
+        {!hoveredKey && (
+          <div className="flex flex-col items-center animate-in fade-in duration-700">
+            <PieChartIcon className="h-5 w-5 text-gray-200" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const LegendItem = ({ label, value, percent, color }: { label: string, value: string | number, percent: string, color: string }) => (
   <div className="flex flex-col gap-0.5 min-w-0">
     <div className="flex items-center gap-1.5">
       <div className="relative w-3 h-3 shrink-0">
@@ -80,41 +133,36 @@ const LegendItem = ({ label, value, percent, color }: { label: string, value: st
 )
 
 const HorizontalBarMock = ({ name, value, max }: { name: string, value: number, max: number }) => (
-  <div className="flex items-center gap-3 w-full">
+  <div className="flex items-center gap-3 w-full group relative">
     <div className="w-[140px] shrink-0 text-[10px] font-bold text-gray-400 truncate text-left uppercase tracking-tight">
       {name}
     </div>
     <div className="flex-1 h-4 relative flex items-center">
       <div 
-        className="h-2.5 bg-[#b3cbfb] rounded-full transition-all duration-1000 relative z-10" 
-        style={{ width: `${(value / max) * 100}%` }}
+        className="h-2.5 bg-[#b3cbfb] rounded-full transition-all duration-500 relative z-10 group-hover:bg-[#4F8AFF] group-hover:shadow-sm" 
+        style={{ width: `${(value / (max || 1)) * 100}%` }}
       />
+    </div>
+
+    {/* Product Name Tooltip */}
+    <div className="absolute left-0 -top-8 bg-white border border-blue-50 shadow-xl px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50 translate-y-2 group-hover:translate-y-0">
+      <p className="text-[10px] font-black text-[#544f6c] whitespace-nowrap">{name}</p>
+      <div className="flex items-baseline gap-1 mt-0.5">
+        <span className="text-[8px] font-bold text-gray-400 uppercase">Sales:</span>
+        <span className="text-[11px] font-black text-blue-600">{value.toLocaleString()}</span>
+      </div>
     </div>
   </div>
 )
 
-const AreaChartMock = () => {
+const AreaChartMock = ({ trendData = [] }: { trendData?: MonthlyTrendItem[] }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = trendData.length > 0 ? trendData.map(d => d.month.substring(0, 3)) : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
-  // Mock data that roughly matches the visual paths and screenshot
-  const chartData = [
-    { purchase: 360000, sales: 240000 },
-    { purchase: 640000, sales: 120000 },
-    { purchase: 840000, sales: 340000 },
-    { purchase: 720000, sales: 400000 },
-    { purchase: 640000, sales: 280000 },
-    { purchase: 880000, sales: 340000 },
-    { purchase: 800000, sales: 300000 }, // Jul
-    { purchase: 720000, sales: 500000 },
-    { purchase: 920000, sales: 360000 },
-    { purchase: 1060000, sales: 500000 },
-    { purchase: 840000, sales: 340000 },
-    { purchase: 720000, sales: 480000 },
-  ];
+  const chartData = trendData.length > 0 ? trendData : Array(12).fill({ sales: 0, purchase: 0 });
 
-  const maxVal = 1200000;
+  const maxVal = Math.max(...chartData.map(d => Math.max(d.sales, d.purchase, 1200000)));
   const getY = (val: number) => 200 - (val / maxVal) * 200;
   const getX = (index: number) => (index * 1000) / 11;
 
@@ -143,13 +191,12 @@ const AreaChartMock = () => {
     <div className="w-full h-80 relative mt-6 flex gap-6">
       {/* Y-Axis Labels */}
       <div className="flex flex-col justify-between text-[11px] font-bold text-gray-400/80 pb-10 w-16 text-right">
-        <span>1,200,000</span>
-        <span>1,000,000</span>
-        <span>800,000</span>
-        <span>600,000</span>
-        <span>400,000</span>
-        <span>200,000</span>
-        <span className="text-gray-300">0</span>
+        <span>{maxVal.toLocaleString()}</span>
+        <span>{(maxVal * 0.8).toLocaleString()}</span>
+        <span>{(maxVal * 0.6).toLocaleString()}</span>
+        <span>{(maxVal * 0.4).toLocaleString()}</span>
+        <span>{(maxVal * 0.2).toLocaleString()}</span>
+        <span>0</span>
       </div>
 
       <div className="flex-1 flex flex-col">
@@ -247,53 +294,54 @@ const AreaChartMock = () => {
   )
 }
 
-const stats = [
-  { name: 'Total Merchant', value: '132', icon: Store, color: 'bg-[#e8f0fe] text-[#4285f4]' },
-  { name: 'Total Product', value: '143', icon: Package, color: 'bg-[#fff4e5] text-[#ff9800]' },
-  { name: 'Total Vendor', value: '14', icon: Users, color: 'bg-[#f3e8ff] text-[#9c27b0]' },
-  { name: 'Total Warehouse', value: '05', icon: Warehouse, color: 'bg-[#e8fbf3] text-[#4caf50]' },
-  { name: 'Total Purchase', value: '34', icon: Truck, color: 'bg-[#fffde7] text-[#fbc02d]' },
-  { name: 'Total Contact Msg', value: '02', icon: MessageCircle, color: 'bg-[#e8f0fe] text-[#00bcd4]' },
-]
+const IncomeExpenseBlock = ({ title, income, expense, color, progressColor }: { title: string, income: string | number, expense: string | number, color: string, progressColor: string }) => {
+  const inc = typeof income === 'string' ? parseFloat(income.replace(/[^0-9.-]+/g,"")) : income;
+  const exp = typeof expense === 'string' ? parseFloat(expense.replace(/[^0-9.-]+/g,"")) : expense;
+  const total = inc + exp || 1;
+  const percentage = (inc / total) * 100;
+  const circumference = 263.8;
+  const offset = circumference - (percentage / 100) * circumference;
 
-const IncomeExpenseBlock = ({ title, income, expense, color, progressColor }: { title: string, income: string, expense: string, color: string, progressColor: string }) => (
-  <div className={clsx("p-4 rounded-[22px] flex justify-between items-center relative overflow-hidden", color)}>
-    <div className="flex flex-col gap-2.5">
-      <h4 className="text-[14px] font-black text-[#544f6c]">{title}</h4>
-      <div className="flex flex-col gap-0">
-        <div className="flex items-center gap-1.5 leading-none">
-          <div className="w-2 h-2 rounded-[2px] bg-[#3b82f6] opacity-70"></div>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Income</span>
+  return (
+    <div className={clsx("p-4 rounded-[22px] flex justify-between items-center relative overflow-hidden", color)}>
+      <div className="flex flex-col gap-2.5">
+        <h4 className="text-[14px] font-black text-[#544f6c]">{title}</h4>
+        <div className="flex flex-col gap-0">
+          <div className="flex items-center gap-1.5 leading-none">
+            <div className="w-2 h-2 rounded-[2px] bg-[#3b82f6] opacity-70"></div>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Income</span>
+          </div>
+          <p className="text-[16px] font-black text-[#334155] tracking-tighter leading-tight mt-0.5">${inc.toLocaleString()}</p>
         </div>
-        <p className="text-[16px] font-black text-[#334155] tracking-tighter leading-tight mt-0.5">{income}</p>
+        <div className="flex flex-col gap-0">
+          <div className="flex items-center gap-1.5 leading-none">
+            <div className="w-2 h-2 rounded-[2px] bg-gray-300"></div>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Expense</span>
+          </div>
+          <p className="text-[16px] font-black text-[#334155] tracking-tighter leading-tight mt-0.5">${exp.toLocaleString()}</p>
+        </div>
       </div>
-      <div className="flex flex-col gap-0">
-        <div className="flex items-center gap-1.5 leading-none">
-          <div className="w-2 h-2 rounded-[2px] bg-gray-300"></div>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Expense</span>
-        </div>
-        <p className="text-[16px] font-black text-[#334155] tracking-tighter leading-tight mt-0.5">{expense}</p>
+      
+      <div className="relative w-[70px] h-[70px] flex items-center justify-center shrink-0">
+        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" stroke="#e5e7eb" strokeWidth="10" fill="transparent" opacity="0.3" />
+          <circle 
+            cx="50" cy="50" r="42" 
+            stroke={progressColor} 
+            strokeWidth="10" 
+            strokeDasharray={circumference} 
+            strokeDashoffset={offset} 
+            fill="transparent" 
+            strokeLinecap="round" 
+            style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
+          />
+        </svg>
       </div>
     </div>
-    
-    <div className="relative w-[70px] h-[70px] flex items-center justify-center shrink-0">
-      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="42" stroke="#e5e7eb" strokeWidth="10" fill="transparent" opacity="0.3" />
-        <circle 
-          cx="50" cy="50" r="42" 
-          stroke={progressColor} 
-          strokeWidth="10" 
-          strokeDasharray="263.8" 
-          strokeDashoffset="180" 
-          fill="transparent" 
-          strokeLinecap="round" 
-        />
-      </svg>
-    </div>
-  </div>
-)
+  )
+}
 
-const ReviewRow = ({ stars, width, count }: { stars: number, width: string, count: string }) => (
+const ReviewRow = ({ stars, width, count }: { stars: number, width: string, count: string | number }) => (
   <div className="flex items-center gap-3">
     <div className="flex items-center gap-1 w-7">
       <span className="text-[12px] font-black text-[#544f6c]">{stars}</span>
@@ -306,7 +354,7 @@ const ReviewRow = ({ stars, width, count }: { stars: number, width: string, coun
   </div>
 )
 
-const TableRow = ({ label, value, isHeader = false }: { label: string, value: string, isHeader?: boolean }) => (
+const TableRow = ({ label, value, isHeader = false }: { label: string, value: string | number, isHeader?: boolean }) => (
   <div className="grid grid-cols-2">
     <div className={clsx(
       "p-3 px-5 text-[13px] font-bold border-b border-r border-blue-100/50",
@@ -348,19 +396,37 @@ const ReportTable = ({ title, headers, items = [], className }: { title: string,
             </div>
           ))}
         </div>
-        <div className="p-4 text-center text-xs font-bold text-gray-300 italic border-b border-blue-100/50 bg-white">
-          Record not found
-        </div>
+        
+        {items.length > 0 ? (
+          items.map((item, idx) => (
+            <div key={idx} className="bg-white border-b border-blue-50 last:border-b-0 hover:bg-blue-50/30 transition-colors" style={gridStyle}>
+              {Object.values(item).map((val: any, vIdx) => (
+                <div key={vIdx} className="p-2.5 px-4 text-[12px] font-bold text-gray-600 border-r border-blue-100/30 last:border-r-0 truncate">
+                  {vIdx > 1 && typeof val === 'number' ? val.toLocaleString() : val}
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <div className="p-6 text-center text-xs font-bold text-gray-300 italic border-b border-blue-100/50 bg-white">
+            Record not found
+          </div>
+        )}
+
         <div className="bg-white" style={gridStyle}>
           <div 
             className="p-2.5 px-5 text-[12px] font-black text-gray-400 text-right border-r border-blue-100/50 uppercase" 
-            style={{ gridColumn: colCount === 5 ? 'span 3' : (colCount === 4 ? 'span 3' : 'span 2') }}
+            style={{ gridColumn: colCount === 5 ? 'span 3' : 'span 3' }}
           >
             Total
           </div>
-          <div className="p-2.5 px-5 text-[12px] font-black text-[#334155] text-right border-r border-blue-100/50 last:border-r-0">$0.00</div>
+          <div className="p-2.5 px-5 text-[12px] font-black text-[#334155] text-right border-r border-blue-100/50 last:border-r-0">
+            ${items.reduce((acc, curr) => acc + (Number(Object.values(curr)[3]) || 0), 0).toLocaleString()}
+          </div>
           {colCount === 5 && (
-            <div className="p-2.5 px-5 text-[12px] font-black text-[#334155] text-right border-r border-blue-100/50 last:border-r-0">$0.00</div>
+            <div className="p-2.5 px-5 text-[12px] font-black text-[#334155] text-right border-r border-blue-100/50 last:border-r-0">
+              ${items.reduce((acc, curr) => acc + (Number(Object.values(curr)[4]) || 0), 0).toLocaleString()}
+            </div>
           )}
         </div>
       </div>
@@ -371,6 +437,7 @@ const ReportTable = ({ title, headers, items = [], className }: { title: string,
 export const DashboardPage = () => {
   const user = useAuthStore((state) => state.user)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const { data, isLoading } = useGetDashboardAnalytics()
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -386,6 +453,30 @@ export const DashboardPage = () => {
     const v = day % 100
     const ordinal = (v >= 11 && v <= 13) ? 'th' : (suffix[day % 10] || 'th')
     return `${time} - ${day}${ordinal} ${month}, ${year}`
+  }
+
+  if (isLoading) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="h-12 w-12 text-primary animate-spin" strokeWidth={1.5} />
+        <p className="text-gray-400 font-bold animate-pulse">Loading dashboard data...</p>
+      </div>
+    )
+  }
+
+  const stats = [
+    { name: 'Total Merchant', value: data?.stats.total_customer ?? 0, icon: Store, color: 'bg-[#e8f0fe] text-[#4285f4]' },
+    { name: 'Total Product', value: data?.stats.total_product ?? 0, icon: Package, color: 'bg-[#fff4e5] text-[#ff9800]' },
+    { name: 'Total Vendor', value: data?.stats.total_suppliers ?? 0, icon: Users, color: 'bg-[#f3e8ff] text-[#9c27b0]' },
+    { name: 'Total Warehouse', value: data?.stats.total_warehouse ?? 0, icon: Warehouse, color: 'bg-[#e8fbf3] text-[#4caf50]' },
+    { name: 'Total Purchase', value: data?.stats.total_purchase_count ?? 0, icon: Truck, color: 'bg-[#fffde7] text-[#fbc02d]' },
+    { name: 'Total Contact Msg', value: data?.stats.total_contact_msg ?? 0, icon: MessageCircle, color: 'bg-[#e8f0fe] text-[#00bcd4]' },
+  ]
+
+  const channelSales = {
+    admin: data?.channel_wise_sales.find(c => c.channel === 'admin')?.total ?? 0,
+    web: data?.channel_wise_sales.find(c => c.channel === 'web')?.total ?? 0,
+    app: data?.channel_wise_sales.find(c => c.channel === 'app')?.total ?? 0,
   }
 
   return (
@@ -424,30 +515,30 @@ export const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Main Dashboard Grid: Strictly Aligned with card_manage.png (3 and 3 divide) */}
+      {/* Main Dashboard Grid */}
       <div className="grid grid-cols-12 gap-6 items-stretch">
         
-        {/* TOP ROW: 6 SMALL CARDS (Aligned 3 and 3) */}
+        {/* TOP ROW: 6 SMALL CARDS */}
         {stats.map((stat, idx) => (
           <div key={stat.name} className="col-span-12 md:col-span-4 lg:col-span-2">
             <StatCard {...stat} />
           </div>
         ))}
 
-        {/* SECTION 2: LEFT GROUP (Under first 3 cards) */}
+        {/* SECTION 2: LEFT GROUP */}
         <div className="col-span-12 lg:col-span-6 grid grid-cols-6 gap-6">
-           {/* Total Sale (Aligns with Card 1) */}
+           {/* Total Sale */}
            <div className="col-span-6 md:col-span-2 bg-card-bg/60 p-3 rounded-[10px] shadow-sm flex flex-col items-start gap-1 relative mt-3 border border-white/40 group hover:shadow-md transition-all">
               <div className="w-8 h-8 rounded-lg bg-[#e8f0fe] text-[#4285f4] flex items-center justify-center shadow-md absolute -top-3 left-4">
                  <Coins className="h-4 w-4" />
               </div>
               <div className="flex flex-col gap-0 mt-4">
                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Sale</p>
-                 <p className="text-xl font-black text-gray-600 tracking-tighter">497</p>
+                 <p className="text-xl font-black text-gray-600 tracking-tighter">{data?.stats.total_sales_count ?? 0}</p>
               </div>
            </div>
 
-           {/* Channel Wise Sale (Aligns with Cards 2 & 3) */}
+           {/* Channel Wise Sale */}
            <div className="col-span-6 md:col-span-4 bg-card-bg/60 p-3 rounded-[10px] shadow-sm flex flex-col gap-2 relative mt-3 border border-white/40 group hover:shadow-md transition-all">
               <div className="w-8 h-8 rounded-lg bg-[#fff4e5] text-[#ff9800] flex items-center justify-center shadow-md absolute -top-3 left-4">
                  <PieChartIcon className="h-4 w-4" />
@@ -456,20 +547,20 @@ export const DashboardPage = () => {
               <div className="flex items-center gap-4 ml-1">
                  <div className="flex flex-col">
                     <span className="text-[8px] text-gray-400 uppercase font-black">Admin:</span>
-                    <span className="text-lg font-black text-gray-600">497</span>
+                    <span className="text-lg font-black text-gray-600">{channelSales.admin}</span>
                  </div>
                  <div className="flex flex-col border-l border-gray-200 pl-3">
                     <span className="text-[8px] text-gray-400 uppercase font-black">Web:</span>
-                    <span className="text-lg font-black text-gray-600">03</span>
+                    <span className="text-lg font-black text-gray-600">{channelSales.web}</span>
                  </div>
                  <div className="flex flex-col border-l border-gray-200 pl-3">
                     <span className="text-[8px] text-gray-400 uppercase font-black">App:</span>
-                    <span className="text-lg font-black text-gray-600">01</span>
+                    <span className="text-lg font-black text-gray-600">{channelSales.app}</span>
                  </div>
               </div>
            </div>
 
-           {/* Expense Statement (Full width of left group) */}
+           {/* Expense Statement */}
            <div className="col-span-6 bg-white p-2 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
               <div className="flex justify-between items-center px-1">
                  <h3 className="text-lg font-black text-[#544f6c] tracking-tight">Expense Statement (৳)</h3>
@@ -480,21 +571,31 @@ export const DashboardPage = () => {
               </div>
 
               <div className="flex items-center">
-                 <DonutChartMock />
+                 <DonutChartMock expenseData={data?.expense_statement} />
                  <div className="grid grid-cols-3 gap-x-6 gap-y-8 flex-1">
-                    <LegendItem label="Total Purchase" value="525" percent="34.93%" color="bg-[#FF7D5E]" />
-                    <LegendItem label="Total Sale" value="224" percent="40.11%" color="bg-[#4ADE80]" />
-                    <LegendItem label="Total Expense" value="145" percent="25.00%" color="bg-[#FACC15]" />
-                    <LegendItem label="Employee Salary" value="145" percent="25.00%" color="bg-[#3B82F6]" />
-                    <LegendItem label="Service" value="145" percent="25.00%" color="bg-[#BFDBFE]" />
+                    {(() => {
+                      const ex = data?.expense_statement;
+                      const total = Object.values(ex || {}).reduce((acc: number, curr: any) => acc + (Number(curr) || 0), 0) || 1;
+                      const getPct = (val: number) => ((val / total) * 100).toFixed(1) + '%';
+                      
+                      return (
+                        <>
+                          <LegendItem label="Total Purchase" value={ex?.total_purchase ?? 0} percent={getPct(ex?.total_purchase ?? 0)} color="bg-[#FF7D5E]" />
+                          <LegendItem label="Total Sale" value={ex?.total_sales ?? 0} percent={getPct(ex?.total_sales ?? 0)} color="bg-[#4ADE80]" />
+                          <LegendItem label="Total Expense" value={ex?.total_expense ?? 0} percent={getPct(ex?.total_expense ?? 0)} color="bg-[#FACC15]" />
+                          <LegendItem label="Employee Salary" value={ex?.total_salary ?? 0} percent={getPct(ex?.total_salary ?? 0)} color="bg-[#3B82F6]" />
+                          <LegendItem label="Service" value={ex?.total_service ?? 0} percent={getPct(ex?.total_service ?? 0)} color="bg-[#BFDBFE]" />
+                        </>
+                      )
+                    })()}
                  </div>
               </div>
            </div>
         </div>
 
-        {/* SECTION 3: RIGHT GROUP (Under last 3 cards) */}
+        {/* SECTION 3: RIGHT GROUP */}
         <div className="col-span-12 lg:col-span-6 flex flex-col">
-           {/* Best Sale Product (Tall, aligns with last 3 cards) */}
+           {/* Best Sale Product */}
            <div className="flex-1 bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
               <div className="flex justify-between items-center px-1">
                  <h3 className="text-lg font-black text-[#544f6c] tracking-tight">Best Sale Product</h3>
@@ -504,32 +605,40 @@ export const DashboardPage = () => {
                  </div>
               </div>
 
-              <div className="relative flex-1 mt-2">
-                 {/* Background Grid Lines */}
-                 <div className="absolute inset-0 left-[152px] flex justify-between pointer-events-none pr-1">
-                    {[0, 200, 400, 600, 800, 1000, 1200].map((val) => (
-                       <div key={val} className="h-full border-l border-gray-50 last:border-r" />
-                    ))}
-                 </div>
+              <div className="relative flex-1 mt-2 flex flex-col min-h-0">
+                 {(() => {
+                    const products = data?.best_selling_products ?? [];
+                    const maxVal = Math.max(...products.map(p => p.value), 100);
+                    const ceiling = Math.ceil(maxVal / 100) * 100;
+                    const steps = [0, 1, 2, 3, 4, 5, 6].map(v => Math.round((ceiling / 6) * v));
 
-                 <div className="flex flex-col gap-4 pr-1 relative z-10">
-                    {[
-                       { name: 'Deshi Shad Paratha 2400gm', value: 1100 },
-                       { name: 'Tatka Stolon of Taro 300gm', value: 350 },
-                       { name: 'Lexus Vegetable Cracker 1800gm', value: 650 },
-                       { name: 'Deshi Shad Paratha 1600gm', value: 550 },
-                       { name: 'Deshi Tatka Beanseed 300gm', value: 1050 },
-                       { name: 'Deshi Shad Dal Puri 454gm', value: 850 },
-                    ].map((item) => (
-                       <HorizontalBarMock key={item.name} name={item.name} value={item.value} max={1200} />
-                    ))}
-                 </div>
+                    return (
+                       <>
+                          <div className="relative flex-1 min-h-0">
+                             {/* Background Grid Lines - strictly contained within bars area */}
+                             <div className="absolute inset-0 left-[152px] flex justify-between pointer-events-none pr-1">
+                                {steps.map((val) => (
+                                   <div key={val} className="h-full border-l border-gray-50 last:border-r" />
+                                ))}
+                             </div>
 
-                 <div className="flex justify-between pl-[152px] mt-4 text-[10px] font-bold text-gray-400 pr-1">
-                    {[0, 200, 400, 600, 800, 1000, 1200].map((val) => (
-                       <span key={val} className="w-0 flex justify-center whitespace-nowrap">{val}</span>
-                    ))}
-                 </div>
+                             {/* Bars */}
+                             <div className="flex flex-col gap-4 pr-1 relative z-10">
+                                {products.map((item) => (
+                                   <HorizontalBarMock key={item.name} name={item.name} value={item.value} max={ceiling} />
+                                ))}
+                             </div>
+                          </div>
+
+                          {/* Legend/Labels - completely outside the bars & grid container */}
+                          <div className="flex justify-between pl-[152px] mt-6 text-[10px] font-bold text-gray-400 pr-1">
+                             {steps.map((val) => (
+                                <span key={val} className="w-0 flex justify-center whitespace-nowrap">{val.toLocaleString()}</span>
+                             ))}
+                          </div>
+                       </>
+                    );
+                 })()}
               </div>
            </div>
         </div>
@@ -557,14 +666,13 @@ export const DashboardPage = () => {
               </div>
            </div>
         </div>
-        <AreaChartMock />
+        <AreaChartMock trendData={data?.monthly_trend} />
       </div>
 
-      {/* Row 5: Lower Grid Sections (6 and 6 divide) */}
+      {/* Row 5: Lower Grid Sections */}
       <div className="grid grid-cols-12 gap-6 pb-2 items-stretch">
-        {/* LEFT COLUMN: Income vs Expense & Customer Reviews */}
+        {/* LEFT COLUMN */}
         <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-          {/* Income vs Expense Chart */}
           <div className="bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
             <div className="flex justify-between items-center px-1">
               <h3 className="text-[18px] font-black text-[#544f6c] tracking-tight">Income vs Expense Chart</h3>
@@ -575,20 +683,19 @@ export const DashboardPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <IncomeExpenseBlock title="Today" income="$1,250" expense="$820" color="bg-[#eef4ff]" progressColor="#3b82f6" />
-              <IncomeExpenseBlock title="This Week" income="$8,750" expense="$5,940" color="bg-[#f0fdf4]" progressColor="#4ade80" />
-              <IncomeExpenseBlock title="This Month" income="$36,500" expense="$24,300" color="bg-[#f0fdfa]" progressColor="#2dd4bf" />
-              <IncomeExpenseBlock title="This Year" income="$428,000" expense="$297,500" color="bg-[#f5f3ff]" progressColor="#a855f7" />
+              <IncomeExpenseBlock title="Today" income={data?.income_vs_expense.today.income ?? 0} expense={data?.income_vs_expense.today.expense ?? 0} color="bg-[#eef4ff]" progressColor="#3b82f6" />
+              <IncomeExpenseBlock title="This Week" income={data?.income_vs_expense.weekly.income ?? 0} expense={data?.income_vs_expense.weekly.expense ?? 0} color="bg-[#f0fdf4]" progressColor="#4ade80" />
+              <IncomeExpenseBlock title="This Month" income={data?.income_vs_expense.monthly.income ?? 0} expense={data?.income_vs_expense.monthly.expense ?? 0} color="bg-[#f0fdfa]" progressColor="#2dd4bf" />
+              <IncomeExpenseBlock title="This Year" income={data?.income_vs_expense.yearly.income ?? 0} expense={data?.income_vs_expense.yearly.expense ?? 0} color="bg-[#f5f3ff]" progressColor="#a855f7" />
             </div>
           </div>
 
-          {/* Customer Reviews */}
           <div className="flex-1 bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
             <div className="flex justify-between items-center px-1">
               <h3 className="text-[18px] font-black text-[#544f6c] tracking-tight">Customer Reviews</h3>
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 cursor-pointer">
-                <span>Weekly</span>
-                <ChevronDown className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 shadow-sm cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">
+                 <span>Weekly</span>
+                 <ChevronDown className="h-3.5 w-3.5" />
               </div>
             </div>
 
@@ -602,31 +709,47 @@ export const DashboardPage = () => {
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Todays Overview, Sales Due, Sales Report */}
+        {/* RIGHT COLUMN */}
         <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-          {/* Todays Overview */}
           <div className="bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
             <div className="flex justify-between items-center px-1">
               <h3 className="text-[18px] font-black text-[#544f6c] tracking-tight">Todays Overview</h3>
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 cursor-pointer">
-                <span>Weekly</span>
-                <ChevronDown className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 shadow-sm cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">
+                 <span>Weekly</span>
+                 <ChevronDown className="h-3.5 w-3.5" />
               </div>
             </div>
 
             <div className="border border-blue-100 rounded-2xl overflow-hidden">
               <TableRow label="Todays Report" value="$" isHeader />
-              <TableRow label="Total Sales" value="$1,250" />
-              <TableRow label="Total Purchase" value="$1,250" />
-              <TableRow label="Last Sales" value="$" />
+              <TableRow label="Total Sales" value={`$${data?.todays_overview.total_sales.toLocaleString() ?? 0}`} />
+              <TableRow label="Total Purchase" value={`$${data?.todays_overview.total_purchase.toLocaleString() ?? 0}`} />
+              <TableRow label="Last Sales" value={`$${data?.todays_overview.last_sales.toLocaleString() ?? 0}`} />
             </div>
           </div>
 
-          {/* Todays Sales Due */}
-          <ReportTable title="Todays Sales Due" headers={['SL.', 'Merchant Name', 'Voucher No', 'Due Amount']} />
+          <ReportTable 
+            title="Todays Sales Due" 
+            headers={['SL.', 'Merchant Name', 'Voucher No', 'Due Amount']} 
+            items={(data?.todays_sales_due ?? []).map((item, idx) => ({
+              sl: idx + 1,
+              name: item.customer_name,
+              invoice: item.invoice,
+              due: item.due_amount
+            }))}
+          />
 
-          {/* Todays Sales Report */}
-          <ReportTable title="Todays Sales Report" headers={['SL.', 'Vendor Name', 'Purchase ID', 'Due Amount']} className="flex-1" />
+          <ReportTable 
+            title="Todays Purchase Due" 
+            headers={['SL.', 'Supplier Name', 'Purchase ID', 'Due Amount']} 
+            className="flex-1"
+            items={(data?.todays_purchase_due ?? []).map((item, idx) => ({
+              sl: idx + 1,
+              name: item.supplier_name,
+              purchase_id: item.purchase_id,
+              due: item.due_amount
+            }))}
+          />
         </div>
       </div>
 
@@ -635,6 +758,13 @@ export const DashboardPage = () => {
         <ReportTable 
           title="Todays Sales Report" 
           headers={['SL.', 'Merchant Name', 'Invoice No', 'Total Amount', 'Paid Amount']} 
+          items={(data?.todays_sales_report ?? []).map((item, idx) => ({
+            sl: idx + 1,
+            name: item.customer_name,
+            invoice: item.invoice,
+            total: item.total_amount,
+            paid: item.paid_amount
+          }))}
         />
       </div>
     </div>
