@@ -14,14 +14,18 @@
 - [x] Create a basic `DashboardPage` view.
 - [x] Implement summary widgets (total products, active employees, etc.).
 - [x] Integrate high-fidelity card design with soft borders and shadows.
-- [x] Implement complex grid layout (Tall Best Sale card, Full-width Monthly Report).
+- [x] Implement complex 4-column grid layout with nested cards and specific row/column spanning.
+- [x] Implement redesign of Topbar (logo, date pickers) and Sidebar (active states, brand colors).
 ## 3. High-Fidelity Dashboard
 - [x] Create high-fidelity visual mockups (SVG Donut, Bars, and Area charts).
 - [x] Implement interactive hover tooltips for Monthly Sales & Purchase chart.
 - [x] Add dynamic report tables (Overview, Sales Due, Daily Sales) and metric blocks.
 - [x] Connect user profile images with backend storage and auto-avatar fallbacks.
 - [x] Integrate `useGetDashboardAnalytics` hook for real-time data synchronization.
-- [x] Implement dynamic Y-axis scaling for trend charts based on live data.
+- [x] Implement dynamic Y-axis scaling and automated X-axis grid values for trend and bar charts.
+- [x] Implement high-fidelity financial tables (Dues, Sales Reports) using semantic HTML with calculated footer totals.
+- [x] Integrate custom branded PNG icons into StatCards with interactive color transitions.
+- [x] Add dark drop shadows and smoothed area gradients to the monthly trend visualization.
 - [x] Add robust loading states for a polished SPA experience.
 ## 4. Shared Domain Utilities
 - [ ] Implement currency formatters (BDT).

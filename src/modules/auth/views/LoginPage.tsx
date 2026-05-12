@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/Button/Button'
 import { FormField } from '@/components/Form/FormField'
 import { loginSchema, type LoginFormValues } from '../hooks/validation'
 import { useLogin } from '../hooks/useLogin'
+import { useSettings } from '@/hooks/useSettings'
 
 export const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  const { webSetting, companyInformation } = useSettings()
   
   const { register, handleSubmit, setError, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -38,91 +40,99 @@ export const LoginPage = () => {
     })
   }
 
+  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url
+  const siteName = webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH'
+
   return (
-    <div className="bg-white rounded-xl shadow-2xl p-8 w-full animate-in fade-in zoom-in duration-300">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h1>
-        <p className="text-gray-500 text-sm">Access your secure enterprise workspace</p>
+    <div className="w-full">
+      {/* Logo */}
+      <div className="mb-5">
+        {logoUrl ? (
+          <img src={logoUrl} alt={siteName} className="h-15 w-auto object-contain" />
+        ) : (
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shrink-0">
+            <div className="text-white font-black text-2xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+                 <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                 <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        )}
       </div>
 
+      <div className="mb-8">
+        <h1 className="text-[20px] font-semibold leading-[28px] text-gray-900 mb-1">Nice to see you again</h1>
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <FormField label="Email or Username" error={errors.email?.message} required>
-          <div className="relative group">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-            <input
-              {...register('email')}
-              type="text"
-              className={`erp-input pl-10 ${errors.email ? 'border-red-500 ring-red-500/10 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-              placeholder="e.g. alex.smith@nexus.corp"
-            />
-          </div>
+      {authError && (
+        <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+          {authError}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <FormField 
+          label="Email or Phone number" 
+          error={errors.email?.message}
+          labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
+        >
+          <input
+            {...register('email')}
+            type="text"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            placeholder="Enter email or phone number"
+          />
         </FormField>
 
-        <FormField label="Password" error={errors.password?.message} required>
-          <div className="relative group">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+        <FormField 
+          label="Password" 
+          error={errors.password?.message}
+          labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
+        >
+          <div className="relative">
             <input
               {...register('password')}
               type={showPassword ? 'text' : 'password'}
-              className={`erp-input pl-10 pr-10 ${errors.password ? 'border-red-500 ring-red-500/10 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-              placeholder="••••••••••••"
+              className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+              placeholder="Enter password"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </FormField>
 
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 cursor-pointer group">
-            <input
-              {...register('rememberMe')}
-              type="checkbox"
-              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-            />
-            <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
+            <div className="relative inline-flex items-center cursor-pointer">
+              <input
+                {...register('rememberMe')}
+                type="checkbox"
+                className="sr-only peer"
+              />
+              <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary"></div>
+            </div>
+            <span className="text-xs font-medium text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
           </label>
-          <Link to="/forgot-password" title="Forgot Password?" className="text-sm font-semibold text-primary hover:text-primary-hover transition-colors">
-            Forgot Password?
+          <Link to="/forgot-password" title="Forgot Password?" className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors">
+            Forgot password?
           </Link>
         </div>
 
-        <Button type="submit" className="w-full py-3 text-lg" loading={isPending}>
-          Sign In
+        <Button 
+          type="submit" 
+          className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-semibold text-sm shadow-sm transition-all active:scale-[0.98]" 
+          loading={isPending}
+        >
+          Sign in
         </Button>
       </form>
-
-      <div className="mt-8">
-        <div className="relative flex items-center justify-center py-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <span className="relative bg-white px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">
-            Or securely via
-          </span>
-        </div>
-
-        <Button variant="outline" className="w-full py-3 gap-3">
-          <ShieldCheck className="h-5 w-5 text-gray-400" />
-          SSO Login
-        </Button>
-      </div>
-
-      <div className="mt-8 flex flex-col items-center gap-2">
-        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-[0.2em]">
-          Security Protocol: AES-256 Encrypted
-        </p>
-        <div className="flex gap-4 text-gray-300">
-          <ShieldCheck className="h-4 w-4" />
-          <Lock className="h-4 w-4" />
-          <Mail className="h-4 w-4" />
-        </div>
-      </div>
     </div>
   )
 }

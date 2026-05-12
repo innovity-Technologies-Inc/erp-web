@@ -26,8 +26,15 @@
 - [x] **Task 4.1**: Verify environment variables loading.
 - [x] **Task 4.2**: Test basic route protection with high-fidelity login implementation.
 
-## Task Group 5: Forgot Password Implementation
-- [x] **Task 5.1**: Add `forgotPassword` and `resetPassword` methods to `AuthController` in `authkit` applet.
-- [x] **Task 5.2**: Register password reset routes in `authkit`'s `api.php`.
-- [x] **Task 5.3**: Implement `ForgotPasswordPage` component and its API hooks in React.
-- [x] **Task 5.4**: Implement `ResetPasswordPage` component and its API hooks in React.
+## Task Group 6: Dynamic Branding & Global Settings
+- [x] **Task 6.1**: Create `GlobalSettingsController` in backend to expose `web_settings` and `company_information`.
+- [x] **Task 6.2**: Add `GET /api/global-settings` public route to `api.php`.
+- [x] **Task 6.3**: Implement `src/api/settings.api.ts` and `src/store/useSettingsStore.ts` in frontend.
+- [x] **Task 6.4**: Create `useSettings` hook to fetch and provide site-wide branding data.
+- [x] **Task 6.5**: Implement the professional split-screen design for the entire Authentication module.
+- [x] **Task 6.6**: Implement dynamic theme injection (Primary, Info, Success, Warning, Danger colors) into document root.
+- [x] **Task 6.7**: Configure Tailwind v4 `@theme` variables in `globals.css` to consume backend-driven CSS variables.
+- [x] **Task 6.8**: Clean up redundant stylesheets and centralize ERP design tokens.
+## Task Group 7: Global Typography & Design Tokens
+- [x] **Task 7.1**: Import Poppins font and configure as global default in Tailwind theme.
+- [x] **Task 7.2**: Implement Figma-precise font sizes and weights for authentication pages.

@@ -1,68 +1,70 @@
 import { 
-  Users, 
-  Package, 
-  Store, 
-  Warehouse, 
-  Truck, 
-  MessageCircle,
-  Coins,
-  PieChart as PieChartIcon,
-  Search,
-  Calendar,
   ChevronDown,
-  Loader2
+  Loader2,
 } from 'lucide-react'
 import { clsx } from 'clsx'
-import { useAuthStore } from '@/store/useAuthStore'
-import { useState, useEffect } from 'react'
+import { 
+  AreaChart, 
+  Area, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts'
 import { useGetDashboardAnalytics } from '../api/dashboard.api'
-import type { MonthlyTrendItem } from '../api/types'
+import { useSettings } from '@/hooks/useSettings'
+
+// Icons
+import ChannelWiseIcon from '@/assets/icons/Channel_Wise_Sale_icon.png'
+import TotalProductIcon from '@/assets/icons/total_product_card_icon.png'
+import TotalMerchantIcon from '@/assets/icons/total_merchante_card_icon.png'
+import TotalVendorIcon from '@/assets/icons/total_vendor_card_icon.png'
+import TotalWarehouseIcon from '@/assets/icons/total_warehouse_card_icon.png'
+import TotalPurchaseIcon from '@/assets/icons/total_purchase_card_icon.png'
+import TotalContactIcon from '@/assets/icons/total_contact_card_icon.png'
+import TotalSaleIcon from '@/assets/icons/total_sale_card_icon.png'
 
 interface StatCardProps {
   name: string
   value: string | number
-  icon: any
-  color: string
+  icon: string
   className?: string
 }
 
-const StatCard = ({ name, value, icon: Icon, color, className }: StatCardProps) => (
-  <div className={clsx("bg-card-bg/60 p-3 rounded-[10px] shadow-sm flex flex-col items-start gap-1.5 relative mt-3 group hover:shadow-md transition-all h-full border border-white/40", className)}>
-    <div className={clsx(
-        "w-9 h-9 rounded-xl flex items-center justify-center shadow-md absolute -top-3 left-4 transition-transform group-hover:scale-110", 
-        color
-    )}>
-      <Icon className="h-5 w-5" strokeWidth={2.5} />
+const StatCard = ({ name, value, icon, className }: StatCardProps) => (
+  <div className={clsx(
+    "px-6 rounded-[16px] shadow-sm flex items-center justify-between h-28 group transition-all duration-300",
+    "bg-white text-gray-800 hover:bg-primary hover:text-white hover:-translate-y-1 hover:shadow-md",
+    className
+  )}>
+    <div className="flex flex-col justify-center gap-1">
+      <p className="text-[13px] font-medium text-gray-500 group-hover:text-white/80 transition-colors">{name}</p>
+      <p className="text-2xl font-bold tracking-tight">{value}</p>
     </div>
-    
-    <div className="flex flex-col gap-0 mt-5">
-      <p className="text-[10px] font-bold text-gray-400 tracking-tight leading-none mb-1">{name}</p>
-      <p className="text-xl font-black text-gray-600 tracking-tighter">{value}</p>
+    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all bg-main-bg group-hover:bg-white/10">
+      <img 
+        src={icon} 
+        alt={name} 
+        className="h-8 w-8 object-contain transition-all" 
+      />
     </div>
   </div>
 )
 
-const DonutChartMock = ({ expenseData }: { expenseData?: any }) => {
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
-  const total = Object.values(expenseData || {}).reduce((acc: number, curr: any) => acc + (Number(curr) || 0), 0) || 1;
-  const values = [
-    { key: 'total_purchase', label: 'Purchase', color: '#FF7D5E' },
-    { key: 'total_sales', label: 'Sales', color: '#4ADE80' },
-    { key: 'total_expense', label: 'Expense', color: '#FACC15' },
-    { key: 'total_salary', label: 'Salary', color: '#3B82F6' },
-    { key: 'total_service', label: 'Service', color: '#BFDBFE' },
-  ];
-
+const DonutChart = ({ data, centerLabel, centerValue, size = 160 }: { data: any[], centerLabel: string, centerValue: string | number, size?: number }) => {
+  const total = data.reduce((acc, curr) => acc + curr.value, 0) || 1;
+  const circumference = 2 * Math.PI * 38;
   let cumulativePercent = 0;
-  const circumference = 213.6; // 2 * PI * 34
 
   return (
-    <div className="relative w-40 h-40 flex items-center justify-center shrink-0 group">
-      <svg className="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="34" stroke="#f3f4f6" strokeWidth="12" fill="transparent" />
-        {values.map((item) => {
-          const val = Number(expenseData?.[item.key]) || 0;
-          const percent = (val / total) * 100;
+    <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+      <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+        {/* Shadow layer for donut */}
+        <circle cx="50" cy="50" r="38" stroke="rgba(0,0,0,0.05)" strokeWidth="14" fill="transparent" />
+        
+        {data.map((item, idx) => {
+          const percent = (item.value / total) * 100;
           const offset = circumference - (percent / 100) * circumference;
           const rotation = (cumulativePercent / 100) * 360;
           cumulativePercent += percent;
@@ -71,388 +73,127 @@ const DonutChartMock = ({ expenseData }: { expenseData?: any }) => {
 
           return (
             <circle
-              key={item.key}
-              cx="50" cy="50" r="34"
+              key={idx}
+              cx="50" cy="50" r="38"
               stroke={item.color}
-              strokeWidth={hoveredKey === item.key ? 15 : 12}
+              strokeWidth={idx === 0 ? "13" : "12"} // Slightly thicker for the first segment
               strokeDasharray={circumference}
               strokeDashoffset={offset}
               fill="transparent"
               style={{ 
                 transform: `rotate(${rotation}deg)`, 
                 transformOrigin: 'center',
-                transition: 'stroke-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 0.4s ease'
+                transition: 'all 0.5s ease'
               }}
-              onMouseEnter={() => setHoveredKey(item.key)}
-              onMouseLeave={() => setHoveredKey(null)}
-              className="cursor-pointer outline-none"
             />
           );
         })}
       </svg>
 
-      {/* Smooth Centered Data */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className={clsx(
-          "flex flex-col items-center transition-all duration-500 ease-out",
-          hoveredKey ? "opacity-100 scale-100" : "opacity-0 scale-95 translate-y-1"
-        )}>
-          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.1em] leading-none">
-            {values.find(v => v.key === hoveredKey)?.label}
-          </span>
-          <span className="text-[16px] font-black text-gray-700 tracking-tighter mt-1">
-            ${hoveredKey ? Number(expenseData?.[hoveredKey]).toLocaleString() : 0}
-          </span>
-        </div>
-        
-        {/* Default View (when not hovered) */}
-        {!hoveredKey && (
-          <div className="flex flex-col items-center animate-in fade-in duration-700">
-            <PieChartIcon className="h-5 w-5 text-gray-200" />
-          </div>
-        )}
+      {/* Center White Circle with Shadow */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-full w-[60%] h-[60%] m-auto shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),0_10px_20px_rgba(0,0,0,0.06)] text-center">
+        <span className="text-[14px] font-bold text-gray-800 leading-tight font-poppins px-2 truncate w-full">{centerLabel}</span>
+        <span className="text-[20px] font-bold text-gray-800 leading-tight font-poppins mt-0.5">{centerValue}</span>
       </div>
     </div>
   );
 };
 
-const LegendItem = ({ label, value, percent, color }: { label: string, value: string | number, percent: string, color: string }) => (
-  <div className="flex flex-col gap-0.5 min-w-0">
-    <div className="flex items-center gap-1.5">
-      <div className="relative w-3 h-3 shrink-0">
-        <div className={clsx("absolute top-0 left-0 w-2 h-2 rounded-[1.5px] opacity-40", color)}></div>
-        <div className={clsx("absolute bottom-0 right-0 w-2 h-2 rounded-[1.5px]", color)}></div>
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-2 border border-primary/20 rounded-xl shadow-2xl flex flex-col gap-1.5 min-w-[100px]">
+        <div className="text-gray-400 text-[9px] font-bold uppercase px-1">{label}</div>
+        <div className="flex flex-col bg-primary/5 p-1.5 rounded-lg border border-primary/10">
+          <span className="text-[9px] text-primary font-bold uppercase leading-none mb-1">Purchase</span>
+          <span className="text-[13px] text-primary font-black leading-none">{payload[0].value.toLocaleString()}</span>
+        </div>
+        <div className="flex flex-col bg-success/5 p-1.5 rounded-lg border border-success/10">
+          <span className="text-[9px] text-success font-bold uppercase leading-none mb-1">Sales</span>
+          <span className="text-[13px] text-success font-black leading-none">{payload[1].value.toLocaleString()}</span>
+        </div>
       </div>
-      <span className="text-[7px] font-bold text-gray-400">{label}</span>
+    );
+  }
+  return null;
+};
+
+const LegendItem = ({ 
+  label, 
+  value, 
+  percent, 
+  color, 
+  variant = 'inline' 
+}: { 
+  label: string, 
+  value: string | number, 
+  percent?: string, 
+  color: string,
+  variant?: 'inline' | 'stacked'
+}) => (
+  <div className={clsx(
+    "flex gap-3 py-0.5",
+    variant === 'inline' ? "items-center" : "items-start"
+  )}>
+    {/* Stacked Square Icon */}
+    <div className="relative w-4 h-4 shrink-0 mt-1">
+      <div className="absolute top-0 left-0 w-3 h-3 rounded-[2px] opacity-30" style={{ backgroundColor: color }}></div>
+      <div className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-[2.5px] shadow-sm" style={{ backgroundColor: color }}></div>
     </div>
-    <div className="flex items-baseline gap-1">
-      <span className="text-[14px] font-black text-[#334155] tracking-tight">{value}</span>
-      <span className="text-[8px] font-bold text-gray-400/70">({percent})</span>
+    
+    <div className={clsx(
+      "flex flex-1",
+      variant === 'inline' ? "items-center justify-between" : "flex-col justify-start"
+    )}>
+      <span className={clsx(
+        "font-semibold text-gray-500 font-poppins",
+        variant === 'inline' ? "text-[14px]" : "text-[13px] leading-tight"
+      )}>
+        {label}:
+      </span>
+      <div className={clsx(
+        "flex items-center",
+        variant === 'inline' ? "gap-3" : "gap-2 mt-0.5"
+      )}>
+        <span className={clsx(
+          "font-bold text-gray-800 font-poppins",
+          variant === 'inline' ? "text-[14px]" : "text-[15px]"
+        )}>
+          {value}
+        </span>
+        {percent && (
+          <span className={clsx(
+            "font-medium text-gray-800 font-poppins opacity-50",
+            variant === 'inline' ? "text-[14px]" : "text-[13px]"
+          )}>
+            ({percent}%)
+          </span>
+        )}
+      </div>
     </div>
   </div>
 )
 
-const HorizontalBarMock = ({ name, value, max }: { name: string, value: number, max: number }) => (
-  <div className="flex items-center gap-3 w-full group relative">
-    <div className="w-[140px] shrink-0 text-[10px] font-bold text-gray-400 truncate text-left uppercase tracking-tight">
+const HorizontalBar = ({ name, value, max, color }: { name: string, value: number, max: number, color: string }) => (
+  <div className="flex items-center gap-4 w-full">
+    <div className="w-44 shrink-0 text-[11px] font-medium text-gray-500 truncate text-left">
       {name}
     </div>
-    <div className="flex-1 h-4 relative flex items-center">
+    <div className="flex-1 h-6 relative flex items-center">
       <div 
-        className="h-2.5 bg-[#b3cbfb] rounded-full transition-all duration-500 relative z-10 group-hover:bg-[#4F8AFF] group-hover:shadow-sm" 
-        style={{ width: `${(value / (max || 1)) * 100}%` }}
+        className="h-3.5 rounded-full transition-all duration-1000 relative z-10" 
+        style={{ width: `${Math.max((value / (max || 1)) * 100, 2)}%`, backgroundColor: color }}
       />
     </div>
-
-    {/* Product Name Tooltip */}
-    <div className="absolute left-0 -top-8 bg-white border border-blue-50 shadow-xl px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50 translate-y-2 group-hover:translate-y-0">
-      <p className="text-[10px] font-black text-[#544f6c] whitespace-nowrap">{name}</p>
-      <div className="flex items-baseline gap-1 mt-0.5">
-        <span className="text-[8px] font-bold text-gray-400 uppercase">Sales:</span>
-        <span className="text-[11px] font-black text-blue-600">{value.toLocaleString()}</span>
-      </div>
-    </div>
   </div>
 )
-
-const AreaChartMock = ({ trendData = [] }: { trendData?: MonthlyTrendItem[] }) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  const months = trendData.length > 0 ? trendData.map(d => d.month.substring(0, 3)) : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  const chartData = trendData.length > 0 ? trendData : Array(12).fill({ sales: 0, purchase: 0 });
-
-  const maxVal = Math.max(...chartData.map(d => Math.max(d.sales, d.purchase, 1200000)));
-  const getY = (val: number) => 200 - (val / maxVal) * 200;
-  const getX = (index: number) => (index * 1000) / 11;
-
-  // Function to generate smooth path from points
-  const getPath = (data: any[], key: string, isClosed: boolean) => {
-    const points = data.map((d, i) => ({ x: getX(i), y: getY(d[key]) }));
-    let d = `M ${points[0].x},${points[0].y}`;
-    
-    for (let i = 0; i < points.length - 1; i++) {
-      const curr = points[i];
-      const next = points[i + 1];
-      const cp1x = curr.x + (next.x - curr.x) / 2;
-      const cp1y = curr.y;
-      const cp2x = curr.x + (next.x - curr.x) / 2;
-      const cp2y = next.y;
-      d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${next.x},${next.y}`;
-    }
-    
-    if (isClosed) {
-      d += ` L 1000,200 L 0,200 Z`;
-    }
-    return d;
-  };
-
-  return (
-    <div className="w-full h-80 relative mt-6 flex gap-6">
-      {/* Y-Axis Labels */}
-      <div className="flex flex-col justify-between text-[11px] font-bold text-gray-400/80 pb-10 w-16 text-right">
-        <span>{maxVal.toLocaleString()}</span>
-        <span>{(maxVal * 0.8).toLocaleString()}</span>
-        <span>{(maxVal * 0.6).toLocaleString()}</span>
-        <span>{(maxVal * 0.4).toLocaleString()}</span>
-        <span>{(maxVal * 0.2).toLocaleString()}</span>
-        <span>0</span>
-      </div>
-
-      <div className="flex-1 flex flex-col">
-        <div className="flex-1 relative">
-          <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 200">
-            <defs>
-              <linearGradient id="colorPurchase" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4F8AFF" stopOpacity={0.3}/>
-                <stop offset="100%" stopColor="#4F8AFF" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#34D399" stopOpacity={0.3}/>
-                <stop offset="100%" stopColor="#34D399" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            
-            {/* Grid Lines */}
-            {[0, 33.3, 66.6, 100, 133.3, 166.6, 200].map((y) => (
-              <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="#f3f4f6" strokeWidth="1.5" />
-            ))}
-
-            {/* Purchase Path */}
-            <path d={getPath(chartData, 'purchase', true)} fill="url(#colorPurchase)" />
-            <path d={getPath(chartData, 'purchase', false)} fill="none" stroke="#4F8AFF" strokeWidth="1.5" strokeLinecap="round" />
-
-            {/* Sales Path */}
-            <path d={getPath(chartData, 'sales', true)} fill="url(#colorSales)" />
-            <path d={getPath(chartData, 'sales', false)} fill="none" stroke="#34D399" strokeWidth="1.5" strokeLinecap="round" />
-
-            {/* Hover Elements */}
-            {hoveredIndex !== null && (
-              <>
-                <line 
-                  x1={getX(hoveredIndex)} y1="0" 
-                  x2={getX(hoveredIndex)} y2="200" 
-                  stroke="#4F8AFF" strokeWidth="1" strokeDasharray="4 4" 
-                />
-                <circle 
-                  cx={getX(hoveredIndex)} cy={getY(chartData[hoveredIndex].purchase)} 
-                  r="4" fill="#4F8AFF" stroke="white" strokeWidth="2" 
-                />
-                <circle 
-                  cx={getX(hoveredIndex)} cy={getY(chartData[hoveredIndex].sales)} 
-                  r="4" fill="#34D399" stroke="white" strokeWidth="2" 
-                />
-              </>
-            )}
-
-            {/* Hitboxes */}
-            {chartData.map((_, i) => (
-              <rect
-                key={i}
-                x={getX(i) - 500/11}
-                y="0"
-                width={1000/11}
-                height="200"
-                fill="transparent"
-                className="cursor-pointer"
-                onMouseEnter={() => setHoveredIndex(i)}
-                onMouseLeave={() => setHoveredIndex(null)}
-              />
-            ))}
-          </svg>
-
-          {/* Tooltip HTML overlay */}
-          {hoveredIndex !== null && (
-            <div 
-              className="absolute bg-white/95 backdrop-blur-sm p-1.5 px-2 rounded-lg shadow-xl border border-blue-50/50 pointer-events-none z-50 flex flex-col gap-0.5 min-w-[80px] transition-all duration-200"
-              style={{ 
-                left: `${getX(hoveredIndex) / 10}%`, 
-                top: `${getY(chartData[hoveredIndex].purchase) * 1.6 - 100}px`,
-                transform: 'translateX(-50%)'
-              }}
-            >
-              <div className="flex flex-col">
-                <span className="text-[8px] font-bold text-blue-400 uppercase tracking-tighter leading-tight">Purchase</span>
-                <span className="text-[11px] font-black text-blue-600 leading-none">{chartData[hoveredIndex].purchase.toLocaleString()}</span>
-              </div>
-              <div className="flex flex-col border-t border-gray-100 pt-0.5 mt-0.5">
-                <span className="text-[8px] font-bold text-green-400 uppercase tracking-tighter leading-tight">Sales</span>
-                <span className="text-[11px] font-black text-green-600 leading-none">{chartData[hoveredIndex].sales.toLocaleString()}</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* X-Axis Labels */}
-        <div className="flex justify-between mt-6 px-2 text-[11px] font-bold text-gray-400/80">
-          {months.map((m, i) => (
-            <span key={m} className={clsx("transition-colors", hoveredIndex === i && "text-blue-500")}>{m}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const IncomeExpenseBlock = ({ title, income, expense, color, progressColor }: { title: string, income: string | number, expense: string | number, color: string, progressColor: string }) => {
-  const inc = typeof income === 'string' ? parseFloat(income.replace(/[^0-9.-]+/g,"")) : income;
-  const exp = typeof expense === 'string' ? parseFloat(expense.replace(/[^0-9.-]+/g,"")) : expense;
-  const total = inc + exp || 1;
-  const percentage = (inc / total) * 100;
-  const circumference = 263.8;
-  const offset = circumference - (percentage / 100) * circumference;
-
-  return (
-    <div className={clsx("p-4 rounded-[22px] flex justify-between items-center relative overflow-hidden", color)}>
-      <div className="flex flex-col gap-2.5">
-        <h4 className="text-[14px] font-black text-[#544f6c]">{title}</h4>
-        <div className="flex flex-col gap-0">
-          <div className="flex items-center gap-1.5 leading-none">
-            <div className="w-2 h-2 rounded-[2px] bg-[#3b82f6] opacity-70"></div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Income</span>
-          </div>
-          <p className="text-[16px] font-black text-[#334155] tracking-tighter leading-tight mt-0.5">${inc.toLocaleString()}</p>
-        </div>
-        <div className="flex flex-col gap-0">
-          <div className="flex items-center gap-1.5 leading-none">
-            <div className="w-2 h-2 rounded-[2px] bg-gray-300"></div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Expense</span>
-          </div>
-          <p className="text-[16px] font-black text-[#334155] tracking-tighter leading-tight mt-0.5">${exp.toLocaleString()}</p>
-        </div>
-      </div>
-      
-      <div className="relative w-[70px] h-[70px] flex items-center justify-center shrink-0">
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" stroke="#e5e7eb" strokeWidth="10" fill="transparent" opacity="0.3" />
-          <circle 
-            cx="50" cy="50" r="42" 
-            stroke={progressColor} 
-            strokeWidth="10" 
-            strokeDasharray={circumference} 
-            strokeDashoffset={offset} 
-            fill="transparent" 
-            strokeLinecap="round" 
-            style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}
-          />
-        </svg>
-      </div>
-    </div>
-  )
-}
-
-const ReviewRow = ({ stars, width, count }: { stars: number, width: string, count: string | number }) => (
-  <div className="flex items-center gap-3">
-    <div className="flex items-center gap-1 w-7">
-      <span className="text-[12px] font-black text-[#544f6c]">{stars}</span>
-      <div className="w-3.5 h-3.5 text-yellow-400">★</div>
-    </div>
-    <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
-      <div className={clsx("h-full bg-[#3b82f6] rounded-full", width)}></div>
-    </div>
-    <span className="text-[11px] font-black text-gray-400 w-10 text-right">{count}</span>
-  </div>
-)
-
-const TableRow = ({ label, value, isHeader = false }: { label: string, value: string | number, isHeader?: boolean }) => (
-  <div className="grid grid-cols-2">
-    <div className={clsx(
-      "p-3 px-5 text-[13px] font-bold border-b border-r border-blue-100/50",
-      isHeader ? "text-[#3b82f6] bg-[#eef4ff]" : "text-gray-500"
-    )}>
-      {label}
-    </div>
-    <div className={clsx(
-      "p-3 px-5 text-[13px] font-black text-right border-b border-blue-100/50",
-      isHeader ? "text-[#3b82f6] bg-[#eef4ff]" : "text-[#334155]"
-    )}>
-      {value}
-    </div>
-  </div>
-)
-
-const ReportTable = ({ title, headers, items = [], className }: { title: string, headers: string[], items?: any[], className?: string }) => {
-  const colCount = headers.length;
-  const gridStyle = { 
-    display: 'grid', 
-    gridTemplateColumns: colCount === 5 ? '80px 1.5fr 1fr 1fr 1fr' : (colCount === 4 ? '80px 1.5fr 1fr 1fr' : '80px 2fr 1fr')
-  };
-
-  return (
-    <div className={clsx("bg-white p-5 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-5", className)}>
-      <div className="flex justify-between items-center px-1">
-        <h3 className="text-[17px] font-black text-[#544f6c] tracking-tight">{title}</h3>
-        <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 cursor-pointer">
-          <span>Weekly</span>
-          <ChevronDown className="h-4 w-4" />
-        </div>
-      </div>
-
-      <div className="border border-blue-100 rounded-2xl overflow-hidden">
-        <div className="bg-[#eef4ff]" style={gridStyle}>
-          {headers.map(h => (
-            <div key={h} className="p-2.5 px-4 text-[11px] font-black text-[#3b82f6] uppercase border-r border-blue-100/50 last:border-r-0">
-              {h}
-            </div>
-          ))}
-        </div>
-        
-        {items.length > 0 ? (
-          items.map((item, idx) => (
-            <div key={idx} className="bg-white border-b border-blue-50 last:border-b-0 hover:bg-blue-50/30 transition-colors" style={gridStyle}>
-              {Object.values(item).map((val: any, vIdx) => (
-                <div key={vIdx} className="p-2.5 px-4 text-[12px] font-bold text-gray-600 border-r border-blue-100/30 last:border-r-0 truncate">
-                  {vIdx > 1 && typeof val === 'number' ? val.toLocaleString() : val}
-                </div>
-              ))}
-            </div>
-          ))
-        ) : (
-          <div className="p-6 text-center text-xs font-bold text-gray-300 italic border-b border-blue-100/50 bg-white">
-            Record not found
-          </div>
-        )}
-
-        <div className="bg-white" style={gridStyle}>
-          <div 
-            className="p-2.5 px-5 text-[12px] font-black text-gray-400 text-right border-r border-blue-100/50 uppercase" 
-            style={{ gridColumn: colCount === 5 ? 'span 3' : 'span 3' }}
-          >
-            Total
-          </div>
-          <div className="p-2.5 px-5 text-[12px] font-black text-[#334155] text-right border-r border-blue-100/50 last:border-r-0">
-            ${items.reduce((acc, curr) => acc + (Number(Object.values(curr)[3]) || 0), 0).toLocaleString()}
-          </div>
-          {colCount === 5 && (
-            <div className="p-2.5 px-5 text-[12px] font-black text-[#334155] text-right border-r border-blue-100/50 last:border-r-0">
-              ${items.reduce((acc, curr) => acc + (Number(Object.values(curr)[4]) || 0), 0).toLocaleString()}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export const DashboardPage = () => {
-  const user = useAuthStore((state) => state.user)
-  const [currentTime, setCurrentTime] = useState(new Date())
   const { data, isLoading } = useGetDashboardAnalytics()
+  const { currency, currencyPosition, webSetting } = useSettings()
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatDateTime = (date: Date) => {
-    const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
-    const day = date.getDate()
-    const month = date.toLocaleDateString('en-US', { month: 'long' })
-    const year = date.getFullYear()
-    const suffix = ['th', 'st', 'nd', 'rd']
-    const v = day % 100
-    const ordinal = (v >= 11 && v <= 13) ? 'th' : (suffix[day % 10] || 'th')
-    return `${time} - ${day}${ordinal} ${month}, ${year}`
+  const formatCurrency = (amount: number | string) => {
+    return currencyPosition === 'left' ? `${currency}${amount}` : `${amount}${currency}`
   }
 
   if (isLoading) {
@@ -464,308 +205,461 @@ export const DashboardPage = () => {
     )
   }
 
-  const stats = [
-    { name: 'Total Merchant', value: data?.stats.total_customer ?? 0, icon: Store, color: 'bg-[#e8f0fe] text-[#4285f4]' },
-    { name: 'Total Product', value: data?.stats.total_product ?? 0, icon: Package, color: 'bg-[#fff4e5] text-[#ff9800]' },
-    { name: 'Total Vendor', value: data?.stats.total_suppliers ?? 0, icon: Users, color: 'bg-[#f3e8ff] text-[#9c27b0]' },
-    { name: 'Total Warehouse', value: data?.stats.total_warehouse ?? 0, icon: Warehouse, color: 'bg-[#e8fbf3] text-[#4caf50]' },
-    { name: 'Total Purchase', value: data?.stats.total_purchase_count ?? 0, icon: Truck, color: 'bg-[#fffde7] text-[#fbc02d]' },
-    { name: 'Total Contact Msg', value: data?.stats.total_contact_msg ?? 0, icon: MessageCircle, color: 'bg-[#e8f0fe] text-[#00bcd4]' },
-  ]
-
-  const channelSales = {
-    admin: data?.channel_wise_sales.find(c => c.channel === 'admin')?.total ?? 0,
-    web: data?.channel_wise_sales.find(c => c.channel === 'web')?.total ?? 0,
-    app: data?.channel_wise_sales.find(c => c.channel === 'app')?.total ?? 0,
+  // Dynamic colors from theme or defaults
+  const colors = {
+    primary: webSetting?.color_primary || 'var(--color-primary)',
+    info: webSetting?.color_info || 'var(--color-info)',
+    success: webSetting?.color_success || 'var(--color-success)',
+    warning: webSetting?.color_warning || 'var(--color-warning)',
+    danger: webSetting?.color_danger || 'var(--color-danger)',
   }
 
+  // Dynamic Channel Wise Sale Data
+  const channelSales = data?.channel_wise_sales || []
+  const totalChannelSale = channelSales.reduce((sum, item) => sum + item.total, 0) || 1
+  const channelColors = [colors.warning, colors.primary, colors.info, colors.success, colors.danger]
+
+  // Dynamic Expense Statement Data
+  const expenseData = data?.expense_statement || {
+    total_purchase: 0,
+    total_sales: 0,
+    total_expense: 0,
+    total_salary: 0,
+    total_service: 0
+  }
+  const totalExpenseVal = Object.values(expenseData).reduce((a, b) => a + b, 0) || 1
+
+  // Dynamic Today's Overview
+  const todaysOverview = data?.todays_overview || {
+    total_sales: 0,
+    total_purchase: 0,
+    last_sales: 0
+  }
+
+  const bestProducts = data?.best_selling_products || []
+  const maxProductRaw = Math.max(...bestProducts.map(p => p.value), 0);
+  
+  // Calculate dynamic grid steps for Best Sale Product
+  const chartMax = maxProductRaw > 0 ? Math.ceil(maxProductRaw / 100) * 100 : 1000;
+  const stepCount = 5;
+  const stepSize = chartMax / stepCount;
+  const gridSteps = Array.from({ length: stepCount + 1 }, (_, i) => Math.round(i * stepSize));
+
+  // Trend Chart Data
+  const trendData = data?.monthly_trend || []
+
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header Area */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-black text-gray-700 tracking-tight">
-            Hello, {user ? `${user.first_name} ${user.last_name}` : 'User'}
-          </h1>
-          <p className="text-sm text-gray-400 font-bold tracking-tight italic">
-            {formatDateTime(currentTime)}
-          </p>
-        </div>
+    <div className="p-1 space-y-6 animate-in fade-in duration-700">
+      {/* Responsive Grid Layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {/* Row 1 */}
+        <StatCard name="Total Product" value={data?.stats.total_product ?? 143} icon={TotalProductIcon} />
+        <StatCard name="Total Merchant" value={data?.stats.total_customer ?? 132} icon={TotalMerchantIcon} />
+        <StatCard name="Total Vendor" value={data?.stats.total_suppliers ?? 14} icon={TotalVendorIcon} />
+        <StatCard name="Total Warehouse" value={data?.stats.total_warehouse ?? "05"} icon={TotalWarehouseIcon} />
 
-        <div className="flex items-center gap-4 min-w-0">
-          <div className="relative w-56 shrink-0">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              className="w-full bg-card-bg/60 border border-gray-200 rounded-xl py-2 px-5 pr-10 text-sm shadow-sm focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/20 transition-all placeholder:text-gray-300 font-medium"
-            />
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="flex items-center gap-3 px-3 py-2 bg-card-bg/60 border border-gray-50 rounded-xl text-[10px] font-bold text-gray-400 shadow-sm cursor-pointer hover:bg-card-bg transition-colors uppercase tracking-tight">
-               <span>From</span>
-               <Calendar className="h-3.5 w-3.5 text-gray-400" />
-            </div>
-            <div className="flex items-center gap-3 px-3 py-2 bg-card-bg/60 border border-gray-50 rounded-xl text-[10px] font-bold text-gray-400 shadow-sm cursor-pointer hover:bg-card-bg transition-colors uppercase tracking-tight">
-               <span>To</span>
-               <Calendar className="h-3.5 w-3.5 text-gray-400" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-12 gap-6 items-stretch">
+        {/* Row 2 */}
+        <StatCard name="Total Purchase" value={data?.stats.total_purchase_count ?? 143} icon={TotalPurchaseIcon} />
+        <StatCard name="Total Contact Msg" value={data?.stats.total_contact_msg ?? 14} icon={TotalContactIcon} />
+        <StatCard name="Total Sale" value={data?.stats.total_sales_count ?? 497} icon={TotalSaleIcon} />
         
-        {/* TOP ROW: 6 SMALL CARDS */}
-        {stats.map((stat, idx) => (
-          <div key={stat.name} className="col-span-12 md:col-span-4 lg:col-span-2">
-            <StatCard {...stat} />
+        {/* Channel Wise Sale */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:row-span-2 flex flex-col items-center justify-between">
+          <div className="flex justify-between items-start w-full mb-4 px-2">
+            <h3 
+              className="text-gray-500 text-xs font-semibold"
+            >
+              Channel Wise Sale
+            </h3>
+            <div className="shrink-0">
+               <img src={ChannelWiseIcon} alt="Channel Wise Sale" className="h-6 w-6 object-contain" />
+            </div>
           </div>
-        ))}
+          
+          <DonutChart 
+            centerLabel={channelSales[0]?.channel || 'Admin'} 
+            centerValue={channelSales[0]?.total || 0} 
+            data={channelSales.map((item, idx) => ({
+              value: item.total,
+              color: channelColors[idx % channelColors.length]
+            }))}
+          />
 
-        {/* SECTION 2: LEFT GROUP */}
-        <div className="col-span-12 lg:col-span-6 grid grid-cols-6 gap-6">
-           {/* Total Sale */}
-           <div className="col-span-6 md:col-span-2 bg-card-bg/60 p-3 rounded-[10px] shadow-sm flex flex-col items-start gap-1 relative mt-3 border border-white/40 group hover:shadow-md transition-all">
-              <div className="w-8 h-8 rounded-lg bg-[#e8f0fe] text-[#4285f4] flex items-center justify-center shadow-md absolute -top-3 left-4">
-                 <Coins className="h-4 w-4" />
-              </div>
-              <div className="flex flex-col gap-0 mt-4">
-                 <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Sale</p>
-                 <p className="text-xl font-black text-gray-600 tracking-tighter">{data?.stats.total_sales_count ?? 0}</p>
-              </div>
-           </div>
-
-           {/* Channel Wise Sale */}
-           <div className="col-span-6 md:col-span-4 bg-card-bg/60 p-3 rounded-[10px] shadow-sm flex flex-col gap-2 relative mt-3 border border-white/40 group hover:shadow-md transition-all">
-              <div className="w-8 h-8 rounded-lg bg-[#fff4e5] text-[#ff9800] flex items-center justify-center shadow-md absolute -top-3 left-4">
-                 <PieChartIcon className="h-4 w-4" />
-              </div>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-4 ml-1">Channel Wise Sale</p>
-              <div className="flex items-center gap-4 ml-1">
-                 <div className="flex flex-col">
-                    <span className="text-[8px] text-gray-400 uppercase font-black">Admin:</span>
-                    <span className="text-lg font-black text-gray-600">{channelSales.admin}</span>
-                 </div>
-                 <div className="flex flex-col border-l border-gray-200 pl-3">
-                    <span className="text-[8px] text-gray-400 uppercase font-black">Web:</span>
-                    <span className="text-lg font-black text-gray-600">{channelSales.web}</span>
-                 </div>
-                 <div className="flex flex-col border-l border-gray-200 pl-3">
-                    <span className="text-[8px] text-gray-400 uppercase font-black">App:</span>
-                    <span className="text-lg font-black text-gray-600">{channelSales.app}</span>
-                 </div>
-              </div>
-           </div>
-
-           {/* Expense Statement */}
-           <div className="col-span-6 bg-white p-2 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
-              <div className="flex justify-between items-center px-1">
-                 <h3 className="text-lg font-black text-[#544f6c] tracking-tight">Expense Statement (৳)</h3>
-                 <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 shadow-sm cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">
-                    <span>Weekly</span>
-                    <ChevronDown className="h-3.5 w-3.5" />
-                 </div>
-              </div>
-
-              <div className="flex items-center">
-                 <DonutChartMock expenseData={data?.expense_statement} />
-                 <div className="grid grid-cols-3 gap-x-6 gap-y-8 flex-1">
-                    {(() => {
-                      const ex = data?.expense_statement;
-                      const total = Object.values(ex || {}).reduce((acc: number, curr: any) => acc + (Number(curr) || 0), 0) || 1;
-                      const getPct = (val: number) => ((val / total) * 100).toFixed(1) + '%';
-                      
-                      return (
-                        <>
-                          <LegendItem label="Total Purchase" value={ex?.total_purchase ?? 0} percent={getPct(ex?.total_purchase ?? 0)} color="bg-[#FF7D5E]" />
-                          <LegendItem label="Total Sale" value={ex?.total_sales ?? 0} percent={getPct(ex?.total_sales ?? 0)} color="bg-[#4ADE80]" />
-                          <LegendItem label="Total Expense" value={ex?.total_expense ?? 0} percent={getPct(ex?.total_expense ?? 0)} color="bg-[#FACC15]" />
-                          <LegendItem label="Employee Salary" value={ex?.total_salary ?? 0} percent={getPct(ex?.total_salary ?? 0)} color="bg-[#3B82F6]" />
-                          <LegendItem label="Service" value={ex?.total_service ?? 0} percent={getPct(ex?.total_service ?? 0)} color="bg-[#BFDBFE]" />
-                        </>
-                      )
-                    })()}
-                 </div>
-              </div>
-           </div>
+          <div className="w-full space-y-4 mt-8 px-2">
+            {channelSales.map((item, idx) => (
+              <LegendItem 
+                key={idx}
+                label={item.channel} 
+                value={item.total} 
+                percent={((item.total / totalChannelSale) * 100).toFixed(2)} 
+                color={channelColors[idx % channelColors.length]} 
+              />
+            ))}
+          </div>
         </div>
 
-        {/* SECTION 3: RIGHT GROUP */}
-        <div className="col-span-12 lg:col-span-6 flex flex-col">
-           {/* Best Sale Product */}
-           <div className="flex-1 bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
-              <div className="flex justify-between items-center px-1">
-                 <h3 className="text-lg font-black text-[#544f6c] tracking-tight">Best Sale Product</h3>
-                 <div className="flex items-center gap-2 px-2 py-1 bg-[#f4f4f9] rounded-full text-[8px] font-black text-gray-400 shadow-sm cursor-pointer uppercase tracking-tight">
-                    <span>Weekly</span>
-                    <ChevronDown className="h-3 w-3" />
-                 </div>
-              </div>
+        {/* Expense Statement (occupies 3 columns on LG) */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-3 flex flex-col">
+          <div className="flex justify-between items-center mb-8">
+            <h3 
+              className="text-gray-500 font-semibold text-[16px]"
+            >
+              Expense Statement ({currency})
+            </h3>
+            <div className="flex items-center gap-2 px-4 py-1.5 bg-main-bg rounded-lg text-[11px] font-bold text-gray-500 cursor-pointer">
+              <span>Monthly</span>
+              <ChevronDown className="h-3.5 w-3.5" />
+            </div>
+          </div>
 
-              <div className="relative flex-1 mt-2 flex flex-col min-h-0">
-                 {(() => {
-                    const products = data?.best_selling_products ?? [];
-                    const maxVal = Math.max(...products.map(p => p.value), 100);
-                    const ceiling = Math.ceil(maxVal / 100) * 100;
-                    const steps = [0, 1, 2, 3, 4, 5, 6].map(v => Math.round((ceiling / 6) * v));
+          <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-16">
+            <DonutChart 
+              centerLabel="Purchase" 
+              centerValue={formatCurrency(expenseData.total_purchase)} 
+              size={170}
+              data={[
+                { value: expenseData.total_purchase, color: colors.warning },
+                { value: expenseData.total_sales, color: colors.danger },
+                { value: expenseData.total_expense, color: colors.primary },
+                { value: expenseData.total_salary, color: colors.info },
+                { value: expenseData.total_service, color: colors.primary },
+              ]}
+            />
 
-                    return (
-                       <>
-                          <div className="relative flex-1 min-h-0">
-                             {/* Background Grid Lines - strictly contained within bars area */}
-                             <div className="absolute inset-0 left-[152px] flex justify-between pointer-events-none pr-1">
-                                {steps.map((val) => (
-                                   <div key={val} className="h-full border-l border-gray-50 last:border-r" />
-                                ))}
-                             </div>
-
-                             {/* Bars */}
-                             <div className="flex flex-col gap-4 pr-1 relative z-10">
-                                {products.map((item) => (
-                                   <HorizontalBarMock key={item.name} name={item.name} value={item.value} max={ceiling} />
-                                ))}
-                             </div>
-                          </div>
-
-                          {/* Legend/Labels - completely outside the bars & grid container */}
-                          <div className="flex justify-between pl-[152px] mt-6 text-[10px] font-bold text-gray-400 pr-1">
-                             {steps.map((val) => (
-                                <span key={val} className="w-0 flex justify-center whitespace-nowrap">{val.toLocaleString()}</span>
-                             ))}
-                          </div>
-                       </>
-                    );
-                 })()}
-              </div>
-           </div>
+            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-12 flex-1">
+              <LegendItem variant="stacked" label="Total Purchase" value={formatCurrency(expenseData.total_purchase)} percent={((expenseData.total_purchase / totalExpenseVal) * 100).toFixed(2)} color={colors.warning} />
+              <LegendItem variant="stacked" label="Total Sale" value={formatCurrency(expenseData.total_sales)} percent={((expenseData.total_sales / totalExpenseVal) * 100).toFixed(2)} color={colors.danger} />
+              <LegendItem variant="stacked" label="Total Expense" value={formatCurrency(expenseData.total_expense)} percent={((expenseData.total_expense / totalExpenseVal) * 100).toFixed(2)} color={colors.primary} />
+              <LegendItem variant="stacked" label="Employee Salary" value={formatCurrency(expenseData.total_salary)} percent={((expenseData.total_salary / totalExpenseVal) * 100).toFixed(2)} color={colors.info} />
+              <LegendItem variant="stacked" label="Service" value={formatCurrency(expenseData.total_service)} percent={((expenseData.total_service / totalExpenseVal) * 100).toFixed(2)} color={colors.primary} />
+            </div>
+          </div>
         </div>
 
-      </div>
+        {/* Best Sale Product (occupies 2 columns on LG) */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col h-full">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-[#3b3b5e] font-bold text-[17px]">
+              Best Sale Product
+            </h3>
+            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
+              <span>Monthly</span>
+              <ChevronDown className="h-3 w-3" />
+            </div>
+          </div>
+          <div className="relative flex-1 pt-1 pb-10">
+            {/* Dynamic Grid Lines */}
+            <div className="absolute inset-0 left-44 right-2 flex justify-between pointer-events-none mb-10">
+              {gridSteps.map(step => (
+                <div key={step} className="h-full border-l border-gray-100/60 relative">
+                  <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] text-gray-400 font-semibold">
+                    {step}
+                  </span>
+                </div>
+              ))}
+            </div>
+            
+            <div className="space-y-3.5 relative z-10">
+              {bestProducts.length > 0 ? (
+                bestProducts.map((p, idx) => (
+                  <HorizontalBar 
+                    key={idx} 
+                    name={p.name} 
+                    value={p.value} 
+                    max={chartMax} 
+                    color={idx % 3 === 0 ? colors.warning : (idx % 3 === 1 ? colors.primary : '#1e293b')} 
+                  />
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm text-center py-10 font-medium">No sales data available</p>
+              )}
+            </div>
+          </div>
+        </div>
 
-      {/* Row 4: Full Width Monthly Report */}
-      <div className="bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-4 mb-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-           <h3 className="text-lg font-black text-[#544f6c] tracking-tight px-1">Monthly Sales & Purchase Report</h3>
-           <div className="flex items-center gap-8">
+        {/* Todays Overview (occupies 2 columns on LG) - Semantic Table Redesign */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col">
+          <h3 className="text-[#3b3b5e] font-bold text-[17px] mb-6">
+            Todays Overview
+          </h3>
+          <div className="space-y-4 flex-1 flex flex-col justify-center">
+            {/* Top Table - Report */}
+            <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
+              <table className="w-full border-collapse">
+                <thead className="bg-primary/5 border-b border-primary/20">
+                  <tr>
+                    <th className="px-6 py-3.5 text-left text-primary font-bold text-[14px] w-[45%]">Todays Report</th>
+                    <th className="px-6 py-3.5 text-center text-primary font-bold text-[14px] border-l border-primary/20">
+                      {currency}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-primary/20">
+                  <tr className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-3 text-gray-500 font-medium text-[13px]">Total Sales</td>
+                    <td className="px-6 py-3 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">
+                      {formatCurrency(todaysOverview.total_sales)}
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-3 text-gray-500 font-medium text-[13px]">Total Purchase</td>
+                    <td className="px-6 py-3 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">
+                      {formatCurrency(todaysOverview.total_purchase)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Bottom Table - Last Sales */}
+            <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
+              <table className="w-full border-collapse">
+                <tbody>
+                  <tr className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4.5 text-gray-500 font-medium text-[13px] w-[45%]">Last Sales</td>
+                    <td className="px-6 py-4.5 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">
+                      {todaysOverview.last_sales ? formatCurrency(todaysOverview.last_sales) : currency}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Monthly Sales & Purchase Report Area Chart */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:col-span-4 flex flex-col min-h-[400px]">
+          <div className="flex flex-wrap justify-between items-center mb-8 gap-4 px-2">
+            <h3 className="text-[#3b3b5e] font-bold text-[18px]">Monthly Sales & Purchase Report</h3>
+            
+            <div className="flex items-center gap-8">
               <div className="flex items-center gap-6">
-                 <div className="flex items-center gap-2">
-                    <div className="w-5 h-[3px] bg-[#4F8AFF] rounded-full"></div>
-                    <span className="text-[11px] font-bold text-[#4F8AFF] tracking-tight">Purchase</span>
-                 </div>
-                 <div className="flex items-center gap-2">
-                    <div className="w-5 h-[3px] bg-[#34D399] rounded-full"></div>
-                    <span className="text-[11px] font-bold text-[#544f6c] tracking-tight">Sales</span>
-                 </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-0.5 rounded-full" style={{ backgroundColor: colors.primary }}></div>
+                  <span className="text-gray-500 font-semibold text-[12px]">Purchase</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-0.5 rounded-full" style={{ backgroundColor: colors.success }}></div>
+                  <span className="text-gray-500 font-semibold text-[12px]">Sales</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[12px] text-[11px] font-bold text-gray-400 shadow-sm cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">
-                 <span>Monthly</span>
-                 <ChevronDown className="h-3.5 w-3.5" />
-              </div>
-           </div>
-        </div>
-        <AreaChartMock trendData={data?.monthly_trend} />
-      </div>
-
-      {/* Row 5: Lower Grid Sections */}
-      <div className="grid grid-cols-12 gap-6 pb-2 items-stretch">
-        {/* LEFT COLUMN */}
-        <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-          <div className="bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
-            <div className="flex justify-between items-center px-1">
-              <h3 className="text-[18px] font-black text-[#544f6c] tracking-tight">Income vs Expense Chart</h3>
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 cursor-pointer">
-                <span>Weekly</span>
+              
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-main-bg rounded-full text-[11px] font-bold text-gray-500 cursor-pointer">
+                <span>Monthly</span>
                 <ChevronDown className="h-3.5 w-3.5" />
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <IncomeExpenseBlock title="Today" income={data?.income_vs_expense.today.income ?? 0} expense={data?.income_vs_expense.today.expense ?? 0} color="bg-[#eef4ff]" progressColor="#3b82f6" />
-              <IncomeExpenseBlock title="This Week" income={data?.income_vs_expense.weekly.income ?? 0} expense={data?.income_vs_expense.weekly.expense ?? 0} color="bg-[#f0fdf4]" progressColor="#4ade80" />
-              <IncomeExpenseBlock title="This Month" income={data?.income_vs_expense.monthly.income ?? 0} expense={data?.income_vs_expense.monthly.expense ?? 0} color="bg-[#f0fdfa]" progressColor="#2dd4bf" />
-              <IncomeExpenseBlock title="This Year" income={data?.income_vs_expense.yearly.income ?? 0} expense={data?.income_vs_expense.yearly.expense ?? 0} color="bg-[#f5f3ff]" progressColor="#a855f7" />
-            </div>
           </div>
 
-          <div className="flex-1 bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
-            <div className="flex justify-between items-center px-1">
-              <h3 className="text-[18px] font-black text-[#544f6c] tracking-tight">Customer Reviews</h3>
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 shadow-sm cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">
-                 <span>Weekly</span>
-                 <ChevronDown className="h-3.5 w-3.5" />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-5 px-1 mt-2">
-              <ReviewRow stars={5} width="w-full" count="250" />
-              <ReviewRow stars={4} width="w-[85%]" count="190" />
-              <ReviewRow stars={3} width="w-[45%]" count="120" />
-              <ReviewRow stars={2} width="w-[65%]" count="150" />
-              <ReviewRow stars={1} width="w-[30%]" count="90" />
-            </div>
+          <div className="flex-1 w-full -ml-4">
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={trendData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                <defs>
+                  <filter id="lineShadow" height="200%">
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+                    <feOffset dx="0" dy="4" result="offsetBlur" />
+                    <feFlood floodColor="black" floodOpacity="0.2" result="offsetColor" />
+                    <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow" />
+                    <feMerge>
+                      <feMergeNode in="shadow" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <linearGradient id="colorPurchase" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={colors.primary} stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor={colors.primary} stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={colors.success} stopOpacity={0.15}/>
+                    <stop offset="95%" stopColor={colors.success} stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f3f9" />
+                <XAxis 
+                  dataKey="month" 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} 
+                  dy={15}
+                />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }}
+                  tickFormatter={(value) => value.toLocaleString()}
+                  dx={-10}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area 
+                  type="monotone" 
+                  dataKey="purchase" 
+                  stroke={colors.primary} 
+                  strokeWidth={3}
+                  filter="url(#lineShadow)"
+                  fillOpacity={1} 
+                  fill="url(#colorPurchase)" 
+                  activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="sales" 
+                  stroke={colors.success} 
+                  strokeWidth={3}
+                  filter="url(#lineShadow)"
+                  fillOpacity={1} 
+                  fill="url(#colorSales)" 
+                  activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* RIGHT COLUMN */}
-        <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
-          <div className="bg-white p-4 rounded-[24px] shadow-sm border border-gray-100 flex flex-col gap-6">
-            <div className="flex justify-between items-center px-1">
-              <h3 className="text-[18px] font-black text-[#544f6c] tracking-tight">Todays Overview</h3>
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#f3f4f6] rounded-[15px] text-[11px] font-bold text-gray-400 shadow-sm cursor-pointer border border-transparent hover:bg-gray-200 transition-colors">
-                 <span>Weekly</span>
-                 <ChevronDown className="h-3.5 w-3.5" />
-              </div>
-            </div>
-
-            <div className="border border-blue-100 rounded-2xl overflow-hidden">
-              <TableRow label="Todays Report" value="$" isHeader />
-              <TableRow label="Total Sales" value={`$${data?.todays_overview.total_sales.toLocaleString() ?? 0}`} />
-              <TableRow label="Total Purchase" value={`$${data?.todays_overview.total_purchase.toLocaleString() ?? 0}`} />
-              <TableRow label="Last Sales" value={`$${data?.todays_overview.last_sales.toLocaleString() ?? 0}`} />
+        {/* Todays Sales Due */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-[#3b3b5e] font-bold text-[17px]">Todays Sales Due</h3>
+            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
+              <span>Monthly</span>
+              <ChevronDown className="h-3 w-3" />
             </div>
           </div>
-
-          <ReportTable 
-            title="Todays Sales Due" 
-            headers={['SL.', 'Merchant Name', 'Voucher No', 'Due Amount']} 
-            items={(data?.todays_sales_due ?? []).map((item, idx) => ({
-              sl: idx + 1,
-              name: item.customer_name,
-              invoice: item.invoice,
-              due: item.due_amount
-            }))}
-          />
-
-          <ReportTable 
-            title="Todays Purchase Due" 
-            headers={['SL.', 'Supplier Name', 'Purchase ID', 'Due Amount']} 
-            className="flex-1"
-            items={(data?.todays_purchase_due ?? []).map((item, idx) => ({
-              sl: idx + 1,
-              name: item.supplier_name,
-              purchase_id: item.purchase_id,
-              due: item.due_amount
-            }))}
-          />
+          <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
+            <table className="w-full border-collapse">
+              <thead className="bg-primary/5 border-b border-primary/20">
+                <tr className="text-primary font-bold text-[13px]">
+                  <th className="px-4 py-3 text-left w-12">SL.</th>
+                  <th className="px-4 py-3 text-left border-l border-primary/20">Merchant Name</th>
+                  <th className="px-4 py-3 text-left border-l border-primary/20">Voucher No</th>
+                  <th className="px-4 py-3 text-center border-l border-primary/20">Due Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-primary/20">
+                {data?.todays_sales_due && data.todays_sales_due.length > 0 ? (
+                  data.todays_sales_due.map((item, idx) => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors text-[13px]">
+                      <td className="px-4 py-3 text-gray-500">{idx + 1}</td>
+                      <td className="px-4 py-3 text-gray-600 font-medium border-l border-primary/20 truncate max-w-[120px]">{item.customer_name}</td>
+                      <td className="px-4 py-3 text-gray-600 border-l border-primary/20">{item.invoice}</td>
+                      <td className="px-4 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.due_amount)}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">Record not found</td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot className="bg-white border-t border-primary/20 font-bold text-[14px]">
+                <tr>
+                  <td colSpan={3} className="px-4 py-3 text-right text-gray-600">Total</td>
+                  <td className="px-4 py-3 text-gray-800 border-l border-primary/20 text-center">
+                    {formatCurrency(data?.todays_sales_due?.reduce((sum, item) => sum + Number(item.due_amount), 0) || 0)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
-      </div>
 
-      {/* Row 6: Full Width Todays Sales Report */}
-      <div className="pb-4">
-        <ReportTable 
-          title="Todays Sales Report" 
-          headers={['SL.', 'Merchant Name', 'Invoice No', 'Total Amount', 'Paid Amount']} 
-          items={(data?.todays_sales_report ?? []).map((item, idx) => ({
-            sl: idx + 1,
-            name: item.customer_name,
-            invoice: item.invoice,
-            total: item.total_amount,
-            paid: item.paid_amount
-          }))}
-        />
+        {/* Todays Purchase Due */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-[#3b3b5e] font-bold text-[17px]">Todays Purchase Due</h3>
+            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
+              <span>Monthly</span>
+              <ChevronDown className="h-3 w-3" />
+            </div>
+          </div>
+          <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
+            <table className="w-full border-collapse">
+              <thead className="bg-primary/5 border-b border-primary/20">
+                <tr className="text-primary font-bold text-[13px]">
+                  <th className="px-4 py-3 text-left w-12">SL.</th>
+                  <th className="px-4 py-3 text-left border-l border-primary/20">Vendor Name</th>
+                  <th className="px-4 py-3 text-left border-l border-primary/20">Purchase ID</th>
+                  <th className="px-4 py-3 text-center border-l border-primary/20">Due Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-primary/20">
+                {data?.todays_purchase_due && data.todays_purchase_due.length > 0 ? (
+                  data.todays_purchase_due.map((item, idx) => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors text-[13px]">
+                      <td className="px-4 py-3 text-gray-500">{idx + 1}</td>
+                      <td className="px-4 py-3 text-gray-600 font-medium border-l border-primary/20 truncate max-w-[120px]">{item.customer_name}</td>
+                      <td className="px-4 py-3 text-gray-600 border-l border-primary/20">{item.purchase_id}</td>
+                      <td className="px-4 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.due_amount)}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">Record not found</td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot className="bg-white border-t border-primary/20 font-bold text-[14px]">
+                <tr>
+                  <td colSpan={3} className="px-4 py-3 text-right text-gray-600">Total</td>
+                  <td className="px-4 py-3 text-gray-800 border-l border-primary/20 text-center">
+                    {formatCurrency(data?.todays_purchase_due?.reduce((sum, item) => sum + Number(item.due_amount), 0) || 0)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        {/* Todays Sales Report */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:col-span-4 flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-[#3b3b5e] font-bold text-[17px]">Todays Sales Report</h3>
+            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
+              <span>Weekly</span>
+              <ChevronDown className="h-3 w-3" />
+            </div>
+          </div>
+          <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
+            <table className="w-full border-collapse">
+              <thead className="bg-primary/5 border-b border-primary/20">
+                <tr className="text-primary font-bold text-[13px]">
+                  <th className="px-6 py-3.5 text-left w-12">SL.</th>
+                  <th className="px-6 py-3.5 text-left border-l border-primary/20">Merchant Name</th>
+                  <th className="px-6 py-3.5 text-left border-l border-primary/20">Invoice No</th>
+                  <th className="px-6 py-3.5 text-center border-l border-primary/20 w-48">Total Amount</th>
+                  <th className="px-6 py-3.5 text-center border-l border-primary/20 w-48">Paid Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-primary/20">
+                {data?.todays_sales_report && data.todays_sales_report.length > 0 ? (
+                  data.todays_sales_report.map((item, idx) => (
+                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors text-[13px]">
+                      <td className="px-6 py-3 text-gray-500">{idx + 1}</td>
+                      <td className="px-6 py-3 text-gray-600 font-medium border-l border-primary/20">{item.customer_name}</td>
+                      <td className="px-6 py-3 text-gray-600 border-l border-primary/20">{item.invoice}</td>
+                      <td className="px-6 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.total_amount)}</td>
+                      <td className="px-6 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.paid_amount)}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm italic">Record not found</td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot className="bg-white border-t border-primary/20 font-bold text-[14px]">
+                <tr>
+                  <td colSpan={3} className="px-6 py-4 text-right text-gray-600">Total</td>
+                  <td className="px-6 py-4 text-gray-800 border-l border-primary/20 text-center">
+                    {formatCurrency(data?.todays_sales_report?.reduce((sum, item) => sum + Number(item.total_amount), 0) || 0)}
+                  </td>
+                  <td className="px-6 py-4 text-gray-800 border-l border-primary/20 text-center">
+                    {formatCurrency(data?.todays_sales_report?.reduce((sum, item) => sum + Number(item.paid_amount), 0) || 0)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   )

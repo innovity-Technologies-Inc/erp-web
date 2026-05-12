@@ -1,13 +1,15 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Mail, ArrowLeft, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/Button/Button'
 import { FormField } from '@/components/Form/FormField'
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from '../hooks/validation'
 import { useForgotPassword } from '../hooks/useForgotPassword'
+import { useSettings } from '@/hooks/useSettings'
 
 export const ForgotPasswordPage = () => {
+  const { webSetting, companyInformation } = useSettings()
   const { register, handleSubmit, formState: { errors } } = useForm<ForgotPasswordFormValues>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: { email: '' },
@@ -19,20 +21,23 @@ export const ForgotPasswordPage = () => {
     mutate(data)
   }
 
+  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url
+  const siteName = webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH'
+
   if (isSuccess) {
     return (
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-full animate-in fade-in zoom-in duration-300 text-center">
-        <div className="mb-6 flex justify-center">
-          <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center">
-            <Mail className="h-8 w-8 text-green-500" />
+      <div className="w-full text-center">
+        <div className="flex justify-center mb-8">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <CheckCircle2 className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Check your email</h1>
-        <p className="text-gray-500 mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-3">Check your email</h1>
+        <p className="text-gray-500 text-sm mb-10 leading-relaxed">
           We've sent a password reset link to your email address. Please follow the instructions to reset your password.
         </p>
         <Link to="/login">
-          <Button variant="outline" className="w-full py-3 flex gap-2 justify-center items-center">
+          <Button variant="outline" className="w-full py-3 border-gray-200 text-gray-700 hover:bg-gray-50 flex gap-2 justify-center items-center rounded-lg font-semibold text-sm transition-all">
             <ArrowLeft className="h-4 w-4" />
             Back to Login
           </Button>
@@ -42,44 +47,57 @@ export const ForgotPasswordPage = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-2xl p-8 w-full animate-in fade-in zoom-in duration-300">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h1>
+    <div className="w-full">
+      {/* Logo */}
+      <div className="mb-10">
+        {logoUrl ? (
+          <img src={logoUrl} alt={siteName} className="h-12 w-auto object-contain" />
+        ) : (
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shrink-0">
+            <div className="text-white font-black text-2xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+                 <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                 <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="mb-8">
+        <h1 className="text-[20px] font-semibold leading-[28px] text-gray-900 mb-1">Forgot Password?</h1>
         <p className="text-gray-500 text-sm">Enter your email and we'll send you a reset link</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <FormField label="Email Address" error={errors.email?.message} required>
-          <div className="relative group">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-            <input
-              {...register('email')}
-              type="email"
-              className={`erp-input pl-10 ${errors.email ? 'border-red-500 ring-red-500/10 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-              placeholder="e.g. alex.smith@nexus.corp"
-            />
-          </div>
+        <FormField 
+          label="Email Address" 
+          error={errors.email?.message}
+          labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
+        >
+          <input
+            {...register('email')}
+            type="email"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            placeholder="Enter your email address"
+          />
         </FormField>
 
-        <Button type="submit" className="w-full py-3 text-lg" loading={isPending}>
+        <Button 
+          type="submit" 
+          className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-semibold text-sm shadow-sm transition-all active:scale-[0.98]" 
+          loading={isPending}
+        >
           Send Reset Link
         </Button>
       </form>
 
       <div className="mt-8 text-center">
-        <Link to="/login" className="text-sm font-semibold text-primary hover:text-primary-hover transition-colors flex items-center justify-center gap-2">
+        <Link to="/login" className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors inline-flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back to Login
         </Link>
-      </div>
-
-      <div className="mt-8 flex flex-col items-center gap-2">
-        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-[0.2em]">
-          Security Protocol: AES-256 Encrypted
-        </p>
-        <div className="flex gap-4 text-gray-300">
-          <ShieldCheck className="h-4 w-4" />
-        </div>
       </div>
     </div>
   )

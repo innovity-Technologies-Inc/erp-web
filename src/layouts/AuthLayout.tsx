@@ -1,31 +1,31 @@
 import { Outlet } from '@tanstack/react-router'
+import { useSettings } from '@/hooks/useSettings'
 
 export const AuthLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      {/* Header */}
-      <header className="h-16 bg-white border-b flex items-center justify-between px-8 shrink-0">
-        <div className="text-xl font-bold text-gray-800">Nexus ERP</div>
-        <div className="text-sm text-gray-600 hover:underline cursor-pointer">Support</div>
-      </header>
+  const { webSetting } = useSettings()
+  const sidebarImage = webSetting?.login_sidebar_image_url || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2070"
 
-      {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-4 bg-[url('/auth-bg.svg')] bg-cover bg-center">
-        <div className="w-full max-w-md">
+  return (
+    <div className="min-h-screen flex bg-white font-sans">
+      {/* Left Side: Image (Hidden on mobile) */}
+      <div className="hidden lg:block lg:w-3/5 xl:w-2/3 relative">
+        <div className="absolute inset-0 bg-black/1 z-10" />
+        <img 
+          src={sidebarImage} 
+          alt="ERP Background" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* <div className="absolute bottom-8 left-8 z-20 text-white/60 text-xs">
+          Photo by <a href="#" className="underline">Alexandr Popadin</a>
+        </div> */}
+      </div>
+
+      {/* Right Side: Auth Form */}
+      <main className="w-full lg:w-2/5 xl:w-1/3 flex flex-col justify-center px-8 sm:px-16 lg:px-12 xl:px-20 py-12">
+        <div className="w-full max-w-sm mx-auto">
           <Outlet />
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="h-16 bg-white border-t flex items-center justify-between px-8 text-xs text-gray-500 shrink-0">
-        <div>© 2024 Nexus ERP Systems. All rights reserved.</div>
-        <div className="flex gap-4">
-          <span className="hover:underline cursor-pointer">Privacy Policy</span>
-          <span className="hover:underline cursor-pointer">Terms of Service</span>
-          <span className="hover:underline cursor-pointer">Security</span>
-          <span className="hover:underline cursor-pointer">Help Desk</span>
-        </div>
-      </footer>
     </div>
   )
 }

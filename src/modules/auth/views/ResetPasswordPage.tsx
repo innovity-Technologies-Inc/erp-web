@@ -1,13 +1,15 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Lock, ShieldCheck, ArrowLeft } from 'lucide-react'
+import { Lock, ArrowLeft } from 'lucide-react'
 import { Link, useSearch } from '@tanstack/react-router'
 import { Button } from '@/components/Button/Button'
 import { FormField } from '@/components/Form/FormField'
 import { resetPasswordSchema, type ResetPasswordFormValues } from '../hooks/validation'
 import { useResetPassword } from '../hooks/useResetPassword'
+import { useSettings } from '@/hooks/useSettings'
 
 export const ResetPasswordPage = () => {
+  const { webSetting, companyInformation } = useSettings()
   const search = useSearch({ from: '/_auth/reset-password' }) as { token: string; email: string }
   
   const { register, handleSubmit, formState: { errors } } = useForm<ResetPasswordFormValues>({
@@ -26,10 +28,30 @@ export const ResetPasswordPage = () => {
     mutate(data)
   }
 
+  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url
+  const siteName = webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH'
+
   return (
-    <div className="bg-white rounded-xl shadow-2xl p-8 w-full animate-in fade-in zoom-in duration-300">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h1>
+    <div className="w-full">
+      {/* Logo */}
+      <div className="mb-10">
+        {logoUrl ? (
+          <img src={logoUrl} alt={siteName} className="h-12 w-auto object-contain" />
+        ) : (
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shrink-0">
+            <div className="text-white font-black text-2xl flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
+                 <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                 <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="mb-8">
+        <h1 className="text-[20px] font-semibold leading-[28px] text-gray-900 mb-1">Reset Password</h1>
         <p className="text-gray-500 text-sm">Create a new secure password for your account</p>
       </div>
 
@@ -38,49 +60,46 @@ export const ResetPasswordPage = () => {
         <input type="hidden" {...register('token')} />
         <input type="hidden" {...register('email')} />
 
-        <FormField label="New Password" error={errors.password?.message} required>
-          <div className="relative group">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-            <input
-              {...register('password')}
-              type="password"
-              className={`erp-input pl-10 ${errors.password ? 'border-red-500 ring-red-500/10 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-              placeholder="••••••••••••"
-            />
-          </div>
+        <FormField 
+          label="New Password" 
+          error={errors.password?.message}
+          labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
+        >
+          <input
+            {...register('password')}
+            type="password"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            placeholder="••••••••••••"
+          />
         </FormField>
 
-        <FormField label="Confirm New Password" error={errors.password_confirmation?.message} required>
-          <div className="relative group">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-            <input
-              {...register('password_confirmation')}
-              type="password"
-              className={`erp-input pl-10 ${errors.password_confirmation ? 'border-red-500 ring-red-500/10 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-              placeholder="••••••••••••"
-            />
-          </div>
+        <FormField 
+          label="Confirm New Password" 
+          error={errors.password_confirmation?.message}
+          labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
+        >
+          <input
+            {...register('password_confirmation')}
+            type="password"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            placeholder="••••••••••••"
+          />
         </FormField>
 
-        <Button type="submit" className="w-full py-3 text-lg" loading={isPending}>
+        <Button 
+          type="submit" 
+          className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-semibold text-sm shadow-sm transition-all active:scale-[0.98]" 
+          loading={isPending}
+        >
           Reset Password
         </Button>
       </form>
 
       <div className="mt-8 text-center">
-        <Link to="/login" className="text-sm font-semibold text-primary hover:text-primary-hover transition-colors flex items-center justify-center gap-2">
+        <Link to="/login" className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors inline-flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back to Login
         </Link>
-      </div>
-
-      <div className="mt-8 flex flex-col items-center gap-2">
-        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-[0.2em]">
-          Security Protocol: AES-256 Encrypted
-        </p>
-        <div className="flex gap-4 text-gray-300">
-          <ShieldCheck className="h-4 w-4" />
-        </div>
       </div>
     </div>
   )

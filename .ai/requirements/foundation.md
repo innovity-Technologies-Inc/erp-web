@@ -30,8 +30,14 @@ This document outlines the requirements for setting up the initial foundation of
 - [x] Define basic TypeScript interfaces for `User` and `Permission`.
 - [x] Set up an `AuthGuard` for route protection (Logical implementation in router).
 
-## 5. Forgot Password Functionality
-- [x] Implement backend API endpoints for forgot password and reset password in `authkit` module.
-- [x] Create `Forgot Password` view in React frontend.
-- [x] Create `Reset Password` view in React frontend.
-- [x] Integrate with TanStack Query hooks for password reset flow.
+## 6. Dynamic Branding & Settings
+- [x] Create a public API endpoint for fetching global site settings (web_settings, company_information).
+- [x] Implement a `useSettingsStore` to cache global branding settings.
+- [x] Create a `useSettings` hook to provide easy access to logos, site names, and themes.
+- [x] Update Authentication pages (Login, Forgot, Reset) to dynamically display logos and site names with fallbacks.
+- [x] Establish a "Single Source of Truth" for theme colors (Primary, Info, Success, Warning, Danger) driven by the backend.
+- [x] Configure Tailwind v4 to use dynamic CSS variables for all branded UI elements.
+- [x] Centralize all ERP-specific design tokens and base styles in `globals.css`.
+## 7. Design System & Typography
+- [x] Standardize on Poppins font globally.
+- [x] Implement precise Figma typography tokens for all authentication and core views.

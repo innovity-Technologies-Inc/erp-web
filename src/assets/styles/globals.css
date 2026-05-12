@@ -1,29 +1,41 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
-  --color-primary: #0052cc;
-  --color-primary-hover: #0040a3;
-  --color-danger: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-sidebar-bg: #0052cc; /* Match the vibrant blue in update2 */
-  --color-sidebar-text: #ffffff;
+  /* ERP Theme Variables (Hydrated from Backend) */
+  --color-primary: #1e4ba1;
+  --color-primary-hover: #163d85;
+  --color-info: #0dcaf0;
+  --color-success: #198754;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-sidebar: #1e4ba1;
+  
   --color-border: #eef1f6;
-  --color-main-bg: #004799; /* The background behind the rounded content area */
-  --color-card-bg: #f0f2f8; /* Light grayish-purple for cards */
+  --color-main-bg: #f0f2f8; 
+  --font-family-poppins: "Poppins", sans-serif;
 }
 
 @theme {
   --color-primary: var(--color-primary);
   --color-primary-hover: var(--color-primary-hover);
+  --color-info: var(--color-info);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-sidebar: var(--color-sidebar);
   --color-main-bg: var(--color-main-bg);
-  --color-sidebar-bg: var(--color-sidebar-bg);
-  --color-card-bg: var(--color-card-bg);
+  --font-sans: var(--font-family-poppins);
 }
 
 @layer base {
   body {
-    @apply bg-main-bg text-gray-900;
+    @apply bg-main-bg text-gray-900 font-sans m-0 overflow-hidden;
+  }
+
+  #root {
+    @apply w-full min-h-svh flex flex-col;
+    box-sizing: border-box;
   }
 }
 

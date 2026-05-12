@@ -9,17 +9,17 @@ interface ToastProps {
 }
 
 const icons = {
-  success: <CheckCircle className="h-5 w-5 text-green-500" />,
-  error: <XCircle className="h-5 w-5 text-red-500" />,
-  warning: <AlertCircle className="h-5 w-5 text-yellow-500" />,
-  info: <Info className="h-5 w-5 text-blue-500" />,
+  success: <CheckCircle className="h-5 w-5 text-success" />,
+  error: <XCircle className="h-5 w-5 text-danger" />,
+  warning: <AlertCircle className="h-5 w-5 text-warning" />,
+  info: <Info className="h-5 w-5 text-info" />,
 }
 
 const bgColors = {
-  success: 'bg-green-50 border-green-200',
-  error: 'bg-red-50 border-red-200',
-  warning: 'bg-yellow-50 border-yellow-200',
-  info: 'bg-blue-50 border-blue-200',
+  success: 'bg-success/10 border-success/20',
+  error: 'bg-danger/10 border-danger/20',
+  warning: 'bg-warning/10 border-warning/20',
+  info: 'bg-info/10 border-info/20',
 }
 
 export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {

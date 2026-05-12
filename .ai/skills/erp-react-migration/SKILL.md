@@ -39,9 +39,9 @@ writing any code. Never deviate from these conventions without explicit user app
 | Backend | Laravel (existing) — API only after migration, no Blade |
 | Frontend | React 18 + TypeScript + Vite (new standalone project) |
 | Auth | **JWT** — Bearer token in Authorization header via Axios interceptor |
-| Styling | Tailwind CSS + shadcn/ui — color tokens imported from Figma |
+| Styling | Tailwind CSS + shadcn/ui — Dynamic color tokens from Backend |
 | Server State | TanStack Query v5 (replaces all AJAX calls) |
-| Client State | Zustand (auth user, permissions, UI state) |
+| Client State | Zustand (auth user, permissions, UI state, **Global Settings**) |
 | Forms | React Hook Form + Zod (replaces jQuery form submit) |
 | Router | TanStack Router (type-safe, file-based) |
 | HTTP | Axios — single shared instance with JWT interceptor |
@@ -54,25 +54,45 @@ writing any code. Never deviate from these conventions without explicit user app
 ## 2. Core Rules — Never Break These
 
 1. **Import direction**: `modules/{name}` can import from `api/`, `components/`, `hooks/`, `layouts/`, `store/`, and `utils/`. Modules should NOT import directly from other modules; shared logic should move to global folders or be accessed via public APIs.
-2. **Module Public API**: Every module exposes its functionality ONLY via its `index.ts`. No deep imports into a module's internal folders (e.g., `import { X } from '@/modules/inventory/views/Y'`).
+2. **Module Public API**: Every module exposes its functionality ONLY via its `index.ts`. No deep imports into a module's internal folders.
 3. **Global Shared UI**: Keep generic, non-domain components in `src/components/`. Domain-specific shared components go into `src/modules/{name}/components/`.
-4. **Module isolation**: Each module should be self-contained as much as possible, containing its own API calls, state, and views.
-5. **No `any` in TypeScript**: Strict mode. Type everything. Use `unknown` + narrowing if needed.
-6. **No direct fetch/axios in views**: Always use TanStack Query hooks defined in the module's `api/` or `hooks/` folder.
-7. **JWT only**: Never Sanctum cookies. Token stored in Zustand + localStorage via persist. Authorization header set in Axios interceptor.
-8. **Zod schema = single source of truth**: Form validation + TypeScript types both come from the Zod schema. No duplicate type definitions.
-9. **Design from Figma**: CSS variables from Figma color styles go into `tailwind.config.ts`. Never use raw Tailwind color classes like `bg-blue-500` — always use semantic tokens like `bg-primary`.
-10. **AG Grid for all tables**: Replace every DataTables instance with AG Grid Community + server-side datasource.
+4. **No `any` in TypeScript**: Strict mode. Type everything.
+5. **No direct fetch/axios in views**: Always use TanStack Query hooks.
+6. **JWT only**: Token stored in Zustand + localStorage via persist.
+7. **Zod schema = single source of truth**: Form validation + TypeScript types.
+8. **Dynamic Branding**: Always use `useSettings()` hook to get `logo`, `siteName`, and colors. Never hardcode these.
+9. **Backend-Driven Colors**: Use the 5 basic colors (Primary, Info, Success, Warning, Danger) provided by the backend `webSetting`. These MUST be applied project-wide via CSS variables.
+10. **AG Grid for all tables**: Replace every DataTables instance with AG Grid Community.
 
 ---
 
-## 3. Architecture — Modular Design
+## 3. Global Settings & Branding
+
+The application fetches global configuration from the backend via the `useSettings()` hook. This data must be used to drive the UI's identity and theme.
+
+### Data available in `GlobalSettings`:
+- **`webSetting`**:
+    - `site_name`: The display name of the ERP.
+    - `logo_url` & `favicon_url`: Branding assets.
+    - `color_primary`, `color_info`, `color_success`, `color_warning`, `color_danger`: The core color palette.
+    - `navbar_color`, `sidebar_color`: Layout specific branding.
+- **`companyInformation`**:
+    - `company_name`, `email`, `mobile`, `address`, `website`: Official contact details used in footers and reports.
+
+### Implementation Requirements:
+- **Site Name**: Use `siteName` from `useSettings()` (fallback to `companyInformation.company_name`).
+- **Logo**: Use `logo` from `useSettings()` for sidebars and login pages.
+- **Dynamic Theme**: The 5 core colors from `webSetting` must be injected as CSS variables (`--color-primary`, etc.) into the `:root` to ensure Tailwind classes like `bg-primary` reflect backend choices.
+
+---
+
+## 4. Architecture — Modular Design
 
 ```
 src/
 ├── api/              # Axios instance, Interceptors (JWT attach করা)
 ├── components/       # Shared UI (Button, Input, Table layout)
-├── hooks/            # Global custom hooks
+├── hooks/            # Global custom hooks (useSettings, usePermissions)
 ├── layouts/          # Dashboard layout, Auth layout
 ├── modules/          # <--- মূল ফোকাস এখানে
 │   ├── inventory/
@@ -83,200 +103,71 @@ src/
 │   │   ├── views/    # Main pages (ProductList, StockEntry)
 │   │   └── index.ts  # Public API for this module
 │   └── accounting/
-├── store/            # Global state (User info, Theme)
+├── store/            # Global state (User info, Theme, Settings)
 └── utils/            # Helper functions
 ```
 
-Layer rules:
-- **Global folders** (`api/`, `components/`, etc.) provide shared infrastructure.
-- **Modules** contain feature-specific logic and are the primary building blocks.
-- **Modules** can use **Global** resources, but **Global** resources must never depend on **Modules**.
-
 ---
 
-## 4. JWT Auth — How It Works
+## 5. JWT Auth — How It Works
 
-Unlike Sanctum (cookie), this project uses JWT Bearer tokens.
-
-**Flow:**
 1. `POST /api/login` → returns `{ token, user, permissions[] }`
-2. Token stored in Zustand `useAuthStore` (in `src/store/`) + persisted to localStorage
-3. Axios interceptor (in `src/api/`) reads token from store → sets `Authorization: Bearer <token>` on every request
-4. On 401 response → interceptor clears store → redirects to `/login`
-5. TanStack Router `AuthGuard` → checks `useAuthStore.user` → redirects if null
-
-**Token refresh (if Laravel Passport/JWT refresh is available):**
-- On 401 → try `POST /api/auth/refresh` with current token
-- If refresh succeeds → retry original request with new token
-- If refresh fails → logout
-
-Full code templates in `references/module-patterns.md` → Section 1 (Axios JWT Client).
+2. Token stored in Zustand `useAuthStore` + persisted to localStorage
+3. Axios interceptor reads token → sets `Authorization: Bearer <token>`
+4. On 401 response → logout and redirect.
 
 ---
 
-## 5. Blade → React Conversion Workflow
-
-When given a Blade file to convert, follow these steps in order:
-
-### Step 1 — Analyze the Blade file
-- What data does the controller pass to the view?
-- What AJAX calls exist (`$.ajax`, `$.get`, `$.post`, `fetch`)? Map each to a `useQuery` or `useMutation`
-- What form submissions exist? → `useMutation` + React Hook Form + Zod
-- What DataTables instances exist? → AG Grid with server-side datasource
-- Which CSS classes are used? Map to Tailwind equivalents or keep as-is
-
-### Step 2 — Determine placement
-```
-Full page view?              → modules/{module}/views/XxxPage.tsx
-Module-specific component?   → modules/{module}/components/
-Reusable domain logic/hook?  → modules/{module}/hooks/
-Module API/State?            → modules/{module}/api/ or /store/
-Pure generic UI?             → components/
-```
-
-### Step 3 — Create files in this order
-1. `types.ts` — TypeScript interfaces (usually in `modules/{module}/api/` or a dedicated types file)
-2. `{module}.keys.ts` — QueryKey factory (in `modules/{module}/api/`)
-3. `{module}.api.ts` — TanStack Query hooks (in `modules/{module}/api/`)
-4. `validation.ts` — Zod schema (in `modules/{module}/hooks/` or `components/`)
-5. `use{Action}.ts` — Business logic hook (in `modules/{module}/hooks/`)
-6. UI components (in `modules/{module}/components/`)
-7. `index.ts` — Export only public API for the module
-8. Main views (in `modules/{module}/views/`)
+## 6. Blade → React Conversion Workflow
 
 ### Step 4 — Design preservation checklist
-- [ ] Colors from Figma/Blade CSS → Tailwind tokens match
-- [ ] Table columns match Blade DataTables columns exactly
-- [ ] Form field order and labels match
-- [ ] Button positions and styles match
-- [ ] Loading skeleton where AJAX spinner existed
-- [ ] Error messages match Laravel validation messages
+- [x] **Global Settings**: Site name and logo match `webSetting`.
+- [x] **Dynamic Colors**: Primary/Success/Danger colors match backend `webSetting` via CSS variables.
+- [ ] Table columns match Blade DataTables columns exactly.
+- [ ] Form field order and labels match.
+- [ ] Loading skeleton where AJAX spinner existed.
 
 ---
 
-## 6. AJAX → TanStack Query Mapping
+## 7. Dynamic Styling & Tailwind Setup
 
-| Old Blade pattern | New React pattern |
-|---|---|
-| `$.ajax({ type: 'GET' })` → DataTable render | `useQuery` → AG Grid `rowData` |
-| `$.ajax({ type: 'POST' })` → success callback | `useMutation` → `onSuccess` invalidate |
-| `$.ajax({ type: 'PUT/PATCH' })` | `useMutation` PUT/PATCH |
-| `$.ajax({ type: 'DELETE' })` → reload | `useMutation` → `invalidateQueries` |
-| DataTables server-side AJAX | AG Grid `IServerSideDatasource` + `useInfiniteQuery` or manual pagination |
-| jQuery form serialize | `react-hook-form` `handleSubmit` |
-| Laravel 422 errors → show div | `form.setError` from `err.response.data.errors` |
-| AJAX success notification | `useUiStore().notify('msg', 'success')` |
+Instead of static Figma tokens, we use a hybrid approach where CSS variables are driven by the backend.
 
----
-
-## 7. Figma → Tailwind Token Setup
-
-When starting a new module or setting up the project:
-
-1. Export Figma color styles as CSS variables (Figma → Tokens plugin or manual)
-2. Add to `src/assets/styles/globals.css` (or wherever global styles are kept):
-```css
-:root {
-  --color-primary: #1a56db;        /* from Figma "Primary" style */
-  --color-primary-hover: #1a46bb;
-  --color-danger: #e02424;
-  --color-success: #057a55;
-  --color-warning: #c27803;
-  --color-sidebar-bg: #1e2a3b;     /* from Figma sidebar */
-  --color-sidebar-text: #9ca3af;
-  --color-border: #e5e7eb;
-  /* add all Figma color styles here */
-}
-```
-3. Reference in `tailwind.config.ts`:
+1. **Tailwind Config**:
 ```ts
 colors: {
   primary: 'var(--color-primary)',
-  danger: 'var(--color-danger)',
+  info: 'var(--color-info)',
   success: 'var(--color-success)',
-  sidebar: { bg: 'var(--color-sidebar-bg)', text: 'var(--color-sidebar-text)' },
+  warning: 'var(--color-warning)',
+  danger: 'var(--color-danger)',
+  sidebar: 'var(--color-sidebar-bg)',
 }
 ```
-4. Now use `bg-primary`, `text-danger`, `bg-sidebar-bg` everywhere — never raw hex.
 
----
-
-## 8. Naming Conventions
-
-| Thing | Convention | Example |
-|---|---|---|
-| Component files | PascalCase | `ProductListTable.tsx` |
-| Hook files | camelCase with `use` prefix | `useProducts.ts` |
-| API files | camelCase with `.api.ts` | `product.api.ts` |
-| Query key files | camelCase with `.keys.ts` | `product.keys.ts` |
-| Type files | `types.ts` per module | `types.ts` |
-| Folder names | kebab-case | `inventory/`, `accounting/` |
-| Query keys | array starting with module | `['inventory', 'products', filters]` |
-| Route constants | object with dot notation | `ROUTES.inventory.products` |
-| Zustand stores | `use` + PascalCase + `Store` | `useAuthStore`, `useUiStore` |
-| Zod schemas | camelCase + `Schema` suffix | `addProductSchema` |
-| DTO types | PascalCase + `Dto` suffix | `CreateProductDto` |
-| Inferred form types | PascalCase + `FormValues` | `AddProductFormValues` |
-
----
-
-## 9. Module Checklist (use when building a new module)
-
-For each new module (e.g., Inventory, Accounting, HRM):
-
-```
-modules/{name}/
-  ├── index.ts          ← export views + hooks (public API)
-  ├── api/              ← API hooks, keys, types
-  │   ├── {name}.api.ts
-  │   ├── {name}.keys.ts
-  │   └── types.ts
-  ├── components/       ← Private UI for this module
-  │   ├── {Feature}Form.tsx
-  │   └── {Feature}Modal.tsx
-  ├── hooks/            ← Module-specific hooks (validation, logic)
-  │   ├── use{Feature}.ts
-  │   └── validation.ts
-  ├── store/            ← Module-specific Zustand store (if needed)
-  │   └── use{Name}Store.ts
-  └── views/            ← Main pages/views
-      ├── {Name}ListPage.tsx
-      └── {Name}DetailPage.tsx
+2. **Injection Logic**:
+The `useSettings` hook (or a dedicated `ThemeProvider`) should apply these colors:
+```typescript
+document.documentElement.style.setProperty('--color-primary', webSetting.color_primary);
 ```
 
 ---
 
-## 10. What NOT to Do
+## 8. What NOT to Do
 
-- ❌ Don't install Redux — Zustand is decided
-- ❌ Don't use React Router — TanStack Router is decided
-- ❌ Don't fetch/axios in views — always go through TanStack Query hooks
-- ❌ Don't hardcode API URLs — always `import.meta.env.VITE_API_URL`
-- ❌ Don't use Sanctum cookies — JWT Bearer only
-- ❌ Don't store JWT in sessionStorage — Zustand persist → localStorage
-- ❌ Don't create domain UI in global `components/` — global is generic only
-- ❌ Don't import between modules directly — modules should be isolated
-- ❌ Don't skip `index.ts` — every module must have a public API file
-- ❌ Don't use `any` TypeScript — type everything
-- ❌ Don't use raw Tailwind colors (`bg-blue-500`) — use Figma-mapped tokens
-- ❌ Don't write duplicate type definitions — derive from Zod schema with `z.infer<>`
-- ❌ Don't use DataTables — AG Grid for all tables
-- ❌ Don't reinvent — always check global `components/` before creating a new component
+- ❌ **Don't hardcode colors**: Never use `bg-blue-600` if it's meant to be the primary color; use `bg-primary`.
+- ❌ **Don't hardcode logos**: Always use the URL from `GlobalSettings`.
+- ❌ **Don't use raw Tailwind colors** for main theme elements.
+- ❌ **Don't create domain UI in global `components/`**.
+- ❌ **Don't skip `index.ts`** for modules.
 
 ---
 
-## 11. Migration Sequence (phase order)
+## 9. Migration Sequence
 
 | Phase | Module | Est. Time |
 |---|---|---|
-| 1 | Project setup + JWT auth (Login, AuthGuard, token refresh) | Week 1 |
-| 2 | Shared UI + AppShell (Sidebar, Header, Layout) + Dashboard | Week 2 |
+| 1 | Project setup + JWT auth + **Global Settings Sync** | Week 1 |
+| 2 | Shared UI + AppShell (Sidebar, Header) with dynamic branding | Week 2 |
 | 3 | HRM — Employee list, profile, attendance | Week 3–4 |
-| 4 | HRM — Payroll, leave management | Week 4–5 |
-| 5 | Inventory — Products, categories, stock | Week 5–6 |
-| 6 | Inventory — Purchase orders (complex multi-line form) | Week 6–7 |
-| 7 | Accounts — Chart of accounts, journal entry | Week 7–8 |
-| 8 | Accounts — Reports, PDF/Excel export | Week 8–9 |
-| 9 | Testing (Vitest + Playwright) + Production deploy | Week 9 |
-
-Complete one phase fully (with working routes + tests) before starting the next.
+| ... | ... | ... |

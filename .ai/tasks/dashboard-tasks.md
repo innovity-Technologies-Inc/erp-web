@@ -22,6 +22,15 @@
 - [x] **Task 3.8**: Create Dashboard API types and TanStack Query data-fetching hook.
 - [x] **Task 3.9**: Refactor Dashboard components to map live backend data (Charts, Stats, Tables).
 - [x] **Task 3.10**: Implement dynamic chart scaling and centered loading states.
+- [x] **Task 3.11**: Redesign Dashboard with 4-column grid, new StatCards, and centered-label Donut charts.
+- [x] **Task 3.12**: Update Topbar with logo, date pickers, and revised user profile layout.
+- [x] **Task 3.13**: Match Sidebar colors, icons, and active states with high-fidelity prototype.
+- [x] **Task 3.14**: Implement `StatCard` hover effects and integrate custom branded PNG icons.
+- [x] **Task 3.15**: Build dynamic grid scaling for `Best Sale Product` bar chart (0, 200, 400... auto-calculated).
+- [x] **Task 3.16**: Redesign `Todays Overview` using semantic HTML tables with "slim smart" aesthetics.
+- [x] **Task 3.17**: Implement specialized financial report cards (Sales Due, Purchase Due, Sales Report) with dynamic totals.
+- [x] **Task 3.18**: Enhance Monthly Trend chart with dark line shadows (SVG filters) and slim tooltips.
+- [x] **Task 3.19**: Enforce strict use of 5 basic backend colors across all dashboard elements.
 
 ## Task Group 4: Global Helpers
 - [ ] **Task 4.1**: Implement `src/utils/formatters.ts`.
