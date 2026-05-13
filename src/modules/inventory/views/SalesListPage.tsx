@@ -146,7 +146,7 @@ export const SalesListPage = () => {
       width: 130,
       flex: 0,
       hide: !visibleCols.invoice,
-      cellClass: 'text-[#1e4ba1] font-bold',
+      cellClass: 'text-[#1e4ba1] font-medium ',
     },
     {
       headerName: 'SALES BY',
@@ -200,7 +200,7 @@ export const SalesListPage = () => {
       hide: !visibleCols.total,
       headerClass: 'text-right',
       cellStyle: { textAlign: 'right' },
-      cellClass: 'font-bold text-[#1e293b]',
+      cellClass: 'font-medium text-[#1e293b]',
       valueFormatter: (params) => formatCurrency(params.value, currency, currencyPosition)
     },
     {
@@ -213,7 +213,7 @@ export const SalesListPage = () => {
         const isApproved = params.value === 'Approved'
         return (
           <span className={clsx(
-            'px-3 py-1 rounded-full text-[11px] font-bold tracking-tight uppercase',
+            'px-3 py-1 rounded-full text-[11px] font-medium tracking-tight uppercase',
             isApproved ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fef9c3] text-[#854d0e]'
           )}>
             {params.value}

@@ -33,5 +33,5 @@
 - [x] **Task 3.19**: Enforce strict use of 5 basic backend colors across all dashboard elements.
 
 ## Task Group 4: Global Helpers
-- [ ] **Task 4.1**: Implement `src/utils/formatters.ts`.
-- [ ] **Task 4.2**: Implement `src/components/DataTable/DataTable.tsx`.
+- [x] **Task 4.1**: Implement `src/utils/formatters.ts`.
+- [x] **Task 4.2**: Implement `src/components/DataTable/DataTable.tsx`.

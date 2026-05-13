@@ -156,12 +156,12 @@ export const ListPageLayout = <T extends object>({
         <div className="flex items-center gap-4">
           <Link
             to={backTo}
-            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-[#1e4ba1] transition-colors shadow-sm text-[10px] font-bold"
+            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-[#1e4ba1] transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
           </Link>
-          <h1 className="text-[20px] font-bold text-[#1e4ba1] tracking-tight ml-2">
+          <h1 className="text-[20px] font-medium text-[#1e4ba1] tracking-tight ml-2">
             {title}
           </h1>
         </div>
@@ -173,7 +173,7 @@ export const ListPageLayout = <T extends object>({
               key={tab.name}
               to={tab.to}
               className={clsx(
-                'px-2 py-2 text-[10px] font-bold rounded-xl transition-all duration-200',
+                'px-2 py-2 text-[10px] font-medium rounded-lg transition-all duration-200',
                 tab.active
                   ? 'bg-[#3b82f6] text-white shadow-lg shadow-blue-500/20'
                   : 'bg-white text-gray-500 border border-gray-50 hover:bg-gray-50 shadow-sm'
@@ -199,7 +199,7 @@ export const ListPageLayout = <T extends object>({
                 className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
               >
                 <Plus className="h-5 w-5" strokeWidth={3} />
-                <span className="font-bold text-[12px]">Create</span>
+                <span className="font-medium text-[12px]">Create</span>
               </button>
             )}
 
@@ -220,7 +220,7 @@ export const ListPageLayout = <T extends object>({
             {showStatusFilter && (
               <div className="relative shrink-0">
                 <select 
-                  className="appearance-none bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-bold text-[#64748b] h-8 pr-10 outline-none hover:bg-[#f1f5f9] transition-all cursor-pointer min-w-[120px] focus:ring-4 focus:ring-[#1e4ba1]/5"
+                  className="appearance-none bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium text-[#64748b] h-8 pr-10 outline-none hover:bg-[#f1f5f9] transition-all cursor-pointer min-w-[120px] focus:ring-4 focus:ring-[#1e4ba1]/5"
                   value={statusValue}
                   onChange={(e) => onStatusChange?.(e.target.value)}
                 >
@@ -245,7 +245,7 @@ export const ListPageLayout = <T extends object>({
                  <button 
                    onClick={() => setColMenuOpen(!colMenuOpen)}
                    className={clsx(
-                     "bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-bold h-8 flex items-center gap-2 transition-all",
+                     "bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium h-8 flex items-center gap-2 transition-all",
                      colMenuOpen ? "text-[#1e4ba1] border-[#1e4ba1]/30 bg-white" : "text-[#64748b] hover:bg-[#f1f5f9]"
                    )}
                  >
@@ -257,7 +257,7 @@ export const ListPageLayout = <T extends object>({
                  {colMenuOpen && (
                     <div className="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.1)] z-[100] py-3 animate-in fade-in slide-in-from-top-2 duration-200">
                       <div className="px-5 pb-2 mb-2 border-b border-gray-50 flex items-center justify-between">
-                         <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-widest font-poppins">Table Columns</span>
+                         <span className="text-[11px] font-medium text-[#94a3b8] uppercase tracking-widest font-poppins">Table Columns</span>
                          <button onClick={() => setColMenuOpen(false)}>
                             <X className="h-3 w-3 text-gray-400 hover:text-gray-600" />
                          </button>
@@ -298,7 +298,7 @@ export const ListPageLayout = <T extends object>({
           <div className="flex items-center gap-3">
             <button 
               onClick={() => onExport?.()}
-              className="bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-bold text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors group shrink-0"
+              className="bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors group shrink-0"
             >
               <Download className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" strokeWidth={2.5} />
               Export
@@ -333,9 +333,9 @@ export const ListPageLayout = <T extends object>({
           <div className="bg-[#f8fafc] border-t border-[#1e4ba1]/20 px-6 py-2 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
-                <span className="text-[12px] text-[#94a3b8] font-bold uppercase tracking-widest">Per Page</span>
+                <span className="text-[12px] text-[#94a3b8] font-medium uppercase tracking-widest">Per Page</span>
                 <select 
-                  className="bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-[13px] font-bold text-[#475569] outline-none focus:border-[#1e4ba1]/30 transition-all cursor-pointer shadow-sm hover:border-gray-300"
+                  className="bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-[13px] font-medium text-[#475569] outline-none focus:border-[#1e4ba1]/30 transition-all cursor-pointer shadow-sm hover:border-gray-300"
                   value={pageSize}
                   onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
                 >
@@ -346,7 +346,7 @@ export const ListPageLayout = <T extends object>({
               </div>
 
               <span className="text-[13px] text-[#64748b] font-medium border-l border-[#1e4ba1]/10 pl-8 py-1">
-                Showing <span className="text-[#1e4ba1] font-bold">{showingFrom}</span> to <span className="text-[#1e4ba1] font-bold">{showingTo}</span> of <span className="text-[#1e4ba1] font-bold">{recordsTotal}</span> entries
+                Showing <span className="text-[#1e4ba1] font-medium">{showingFrom}</span> to <span className="text-[#1e4ba1] font-medium">{showingTo}</span> of <span className="text-[#1e4ba1] font-medium">{recordsTotal}</span> entries
               </span>
             </div>
 
@@ -366,7 +366,7 @@ export const ListPageLayout = <T extends object>({
                   onClick={() => typeof page === 'number' && onPageChange?.(page)}
                   disabled={page === '...'}
                   className={clsx(
-                    'min-w-[34px] h-8 rounded-lg text-[13px] font-bold transition-all shadow-sm',
+                    'min-w-[34px] h-8 rounded-lg text-[13px] font-medium transition-all shadow-sm',
                     page === currentPage
                       ? 'bg-[#1e4ba1] text-white shadow-[#1e4ba1]/20 shadow-md'
                       : page === '...'

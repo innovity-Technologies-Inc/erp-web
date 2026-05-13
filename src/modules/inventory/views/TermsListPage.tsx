@@ -156,7 +156,7 @@ export const TermsListPage = () => {
         const isActive = status === 'Approved' || status === 'Active'
         return (
           <span className={clsx(
-            'px-4 py-1 rounded-full text-[12px] font-bold tracking-tight',
+            'px-4 py-1 rounded-full text-[12px] font-medium tracking-tight',
             isActive ? 'bg-[#dbeafe] text-[#1e4ba1]' : 'bg-[#f1f5f9] text-[#94a3b8]'
           )}>
             {status}

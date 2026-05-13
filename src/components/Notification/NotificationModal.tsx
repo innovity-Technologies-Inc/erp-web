@@ -61,7 +61,7 @@ export const NotificationModal = () => {
         </div>
 
         {/* Text Content */}
-        <h2 className={clsx("text-[20px] font-bold tracking-tight mb-3 font-poppins", current.titleColor)}>
+        <h2 className={clsx("text-[20px] font-medium tracking-tight mb-3 font-poppins", current.titleColor)}>
           {title}
         </h2>
         
@@ -72,7 +72,7 @@ export const NotificationModal = () => {
         {/* Action Button */}
         <button
           onClick={hideNotificationModal}
-          className="w-32 py-2.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#1e293b] text-[15px] font-bold rounded-2xl transition-all active:scale-95 shadow-sm"
+          className="w-32 py-2.5 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#1e293b] text-[15px] font-medium rounded-2xl transition-all active:scale-95 shadow-sm"
         >
           Ok
         </button>

@@ -51,7 +51,7 @@ export const Sidebar = () => {
   return (
     <aside 
       className={clsx(
-        "bg-sidebar text-white transition-all duration-300 flex flex-col relative shrink-0 rounded-r-2xl",
+        "bg-sidebar text-white transition-all duration-300 flex flex-col relative shrink-0 rounded-tr-2xl",
         sidebarOpen ? "w-64" : "w-20"
       )}
     >
@@ -60,7 +60,7 @@ export const Sidebar = () => {
         {filteredMenuItems.map((group, idx) => (
           <div key={idx} className="mb-6">
             {sidebarOpen && (
-              <h3 className="px-4 text-[11px] font-bold text-white/40 mb-3 tracking-[0.1em] uppercase font-poppins">
+              <h3 className="px-4 text-[11px] font-medium text-white/40 mb-3 tracking-[0.1em] uppercase font-poppins">
                 {group.group}
               </h3>
             )}

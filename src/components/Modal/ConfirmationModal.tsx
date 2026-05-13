@@ -57,7 +57,7 @@ export const ConfirmationModal = ({
           {current.icon}
         </div>
 
-        <h2 className="text-[20px] font-bold text-[#1e293b] mb-2 tracking-tight">
+        <h2 className="text-[20px] font-medium text-[#1e293b] mb-2 tracking-tight">
           {title}
         </h2>
         

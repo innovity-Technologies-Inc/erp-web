@@ -84,7 +84,7 @@ export const Topbar = () => {
                <span className="text-gray-300 font-light text-lg">/</span>
              </>
            )}
-           <span className="text-[#1e4ba1] font-bold">
+           <span className="text-[#1e4ba1] font-medium">
              {pathParts.includes('terms') ? 'Manage Sales Terms' : 'Dashboard'}
            </span>
         </div>
@@ -93,7 +93,7 @@ export const Topbar = () => {
       {/* Right Side */}
       <div className="flex items-center gap-4 px-6">
         {/* Reset Button */}
-        <button className="flex items-center gap-2 px-5 py-2 bg-[#f1f5f9] text-[#7c8db5] rounded-full text-[14px] font-bold hover:bg-gray-200 transition-all mr-2">
+        <button className="flex items-center gap-2 px-5 py-2 bg-[#f1f5f9] text-[#7c8db5] rounded-full text-[14px] font-medium hover:bg-gray-200 transition-all mr-2">
           <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
           Reset
         </button>
@@ -113,7 +113,7 @@ export const Topbar = () => {
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-2 pr-1 pl-4 py-1 border border-gray-200 rounded-full hover:border-[#1e4ba1]/30 transition-all bg-white shadow-sm"
           >
-            <span className="text-[14px] font-bold text-[#475569]">{userFullName}</span>
+            <span className="text-[14px] font-medium text-[#475569]">{userFullName}</span>
             <div className="w-8.5 h-8.5 rounded-full flex items-center justify-center overflow-hidden bg-[#e2e8f0]">
                {user?.image ? (
                  <img 
@@ -132,11 +132,11 @@ export const Topbar = () => {
               <div className="fixed inset-0 z-40" onClick={() => setProfileOpen(false)}></div>
               <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in fade-in zoom-in duration-200">
                 <div className="px-5 py-2 border-b border-gray-50 mb-2">
-                  <p className="text-xs font-bold text-gray-800">{userFullName}</p>
+                  <p className="text-xs font-medium text-gray-800">{userFullName}</p>
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-4 px-5 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors font-bold"
+                  className="w-full flex items-center gap-4 px-5 py-3 text-sm text-red-500 hover:bg-red-50 transition-colors font-medium"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign Out

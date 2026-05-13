@@ -32,7 +32,7 @@ export const ForgotPasswordPage = () => {
             <CheckCircle2 className="h-8 w-8 text-primary" />
           </div>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-3">Check your email</h1>
+        <h1 className="text-2xl font-medium text-gray-900 mb-3">Check your email</h1>
         <p className="text-gray-500 text-sm mb-10 leading-relaxed">
           We've sent a password reset link to your email address. Please follow the instructions to reset your password.
         </p>

@@ -92,7 +92,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
               newDate.setMonth(parseInt(e.target.value))
               setViewDate(newDate)
             }}
-            className="bg-transparent font-bold text-[#1e4ba1] text-[14px] outline-none cursor-pointer hover:bg-gray-50 rounded px-1"
+            className="bg-transparent font-medium text-[#1e4ba1] text-[14px] outline-none cursor-pointer hover:bg-gray-50 rounded px-1"
           >
             {months.map((month, idx) => (
               <option key={month} value={idx}>{month}</option>
@@ -105,7 +105,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
               newDate.setFullYear(parseInt(e.target.value))
               setViewDate(newDate)
             }}
-            className="bg-transparent font-bold text-[#1e4ba1] text-[14px] outline-none cursor-pointer hover:bg-gray-50 rounded px-1"
+            className="bg-transparent font-medium text-[#1e4ba1] text-[14px] outline-none cursor-pointer hover:bg-gray-50 rounded px-1"
           >
             {years.map(year => (
               <option key={year} value={year}>{year}</option>
@@ -114,7 +114,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
         </div>
         <div className="grid grid-cols-7 gap-1 mb-2">
           {weekDays.map(day => (
-            <div key={day} className="text-center text-[10px] font-bold text-[#94a3b8] uppercase">
+            <div key={day} className="text-center text-[10px] font-medium text-[#94a3b8] uppercase">
               {day}
             </div>
           ))}
@@ -158,8 +158,8 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
         )}
       >
         <div className="flex items-center gap-2 flex-1 justify-center">
-           <span className="text-[10px] font-bold text-[#94a3b8] uppercase opacity-60">From</span>
-           <span className={clsx("text-[13px] font-bold", from ? "text-[#475569]" : "text-[#94a3b8] opacity-40")}>
+           <span className="text-[10px] font-medium text-[#94a3b8] uppercase opacity-60">From</span>
+           <span className={clsx("text-[13px] font-medium", from ? "text-[#475569]" : "text-[#94a3b8] opacity-40")}>
              {from ? format(parseISO(from), 'dd/MM/yyyy') : '--/--/----'}
            </span>
         </div>
@@ -167,8 +167,8 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
         <span className="text-gray-200 font-light px-1">|</span>
         
         <div className="flex items-center gap-2 flex-1 justify-center">
-           <span className="text-[10px] font-bold text-[#94a3b8] uppercase opacity-60">To</span>
-           <span className={clsx("text-[13px] font-bold", to ? "text-[#475569]" : "text-[#94a3b8] opacity-40")}>
+           <span className="text-[10px] font-medium text-[#94a3b8] uppercase opacity-60">To</span>
+           <span className={clsx("text-[13px] font-medium", to ? "text-[#475569]" : "text-[#94a3b8] opacity-40")}>
              {to ? format(parseISO(to), 'dd/MM/yyyy') : '--/--/----'}
            </span>
         </div>
@@ -225,7 +225,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
                       onChange?.(format(start, 'yyyy-MM-dd'), format(end, 'yyyy-MM-dd'))
                       setIsOpen(false)
                     }}
-                    className="px-3 py-1.5 bg-gray-50 hover:bg-[#1e4ba1]/5 text-[#64748b] hover:text-[#1e4ba1] rounded-lg text-[11px] font-bold transition-all"
+                    className="px-3 py-1.5 bg-gray-50 hover:bg-[#1e4ba1]/5 text-[#64748b] hover:text-[#1e4ba1] rounded-lg text-[11px] font-medium transition-all"
                   >
                     {label}
                   </button>
@@ -233,7 +233,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
              </div>
              <button 
                onClick={() => setIsOpen(false)}
-               className="px-6 py-2 bg-[#1e4ba1] text-white rounded-xl text-[12px] font-bold shadow-lg shadow-[#1e4ba1]/20 hover:scale-105 active:scale-95 transition-all"
+               className="px-6 py-2 bg-[#1e4ba1] text-white rounded-xl text-[12px] font-medium shadow-lg shadow-[#1e4ba1]/20 hover:scale-105 active:scale-95 transition-all"
              >
                Apply Filter
              </button>
