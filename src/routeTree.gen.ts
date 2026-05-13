@@ -15,6 +15,8 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedInventoryTermsIndexRouteImport } from './routes/_authenticated/inventory/terms.index'
+import { Route as AuthenticatedInventorySalesIndexRouteImport } from './routes/_authenticated/inventory/sales.index'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -44,18 +46,34 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedInventoryTermsIndexRoute =
+  AuthenticatedInventoryTermsIndexRouteImport.update({
+    id: '/inventory/terms/',
+    path: '/inventory/terms/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventorySalesIndexRoute =
+  AuthenticatedInventorySalesIndexRouteImport.update({
+    id: '/inventory/sales/',
+    path: '/inventory/sales/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
+  '/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/sales': typeof AuthenticatedInventorySalesIndexRoute
+  '/inventory/terms': typeof AuthenticatedInventoryTermsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -65,12 +83,26 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
+  '/_authenticated/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/forgot-password' | '/login' | '/reset-password'
+  fullPaths:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/inventory/sales/'
+    | '/inventory/terms/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forgot-password' | '/login' | '/reset-password'
+  to:
+    | '/'
+    | '/forgot-password'
+    | '/login'
+    | '/reset-password'
+    | '/inventory/sales'
+    | '/inventory/terms'
   id:
     | '__root__'
     | '/_auth'
@@ -79,6 +111,8 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_authenticated/'
+    | '/_authenticated/inventory/sales/'
+    | '/_authenticated/inventory/terms/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -130,6 +164,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_authenticated/inventory/terms/': {
+      id: '/_authenticated/inventory/terms/'
+      path: '/inventory/terms'
+      fullPath: '/inventory/terms/'
+      preLoaderRoute: typeof AuthenticatedInventoryTermsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/sales/': {
+      id: '/_authenticated/inventory/sales/'
+      path: '/inventory/sales'
+      fullPath: '/inventory/sales/'
+      preLoaderRoute: typeof AuthenticatedInventorySalesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -149,10 +197,14 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedInventorySalesIndexRoute: typeof AuthenticatedInventorySalesIndexRoute
+  AuthenticatedInventoryTermsIndexRoute: typeof AuthenticatedInventoryTermsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedInventorySalesIndexRoute: AuthenticatedInventorySalesIndexRoute,
+  AuthenticatedInventoryTermsIndexRoute: AuthenticatedInventoryTermsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

@@ -25,7 +25,7 @@ const menuItems = [
   {
     group: 'INVENTORY',
     items: [
-      { name: 'Sale', icon: Scale, to: '/inventory/sale', permission: 'view_sales' },
+      { name: 'Sale', icon: Scale, to: '/inventory/sales', permission: 'view_sales' },
       { name: 'Vendor', icon: User, to: '/inventory/vendor', permission: 'view_supplier' },
       { name: 'Product', icon: Package, to: '/inventory/product', permission: 'view_product' },
       { name: 'Warehouse', icon: Warehouse, to: '/inventory/warehouse', permission: 'view_warehouse' },
@@ -34,6 +34,7 @@ const menuItems = [
       { name: 'Return', icon: RotateCcw, to: '/inventory/return', permission: 'sales_return' },
       { name: 'Service', icon: Wrench, to: '/inventory/service', permission: 'view_service' },
       { name: 'Quotation', icon: FileText, to: '/inventory/quotation', permission: 'view_quotation' },
+      { name: 'Terms', icon: FileText, to: '/inventory/terms', permission: 'view_terms_condition' },
     ]
   }
 ]
@@ -50,7 +51,7 @@ export const Sidebar = () => {
   return (
     <aside 
       className={clsx(
-        "bg-sidebar text-white transition-all duration-300 flex flex-col relative shrink-0",
+        "bg-sidebar text-white transition-all duration-300 flex flex-col relative shrink-0 rounded-r-2xl",
         sidebarOpen ? "w-64" : "w-20"
       )}
     >

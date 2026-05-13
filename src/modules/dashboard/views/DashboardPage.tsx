@@ -42,7 +42,7 @@ const StatCard = ({ name, value, icon, className }: StatCardProps) => (
       <p className="text-[13px] font-medium text-gray-500 group-hover:text-white/80 transition-colors">{name}</p>
       <p className="text-2xl font-bold tracking-tight">{value}</p>
     </div>
-    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all bg-main-bg group-hover:bg-white/10">
+    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-all">
       <img 
         src={icon} 
         alt={name} 

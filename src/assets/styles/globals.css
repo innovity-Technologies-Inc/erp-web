@@ -61,4 +61,103 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.2);
   }
+
+  /* AG Grid ERP Theme Overrides */
+  .ag-theme-quartz {
+    --ag-foreground-color: #374151;
+    --ag-background-color: #ffffff;
+    --ag-header-foreground-color: #7c8db5;
+    --ag-header-background-color: #f9fbff;
+    --ag-odd-row-background-color: #ffffff;
+    --ag-header-column-separator-display: none;
+    --ag-header-column-resize-handle-display: none;
+    
+    --ag-font-size: 13px;
+    --ag-font-family: var(--font-family-poppins);
+    
+    --ag-grid-size: 8px;
+    --ag-list-item-height: 48px;
+    
+    --ag-row-hover-color: #f8faff;
+    --ag-selected-row-background-color: rgba(var(--color-primary-rgb, 30, 75, 161), 0.05);
+    --ag-range-selection-border-color: var(--color-primary);
+    
+    --ag-border-color: #f0f3f8;
+    --ag-border-radius: 16px;
+
+    --ag-input-focus-border-color: var(--color-primary);
+  }
+
+  .ag-theme-quartz .ag-header {
+    border-bottom: 1px solid #f0f3f8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .ag-theme-quartz .ag-row {
+    border-bottom: 1px solid #f8fafc;
+    color: #475569;
+  }
+
+  .ag-theme-quartz .ag-cell {
+    display: flex;
+    align-items: center;
+  }
+
+  .ag-theme-quartz .ag-root-wrapper {
+    border: 1px solid #f0f3f8;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .ag-theme-quartz .ag-paging-panel {
+    border-top: 1px solid #f0f3f8;
+    color: #64748b;
+    font-size: 13px;
+    padding: 0 24px;
+    height: 56px;
+  }
+
+  .ag-theme-quartz .ag-paging-button {
+    color: #64748b;
+  }
+
+  .ag-theme-quartz .ag-paging-row-summary-panel {
+    margin-right: 24px;
+  }
+
+  /* Status Pills */
+  .status-pill {
+    @apply px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide uppercase;
+  }
+  .status-pill-approved {
+    @apply bg-blue-100 text-blue-600;
+  }
+  .status-pill-inactive {
+    @apply bg-gray-100 text-gray-500;
+  }
+  .status-pill-active {
+    @apply bg-green-100 text-green-600;
+  }
+  .status-pill-pending {
+    @apply bg-yellow-100 text-yellow-600;
+  }
+
+  /* Action Buttons */
+  .action-btn {
+    @apply p-1.5 rounded-lg transition-all duration-200;
+  }
+  .action-btn-view {
+    @apply text-blue-500 hover:bg-blue-50;
+  }
+  .action-btn-edit {
+    @apply text-emerald-500 hover:bg-emerald-50;
+  }
+  .action-btn-delete {
+    @apply text-rose-500 hover:bg-rose-50;
+  }
 }
