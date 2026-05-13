@@ -1,4 +1,4 @@
-import { Bell, Settings, User as UserIcon, LogOut, Menu, Home, RotateCcw } from 'lucide-react'
+import { Bell, Settings, User as UserIcon, LogOut, Maximize, Minimize, Home, RotateCcw } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
 import { useState } from 'react'
@@ -45,24 +45,29 @@ export const Topbar = () => {
            )}
         </div>
         
+
+        {/* Logo Area er vitore Sidebar Open thakle */}
         {sidebarOpen && (
-           <button 
-             onClick={toggleSidebar}
-             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
-           >
-             <Menu className="w-5 h-5" />
-           </button>
+          <button 
+            onClick={toggleSidebar}
+            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
+          >
+            {/* Image er ulto icon (Minimize) */}
+            <Minimize className="w-5 h-5" /> 
+          </button>
+        )}
+
+        {/* Logo Area er baire Sidebar Close thakle (Image er moto icon) */}
+        {!sidebarOpen && (
+          <button 
+            onClick={toggleSidebar}
+            className="p-2 ml-4 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
+          >
+            {/* Precisely your shared image icon */}
+            <Maximize className="w-5 h-5" /> 
+          </button>
         )}
       </div>
-
-      {!sidebarOpen && (
-        <button 
-          onClick={toggleSidebar}
-          className="p-2 ml-4 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-      )}
 
       {/* Navigation / Breadcrumbs */}
       <div className="flex-1 flex items-center px-6 gap-3">

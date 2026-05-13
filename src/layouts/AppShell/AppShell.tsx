@@ -12,7 +12,7 @@ export const AppShell = () => {
       <Topbar />
       <div className="flex flex-1 overflow-hidden mt-5">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto px-2 custom-scrollbar">
           <Outlet />
         </main>
       </div>

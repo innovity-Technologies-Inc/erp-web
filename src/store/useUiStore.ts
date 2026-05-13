@@ -8,17 +8,33 @@ interface Notification {
   type: NotificationType
 }
 
+interface NotificationModalState {
+  isOpen: boolean
+  title: string
+  message: string
+  type: NotificationType
+}
+
 interface UiState {
   sidebarOpen: boolean
   notifications: Notification[]
+  modalNotification: NotificationModalState
   toggleSidebar: () => void
   notify: (message: string, type?: NotificationType) => void
   dismiss: (id: string) => void
+  showNotificationModal: (title: string, message: string, type?: NotificationType) => void
+  hideNotificationModal: () => void
 }
 
 export const useUiStore = create<UiState>((set) => ({
-  sidebarOpen: true,
+  sidebarOpen: false,
   notifications: [],
+  modalNotification: {
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'success',
+  },
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   notify: (message, type = 'info') => {
     const id = crypto.randomUUID()
@@ -34,5 +50,13 @@ export const useUiStore = create<UiState>((set) => ({
   dismiss: (id) =>
     set((state) => ({
       notifications: state.notifications.filter((n) => n.id !== id),
+    })),
+  showNotificationModal: (title, message, type = 'success') =>
+    set({
+      modalNotification: { isOpen: true, title, message, type },
+    }),
+  hideNotificationModal: () =>
+    set((state) => ({
+      modalNotification: { ...state.modalNotification, isOpen: false },
     })),
 }))

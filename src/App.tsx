@@ -1,6 +1,7 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { useAuthStore } from '@/store/useAuthStore'
+import { NotificationModal } from '@/components/Notification/NotificationModal'
 
 // Create a new router instance
 const router = createRouter({
@@ -21,10 +22,13 @@ function App() {
   const auth = useAuthStore()
 
   return (
-    <RouterProvider
-      router={router}
-      context={{ auth }}
-    />
+    <>
+      <RouterProvider
+        router={router}
+        context={{ auth }}
+      />
+      <NotificationModal />
+    </>
   )
 }
 

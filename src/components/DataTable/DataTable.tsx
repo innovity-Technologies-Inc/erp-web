@@ -12,7 +12,9 @@ import {
   TextFilterModule,
   NumberFilterModule,
   CustomEditorModule,
-  ValidationModule
+  ValidationModule,
+  CellStyleModule,
+  CsvExportModule
 } from 'ag-grid-community'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
@@ -25,7 +27,9 @@ ModuleRegistry.registerModules([
   TextFilterModule,
   NumberFilterModule,
   CustomEditorModule,
-  ValidationModule
+  ValidationModule,
+  CellStyleModule,
+  CsvExportModule
 ])
 
 interface DataTableProps<T> {
@@ -59,8 +63,20 @@ export const DataTable = <T extends object>({
     minWidth: 100,
   }), [])
 
+  // Explicitly extract options that might be passed in gridOptions
+  const finalGridOptions = useMemo(() => ({
+    ...gridOptions,
+    pagination: gridOptions.pagination ?? pagination,
+    paginationPageSize: gridOptions.paginationPageSize ?? paginationPageSize,
+    domLayout: gridOptions.domLayout ?? (autoHeight ? 'autoHeight' : 'normal'),
+    onGridReady: (params: any) => {
+      onGridReady?.(params)
+      gridOptions.onGridReady?.(params)
+    }
+  }), [gridOptions, pagination, paginationPageSize, autoHeight, onGridReady])
+
   return (
-    <div className={`ag-theme-quartz erp-table-container relative w-full ${className}`} style={{ height: autoHeight ? 'auto' : '500px' }}>
+    <div className={`ag-theme-quartz erp-table-container relative w-full ${className}`} style={!autoHeight ? { height: '500px' } : {}}>
       {isLoading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-[1px] rounded-lg">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -70,14 +86,11 @@ export const DataTable = <T extends object>({
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
-        pagination={pagination}
-        paginationPageSize={paginationPageSize}
-        paginationPageSizeSelector={[10, 20, 50, 100]}
-        onGridReady={onGridReady}
-        domLayout={autoHeight ? 'autoHeight' : 'normal'}
         animateRows={true}
         suppressCellFocus={true}
-        {...gridOptions}
+        theme="legacy"
+        paginationPageSizeSelector={[10, 20, 50, 100]}
+        {...finalGridOptions}
       />
     </div>
   )

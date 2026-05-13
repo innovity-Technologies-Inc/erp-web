@@ -11,7 +11,16 @@ import { useUiStore } from '@/store/useUiStore'
 
 export const useTermsDatatable = (params: any) => {
   return useQuery({
-    queryKey: ['terms', 'datatable', params],
+    queryKey: [
+      'terms', 
+      'datatable', 
+      params.start, 
+      params.length, 
+      params.search?.value, 
+      params.status, 
+      params.start_date, 
+      params.end_date
+    ],
     queryFn: () => getTermsDatatable(params),
   })
 }
@@ -26,48 +35,45 @@ export const useTerm = (id: number | null) => {
 
 export const useCreateTerm = () => {
   const queryClient = useQueryClient()
-  const { addToast } = useUiStore()
+  const { notify } = useUiStore()
 
   return useMutation({
     mutationFn: createTerm,
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['terms'] })
-      addToast(response.message || 'Term created successfully', 'success')
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Failed to create term', 'error')
+      notify(error.response?.data?.message || 'Failed to create term', 'error')
     }
   })
 }
 
 export const useUpdateTerm = () => {
   const queryClient = useQueryClient()
-  const { addToast } = useUiStore()
+  const { notify } = useUiStore()
 
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: TermFormData }) => updateTerm(id, data),
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['terms'] })
-      addToast(response.message || 'Term updated successfully', 'success')
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Failed to update term', 'error')
+      notify(error.response?.data?.message || 'Failed to update term', 'error')
     }
   })
 }
 
 export const useDeleteTerm = () => {
   const queryClient = useQueryClient()
-  const { addToast } = useUiStore()
+  const { notify } = useUiStore()
 
   return useMutation({
     mutationFn: deleteTerm,
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['terms'] })
-      addToast(response.message || 'Term deleted successfully', 'success')
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Failed to delete term', 'error')
+      notify(error.response?.data?.message || 'Failed to delete term', 'error')
     }
   })
 }

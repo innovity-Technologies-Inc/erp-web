@@ -38,3 +38,9 @@
 ## Task Group 7: Global Typography & Design Tokens
 - [x] **Task 7.1**: Import Poppins font and configure as global default in Tailwind theme.
 - [x] **Task 7.2**: Implement Figma-precise font sizes and weights for authentication pages.
+
+## Task Group 8: Table & Layout Optimization
+- [x] **Task 8.1**: Resolve AG Grid auto-height issues by unsetting default min-heights in global CSS.
+- [x] **Task 8.2**: Unify table borders by removing internal AG Grid borders and using ListPageLayout wrapper.
+- [x] **Task 8.3**: Ensure perfect rounding alignment (16px) across all table containers.
+- [x] **Task 8.4**: Preserve developer-defined font sizes and paddings for laptop screen compatibility.

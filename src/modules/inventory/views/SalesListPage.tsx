@@ -1,179 +1,327 @@
 import { useMemo, useState } from 'react'
-import { DataTable } from '@/components/DataTable/DataTable'
-import { Button } from '@/components/Button/Button'
-import { Plus, Edit, Trash2, Search, Eye, Filter } from 'lucide-react'
+import { Edit, Trash2, Eye } from 'lucide-react'
 import { useSalesDatatable, useDeleteSale } from '../hooks/useSales'
 import type { ColDef } from 'ag-grid-community'
 import type { SaleListItem } from '../api/sales.api'
+import { clsx } from 'clsx'
+import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
+import { useUiStore } from '@/store/useUiStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
+import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
+import { exportToExcel } from '@/utils/exportUtils'
+import { useNavigate } from '@tanstack/react-router'
+
+const tabs: NavTab[] = [
+  { name: 'Manage Sale',          to: '/inventory/sales', active: true },
+  { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
+  { name: 'Manage Sales Terms',   to: '/inventory/terms' },
+  { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
+]
 
 export const SalesListPage = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const { currency, currencyPosition } = useSettings()
+  const [searchTerm, setSearchTerm]   = useState('')
+  const [status, setStatus]           = useState('')
+  const [fromDate, setFromDate]       = useState('')
+  const [toDate, setToDate]           = useState('')
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [selectedSaleId, setSelectedSaleId] = useState<number | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize]       = useState(10)
+  const [gridApi, setGridApi]         = useState<any>(null)
   
-  // DataTables params
+  const { currency, currencyPosition } = useSettings()
+  const { showNotificationModal } = useUiStore()
+  const navigate = useNavigate()
+
+  // Column Visibility State
+  const [visibleCols, setVisibleColumns] = useState({
+    sl: true,
+    invoice: true,
+    salesBy: true,
+    channel: true,
+    merchant: true,
+    date: true,
+    deliveryNote: true,
+    total: true,
+    voucher: true,
+    action: true
+  })
+
   const params = useMemo(() => ({
-    draw: 1,
-    start: 0,
-    length: 100,
+    draw:   1,
+    start:  (currentPage - 1) * pageSize,
+    length: pageSize,
     search: { value: searchTerm, regex: false },
-  }), [searchTerm])
+    status,
+    start_date: fromDate,
+    end_date: toDate
+  }), [searchTerm, status, fromDate, toDate, currentPage, pageSize])
 
   const { data: salesData, isLoading } = useSalesDatatable(params)
-  const { mutate: deleteSale } = useDeleteSale()
+  const { mutate: deleteSale, isPending: isDeleting } = useDeleteSale()
+  
+  const handleCreate = () => {
+    navigate({ to: '/inventory/sales/create' })
+  }
+
+  const handleEdit = (id: number) => {
+    navigate({ to: `/inventory/sales/edit/${id}` })
+  }
+
+  const handleView = (id: number) => {
+    navigate({ to: `/inventory/sales/view/${id}` })
+  }
 
   const handleDelete = (id: number) => {
-    if (window.confirm('Are you sure you want to delete this invoice?')) {
-      deleteSale(id)
+    setSelectedSaleId(id)
+    setIsConfirmOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (selectedSaleId) {
+      deleteSale(selectedSaleId, {
+        onSuccess: () => {
+          setIsConfirmOpen(false)
+          setSelectedSaleId(null)
+          showNotificationModal(
+            'Deleted Successfully!',
+            'Your sales invoice has been deleted successfully.',
+            'success'
+          )
+        }
+      })
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Delivered': return 'bg-success/10 text-success'
-      case 'Confirmed': return 'bg-blue-100 text-blue-700'
-      case 'On The Way': return 'bg-orange-100 text-orange-700'
-      case 'Picked Up': return 'bg-purple-100 text-purple-700'
-      case 'Cancelled': return 'bg-danger/10 text-danger'
-      default: return 'bg-gray-100 text-gray-700'
-    }
+  const handleExport = () => {
+    if (!salesData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Invoice No', key: 'invoice_id', width: 15 },
+      { header: 'Sales By', key: 'sales_by', width: 20 },
+      { header: 'Channel', key: 'channel', width: 15 },
+      { header: 'Merchant Name', key: 'customer_name', width: 30 },
+      { header: 'Date', key: 'date', width: 15 },
+      { header: 'Delivery Note', key: 'delivery_note', width: 40 },
+      { header: 'Total Amount', key: 'total_amount', width: 15 },
+      { header: 'Voucher Status', key: 'status', width: 15 },
+    ]
+
+    const exportData = salesData.data.map((item, index) => ({
+      sl: index + 1,
+      invoice_id: item.invoice_id,
+      sales_by: item.sales_by,
+      channel: item.channel,
+      customer_name: item.customer_name,
+      date: item.date ? new Date(item.date) : '',
+      delivery_note: item.delivery_note,
+      total_amount: item.total_amount,
+      status: item.status,
+    }))
+
+    exportToExcel(exportData, exportColumns, 'sales-invoices')
   }
+
+  const toggleColumn = (field: string) => {
+    setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const totalPages = Math.ceil((salesData?.recordsFiltered ?? 0) / pageSize)
 
   const columnDefs = useMemo<ColDef<SaleListItem>[]>(() => [
-    { 
-      headerName: 'Invoice ID', 
+    {
+      headerName: 'SL',
+      valueGetter: 'node.rowIndex + 1',
+      width: 80,
+      flex: 0,
+      pinned: 'left',
+      hide: !visibleCols.sl,
+      cellClass: 'text-gray-400 font-medium border-r border-gray-50 flex items-center justify-center',
+    },
+    {
+      headerName: 'INVOICE NO',
       field: 'invoice_id',
       width: 130,
       flex: 0,
-      pinned: 'left',
-      cellStyle: { fontWeight: '600', color: 'var(--color-primary)' }
+      hide: !visibleCols.invoice,
+      cellClass: 'text-[#1e4ba1] font-bold',
     },
-    { 
-      headerName: 'Date', 
+    {
+      headerName: 'SALES BY',
+      field: 'sales_by',
+      width: 140,
+      flex: 0,
+      hide: !visibleCols.salesBy,
+      cellClass: 'text-[#64748b] font-normal',
+    },
+    {
+      headerName: 'CHANNEL',
+      field: 'channel',
+      width: 120,
+      flex: 0,
+      hide: !visibleCols.channel,
+      cellClass: 'text-[#64748b] font-medium',
+    },
+    {
+      headerName: 'MERCHANT NAME',
+      field: 'customer_name',
+      flex: 1.5,
+      hide: !visibleCols.merchant,
+      cellClass: 'text-[#475569] font-medium',
+    },
+    {
+      headerName: 'DATE',
       field: 'date',
       width: 120,
       flex: 0,
-      valueFormatter: (params) => formatDate(params.value)
+      hide: !visibleCols.date,
+      valueFormatter: (params) => formatDate(params.value),
+      cellClass: 'text-[#475569] font-medium',
     },
-    { 
-      headerName: 'Customer', 
-      field: 'customer_name',
-      flex: 1.5
+    {
+      headerName: 'DELIVERY NOTE',
+      field: 'delivery_note',
+      width: 180,
+      flex: 1,
+      hide: !visibleCols.deliveryNote,
+      cellRenderer: (params: any) => (
+        <div className="line-clamp-1 text-[#64748b] font-normal" title={params.value}>
+          {params.value || '---'}
+        </div>
+      ),
     },
-    { 
-      headerName: 'Sales By', 
-      field: 'sales_by',
-      flex: 1
-    },
-    { 
-      headerName: 'Total Amount', 
+    {
+      headerName: 'TOTAL AMOUNT',
       field: 'total_amount',
       width: 140,
       flex: 0,
+      hide: !visibleCols.total,
       headerClass: 'text-right',
-      cellStyle: { textAlign: 'right', fontWeight: '600' },
+      cellStyle: { textAlign: 'right' },
+      cellClass: 'font-bold text-[#1e293b]',
       valueFormatter: (params) => formatCurrency(params.value, currency, currencyPosition)
     },
-    { 
-      headerName: 'Delivery', 
-      field: 'delivery_status_text',
-      width: 130,
-      flex: 0,
-      cellRenderer: (params: any) => (
-        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider ${getStatusColor(params.value)}`}>
-          {params.value}
-        </span>
-      )
-    },
-    { 
-      headerName: 'Voucher', 
+    {
+      headerName: 'VOUCHER STATUS',
       field: 'status',
-      width: 130,
+      width: 150,
       flex: 0,
-      cellRenderer: (params: any) => (
-        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider ${
-          params.value === 'Approved' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
-        }`}>
-          {params.value}
-        </span>
-      )
+      hide: !visibleCols.voucher,
+      cellRenderer: (params: any) => {
+        const isApproved = params.value === 'Approved'
+        return (
+          <span className={clsx(
+            'px-3 py-1 rounded-full text-[11px] font-bold tracking-tight uppercase',
+            isApproved ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fef9c3] text-[#854d0e]'
+          )}>
+            {params.value}
+          </span>
+        )
+      }
     },
     {
-      headerName: 'Action',
+      headerName: 'ACTION',
       field: 'id',
-      width: 130,
+      width: 140,
       flex: 0,
       sortable: false,
       filter: false,
       pinned: 'right',
+      hide: !visibleCols.action,
       cellRenderer: (params: any) => (
-        <div className="flex items-center gap-1.5">
-          <button 
+        <div className="flex items-center justify-center gap-3 h-full">
+          <button
+            onClick={() => handleView(params.data.id)}
+            className="text-[#64748b] hover:scale-110 transition-transform group/view"
             title="View Details"
-            className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4.5 w-4.5 group-hover/view:text-[#1e4ba1]" />
           </button>
-          <button 
+          <button
+            onClick={() => handleEdit(params.data.id)}
+            className="text-[#10b981] hover:scale-110 transition-transform group/edit"
             title="Edit"
-            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
           >
-            <Edit className="h-4 w-4" />
+            <Edit className="h-4.5 w-4.5 text-emerald-500 group-hover/edit:text-emerald-600" />
           </button>
-          <button 
+          <button
+            onClick={() => handleDelete(params.data.id)}
+            className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
             title="Delete"
-            onClick={() => handleDelete(params.value)}
-            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4.5 w-4.5 text-rose-500 group-hover/delete:text-rose-600" />
           </button>
         </div>
-      )
-    }
-  ], [currency, currencyPosition])
+      ),
+    },
+  ], [visibleCols, currency, currencyPosition])
+
+  const filterColumns = [
+    { name: 'SL', field: 'sl', visible: visibleCols.sl },
+    { name: 'Invoice No', field: 'invoice', visible: visibleCols.invoice },
+    { name: 'Sales By', field: 'salesBy', visible: visibleCols.salesBy },
+    { name: 'Channel', field: 'channel', visible: visibleCols.channel },
+    { name: 'Merchant Name', field: 'merchant', visible: visibleCols.merchant },
+    { name: 'Date', field: 'date', visible: visibleCols.date },
+    { name: 'Delivery Note', field: 'deliveryNote', visible: visibleCols.deliveryNote },
+    { name: 'Total Amount', field: 'total', visible: visibleCols.total },
+    { name: 'Voucher Status', field: 'voucher', visible: visibleCols.voucher },
+    { name: 'Action', field: 'action', visible: visibleCols.action },
+  ]
+
+  const statusOptions = [
+    { label: 'Approved', value: 'Active' },
+    { label: 'Not Approved', value: 'Inactive' },
+  ]
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Manage Sales</h1>
-          <p className="text-sm text-gray-500">View and manage all sales invoices</p>
-        </div>
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Create New Sale
-        </Button>
-      </div>
-
-      {/* Filters/Actions */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by Invoice ID, Customer..."
-            className="erp-input pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-           <Button variant="outline" className="flex items-center gap-2 text-xs py-2">
-             <Filter className="h-3.5 w-3.5" />
-             More Filters
-           </Button>
-        </div>
-      </div>
-
-      {/* Table */}
-      <DataTable
+    <>
+      <ListPageLayout<SaleListItem>
+        title="Manage Sales"
+        backTo="/inventory/sales"
+        tabs={tabs}
+        onCreate={handleCreate}
+        showStatusFilter={true}
+        statusValue={status}
+        onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}
+        statusOptions={statusOptions}
+        showColumnFilter={true}
+        columns={filterColumns}
+        onColumnToggle={toggleColumn}
+        fromDate={fromDate}
+        toDate={toDate}
+        onDateRangeChange={(from, to) => { setFromDate(from); setToDate(to); setCurrentPage(1) }}
+        onExport={handleExport}
         rowData={salesData?.data}
         columnDefs={columnDefs}
         isLoading={isLoading}
-        autoHeight
+        recordsTotal={salesData?.recordsFiltered ?? 0}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1) }}
+        searchValue={searchTerm}
+        onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
+        gridOptions={{
+          onGridReady: (params) => setGridApi(params.api)
+        }}
       />
-    </div>
+
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={() => {
+          setIsConfirmOpen(false)
+          setSelectedSaleId(null)
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Sales Invoice?"
+        message="Are you sure you want to delete this sales invoice? This action cannot be undone."
+        confirmText="Yes, Delete"
+        isLoading={isDeleting}
+      />
+    </>
   )
 }

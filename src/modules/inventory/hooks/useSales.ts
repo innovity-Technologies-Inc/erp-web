@@ -11,16 +11,15 @@ export const useSalesDatatable = (params: any) => {
 
 export const useDeleteSale = () => {
   const queryClient = useQueryClient()
-  const { addToast } = useUiStore()
+  const { notify } = useUiStore()
 
   return useMutation({
     mutationFn: deleteSale,
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sales'] })
-      addToast(response.message || 'Sale deleted successfully', 'success')
     },
     onError: (error: any) => {
-      addToast(error.response?.data?.message || 'Failed to delete sale', 'error')
+      notify(error.response?.data?.message || 'Failed to delete sale', 'error')
     }
   })
 }

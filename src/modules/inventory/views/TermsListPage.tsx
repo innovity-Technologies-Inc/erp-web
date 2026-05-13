@@ -1,11 +1,15 @@
 import { useMemo, useState } from 'react'
-import { Edit, Eye } from 'lucide-react'
+import { Edit, Trash2, Eye } from 'lucide-react'
 import { useTermsDatatable, useDeleteTerm } from '../hooks/useTerms'
 import type { ColDef } from 'ag-grid-community'
 import type { TermListItem } from '../api/terms.api'
 import { TermModal } from '../components/TermModal'
+import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
+import type { TermFormValues } from '../hooks/validation'
+import { useUiStore } from '@/store/useUiStore'
+import { exportToExcel } from '@/utils/exportUtils'
 
 const tabs: NavTab[] = [
   { name: 'Manage Sale',          to: '/inventory/sales' },
@@ -16,32 +20,101 @@ const tabs: NavTab[] = [
 
 export const TermsListPage = () => {
   const [searchTerm, setSearchTerm]   = useState('')
+  const [status, setStatus]           = useState('')
+  const [fromDate, setFromDate]       = useState('')
+  const [toDate, setToDate]           = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [selectedTermId, setSelectedTermId] = useState<number | null>(null)
+  const [selectedTermData, setSelectedTermData] = useState<TermFormValues | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize]       = useState(10)
+  const [gridApi, setGridApi]         = useState<any>(null)
+  const { showNotificationModal } = useUiStore()
+
+  // Column Visibility State
+  const [visibleCols, setVisibleColumns] = useState({
+    sl: true,
+    date: true,
+    description: true,
+    status: true,
+    action: true
+  })
 
   const params = useMemo(() => ({
     draw:   1,
     start:  (currentPage - 1) * pageSize,
     length: pageSize,
     search: { value: searchTerm, regex: false },
-  }), [searchTerm, currentPage, pageSize])
+    status,
+    start_date: fromDate,
+    end_date: toDate
+  }), [searchTerm, status, fromDate, toDate, currentPage, pageSize])
 
   const { data: termsData, isLoading } = useTermsDatatable(params)
-  const { mutate: deleteTerm } = useDeleteTerm()
-
-  const handleEdit = (id: number) => {
-    setSelectedTermId(id)
+  const { mutate: deleteTerm, isPending: isDeleting } = useDeleteTerm()
+  
+  const handleEdit = (item: TermListItem) => {
+    setSelectedTermId(item.id)
+    setSelectedTermData({
+      description: item.description,
+      status: item.status === 'Active' ? 1 : 0
+    })
     setIsModalOpen(true)
   }
 
   const handleAdd = () => {
     setSelectedTermId(null)
+    setSelectedTermData(null)
     setIsModalOpen(true)
   }
 
-  const totalPages = Math.ceil((termsData?.recordsTotal ?? 0) / pageSize)
+  const handleDelete = (id: number) => {
+    setSelectedTermId(id)
+    setIsConfirmOpen(true)
+  }
+
+  const confirmDelete = () => {
+    if (selectedTermId) {
+      deleteTerm(selectedTermId, {
+        onSuccess: () => {
+          setIsConfirmOpen(false)
+          setSelectedTermId(null)
+          showNotificationModal(
+            'Deleted Successfully!',
+            'Your sales term and condition has been deleted successfully.',
+            'success'
+          )
+        }
+      })
+    }
+  }
+
+  const handleExport = () => {
+    if (!termsData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Date', key: 'created_at', width: 20 },
+      { header: 'Description', key: 'description', width: 60 },
+      { header: 'Status', key: 'status', width: 15 },
+    ]
+
+    const exportData = termsData.data.map((item, index) => ({
+      sl: index + 1,
+      created_at: (item as any).created_at ? new Date((item as any).created_at) : '',
+      description: item.description,
+      status: item.status,
+    }))
+
+    exportToExcel(exportData, exportColumns, 'sales-terms')
+  }
+
+  const toggleColumn = (field: string) => {
+    setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const totalPages = Math.ceil((termsData?.recordsFiltered ?? 0) / pageSize)
 
   const columnDefs = useMemo<ColDef<TermListItem>[]>(() => [
     {
@@ -50,22 +123,24 @@ export const TermsListPage = () => {
       width: 80,
       flex: 0,
       pinned: 'left',
+      hide: !visibleCols.sl,
       cellClass: 'text-gray-400 font-medium border-r border-gray-50 flex items-center justify-center',
     },
     {
       headerName: 'DATE',
-      field: 'id',
+      field: 'created_at',
       width: 140,
       flex: 0,
-      valueFormatter: () => '2026-04-27',
+      hide: !visibleCols.date,
       cellClass: 'text-[#475569] font-medium',
     },
     {
       headerName: 'DESCRIPTION',
       field: 'description',
       flex: 1,
+      hide: !visibleCols.description,
       cellRenderer: (params: any) => (
-        <div className="line-clamp-1 py-2 text-[#475569] font-normal" title={params.value}>
+        <div className="line-clamp-1  text-[#475569] font-normal" title={params.value}>
           {params.value}
         </div>
       ),
@@ -75,6 +150,7 @@ export const TermsListPage = () => {
       field: 'status',
       width: 140,
       flex: 0,
+      hide: !visibleCols.status,
       cellRenderer: (params: any) => {
         const status = params.value
         const isActive = status === 'Approved' || status === 'Active'
@@ -96,22 +172,35 @@ export const TermsListPage = () => {
       sortable: false,
       filter: false,
       pinned: 'right',
+      hide: !visibleCols.action,
       cellRenderer: (params: any) => (
         <div className="flex items-center justify-center gap-4 h-full">
-          <button className="text-[#3b82f6] hover:scale-110 transition-transform" title="View">
-            <Eye className="h-5 w-5" />
-          </button>
           <button
-            onClick={() => handleEdit(params.value)}
-            className="text-[#10b981] hover:scale-110 transition-transform"
+            onClick={() => handleEdit(params.data)}
+            className="text-[#10b981] hover:scale-110 transition-transform group/edit"
             title="Edit"
           >
-            <Edit className="h-5 w-5" />
+            <Edit className="h-5 w-5 text-emerald-500 group-hover/edit:text-emerald-600" />
+          </button>
+          <button
+            onClick={() => handleDelete(params.data.id)}
+            className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
+            title="Delete"
+          >
+            <Trash2 className="h-5 w-5 text-rose-500 group-hover/delete:text-rose-600" />
           </button>
         </div>
       ),
     },
-  ], [])
+  ], [visibleCols])
+
+  const filterColumns = [
+    { name: 'SL', field: 'sl', visible: visibleCols.sl },
+    { name: 'Date', field: 'date', visible: visibleCols.date },
+    { name: 'Description', field: 'description', visible: visibleCols.description },
+    { name: 'Status', field: 'status', visible: visibleCols.status },
+    { name: 'Action', field: 'action', visible: visibleCols.action },
+  ]
 
   return (
     <>
@@ -121,11 +210,19 @@ export const TermsListPage = () => {
         tabs={tabs}
         onCreate={handleAdd}
         showStatusFilter={true}
+        statusValue={status}
+        onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}
         showColumnFilter={true}
+        columns={filterColumns}
+        onColumnToggle={toggleColumn}
+        fromDate={fromDate}
+        toDate={toDate}
+        onDateRangeChange={(from, to) => { setFromDate(from); setToDate(to); setCurrentPage(1) }}
+        onExport={handleExport}
         rowData={termsData?.data}
         columnDefs={columnDefs}
         isLoading={isLoading}
-        recordsTotal={termsData?.recordsTotal ?? 0}
+        recordsTotal={termsData?.recordsFiltered ?? 0}
         currentPage={currentPage}
         pageSize={pageSize}
         totalPages={totalPages}
@@ -133,12 +230,33 @@ export const TermsListPage = () => {
         onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1) }}
         searchValue={searchTerm}
         onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
+        gridOptions={{
+          onGridReady: (params) => setGridApi(params.api)
+        }}
       />
 
       <TermModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false)
+          setSelectedTermId(null)
+          setSelectedTermData(null)
+        }}
         termId={selectedTermId}
+        initialData={selectedTermData}
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={() => {
+          setIsConfirmOpen(false)
+          setSelectedTermId(null)
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Sales Term?"
+        message="Are you sure you want to delete this sales term? This action cannot be undone."
+        confirmText="Yes, Delete"
+        isLoading={isDeleting}
       />
     </>
   )

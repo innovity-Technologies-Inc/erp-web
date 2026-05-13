@@ -2,17 +2,20 @@
 // Generic reusable list page layout for the entire ERP.
 // Drop-in replacement for any datatable page — just pass props.
 
-import { useMemo, type ReactNode } from 'react'
+import { useMemo, useState, useRef, useEffect, type ReactNode } from 'react'
 import { DataTable } from '@/components/DataTable/DataTable'
+import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
 import {
   Plus,
   Search,
   ArrowLeft,
   ChevronDown,
   Download,
-  Calendar,
   ChevronLeft,
   ChevronRight,
+  Filter,
+  Columns as ColumnsIcon,
+  X
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { clsx } from 'clsx'
@@ -37,10 +40,26 @@ export interface ListPageLayoutProps<T extends object> {
   // ── Toolbar (left side) ──
   /** Show the dark "+ Create" button. Pass onClick handler. */
   onCreate?: () => void
-  /** Show the "Status" dropdown filter */
+  
+  /** Status filter */
   showStatusFilter?: boolean
-  /** Show the "Column" dropdown filter */
+  statusValue?: string
+  onStatusChange?: (status: string) => void
+  statusOptions?: { label: string; value: string }[]
+  
+  /** Column toggle */
   showColumnFilter?: boolean
+  columns?: { name: string; field: string; visible: boolean }[]
+  onColumnToggle?: (field: string) => void
+  
+  /** Date range */
+  fromDate?: string
+  toDate?: string
+  onDateRangeChange?: (from: string, to: string) => void
+  
+  /** Export */
+  onExport?: () => void
+
   /** Extra toolbar nodes rendered after the filters */
   toolbarExtra?: ReactNode
 
@@ -48,6 +67,7 @@ export interface ListPageLayoutProps<T extends object> {
   rowData: T[] | undefined
   columnDefs: ColDef<T>[]
   isLoading?: boolean
+  gridOptions?: any
 
   // ── Pagination meta (from API response) ──
   recordsTotal?: number
@@ -70,11 +90,21 @@ export const ListPageLayout = <T extends object>({
   tabs,
   onCreate,
   showStatusFilter = false,
+  statusValue = '',
+  onStatusChange,
+  statusOptions,
   showColumnFilter = true,
+  columns = [],
+  onColumnToggle,
+  fromDate = '',
+  toDate = '',
+  onDateRangeChange,
+  onExport,
   toolbarExtra,
   rowData,
   columnDefs,
   isLoading = false,
+  gridOptions = {},
   recordsTotal = 0,
   currentPage = 1,
   pageSize = 10,
@@ -85,11 +115,36 @@ export const ListPageLayout = <T extends object>({
   onSearchChange,
 }: ListPageLayoutProps<T>) => {
 
-  // Build visible page numbers: [1, 2, 3, 4, '...', last]
+  const [colMenuOpen, setColMenuOpen] = useState(false)
+  const colMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close column menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (colMenuRef.current && !colMenuRef.current.contains(event.target as Node)) {
+        setColMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Build visible page numbers
   const pageNumbers = useMemo(() => {
-    if (totalPages <= 6) return Array.from({ length: totalPages }, (_, i) => i + 1)
-    return [1, 2, 3, 4, '...', totalPages] as (number | string)[]
-  }, [totalPages])
+    const pages: (number | string)[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      if (currentPage <= 4) {
+        pages.push(1, 2, 3, 4, 5, '...', totalPages)
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages)
+      }
+    }
+    return pages
+  }, [totalPages, currentPage])
 
   const showingFrom = recordsTotal === 0 ? 0 : (currentPage - 1) * pageSize + 1
   const showingTo = Math.min(currentPage * pageSize, recordsTotal)
@@ -101,7 +156,7 @@ export const ListPageLayout = <T extends object>({
         <div className="flex items-center gap-4">
           <Link
             to={backTo}
-            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors shadow-sm text-[10px] font-bold"
+            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-[#1e4ba1] transition-colors shadow-sm text-[10px] font-bold"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
@@ -131,7 +186,7 @@ export const ListPageLayout = <T extends object>({
       </div>
 
       {/* ── 2. Main Card ────────────────────────────────────────── */}
-      <div className="bg-white rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-50 p-7 space-y-7">
+      <div className="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-50 p-7 space-y-7">
 
         {/* Filter & Action Row */}
         <div className="flex items-center justify-between gap-4">
@@ -141,39 +196,99 @@ export const ListPageLayout = <T extends object>({
             {onCreate && (
               <button
                 onClick={onCreate}
-                className="bg-primary hover:bg-primary-hover text-white px-2 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-gray-200"
+                className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
               >
                 <Plus className="h-5 w-5" strokeWidth={3} />
-                <span className="font-bold text-[15px]">Create</span>
+                <span className="font-bold text-[12px]">Create</span>
               </button>
             )}
 
             <div className="relative w-full max-w-70">
               <input
                 type="text"
-                placeholder="Search ..."
-                className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[14px] h-8 focus:ring-2 focus:ring-blue-500/10 outline-none pr-12"
+                placeholder="Search everything..."
+                className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-8 focus:ring-4 focus:ring-[#1e4ba1]/5 outline-none pr-12 transition-all"
                 value={searchValue}
                 onChange={(e) => onSearchChange?.(e.target.value)}
               />
               <Search
-                className="absolute right-5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+                className="absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
                 strokeWidth={2}
               />
             </div>
 
             {showStatusFilter && (
-              <button className="bg-[#f8fafc] border border-gray-50 px-6 py-2.5 rounded-full text-[14px] font-bold text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors">
-                Status
-                <ChevronDown className="h-4 w-4" />
-              </button>
+              <div className="relative shrink-0">
+                <select 
+                  className="appearance-none bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-bold text-[#64748b] h-8 pr-10 outline-none hover:bg-[#f1f5f9] transition-all cursor-pointer min-w-[120px] focus:ring-4 focus:ring-[#1e4ba1]/5"
+                  value={statusValue}
+                  onChange={(e) => onStatusChange?.(e.target.value)}
+                >
+                  <option value="">All Status</option>
+                  {statusOptions ? (
+                    statusOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))
+                  ) : (
+                    <>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </>
+                  )}
+                </select>
+                <Filter className="absolute right-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b] pointer-events-none opacity-60" />
+              </div>
             )}
 
             {showColumnFilter && (
-              <button className="bg-[#f8fafc] border border-gray-50 px-6 py-2.5 rounded-full text-[14px] font-bold text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors">
-                Column
-                <ChevronDown className="h-4 w-4" />
-              </button>
+               <div className="relative shrink-0" ref={colMenuRef}>
+                 <button 
+                   onClick={() => setColMenuOpen(!colMenuOpen)}
+                   className={clsx(
+                     "bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-bold h-8 flex items-center gap-2 transition-all",
+                     colMenuOpen ? "text-[#1e4ba1] border-[#1e4ba1]/30 bg-white" : "text-[#64748b] hover:bg-[#f1f5f9]"
+                   )}
+                 >
+                   <ColumnsIcon className="h-4 w-4" />
+                   Column
+                   <ChevronDown className={clsx("h-3 w-3 transition-transform", colMenuOpen && "rotate-180")} />
+                 </button>
+                 
+                 {colMenuOpen && (
+                    <div className="absolute left-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.1)] z-[100] py-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-5 pb-2 mb-2 border-b border-gray-50 flex items-center justify-between">
+                         <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-widest font-poppins">Table Columns</span>
+                         <button onClick={() => setColMenuOpen(false)}>
+                            <X className="h-3 w-3 text-gray-400 hover:text-gray-600" />
+                         </button>
+                      </div>
+                      <div className="max-h-64 overflow-y-auto custom-scrollbar px-1">
+                        {columns.map(col => (
+                          <label key={col.field} className="flex items-center px-4 py-2 hover:bg-[#f8fafc] cursor-pointer gap-3 group transition-colors rounded-lg mx-1">
+                             <div className={clsx(
+                               "w-4 h-4 rounded border flex items-center justify-center transition-all",
+                               col.visible ? "bg-[#1e4ba1] border-[#1e4ba1]" : "bg-white border-gray-200 group-hover:border-gray-300"
+                             )}>
+                               {col.visible && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                             </div>
+                             <input 
+                               type="checkbox" 
+                               checked={col.visible} 
+                               onChange={() => onColumnToggle?.(col.field)}
+                               className="hidden"
+                             />
+                             <span className={clsx(
+                               "text-[13px] transition-colors",
+                               col.visible ? "text-[#1e4ba1] font-semibold" : "text-[#475569] font-medium"
+                             )}>
+                               {col.name}
+                             </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                 )}
+               </div>
             )}
 
             {toolbarExtra}
@@ -181,111 +296,99 @@ export const ListPageLayout = <T extends object>({
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <button className="bg-[#f8fafc] border border-gray-50 px-6 py-2 rounded-full text-[14px] font-bold text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors">
+            <button 
+              onClick={() => onExport?.()}
+              className="bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-bold text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors group shrink-0"
+            >
+              <Download className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" strokeWidth={2.5} />
               Export
-              <Download className="h-4 w-4" strokeWidth={2.5} />
             </button>
 
-            <div className="bg-[#f8fafc] border border-gray-50 px-6 py-2 rounded-full text-[14px] font-bold text-[#94a3b8] h-8 flex items-center gap-4 min-w-[340px] shadow-inner">
-              <span className="flex-1 whitespace-nowrap text-center">From -- / -- / ----</span>
-              <span className="text-gray-300 font-light">|</span>
-              <span className="flex-1 whitespace-nowrap text-center">To -- / -- / ----</span>
-              <Calendar className="h-4 w-4 text-[#94a3b8]" />
-            </div>
+            <DateRangePicker 
+              from={fromDate}
+              to={toDate}
+              onChange={onDateRangeChange}
+            />
           </div>
         </div>
 
         {/* ── Table ──────────────────────────────────────────────── */}
-        <div className="rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+        <div className="rounded-xl border border-[#1e4ba1]/20 overflow-hidden shadow-sm">
           <DataTable
             rowData={rowData}
             columnDefs={columnDefs}
             isLoading={isLoading}
             autoHeight
-            className="rounded-2xl"
+            pagination={false}
+            className=""
             gridOptions={{
               rowHeight: 40,
-              headerHeight: 45,
+              headerHeight: 38,
               suppressHorizontalScroll: true,
+              ...gridOptions
             }}
           />
-        </div>
+          
+          {/* ── Table Footer / Pagination ─────────────────────────── */}
+          <div className="bg-[#f8fafc] border-t border-[#1e4ba1]/20 px-6 py-2 flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-3">
+                <span className="text-[12px] text-[#94a3b8] font-bold uppercase tracking-widest">Per Page</span>
+                <select 
+                  className="bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-[13px] font-bold text-[#475569] outline-none focus:border-[#1e4ba1]/30 transition-all cursor-pointer shadow-sm hover:border-gray-300"
+                  value={pageSize}
+                  onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
+                >
+                  {[10, 25, 50, 100].map(size => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+              </div>
 
-        {/* ── Pagination Footer ──────────────────────────────────── */}
-        {!isLoading && recordsTotal > 0 && (
-          <div className="flex items-center justify-between pt-2 px-4">
-            <div className="text-[14px] text-[#64748b] font-medium">
-              Showing{' '}
-              <span className="font-bold text-gray-800">{showingFrom}</span> to{' '}
-              <span className="font-bold text-gray-800">{showingTo}</span> of{' '}
-              <span className="font-bold text-gray-800">{recordsTotal}</span> entries
+              <span className="text-[13px] text-[#64748b] font-medium border-l border-[#1e4ba1]/10 pl-8 py-1">
+                Showing <span className="text-[#1e4ba1] font-bold">{showingFrom}</span> to <span className="text-[#1e4ba1] font-bold">{showingTo}</span> of <span className="text-[#1e4ba1] font-bold">{recordsTotal}</span> entries
+              </span>
             </div>
 
-            <div className="flex items-center gap-8">
-              {/* Page size selector */}
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <select
-                    value={pageSize}
-                    onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
-                    className="appearance-none bg-[#f8fafc] border border-gray-100 rounded-xl pl-4 pr-10 py-1.5 outline-none text-[14px] font-bold text-gray-600 cursor-pointer"
-                  >
-                    {[10, 20, 50, 100].map((n) => (
-                      <option key={n} value={n}>{n}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
-                </div>
-                <span className="text-[14px] font-medium text-[#64748b]">Items per page</span>
-              </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => onPageChange?.(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-gray-200 text-[#94a3b8] hover:bg-white hover:text-[#1e4ba1] hover:border-[#1e4ba1]/20 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-all mr-1 shadow-sm"
+                title="Previous Page"
+              >
+                <ChevronLeft className="h-4 w-4" strokeWidth={3} />
+              </button>
 
-              {/* Page buttons */}
-              <div className="flex items-center gap-2">
+              {pageNumbers.map((page, idx) => (
                 <button
-                  onClick={() => onPageChange?.(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="p-2 text-gray-400 hover:text-[#3b82f6] transition-colors disabled:opacity-30"
+                  key={idx}
+                  onClick={() => typeof page === 'number' && onPageChange?.(page)}
+                  disabled={page === '...'}
+                  className={clsx(
+                    'min-w-[34px] h-8 rounded-lg text-[13px] font-bold transition-all shadow-sm',
+                    page === currentPage
+                      ? 'bg-[#1e4ba1] text-white shadow-[#1e4ba1]/20 shadow-md'
+                      : page === '...'
+                      ? 'text-[#94a3b8] cursor-default'
+                      : 'bg-white text-[#64748b] border border-gray-200 hover:border-[#1e4ba1]/30 hover:text-[#1e4ba1] hover:bg-gray-50'
+                  )}
                 >
-                  <div className="flex items-center gap-1 font-bold text-[13px]">
-                    <ChevronLeft className="h-4 w-4" />
-                    <span>Prev</span>
-                  </div>
+                  {page}
                 </button>
+              ))}
 
-                <div className="flex items-center gap-1">
-                  {pageNumbers.map((page, i) => (
-                    <button
-                      key={i}
-                      onClick={() => typeof page === 'number' ? onPageChange?.(page) : undefined}
-                      disabled={page === '...'}
-                      className={clsx(
-                        'w-9 h-9 rounded-lg flex items-center justify-center text-[14px] font-bold transition-all',
-                        page === currentPage
-                          ? 'bg-[#3b82f6] text-white shadow-md shadow-blue-500/20'
-                          : page === '...'
-                          ? 'text-gray-300 cursor-default'
-                          : 'text-gray-400 hover:bg-gray-50'
-                      )}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => onPageChange?.(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="p-2 text-gray-400 hover:text-[#3b82f6] transition-colors disabled:opacity-30"
-                >
-                  <div className="flex items-center gap-1 font-bold text-[13px]">
-                    <span>Next</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </div>
-                </button>
-              </div>
+              <button
+                onClick={() => onPageChange?.(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-gray-200 text-[#94a3b8] hover:bg-white hover:text-[#1e4ba1] hover:border-[#1e4ba1]/20 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-all mr-1 shadow-sm"
+                title="Next Page"
+              >
+                <ChevronRight className="h-4 w-4" strokeWidth={3} />
+              </button>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

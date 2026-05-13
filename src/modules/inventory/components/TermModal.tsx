@@ -1,23 +1,26 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Save, PenLine } from 'lucide-react'
 import { Modal } from '@/components/Modal/Modal'
 import { Button } from '@/components/Button/Button'
 import { FormField } from '@/components/Form/FormField'
 import { termSchema } from '../hooks/validation'
 import type { TermFormValues } from '../hooks/validation'
-import { useCreateTerm, useUpdateTerm, useTerm } from '../hooks/useTerms'
+import { useCreateTerm, useUpdateTerm } from '../hooks/useTerms'
+import { useUiStore } from '@/store/useUiStore'
 
 interface TermModalProps {
   isOpen: boolean
   onClose: () => void
   termId: number | null
+  initialData?: TermFormValues | null
 }
 
-export const TermModal = ({ isOpen, onClose, termId }: TermModalProps) => {
-  const { data: termResponse, isLoading: isFetching } = useTerm(termId)
+export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalProps) => {
   const { mutate: createTerm, isPending: isCreating } = useCreateTerm()
   const { mutate: updateTerm, isPending: isUpdating } = useUpdateTerm()
+  const { showNotificationModal } = useUiStore()
 
   const {
     register,
@@ -33,18 +36,13 @@ export const TermModal = ({ isOpen, onClose, termId }: TermModalProps) => {
   })
 
   useEffect(() => {
-    if (termResponse?.data) {
-      reset({
-        description: termResponse.data.description,
-        status: termResponse.data.status,
-      })
-    } else {
-      reset({
+    if (isOpen) {
+      reset(initialData || {
         description: '',
         status: 1,
       })
     }
-  }, [termResponse, reset, isOpen])
+  }, [isOpen, initialData, reset])
 
   const onSubmit = (data: TermFormValues) => {
     // Convert status to number if it's not
@@ -59,7 +57,11 @@ export const TermModal = ({ isOpen, onClose, termId }: TermModalProps) => {
         {
           onSuccess: () => {
             onClose()
-            reset()
+            showNotificationModal(
+              'Updated Successfully!',
+              'Your sales terms and conditions have been updated successfully.',
+              'success'
+            )
           },
         }
       )
@@ -67,7 +69,11 @@ export const TermModal = ({ isOpen, onClose, termId }: TermModalProps) => {
       createTerm(payload, {
         onSuccess: () => {
           onClose()
-          reset()
+          showNotificationModal(
+            'Saved Successfully!',
+            'Your sales terms and conditions have been saved successfully.',
+            'success'
+          )
         },
       })
     }
@@ -86,7 +92,17 @@ export const TermModal = ({ isOpen, onClose, termId }: TermModalProps) => {
             Cancel
           </Button>
           <Button onClick={handleSubmit(onSubmit)} loading={isPending}>
-            {termId ? 'Update Term' : 'Create Term'}
+            {termId ? (
+              <>
+                <PenLine className="h-4 w-4" />
+                Update
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Save
+              </>
+            )}
           </Button>
         </div>
       }

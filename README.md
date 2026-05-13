@@ -1,73 +1,114 @@
-# React + TypeScript + Vite
+# ERP Frontend - Setup & Installation Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This document provides a comprehensive, step-by-step guide to setting up and running the ERP Frontend project on a new laptop or a production server.
 
-Currently, two official plugins are available:
+## 🚀 Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Before you begin, ensure you have the following installed on your machine:
 
-## React Compiler
+1.  **Node.js**: Version 20.x or higher (LTS recommended).
+2.  **npm**: Version 10.x or higher (comes with Node.js).
+3.  **Git**: For cloning the repository.
+4.  **Backend API**: Ensure the Laravel backend is running and accessible via a URL.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Step-by-Step Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Clone the Repository
+Open your terminal and run:
+```bash
+git clone <your-repository-url>
+cd erp_new/erp_frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Configure Environment Variables
+The project requires a `.env` file to communicate with the backend API.
+1.  Copy the example environment file:
+    ```bash
+    cp .env.example .env
+    ```
+2.  Open `.env` in your code editor and update the following:
+    ```env
+    VITE_API_URL=http://your-backend-api-url.test/api
+    ```
+    *Replace `http://your-backend-api-url.test` with the actual URL where your Laravel server is running.*
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. Install Dependencies
+Install all required packages using npm:
+```bash
+npm install
 ```
+
+### 4. Run Development Server
+To start the project locally:
+```bash
+npm run dev
+```
+By default, it runs on `http://localhost:5173`.
+
+#### 📱 Access from another laptop/mobile
+If you want to view the project from another device on the same Wi-Fi:
+```bash
+npm run dev -- --host
+```
+Then, use the **Network IP** (e.g., `http://192.168.1.10:5173`) shown in your terminal.
+
+---
+
+## 🏗️ Production Deployment
+
+### 1. Build for Production
+```bash
+npm run build
+```
+This generates a `dist/` folder.
+
+### 2. Serving the Build
+To test the production build locally or on a basic server:
+```bash
+# Install a static server
+npm install -g serve
+# Run the server
+serve -s dist
+```
+
+### 3. Nginx / Apache Configuration
+For a professional server setup, point your web server to the `dist/` folder.
+**Nginx Example:**
+```nginx
+server {
+    listen 80;
+    server_name your-erp-domain.com;
+    root /path/to/erp_new/erp_frontend/dist;
+
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+---
+
+## 🧪 Advanced Features
+
+### Professional Excel Export
+The project uses `exceljs` and `file-saver` for high-quality exports. 
+- **Column Widths**: Auto-calculated based on data content.
+- **Styling**: Branded primary-color headers and formatted dates.
+
+### Date Navigation
+The Date Range Picker supports quick navigation across years (e.g., 1990) via top dropdowns.
+
+---
+
+## 🆘 Troubleshooting
+
+- **Node Version Error**: Ensure you are using a modern Node version. Check with `node -v`.
+- **API Connection Refused**: Check if your `VITE_API_URL` in `.env` is correct and the backend is running.
+- **Missing Icons**: Ensure `lucide-react` is installed correctly.
+
+---
+*Last Updated: May 2026*
