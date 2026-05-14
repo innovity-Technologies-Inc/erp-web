@@ -27,7 +27,7 @@ export const Topbar = () => {
   const userFullName = user ? `${user.first_name} ${user.last_name}` : 'Kazi Sakib'
 
   return (
-    <header className="h-16 flex items-center bg-white shrink-0 relative z-30 shadow-[0_1px_4px_rgba(0,0,0,0.05)] border-b border-gray-100 px-0">
+    <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.18)] px-0">
       {/* Logo Area */}
       <div className={clsx(
         "flex items-center justify-between px-6 transition-all duration-300 shrink-0 border-r border-gray-100 h-full",

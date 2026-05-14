@@ -37,7 +37,7 @@ export const ForgotPasswordPage = () => {
           We've sent a password reset link to your email address. Please follow the instructions to reset your password.
         </p>
         <Link to="/login">
-          <Button variant="outline" className="w-full py-3 border-gray-200 text-gray-700 hover:bg-gray-50 flex gap-2 justify-center items-center rounded-lg font-semibold text-sm transition-all">
+          <Button variant="outline" className="w-full py-3 border-[#1e4ba1]/30 text-[#1e4ba1] hover:bg-[#1e4ba1]/10 flex gap-2 justify-center items-center rounded-lg font-semibold text-sm transition-all">
             <ArrowLeft className="h-4 w-4" />
             Back to Login
           </Button>

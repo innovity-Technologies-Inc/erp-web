@@ -9,7 +9,8 @@ import {
   Users, 
   RotateCcw, 
   Wrench, 
-  FileText
+  FileText,
+  Mail
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -35,6 +36,7 @@ const menuItems = [
       { name: 'Service', icon: Wrench, to: '/inventory/service', permission: 'view_service' },
       { name: 'Quotation', icon: FileText, to: '/inventory/quotation', permission: 'view_quotation' },
       { name: 'Terms', icon: FileText, to: '/inventory/terms', permission: 'view_terms_condition' },
+      { name: 'Contact Us', icon: Mail, to: '/inventory/contact-us' },
     ]
   }
 ]

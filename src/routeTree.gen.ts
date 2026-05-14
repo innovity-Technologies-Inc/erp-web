@@ -17,6 +17,8 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthenticatedInventoryTermsIndexRouteImport } from './routes/_authenticated/inventory/terms.index'
 import { Route as AuthenticatedInventorySalesIndexRouteImport } from './routes/_authenticated/inventory/sales.index'
+import { Route as AuthenticatedInventoryContactUsIndexRouteImport } from './routes/_authenticated/inventory/contact-us.index'
+import { Route as AuthenticatedInventoryContactUsReplyIdRouteImport } from './routes/_authenticated/inventory/contact-us.reply.$id'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -58,22 +60,38 @@ const AuthenticatedInventorySalesIndexRoute =
     path: '/inventory/sales/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryContactUsIndexRoute =
+  AuthenticatedInventoryContactUsIndexRouteImport.update({
+    id: '/inventory/contact-us/',
+    path: '/inventory/contact-us/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryContactUsReplyIdRoute =
+  AuthenticatedInventoryContactUsReplyIdRouteImport.update({
+    id: '/inventory/contact-us/reply/$id',
+    path: '/inventory/contact-us/reply/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/contact-us/': typeof AuthenticatedInventoryContactUsIndexRoute
   '/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
   '/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
+  '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/contact-us': typeof AuthenticatedInventoryContactUsIndexRoute
   '/inventory/sales': typeof AuthenticatedInventorySalesIndexRoute
   '/inventory/terms': typeof AuthenticatedInventoryTermsIndexRoute
+  '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,8 +101,10 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/inventory/contact-us/': typeof AuthenticatedInventoryContactUsIndexRoute
   '/_authenticated/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
   '/_authenticated/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
+  '/_authenticated/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -93,16 +113,20 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/reset-password'
+    | '/inventory/contact-us/'
     | '/inventory/sales/'
     | '/inventory/terms/'
+    | '/inventory/contact-us/reply/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
+    | '/inventory/contact-us'
     | '/inventory/sales'
     | '/inventory/terms'
+    | '/inventory/contact-us/reply/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -111,8 +135,10 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_authenticated/'
+    | '/_authenticated/inventory/contact-us/'
     | '/_authenticated/inventory/sales/'
     | '/_authenticated/inventory/terms/'
+    | '/_authenticated/inventory/contact-us/reply/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -178,6 +204,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventorySalesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/contact-us/': {
+      id: '/_authenticated/inventory/contact-us/'
+      path: '/inventory/contact-us'
+      fullPath: '/inventory/contact-us/'
+      preLoaderRoute: typeof AuthenticatedInventoryContactUsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/contact-us/reply/$id': {
+      id: '/_authenticated/inventory/contact-us/reply/$id'
+      path: '/inventory/contact-us/reply/$id'
+      fullPath: '/inventory/contact-us/reply/$id'
+      preLoaderRoute: typeof AuthenticatedInventoryContactUsReplyIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -197,14 +237,20 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedInventoryContactUsIndexRoute: typeof AuthenticatedInventoryContactUsIndexRoute
   AuthenticatedInventorySalesIndexRoute: typeof AuthenticatedInventorySalesIndexRoute
   AuthenticatedInventoryTermsIndexRoute: typeof AuthenticatedInventoryTermsIndexRoute
+  AuthenticatedInventoryContactUsReplyIdRoute: typeof AuthenticatedInventoryContactUsReplyIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedInventoryContactUsIndexRoute:
+    AuthenticatedInventoryContactUsIndexRoute,
   AuthenticatedInventorySalesIndexRoute: AuthenticatedInventorySalesIndexRoute,
   AuthenticatedInventoryTermsIndexRoute: AuthenticatedInventoryTermsIndexRoute,
+  AuthenticatedInventoryContactUsReplyIdRoute:
+    AuthenticatedInventoryContactUsReplyIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

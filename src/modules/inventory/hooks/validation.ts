@@ -6,3 +6,9 @@ export const termSchema = z.object({
 })
 
 export type TermFormValues = z.infer<typeof termSchema>
+
+export const contactUsReplySchema = z.object({
+  replay_message: z.string().min(1, 'Reply message is required'),
+})
+
+export type ContactUsReplyValues = z.infer<typeof contactUsReplySchema>

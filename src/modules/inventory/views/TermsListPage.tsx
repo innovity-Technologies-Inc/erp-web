@@ -124,7 +124,7 @@ export const TermsListPage = () => {
       flex: 0,
       pinned: 'left',
       hide: !visibleCols.sl,
-      cellClass: 'text-gray-400 font-medium border-r border-gray-50 flex items-center justify-center',
+      cellClass: 'text-gray-400 font-medium border-r border-[#1e4ba1]/30 flex items-center justify-center',
     },
     {
       headerName: 'DATE',
