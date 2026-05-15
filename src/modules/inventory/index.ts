@@ -1,5 +1,6 @@
 export { TermsListPage } from './views/TermsListPage'
 export { SalesListPage } from './views/SalesListPage'
+export { InvoicePaymentListPage } from './views/InvoicePaymentListPage'
 export { ContactUsListPage } from './views/ContactUsListPage'
 export { ContactUsReplyPage } from './views/ContactUsReplyPage'
 export * from './api/terms.api'

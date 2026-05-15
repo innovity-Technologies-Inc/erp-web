@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { 
   LayoutDashboard, 
   Scale, 
@@ -9,8 +9,7 @@ import {
   Users, 
   RotateCcw, 
   Wrench, 
-  FileText,
-  Mail
+  FileText
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -26,7 +25,14 @@ const menuItems = [
   {
     group: 'INVENTORY',
     items: [
-      { name: 'Sale', icon: Scale, to: '/inventory/sales', permission: 'view_sales' },
+      { 
+        name: 'Sale', 
+        icon: Scale, 
+        to: '/inventory/sales', 
+        permission: 'view_sales',
+        // Define paths that should also trigger this item as active
+        activePaths: ['/inventory/sales', '/inventory/terms', '/inventory/contact-us']
+      },
       { name: 'Vendor', icon: User, to: '/inventory/vendor', permission: 'view_supplier' },
       { name: 'Product', icon: Package, to: '/inventory/product', permission: 'view_product' },
       { name: 'Warehouse', icon: Warehouse, to: '/inventory/warehouse', permission: 'view_warehouse' },
@@ -35,8 +41,6 @@ const menuItems = [
       { name: 'Return', icon: RotateCcw, to: '/inventory/return', permission: 'sales_return' },
       { name: 'Service', icon: Wrench, to: '/inventory/service', permission: 'view_service' },
       { name: 'Quotation', icon: FileText, to: '/inventory/quotation', permission: 'view_quotation' },
-      { name: 'Terms', icon: FileText, to: '/inventory/terms', permission: 'view_terms_condition' },
-      { name: 'Contact Us', icon: Mail, to: '/inventory/contact-us' },
     ]
   }
 ]
@@ -44,6 +48,7 @@ const menuItems = [
 export const Sidebar = () => {
   const { sidebarOpen } = useUiStore()
   const { hasPermission } = usePermissions()
+  const location = useLocation()
 
   const filteredMenuItems = menuItems.map(group => ({
     ...group,
@@ -67,31 +72,32 @@ export const Sidebar = () => {
               </h3>
             )}
             <div className="space-y-1">
-              {group.items.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.to}
-                  activeProps={{ 
-                    className: 'bg-white text-primary shadow-xl' 
-                  }}
-                  inactiveProps={{
-                    className: 'text-white'
-                  }}
-                  className={clsx(
-                    "flex items-center px-4 py-3 transition-all duration-200 group relative rounded-xl font-medium text-[14px] font-poppins hover:bg-white hover:text-primary",
-                    !sidebarOpen && "justify-center px-0"
-                  )}
-                >
-                  <item.icon className={clsx("w-5 h-5 shrink-0", sidebarOpen ? "mr-3" : "mr-0")} strokeWidth={2} />
-                  {sidebarOpen && <span>{item.name}</span>}
-                  
-                  {!sidebarOpen && (
-                    <div className="absolute left-full ml-4 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
-                      {item.name}
-                    </div>
-                  )}
-                </Link>
-              ))}
+              {group.items.map((item) => {
+                const isActive = item.activePaths 
+                  ? item.activePaths.some(path => location.pathname.startsWith(path))
+                  : location.pathname === item.to
+
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.to as any}
+                    className={clsx(
+                      "flex items-center px-4 py-3 transition-all duration-200 group relative rounded-xl font-medium text-[14px] font-poppins hover:bg-white hover:text-primary",
+                      isActive ? "bg-white text-primary shadow-xl" : "text-white",
+                      !sidebarOpen && "justify-center px-0"
+                    )}
+                  >
+                    <item.icon className={clsx("w-5 h-5 shrink-0", sidebarOpen ? "mr-3" : "mr-0")} strokeWidth={2} />
+                    {sidebarOpen && <span>{item.name}</span>}
+                    
+                    {!sidebarOpen && (
+                      <div className="absolute left-full ml-4 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
+                        {item.name}
+                      </div>
+                    )}
+                  </Link>
+                )
+              })}
             </div>
           </div>
         ))}

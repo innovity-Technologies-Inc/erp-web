@@ -1,4 +1,4 @@
-import { Bell, Settings, User as UserIcon, LogOut, Maximize, Minimize, Home, RotateCcw } from 'lucide-react'
+import { Bell, Settings, User as UserIcon, LogOut, Expand, Shrink, Home, RotateCcw } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
 import { useState } from 'react'
@@ -27,7 +27,7 @@ export const Topbar = () => {
   const userFullName = user ? `${user.first_name} ${user.last_name}` : 'Kazi Sakib'
 
   return (
-    <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.18)] px-0">
+    <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.5)] px-0">
       {/* Logo Area */}
       <div className={clsx(
         "flex items-center justify-between px-6 transition-all duration-300 shrink-0 border-r border-gray-100 h-full",
@@ -53,7 +53,7 @@ export const Topbar = () => {
             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
           >
             {/* Image er ulto icon (Minimize) */}
-            <Minimize className="w-5 h-5" /> 
+            <Shrink className="w-5 h-5" /> 
           </button>
         )}
 
@@ -64,7 +64,7 @@ export const Topbar = () => {
             className="p-2 ml-4 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
           >
             {/* Precisely your shared image icon */}
-            <Maximize className="w-5 h-5" /> 
+            <Expand className="w-5 h-5" /> 
           </button>
         )}
       </div>

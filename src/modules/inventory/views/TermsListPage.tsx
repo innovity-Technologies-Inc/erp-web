@@ -10,6 +10,7 @@ import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpag
 import type { TermFormValues } from '../hooks/validation'
 import { useUiStore } from '@/store/useUiStore'
 import { exportToExcel } from '@/utils/exportUtils'
+import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 
 const tabs: NavTab[] = [
   { name: 'Manage Sale',          to: '/inventory/sales' },
@@ -119,7 +120,9 @@ export const TermsListPage = () => {
   const columnDefs = useMemo<ColDef<TermListItem>[]>(() => [
     {
       headerName: 'SL',
-      valueGetter: 'node.rowIndex + 1',
+      valueGetter: (params) => {
+        return (currentPage - 1) * pageSize + (params.node?.rowIndex ?? 0) + 1
+      },
       width: 80,
       flex: 0,
       pinned: 'left',
@@ -175,24 +178,28 @@ export const TermsListPage = () => {
       hide: !visibleCols.action,
       cellRenderer: (params: any) => (
         <div className="flex items-center justify-center gap-4 h-full">
-          <button
-            onClick={() => handleEdit(params.data)}
-            className="text-[#10b981] hover:scale-110 transition-transform group/edit"
-            title="Edit"
-          >
-            <Edit className="h-5 w-5 text-emerald-500 group-hover/edit:text-emerald-600" />
-          </button>
-          <button
-            onClick={() => handleDelete(params.data.id)}
-            className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
-            title="Delete"
-          >
-            <Trash2 className="h-5 w-5 text-rose-500 group-hover/delete:text-rose-600" />
-          </button>
+          <PermissionGuard permission="edit-terms">
+            <button
+              onClick={() => handleEdit(params.data)}
+              className="text-[#10b981] hover:scale-110 transition-transform group/edit"
+              title="Edit"
+            >
+              <Edit className="h-5 w-5 text-emerald-500 group-hover/edit:text-emerald-600" />
+            </button>
+          </PermissionGuard>
+          <PermissionGuard permission="delete-terms">
+            <button
+              onClick={() => handleDelete(params.data.id)}
+              className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
+              title="Delete"
+            >
+              <Trash2 className="h-5 w-5 text-rose-500 group-hover/delete:text-rose-600" />
+            </button>
+          </PermissionGuard>
         </div>
       ),
     },
-  ], [visibleCols])
+  ], [visibleCols, currentPage, pageSize])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -209,6 +216,7 @@ export const TermsListPage = () => {
         backTo="/inventory/sales"
         tabs={tabs}
         onCreate={handleAdd}
+        createPermission="create-terms"
         showStatusFilter={true}
         statusValue={status}
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}

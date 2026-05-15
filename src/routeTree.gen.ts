@@ -18,6 +18,8 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as AuthenticatedInventoryTermsIndexRouteImport } from './routes/_authenticated/inventory/terms.index'
 import { Route as AuthenticatedInventorySalesIndexRouteImport } from './routes/_authenticated/inventory/sales.index'
 import { Route as AuthenticatedInventoryContactUsIndexRouteImport } from './routes/_authenticated/inventory/contact-us.index'
+import { Route as AuthenticatedInventorySalesPaymentsRouteImport } from './routes/_authenticated/inventory/sales.payments'
+import { Route as AuthenticatedInventorySalesCreateRouteImport } from './routes/_authenticated/inventory/sales.create'
 import { Route as AuthenticatedInventoryContactUsReplyIdRouteImport } from './routes/_authenticated/inventory/contact-us.reply.$id'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -66,6 +68,18 @@ const AuthenticatedInventoryContactUsIndexRoute =
     path: '/inventory/contact-us/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventorySalesPaymentsRoute =
+  AuthenticatedInventorySalesPaymentsRouteImport.update({
+    id: '/inventory/sales/payments',
+    path: '/inventory/sales/payments',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventorySalesCreateRoute =
+  AuthenticatedInventorySalesCreateRouteImport.update({
+    id: '/inventory/sales/create',
+    path: '/inventory/sales/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryContactUsReplyIdRoute =
   AuthenticatedInventoryContactUsReplyIdRouteImport.update({
     id: '/inventory/contact-us/reply/$id',
@@ -78,6 +92,8 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
+  '/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsRoute
   '/inventory/contact-us/': typeof AuthenticatedInventoryContactUsIndexRoute
   '/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
   '/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
@@ -88,6 +104,8 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
+  '/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsRoute
   '/inventory/contact-us': typeof AuthenticatedInventoryContactUsIndexRoute
   '/inventory/sales': typeof AuthenticatedInventorySalesIndexRoute
   '/inventory/terms': typeof AuthenticatedInventoryTermsIndexRoute
@@ -101,6 +119,8 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
+  '/_authenticated/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsRoute
   '/_authenticated/inventory/contact-us/': typeof AuthenticatedInventoryContactUsIndexRoute
   '/_authenticated/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
   '/_authenticated/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
@@ -113,6 +133,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/reset-password'
+    | '/inventory/sales/create'
+    | '/inventory/sales/payments'
     | '/inventory/contact-us/'
     | '/inventory/sales/'
     | '/inventory/terms/'
@@ -123,6 +145,8 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/reset-password'
+    | '/inventory/sales/create'
+    | '/inventory/sales/payments'
     | '/inventory/contact-us'
     | '/inventory/sales'
     | '/inventory/terms'
@@ -135,6 +159,8 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_authenticated/'
+    | '/_authenticated/inventory/sales/create'
+    | '/_authenticated/inventory/sales/payments'
     | '/_authenticated/inventory/contact-us/'
     | '/_authenticated/inventory/sales/'
     | '/_authenticated/inventory/terms/'
@@ -211,6 +237,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryContactUsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/sales/payments': {
+      id: '/_authenticated/inventory/sales/payments'
+      path: '/inventory/sales/payments'
+      fullPath: '/inventory/sales/payments'
+      preLoaderRoute: typeof AuthenticatedInventorySalesPaymentsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/sales/create': {
+      id: '/_authenticated/inventory/sales/create'
+      path: '/inventory/sales/create'
+      fullPath: '/inventory/sales/create'
+      preLoaderRoute: typeof AuthenticatedInventorySalesCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/contact-us/reply/$id': {
       id: '/_authenticated/inventory/contact-us/reply/$id'
       path: '/inventory/contact-us/reply/$id'
@@ -237,6 +277,8 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedInventorySalesCreateRoute: typeof AuthenticatedInventorySalesCreateRoute
+  AuthenticatedInventorySalesPaymentsRoute: typeof AuthenticatedInventorySalesPaymentsRoute
   AuthenticatedInventoryContactUsIndexRoute: typeof AuthenticatedInventoryContactUsIndexRoute
   AuthenticatedInventorySalesIndexRoute: typeof AuthenticatedInventorySalesIndexRoute
   AuthenticatedInventoryTermsIndexRoute: typeof AuthenticatedInventoryTermsIndexRoute
@@ -245,6 +287,10 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedInventorySalesCreateRoute:
+    AuthenticatedInventorySalesCreateRoute,
+  AuthenticatedInventorySalesPaymentsRoute:
+    AuthenticatedInventorySalesPaymentsRoute,
   AuthenticatedInventoryContactUsIndexRoute:
     AuthenticatedInventoryContactUsIndexRoute,
   AuthenticatedInventorySalesIndexRoute: AuthenticatedInventorySalesIndexRoute,

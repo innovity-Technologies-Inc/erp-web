@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Save, PenLine } from 'lucide-react'
 import { Modal } from '@/components/Modal/Modal'
@@ -9,6 +9,7 @@ import { termSchema } from '../hooks/validation'
 import type { TermFormValues } from '../hooks/validation'
 import { useCreateTerm, useUpdateTerm } from '../hooks/useTerms'
 import { useUiStore } from '@/store/useUiStore'
+import { Select2 } from '@/components/Select/Select2'
 
 interface TermModalProps {
   isOpen: boolean
@@ -24,6 +25,7 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors },
@@ -118,13 +120,21 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
         </FormField>
 
         <FormField label="Status">
-          <select
-            {...register('status')}
-            className="erp-input"
-          >
-            <option value={1}>Active</option>
-            <option value={0}>Inactive</option>
-          </select>
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <Select2
+                options={[
+                  { value: 1, label: 'Active' },
+                  { value: 0, label: 'Inactive' }
+                ]}
+                value={field.value}
+                onChange={(val) => field.onChange(val)}
+                className="w-full"
+              />
+            )}
+          />
         </FormField>
       </form>
     </Modal>

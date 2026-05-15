@@ -13,7 +13,7 @@ This document outlines the requirements for setting up the initial foundation of
 - [x] Install routing: `@tanstack/react-router`.
 - [x] Install form and validation libraries: `react-hook-form`, `zod`, `@hookform/resolvers`.
 - [x] Install HTTP client: `axios`.
-- [x] Install UI and Table libraries: `ag-grid-react`, `ag-grid-community`, `lucide-react`.
+- [x] Install UI and Table libraries: `ag-grid-react`, `ag-grid-community`, `lucide-react`, `react-select`.
 
 ## 3. Global Infrastructure
 - [x] Configure Axios with a base URL from environment variables.
@@ -34,6 +34,7 @@ This document outlines the requirements for setting up the initial foundation of
 - [x] Create a public API endpoint for fetching global site settings (web_settings, company_information).
 - [x] Implement a `useSettingsStore` to cache global branding settings.
 - [x] Create a `useSettings` hook to provide easy access to logos, site names, and themes.
+- [x] **Optimize Global Settings**: Implement "Only-on-Login" fetch logic to prevent redundant API calls per page.
 - [x] Update Authentication pages (Login, Forgot, Reset) to dynamically display logos and site names with fallbacks.
 - [x] Establish a "Single Source of Truth" for theme colors (Primary, Info, Success, Warning, Danger) driven by the backend.
 - [x] Configure Tailwind v4 to use dynamic CSS variables for all branded UI elements.
@@ -41,3 +42,11 @@ This document outlines the requirements for setting up the initial foundation of
 ## 7. Design System & Typography
 - [x] Standardize on Poppins font globally.
 - [x] Implement precise Figma typography tokens for all authentication and core views.
+- [x] Replace all native HTML `<select>` elements with a globally styled `Select2` component (built on `react-select`) to ensure virtual DOM compatibility and a premium user experience.
+
+## 8. Permissions & Security
+- [x] Implement a `usePermissions` hook to check user permissions and roles.
+- [x] **Super-Admin Access**: Ensure the `Super-Admin` role bypasses all permission checks (access anything).
+- [x] Implement a `PermissionGuard` component for declarative permission-based rendering.
+- [x] Standardize permission-based visibility for all action buttons (Create, Edit, Delete, View) across the project.
+

@@ -20,6 +20,7 @@ import { useUiStore } from '@/store/useUiStore'
 import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
+import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 
 export const ContactUsReplyPage = () => {
   const { id } = useParams({ from: '/_authenticated/inventory/contact-us/reply/$id' })
@@ -268,18 +269,20 @@ export const ContactUsReplyPage = () => {
                   >
                     Discard
                   </button>
-                  <button 
-                    type="submit"
-                    disabled={isReplying}
-                    className="bg-[#0f172a] hover:bg-[#1e293b] text-white shadow-lg font-medium px-10 h-11 rounded-lg text-[14px] flex items-center gap-2 transition-all"
-                  >
-                    {isReplying ? (
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    ) : (
-                      <Send className="h-4 w-4 rotate-0" />
-                    )}
-                    Send Replay
-                  </button>
+                  <PermissionGuard permission="reply-contact-us">
+                    <button 
+                      type="submit"
+                      disabled={isReplying}
+                      className="bg-[#0f172a] hover:bg-[#1e293b] text-white shadow-lg font-medium px-10 h-11 rounded-lg text-[14px] flex items-center gap-2 transition-all"
+                    >
+                      {isReplying ? (
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      ) : (
+                        <Send className="h-4 w-4 rotate-0" />
+                      )}
+                      Send Replay
+                    </button>
+                  </PermissionGuard>
                 </div>
               </form>
             )}

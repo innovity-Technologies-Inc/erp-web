@@ -5,6 +5,8 @@
 import { useMemo, useState, useRef, useEffect, type ReactNode } from 'react'
 import { DataTable } from '@/components/DataTable/DataTable'
 import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
+import { Select2 } from '@/components/Select/Select2'
+import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import {
   Plus,
   Search,
@@ -40,6 +42,9 @@ export interface ListPageLayoutProps<T extends object> {
   // ── Toolbar (left side) ──
   /** Show the dark "+ Create" button. Pass onClick handler. */
   onCreate?: () => void
+
+  /** Permission required to show the create button */
+  createPermission?: string | string[]
   
   /** Status filter */
   showStatusFilter?: boolean
@@ -89,6 +94,7 @@ export const ListPageLayout = <T extends object>({
   backTo,
   tabs,
   onCreate,
+  createPermission,
   showStatusFilter = false,
   statusValue = '',
   onStatusChange,
@@ -194,13 +200,25 @@ export const ListPageLayout = <T extends object>({
           {/* Left side */}
           <div className="flex items-center gap-3 flex-1">
             {onCreate && (
-              <button
-                onClick={onCreate}
-                className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
-              >
-                <Plus className="h-5 w-5" strokeWidth={3} />
-                <span className="font-medium text-[12px]">Create</span>
-              </button>
+              createPermission ? (
+                <PermissionGuard permission={createPermission}>
+                  <button
+                    onClick={onCreate}
+                    className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
+                  >
+                    <Plus className="h-5 w-5" strokeWidth={3} />
+                    <span className="font-medium text-[12px]">Create</span>
+                  </button>
+                </PermissionGuard>
+              ) : (
+                <button
+                  onClick={onCreate}
+                  className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
+                >
+                  <Plus className="h-5 w-5" strokeWidth={3} />
+                  <span className="font-medium text-[12px]">Create</span>
+                </button>
+              )
             )}
 
             <div className="relative w-full max-w-70">
@@ -218,25 +236,20 @@ export const ListPageLayout = <T extends object>({
             </div>
 
             {showStatusFilter && (
-              <div className="relative shrink-0">
-                <select 
-                  className="appearance-none bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium text-[#64748b] h-8 pr-10 outline-none hover:bg-[#f1f5f9] transition-all cursor-pointer min-w-[120px] focus:ring-4 focus:ring-[#1e4ba1]/5"
+              <div className="relative shrink-0 min-w-[120px] z-50">
+                <Select2
+                  options={[
+                    { value: '', label: 'All Status' },
+                    ...(statusOptions || [
+                      { value: 'Active', label: 'Active' },
+                      { value: 'Inactive', label: 'Inactive' }
+                    ])
+                  ]}
                   value={statusValue}
-                  onChange={(e) => onStatusChange?.(e.target.value)}
-                >
-                  <option value="">All Status</option>
-                  {statusOptions ? (
-                    statusOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))
-                  ) : (
-                    <>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </>
-                  )}
-                </select>
-                <Filter className="absolute right-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#64748b] pointer-events-none opacity-60" />
+                  onChange={(val) => onStatusChange?.(val as string)}
+                  rounded="full"
+                  variant="solid"
+                />
               </div>
             )}
 
@@ -334,15 +347,21 @@ export const ListPageLayout = <T extends object>({
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
                 <span className="text-[12px] text-[#94a3b8] font-medium uppercase tracking-widest">Per Page</span>
-                <select 
-                  className="bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-[13px] font-medium text-[#475569] outline-none focus:border-[#1e4ba1]/30 transition-all cursor-pointer shadow-sm hover:border-gray-300"
-                  value={pageSize}
-                  onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
-                >
-                  {[10, 25, 50, 100].map(size => (
-                    <option key={size} value={size}>{size}</option>
-                  ))}
-                </select>
+                <div className="w-[80px]">
+                  <Select2
+                    options={[
+                      { value: 10, label: '10' },
+                      { value: 25, label: '25' },
+                      { value: 50, label: '50' },
+                      { value: 100, label: '100' }
+                    ]}
+                    value={pageSize}
+                    onChange={(val) => onPageSizeChange?.(Number(val))}
+                    rounded="lg"
+                    size="sm"
+                    menuPlacement="top"
+                  />
+                </div>
               </div>
 
               <span className="text-[13px] text-[#64748b] font-medium border-l border-[#1e4ba1]/10 pl-8 py-1">

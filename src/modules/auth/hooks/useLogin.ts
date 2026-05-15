@@ -1,21 +1,34 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
 import { login } from '../api/auth.api'
+import { getGlobalSettings } from '@/api/settings.api'
 import type { LoginFormValues } from './validation'
 
 export const useLogin = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const setUser = useAuthStore((state) => state.setUser)
   const notify = useUiStore((state) => state.notify)
 
   return useMutation({
     mutationFn: (values: LoginFormValues) => login({ email: values.email, password: values.password }),
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.success) {
         const { user, token, permissions, expires_in } = response.data
         setUser(user, token, permissions, expires_in)
+
+        // Force refresh global settings after login to ensure fresh branding/config
+        try {
+          await queryClient.fetchQuery({
+            queryKey: ['global-settings'],
+            queryFn: getGlobalSettings,
+          })
+        } catch (err) {
+          console.error('Failed to refresh settings after login', err)
+        }
+
         notify('Login successful!', 'success')
         navigate({ to: '/' })
       } else {

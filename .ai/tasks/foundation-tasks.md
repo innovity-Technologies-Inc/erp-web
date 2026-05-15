@@ -35,6 +35,7 @@
 - [x] **Task 6.6**: Implement dynamic theme injection (Primary, Info, Success, Warning, Danger colors) into document root.
 - [x] **Task 6.7**: Configure Tailwind v4 `@theme` variables in `globals.css` to consume backend-driven CSS variables.
 - [x] **Task 6.8**: Clean up redundant stylesheets and centralize ERP design tokens.
+- [x] **Task 6.9**: Optimize `useSettings` and `useLogin` to ensure global settings are only fetched during login and initial load.
 ## Task Group 7: Global Typography & Design Tokens
 - [x] **Task 7.1**: Import Poppins font and configure as global default in Tailwind theme.
 - [x] **Task 7.2**: Implement Figma-precise font sizes and weights for authentication pages.
@@ -43,4 +44,11 @@
 - [x] **Task 8.1**: Resolve AG Grid auto-height issues by unsetting default min-heights in global CSS.
 - [x] **Task 8.2**: Unify table borders by removing internal AG Grid borders and using ListPageLayout wrapper.
 - [x] **Task 8.3**: Ensure perfect rounding alignment (16px) across all table containers.
-- [x] **Task 8.4**: Preserve developer-defined font sizes and paddings for laptop screen compatibility.
+- [x] Task 8.4: Preserve developer-defined font sizes and paddings for laptop screen compatibility.
+
+## Task Group 9: Permission-Based UI & Security
+- [x] **Task 9.1**: Implement `usePermissions` hook with support for permissions and 'Super-Admin' role override.
+- [x] **Task 9.2**: Create `PermissionGuard` component for wrapping UI elements.
+- [x] **Task 9.3**: Update `ListPageLayout` to support `createPermission` prop for the standard "+ Create" button.
+- [x] **Task 9.4**: Retrofit existing modules (Inventory, etc.) to use `PermissionGuard` for Edit, Delete, and View actions.
+

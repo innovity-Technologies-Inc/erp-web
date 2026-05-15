@@ -19,6 +19,7 @@ import {
 } from 'date-fns'
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { clsx } from 'clsx'
+import { Select2 } from '@/components/Select/Select2'
 
 interface DateRangePickerProps {
   from?: string
@@ -84,33 +85,33 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
 
     return (
       <div className="w-50">
-        <div className="flex items-center justify-center gap-1 mb-4">
-          <select
+        <div className="flex items-center justify-center mb-4 z-50">
+          <Select2
+            options={months.map((month, idx) => ({ value: idx, label: month }))}
             value={monthDate.getMonth()}
-            onChange={(e) => {
+            onChange={(val) => {
               const newDate = new Date(monthDate)
-              newDate.setMonth(parseInt(e.target.value))
+              newDate.setMonth(Number(val))
               setViewDate(newDate)
             }}
-            className="bg-transparent font-medium text-[#1e4ba1] text-[14px] outline-none cursor-pointer hover:bg-gray-50 rounded px-1"
-          >
-            {months.map((month, idx) => (
-              <option key={month} value={idx}>{month}</option>
-            ))}
-          </select>
-          <select
+            variant="ghost"
+            className="min-w-[100px]"
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          />
+          <Select2
+            options={years.map(year => ({ value: year, label: String(year) }))}
             value={monthDate.getFullYear()}
-            onChange={(e) => {
+            onChange={(val) => {
               const newDate = new Date(monthDate)
-              newDate.setFullYear(parseInt(e.target.value))
+              newDate.setFullYear(Number(val))
               setViewDate(newDate)
             }}
-            className="bg-transparent font-medium text-[#1e4ba1] text-[14px] outline-none cursor-pointer hover:bg-gray-50 rounded px-1"
-          >
-            {years.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
+            variant="ghost"
+            className="min-w-[80px]"
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+          />
         </div>
         <div className="grid grid-cols-7 gap-1 mb-2">
           {weekDays.map(day => (

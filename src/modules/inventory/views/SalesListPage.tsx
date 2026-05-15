@@ -11,6 +11,8 @@ import { useSettings } from '@/hooks/useSettings'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { exportToExcel } from '@/utils/exportUtils'
 import { useNavigate } from '@tanstack/react-router'
+import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { usePermissions } from '@/hooks/usePermissions'
 
 const tabs: NavTab[] = [
   { name: 'Manage Sale',          to: '/inventory/sales', active: true },
@@ -133,7 +135,9 @@ export const SalesListPage = () => {
   const columnDefs = useMemo<ColDef<SaleListItem>[]>(() => [
     {
       headerName: 'SL',
-      valueGetter: 'node.rowIndex + 1',
+      valueGetter: (params) => {
+        return (currentPage - 1) * pageSize + (params.node?.rowIndex ?? 0) + 1
+      },
       width: 80,
       flex: 0,
       pinned: 'left',
@@ -232,31 +236,39 @@ export const SalesListPage = () => {
       hide: !visibleCols.action,
       cellRenderer: (params: any) => (
         <div className="flex items-center justify-center gap-3 h-full">
-          <button
-            onClick={() => handleView(params.data.id)}
-            className="text-[#64748b] hover:scale-110 transition-transform group/view"
-            title="View Details"
-          >
-            <Eye className="h-4.5 w-4.5 group-hover/view:text-[#1e4ba1]" />
-          </button>
-          <button
-            onClick={() => handleEdit(params.data.id)}
-            className="text-[#10b981] hover:scale-110 transition-transform group/edit"
-            title="Edit"
-          >
-            <Edit className="h-4.5 w-4.5 text-emerald-500 group-hover/edit:text-emerald-600" />
-          </button>
-          <button
-            onClick={() => handleDelete(params.data.id)}
-            className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
-            title="Delete"
-          >
-            <Trash2 className="h-4.5 w-4.5 text-rose-500 group-hover/delete:text-rose-600" />
-          </button>
+          <PermissionGuard permission="view-sales">
+            <button
+              onClick={() => handleView(params.data.id)}
+              className="text-[#64748b] hover:scale-110 transition-transform group/view"
+              title="View Details"
+            >
+              <Eye className="h-4.5 w-4.5 group-hover/view:text-[#1e4ba1]" />
+            </button>
+          </PermissionGuard>
+
+          <PermissionGuard permission="edit-sales">
+            <button
+              onClick={() => handleEdit(params.data.id)}
+              className="text-[#10b981] hover:scale-110 transition-transform group/edit"
+              title="Edit"
+            >
+              <Edit className="h-4.5 w-4.5 text-emerald-500 group-hover/edit:text-emerald-600" />
+            </button>
+          </PermissionGuard>
+
+          <PermissionGuard permission="delete-sales">
+            <button
+              onClick={() => handleDelete(params.data.id)}
+              className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
+              title="Delete"
+            >
+              <Trash2 className="h-4.5 w-4.5 text-rose-500 group-hover/delete:text-rose-600" />
+            </button>
+          </PermissionGuard>
         </div>
       ),
     },
-  ], [visibleCols, currency, currencyPosition])
+  ], [visibleCols, currency, currencyPosition, currentPage, pageSize])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -283,6 +295,7 @@ export const SalesListPage = () => {
         backTo="/inventory/sales"
         tabs={tabs}
         onCreate={handleCreate}
+        createPermission="create-sales"
         showStatusFilter={true}
         statusValue={status}
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}

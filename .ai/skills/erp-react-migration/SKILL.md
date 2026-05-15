@@ -58,11 +58,23 @@ writing any code. Never deviate from these conventions without explicit user app
 3. **Global Shared UI**: Keep generic, non-domain components in `src/components/`. Domain-specific shared components go into `src/modules/{name}/components/`.
 4. **No `any` in TypeScript**: Strict mode. Type everything.
 5. **No direct fetch/axios in views**: Always use TanStack Query hooks.
-6. **JWT only**: Token stored in Zustand + localStorage via persist.
-7. **Zod schema = single source of truth**: Form validation + TypeScript types.
-8. **Dynamic Branding**: Always use `useSettings()` hook to get `logo`, `siteName`, and colors. Never hardcode these.
-9. **Backend-Driven Colors**: Use the 5 basic colors (Primary, Info, Success, Warning, Danger) provided by the backend `webSetting`. These MUST be applied project-wide via CSS variables.
-10. **AG Grid for all tables**: Replace every DataTables instance with AG Grid Community.
+- **JWT only**: Token stored in Zustand + localStorage via persist.
+- **Zod schema = single source of truth**: Form validation + TypeScript types.
+- **Dynamic Branding**: Always use `useSettings()` hook to get `logo`, `siteName`, and colors. Never hardcode these.
+- **Backend-Driven Colors**: Use the 5 basic colors (Primary, Info, Success, Warning, Danger) provided by the backend `webSetting`. These MUST be applied project-wide via CSS variables.
+- **AG Grid for all tables**: Replace every DataTables instance with AG Grid Community.
+- **Permission-Based UI**: ALWAYS wrap action buttons (Create, Edit, Delete, View) with `PermissionGuard` or check permissions via `usePermissions`. Action buttons MUST NOT be visible if the user lacks the required permission. Use the `createPermission`, `editPermission`, `deletePermission` patterns.
+- **Super-Admin Access**: Users with the `Super-Admin` role (checked in `usePermissions`) have global access and bypass all permission guards. This is a project-wide standard.
+
+## 2.1 Engineering & Design Standards (STRICT)
+
+1. **Dropdowns (Select2)**: NEVER use native HTML `<select>` elements. Use the project-standard `Select2` component (located in `src/components/Select/Select2.tsx`) for all dropdowns to ensure searchability and React Virtual DOM compatibility.
+2. **Notifications**: DO NOT use small toast notifications for success or critical error messages. ALWAYS use the global `NotificationModal` (via `showNotificationModal` in `useUiStore`) for a premium, high-impact user experience.
+3. **Typography**: 
+   - **Font Family**: Always use **Poppins**.
+   - **Font Sizes**: Strictly follow project standards (e.g., 10px-12px for small UI elements, 14px-16px for body/inputs, 20px+ for headers).
+4. **Responsiveness**: All new components and layouts MUST be fully responsive and tested for various screen sizes (Mobile, Tablet, Laptop, Desktop).
+5. **Backend Integrity**: NEVER modify backend API controllers, routes, or logic without explicit user approval. Your focus is strictly on the React frontend migration.
 
 ---
 

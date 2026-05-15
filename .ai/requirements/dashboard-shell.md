@@ -4,6 +4,7 @@
 - [x] Implement the `AppShell` component with Sidebar and Topbar.
 - [x] Design the navigation menu based on user roles and permissions.
 - [x] Implement a collapsible sidebar logic using `useUiStore`.
+- [x] Implement **Path Synchronization** for Sidebar items: Items remain active when navigating to related sub-modules (e.g., "Sale" active for Terms/Payments).
 
 ## 2. Authentication Guards
 - [x] Create a reusable `AuthGuard` component to wrap private routes.

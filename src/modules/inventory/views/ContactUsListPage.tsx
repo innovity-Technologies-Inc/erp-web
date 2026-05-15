@@ -8,6 +8,7 @@ import { exportToExcel } from '@/utils/exportUtils'
 import { useNavigate } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import { formatDate } from '@/utils/formatters'
+import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 
 const tabs: NavTab[] = [
   { name: 'Manage Sale',          to: '/inventory/sales' },
@@ -87,7 +88,9 @@ export const ContactUsListPage = () => {
   const columnDefs = useMemo<ColDef<ContactUsListItem>[]>(() => [
     {
       headerName: 'SL',
-      valueGetter: 'node.rowIndex + 1',
+      valueGetter: (params) => {
+        return (currentPage - 1) * pageSize + (params.node?.rowIndex ?? 0) + 1
+      },
       width: 80,
       flex: 0,
       pinned: 'left',
@@ -167,17 +170,19 @@ export const ContactUsListPage = () => {
       hide: !visibleCols.action,
       cellRenderer: (params: any) => (
         <div className="flex items-center justify-center h-full">
-          <button
-            onClick={() => handleView(params.data.id)}
-            className="text-primary hover:scale-110 transition-transform group/view"
-            title="View & Reply"
-          >
-            <Mail className="h-5 w-5 text-primary group-hover/view:text-primary/80" />
-          </button>
+          <PermissionGuard permission="view-contact-us">
+            <button
+              onClick={() => handleView(params.data.id)}
+              className="text-primary hover:scale-110 transition-transform group/view"
+              title="View & Reply"
+            >
+              <Mail className="h-5 w-5 text-primary group-hover/view:text-primary/80" />
+            </button>
+          </PermissionGuard>
         </div>
       ),
     },
-  ], [visibleCols])
+  ], [visibleCols, currentPage, pageSize])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -196,6 +201,7 @@ export const ContactUsListPage = () => {
         title="Manage Contact Us"
         backTo="/inventory/sales"
         tabs={tabs}
+        createPermission="create-contact-us"
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
