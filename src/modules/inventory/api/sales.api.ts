@@ -49,18 +49,28 @@ export const createSale = async (data: any): Promise<ApiResponse<any>> => {
   return response.data
 }
 
+export const getSaleDetails = async (id: number): Promise<any> => {
+  const response = await apiClient.get<any>(`/inventory/sales/get-return-data/${id}`)
+  return response.data
+}
+
+export const updateSale = async (uuid: string, data: any): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>(`/inventory/sales/update/${uuid}`, data)
+  return response.data
+}
+
 export const getWarehouses = async (): Promise<DataTablesResponse<any>> => {
-  const response = await apiClient.get<DataTablesResponse<any>>('/inventory/warehouse/datatable', { params: { length: -1 } })
+  const response = await apiClient.get<DataTablesResponse<any>>('/select2/get-warehouse-select2')
   return response.data
 }
 
 export const getMerchants = async (search: string = ''): Promise<DataTablesResponse<any>> => {
-  const response = await apiClient.get<DataTablesResponse<any>>('/inventory/merchant/datatable', { params: { 'search[value]': search, length: 10 } })
+  const response = await apiClient.get<DataTablesResponse<any>>('/inventory/merchant/datatable', { params: { 'search[value]': search, length: 100 } })
   return response.data
 }
 
 export const getProducts = async (search: string = ''): Promise<DataTablesResponse<any>> => {
-  const response = await apiClient.get<DataTablesResponse<any>>('/inventory/products/datatable', { params: { 'search[value]': search, length: 10 } })
+  const response = await apiClient.get<DataTablesResponse<any>>('/inventory/products/datatable', { params: { 'search[value]': search, length: 100 } })
   return response.data
 }
 
@@ -75,7 +85,7 @@ export const getMerchantDetails = async (id: number): Promise<{ data: any }> => 
 }
 
 export const getPaymentMethods = async (): Promise<DataTablesResponse<any>> => {
-  const response = await apiClient.get<DataTablesResponse<any>>('/account/payment-method/datatable', { params: { length: -1 } })
+  const response = await apiClient.get<DataTablesResponse<any>>('/select2/get-payment-methods-select2')
   return response.data
 }
 

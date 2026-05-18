@@ -38,9 +38,9 @@ export const Topbar = () => {
              <img src={logo} alt={siteName} className="w-full h-full object-contain" />
            ) : (
              <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 4L34 11.5V28.5L20 36L6 28.5V11.5L20 4Z" stroke="#1e4ba1" strokeWidth="3" strokeLinejoin="round"/>
-                <path d="M10 15L20 10L30 15V25L20 30L10 25V15Z" fill="#1e4ba1" fillOpacity="0.1"/>
-                <path d="M20 12V28M12 20H28" stroke="#1e4ba1" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M20 4L34 11.5V28.5L20 36L6 28.5V11.5L20 4Z" stroke="var(--color-primary)" strokeWidth="3" strokeLinejoin="round"/>
+                <path d="M10 15L20 10L30 15V25L20 30L10 25V15Z" fill="var(--color-primary)" fillOpacity="0.1"/>
+                <path d="M20 12V28M12 20H28" stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"/>
              </svg>
            )}
         </div>
@@ -75,17 +75,26 @@ export const Topbar = () => {
           <Home className="w-5 h-5" />
         </Link>
         
-        <div className="flex items-center text-[15px] font-medium font-poppins text-gray-400 gap-3">
-           <span>Dashboard</span>
+        <div className="flex items-center text-[14px] font-medium font-poppins text-[#94a3b8] gap-2.5">
+           <span className="hover:text-primary cursor-pointer transition-colors">Dashboard</span>
            <span className="text-gray-300 font-light text-lg">/</span>
+           
            {pathParts.includes('inventory') && (
              <>
-               <span>Sales</span>
+               <span className="hover:text-primary cursor-pointer transition-colors">Sales</span>
                <span className="text-gray-300 font-light text-lg">/</span>
              </>
            )}
-           <span className="text-[#1e4ba1] font-medium">
-             {pathParts.includes('terms') ? 'Manage Sales Terms' : 'Dashboard'}
+
+           <span className="text-[#003671] font-bold">
+             {(() => {
+               if (pathParts.includes('create')) return 'Add Sale'
+               if (pathParts.includes('terms')) return 'Manage Sales Terms'
+               if (pathParts.includes('payments')) return 'Manage Sales Payment'
+               if (pathParts.includes('contact-us')) return 'Manage Contact Us'
+               if (pathParts.includes('sales')) return 'Manage Sale'
+               return 'Dashboard'
+             })()}
            </span>
         </div>
       </div>
@@ -111,7 +120,7 @@ export const Topbar = () => {
         <div className="relative ml-1">
           <button 
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-2 pr-1 pl-4 py-1 border border-gray-200 rounded-full hover:border-[#1e4ba1]/30 transition-all bg-white shadow-sm"
+            className="flex items-center gap-2 pr-1 pl-4 py-1 border border-gray-200 rounded-full hover:border-primary/30 transition-all bg-white shadow-sm"
           >
             <span className="text-[14px] font-medium text-[#475569]">{userFullName}</span>
             <div className="w-8.5 h-8.5 rounded-full flex items-center justify-center overflow-hidden bg-[#e2e8f0]">

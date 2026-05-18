@@ -14,8 +14,8 @@ import { useNavigate } from '@tanstack/react-router'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 
-const tabs: NavTab[] = [
-  { name: 'Manage Sale',          to: '/inventory/sales', active: true },
+const tabs = [
+  { name: 'Manage Sale', to: '/inventory/sales', active: true },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
   { name: 'Manage Sales Terms',   to: '/inventory/terms' },
   { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
@@ -35,6 +35,7 @@ export const SalesListPage = () => {
   const { currency, currencyPosition } = useSettings()
   const { showNotificationModal } = useUiStore()
   const navigate = useNavigate()
+  const { hasAnyPermission } = usePermissions()
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
@@ -68,11 +69,11 @@ export const SalesListPage = () => {
   }
 
   const handleEdit = (id: number) => {
-    navigate({ to: `/inventory/sales/edit/${id}` })
+    navigate({ to: '/inventory/sales/edit/$id', params: { id: id.toString() } })
   }
 
   const handleView = (id: number) => {
-    navigate({ to: `/inventory/sales/view/${id}` })
+    navigate({ to: '/inventory/sales/view/$id', params: { id: id.toString() } })
   }
 
   const handleDelete = (id: number) => {
@@ -142,7 +143,7 @@ export const SalesListPage = () => {
       flex: 0,
       pinned: 'left',
       hide: !visibleCols.sl,
-      cellClass: 'text-gray-400 font-medium border-r border-[#1e4ba1]/30 flex items-center justify-center',
+      cellClass: 'text-gray-400 font-medium border-r border-primary/30 flex items-center justify-center',
     },
     {
       headerName: 'INVOICE NO',
@@ -150,7 +151,7 @@ export const SalesListPage = () => {
       width: 130,
       flex: 0,
       hide: !visibleCols.invoice,
-      cellClass: 'text-[#1e4ba1] font-medium ',
+      cellClass: 'text-primary font-medium ',
     },
     {
       headerName: 'SALES BY',
@@ -233,42 +234,42 @@ export const SalesListPage = () => {
       sortable: false,
       filter: false,
       pinned: 'right',
-      hide: !visibleCols.action,
+      hide: !visibleCols.action || !hasAnyPermission(['view_sales', 'edit_sales', 'delete_sales']),
       cellRenderer: (params: any) => (
-        <div className="flex items-center justify-center gap-3 h-full">
-          <PermissionGuard permission="view-sales">
+        <div className="flex items-center justify-center gap-1.5 h-full">
+          <PermissionGuard permission="view_sales">
             <button
               onClick={() => handleView(params.data.id)}
-              className="text-[#64748b] hover:scale-110 transition-transform group/view"
+              className="p-2 hover:bg-blue-50 text-primary rounded-xl transition-all border border-transparent hover:border-blue-100 hover:scale-110 group/view"
               title="View Details"
             >
-              <Eye className="h-4.5 w-4.5 group-hover/view:text-[#1e4ba1]" />
+              <Eye className="h-4 w-4" />
             </button>
           </PermissionGuard>
 
-          <PermissionGuard permission="edit-sales">
+          <PermissionGuard permission="edit_sales">
             <button
               onClick={() => handleEdit(params.data.id)}
-              className="text-[#10b981] hover:scale-110 transition-transform group/edit"
+              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110 group/edit"
               title="Edit"
             >
-              <Edit className="h-4.5 w-4.5 text-emerald-500 group-hover/edit:text-emerald-600" />
+              <Edit className="h-4 w-4" />
             </button>
           </PermissionGuard>
 
-          <PermissionGuard permission="delete-sales">
+          <PermissionGuard permission="delete_sales">
             <button
               onClick={() => handleDelete(params.data.id)}
-              className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
+              className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110 group/delete"
               title="Delete"
             >
-              <Trash2 className="h-4.5 w-4.5 text-rose-500 group-hover/delete:text-rose-600" />
+              <Trash2 className="h-4 w-4" />
             </button>
           </PermissionGuard>
         </div>
       ),
     },
-  ], [visibleCols, currency, currencyPosition, currentPage, pageSize])
+  ], [visibleCols, currency, currencyPosition, currentPage, pageSize, hasAnyPermission])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -295,7 +296,7 @@ export const SalesListPage = () => {
         backTo="/inventory/sales"
         tabs={tabs}
         onCreate={handleCreate}
-        createPermission="create-sales"
+        createPermission="create_sales"
         showStatusFilter={true}
         statusValue={status}
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}

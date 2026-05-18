@@ -65,10 +65,9 @@ export const ResetPasswordPage = () => {
           error={errors.password?.message}
           labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
         >
-          <input
-            {...register('password')}
+          <input {...register('password')}
             type="password"
-            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg outline-none placeholder:text-gray-400 text-sm hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
             placeholder="••••••••••••"
           />
         </FormField>
@@ -78,10 +77,9 @@ export const ResetPasswordPage = () => {
           error={errors.password_confirmation?.message}
           labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
         >
-          <input
-            {...register('password_confirmation')}
+          <input {...register('password_confirmation')}
             type="password"
-            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg outline-none placeholder:text-gray-400 text-sm hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
             placeholder="••••••••••••"
           />
         </FormField>

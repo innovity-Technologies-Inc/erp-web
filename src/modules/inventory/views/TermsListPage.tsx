@@ -11,9 +11,10 @@ import type { TermFormValues } from '../hooks/validation'
 import { useUiStore } from '@/store/useUiStore'
 import { exportToExcel } from '@/utils/exportUtils'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { usePermissions } from '@/hooks/usePermissions'
 
-const tabs: NavTab[] = [
-  { name: 'Manage Sale',          to: '/inventory/sales' },
+const tabs = [
+  { name: 'Manage Sale', to: '/inventory/sales' },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
   { name: 'Manage Sales Terms',   to: '/inventory/terms', active: true },
   { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
@@ -32,6 +33,7 @@ export const TermsListPage = () => {
   const [pageSize, setPageSize]       = useState(10)
   const [gridApi, setGridApi]         = useState<any>(null)
   const { showNotificationModal } = useUiStore()
+  const { hasAnyPermission } = usePermissions()
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
@@ -127,7 +129,7 @@ export const TermsListPage = () => {
       flex: 0,
       pinned: 'left',
       hide: !visibleCols.sl,
-      cellClass: 'text-gray-400 font-medium border-r border-[#1e4ba1]/30 flex items-center justify-center',
+      cellClass: 'text-gray-400 font-medium border-r border-primary/30 flex items-center justify-center',
     },
     {
       headerName: 'DATE',
@@ -160,7 +162,7 @@ export const TermsListPage = () => {
         return (
           <span className={clsx(
             'px-4 py-1 rounded-full text-[12px] font-medium tracking-tight',
-            isActive ? 'bg-[#dbeafe] text-[#1e4ba1]' : 'bg-[#f1f5f9] text-[#94a3b8]'
+            isActive ? 'bg-[#dbeafe] text-primary' : 'bg-[#f1f5f9] text-[#94a3b8]'
           )}>
             {status}
           </span>
@@ -175,31 +177,31 @@ export const TermsListPage = () => {
       sortable: false,
       filter: false,
       pinned: 'right',
-      hide: !visibleCols.action,
+      hide: !visibleCols.action || !hasAnyPermission(['edit_terms_condition', 'delete_terms_condition']),
       cellRenderer: (params: any) => (
-        <div className="flex items-center justify-center gap-4 h-full">
-          <PermissionGuard permission="edit-terms">
+        <div className="flex items-center justify-center gap-1.5 h-full">
+          <PermissionGuard permission="edit_terms_condition">
             <button
               onClick={() => handleEdit(params.data)}
-              className="text-[#10b981] hover:scale-110 transition-transform group/edit"
+              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110 group/edit"
               title="Edit"
             >
-              <Edit className="h-5 w-5 text-emerald-500 group-hover/edit:text-emerald-600" />
+              <Edit className="h-4 w-4" />
             </button>
           </PermissionGuard>
-          <PermissionGuard permission="delete-terms">
+          <PermissionGuard permission="delete_terms_condition">
             <button
               onClick={() => handleDelete(params.data.id)}
-              className="text-[#ef4444] hover:scale-110 transition-transform group/delete"
+              className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110 group/delete"
               title="Delete"
             >
-              <Trash2 className="h-5 w-5 text-rose-500 group-hover/delete:text-rose-600" />
+              <Trash2 className="h-4 w-4" />
             </button>
           </PermissionGuard>
         </div>
       ),
     },
-  ], [visibleCols, currentPage, pageSize])
+  ], [visibleCols, currentPage, pageSize, hasAnyPermission])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -216,7 +218,7 @@ export const TermsListPage = () => {
         backTo="/inventory/sales"
         tabs={tabs}
         onCreate={handleAdd}
-        createPermission="create-terms"
+        createPermission="create_terms_condition"
         showStatusFilter={true}
         statusValue={status}
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}

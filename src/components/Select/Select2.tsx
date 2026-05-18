@@ -18,6 +18,7 @@ export interface Select2Props extends Omit<Props<Option, boolean, GroupBase<Opti
   rounded?: 'full' | 'md' | 'lg'
   size?: 'sm' | 'md'
   variant?: 'solid' | 'outline' | 'ghost'
+  menuPortalTarget?: HTMLElement | null
 }
 
 export const Select2 = ({
@@ -30,6 +31,7 @@ export const Select2 = ({
   rounded = 'lg',
   size = 'md',
   variant = 'outline',
+  menuPortalTarget = typeof document !== 'undefined' ? document.body : undefined,
   ...rest
 }: Select2Props) => {
   // Find the selected option object based on the value string/number
@@ -57,6 +59,7 @@ export const Select2 = ({
         value={selectedOption}
         onChange={handleChange}
         isMulti={isMulti}
+        menuPortalTarget={menuPortalTarget}
         unstyled
         classNames={{
           control: (state) =>
@@ -68,13 +71,13 @@ export const Select2 = ({
               variant === 'solid' && 'bg-[#f8fafc] border-gray-100',
               variant === 'outline' && 'bg-white border-gray-200',
               state.isFocused && variant !== 'ghost'
-                ? 'border-primary ring-4 ring-primary/5 bg-white' 
+                ? 'border-primary ring-1 ring-primary/30 bg-white' 
                 : variant !== 'ghost' ? 'hover:border-gray-300' : '',
               error && 'border-rose-500 ring-rose-500/10',
               state.isDisabled && 'opacity-50 cursor-not-allowed bg-gray-50'
             ),
           placeholder: () => 'text-gray-400',
-          singleValue: () => variant === 'ghost' ? 'text-[#1e4ba1] text-[14px]' : 'text-[#475569]',
+          singleValue: () => variant === 'ghost' ? 'text-primary text-[14px]' : 'text-[#475569]',
           multiValue: () => 'bg-gray-100 rounded-md px-2 py-0.5 text-xs text-gray-700 mr-1 flex items-center',
           multiValueLabel: () => 'mr-1',
           multiValueRemove: () => 'hover:bg-rose-100 hover:text-rose-600 rounded cursor-pointer',

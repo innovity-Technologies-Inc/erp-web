@@ -19,7 +19,7 @@ import {
   Link as LinkIcon,
   Image as ImageIcon
 } from 'lucide-react'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate, useParams, Link } from '@tanstack/react-router'
 import { saleSchema, type SaleFormValues } from '../hooks/validation'
 import { 
   useWarehouses, 
@@ -28,23 +28,31 @@ import {
   useProductBatchInfo, 
   useMerchantDetails,
   usePaymentMethods,
-  useCreateSale
+  useUpdateSale,
+  useSaleDetails
 } from '../hooks/useSales'
 import { Select2 } from '@/components/Select/Select2'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
+import { Loader2 } from 'lucide-react'
 
 // ─── Simple Rich Text Editor ───────────────────────────────────────────────────
 
 const RichEditor = ({ value, onChange, placeholder }: { value: string, onChange: (val: string) => void, placeholder?: string }) => {
   const editorRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const isFirstMount = useRef(true)
 
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value || ''
+    // Defensively handle cases where 'value' might be an object/array due to naming collisions
+    const safeValue = typeof value === 'string' ? value : ''
+    
+    // Set content on initial mount or when value actually changes from outside
+    if (editorRef.current && (isFirstMount.current || (editorRef.current.innerHTML !== safeValue && document.activeElement !== editorRef.current))) {
+      editorRef.current.innerHTML = safeValue
+      isFirstMount.current = false
     }
   }, [value])
 
@@ -107,6 +115,7 @@ const RichEditor = ({ value, onChange, placeholder }: { value: string, onChange:
         ref={editorRef}
         contentEditable
         onInput={(e) => onChange(e.currentTarget.innerHTML)}
+        onBlur={(e) => onChange(e.currentTarget.innerHTML)}
         className="w-full flex-1 p-4 text-[14px] outline-none min-h-[250px] text-[#475569] leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
         data-placeholder={placeholder}
       />
@@ -116,18 +125,32 @@ const RichEditor = ({ value, onChange, placeholder }: { value: string, onChange:
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 
-export const SaleCreatePage = () => {
+const tabs = [
+  { name: 'Manage Sale',          to: '/inventory/sales', active: true },
+  { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
+  { name: 'Manage Sales Terms',   to: '/inventory/terms' },
+  { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
+]
+
+export const SaleEditPage = () => {
   const navigate = useNavigate()
+  const { id } = useParams({ strict: false })
+  const saleId = id ? parseInt(id as string, 10) : null
   const { currency, currencyPosition } = useSettings()
   const [merchantSearch, setMerchantSearch] = useState('')
   const [productSearch, setProductSearch] = useState('')
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
+  const [isHydrating, setIsHydrating] = useState(true)
 
   const { data: warehousesData } = useWarehouses()
   const { data: merchantsData } = useMerchants(merchantSearch)
   const { data: paymentMethodsData } = usePaymentMethods()
-  const { mutate: createSaleMutation, isPending: isSaving } = useCreateSale()
+  const { mutate: updateSaleMutation, isPending: isSaving } = useUpdateSale()
+  
+  // Fetch initial details
+  const { data: saleDetails, isLoading: isLoadingDetails } = useSaleDetails(saleId)
 
+  
   // Helper for consistent formatting within this component
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)
 
@@ -138,6 +161,7 @@ export const SaleCreatePage = () => {
     watch,
     setValue,
     getValues,
+    reset,
     formState: { errors, isDirty },
   } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema),
@@ -145,20 +169,7 @@ export const SaleCreatePage = () => {
       date: new Date().toISOString().split('T')[0],
       warehouse_id: undefined,
       customer_id: undefined,
-      items: [{
-        product_id: 0,
-        batch_master_id: 0,
-        quantity: 1,
-        rate: 0,
-        discount_per: 0,
-        discount: 0,
-        vat_per: 0,
-        vat_amnt: 0,
-        total_price: 0,
-        avl_qty: 0,
-        unit: '',
-        description: ''
-      }],
+      items: [],
       payment_type_id: undefined,
       payment_amount: 0,
       paid_amount: 0,
@@ -171,6 +182,73 @@ export const SaleCreatePage = () => {
       details: ''
     },
   })
+
+  // Prepopulate form data when saleDetails changes
+  useEffect(() => {
+    if (saleDetails && isHydrating) {
+      const data = saleDetails
+      
+      const itemsSource = Array.isArray(data.InvoiceDetails) ? data.InvoiceDetails : 
+                          Array.isArray(data.invoice_details) ? data.invoice_details : [];
+      
+      const formattedItems = itemsSource.map((item: any) => ({
+        product_id: item.product_id,
+        batch_master_id: item.batch_master_id,
+        quantity: parseFloat(item.quantity) || 0,
+        rate: parseFloat(item.rate) || 0,
+        discount_per: parseFloat(item.discount_per) || 0,
+        discount: parseFloat(item.discount) || 0,
+        vat_per: parseFloat(item.vat_amnt_per) || 0,
+        vat_amnt: parseFloat(item.vat_amnt) || 0,
+        total_price: parseFloat(item.total_price) || 0,
+        // The backend returns 'available_qty' on the item, fallback to 0 if not present
+        avl_qty: parseFloat(item.available_qty) || parseFloat(item.batchMaster?.avl_qty) || 0,
+        // The backend returns the product relation, extract the unit from there
+        unit: item.product?.unit?.unit_name || item.batchMaster?.unit || '',
+        description: item.description || ''
+      }))
+
+      let detailsValue = ''
+      
+      const isObjectString = (val: any) => typeof val === 'string' && (val.includes('[object Object]') || val.startsWith('{') || val.startsWith('['));
+
+      // In Laravel, the HTML string might be 'invoice_details' or 'invoice_details_text' depending on the serialization.
+      if (typeof data.invoice_details === 'string' && !isObjectString(data.invoice_details)) {
+        detailsValue = data.invoice_details
+      } else if (typeof data.invoice_details_text === 'string') {
+        detailsValue = data.invoice_details_text
+      } else if (typeof data.details === 'string' && !isObjectString(data.details)) {
+        detailsValue = data.details
+      }
+      
+      if (typeof detailsValue !== 'string' || isObjectString(detailsValue)) {
+        detailsValue = ''
+      }
+      
+      reset({
+        date: data.date ? new Date(data.date).toISOString().split('T')[0] : '',
+        warehouse_id: itemsSource?.[0]?.warehouse_id,
+        customer_id: data.customer_id,
+        items: formattedItems?.length ? formattedItems : [],
+        payment_type_id: data.initial_payment_method_id || data.payment_type || undefined,
+        payment_amount: parseFloat(data.payment_amount) || parseFloat(data.paid_amount) || 0,
+        paid_amount: parseFloat(data.paid_amount) || 0,
+        invoice_discount: parseFloat(data.invoice_discount) || 0,
+        shipping_cost: parseFloat(data.shipping_cost) || 0,
+        previous: parseFloat(data.prevous_due) || parseFloat(data.customer?.previous_due) || 0,
+        grand_total: parseFloat(data.total_amount) || parseFloat(data.net_total) || 0,
+        due_amount: parseFloat(data.due_amount) || 0,
+        total_discount: parseFloat(data.total_discount) || 0,
+        details: detailsValue
+      })
+
+      // Short delay to allow sub-components (batches, etc.) to start their queries
+      // before we lift the loading curtain
+      setTimeout(() => {
+        setIsHydrating(false)
+      }, 800)
+    }
+  }, [saleDetails, reset, isHydrating])
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -193,7 +271,14 @@ export const SaleCreatePage = () => {
   useEffect(() => {
     if (!watchWarehouseId) return
     const currentItems = getValues('items')
+    // Don't auto-clear if we are editing and data is loading/just loaded
+    if (saleDetails && isLoadingDetails) return
+
+    // If warehouse changes dynamically after initial load
     if (currentItems.length > 1 || (currentItems.length === 1 && currentItems[0].product_id !== 0)) {
+       // Only clear if the warehouse ID actually differs from the initial load
+       if (saleDetails && watchWarehouseId === saleDetails.invoice_details?.[0]?.warehouse_id) return
+       
       setValue('items', [{
         product_id: 0,
         batch_master_id: 0,
@@ -209,16 +294,16 @@ export const SaleCreatePage = () => {
         description: ''
       }])
     }
-  }, [watchWarehouseId, setValue, getValues])
+  }, [watchWarehouseId, setValue, getValues, saleDetails, isLoadingDetails])
 
   // 2. Merchant Details Logic
   useEffect(() => {
     if (selectedMerchantDetails?.data) {
+      // Only overwrite previous due if customer is changed manually from the originally loaded one
+      if (saleDetails && watchCustomerId === saleDetails.customer_id) return
       setValue('previous', selectedMerchantDetails.data.previous_due || 0)
-    } else {
-      setValue('previous', 0)
     }
-  }, [selectedMerchantDetails, setValue])
+  }, [selectedMerchantDetails, setValue, saleDetails, watchCustomerId])
 
   // 3. Credit Sale Logic
   useEffect(() => {
@@ -280,6 +365,8 @@ export const SaleCreatePage = () => {
   }, [totals, paid_amount, setValue])
 
   const onSubmit = (data: SaleFormValues) => {
+    if (!saleDetails?.uuid) return
+
     const validItems = data.items.filter(item => item.product_id !== 0 && item.batch_master_id !== 0)
     if (validItems.length === 0) return
     
@@ -304,7 +391,7 @@ export const SaleCreatePage = () => {
       net_total: totals.grandTotal
     }
 
-    createSaleMutation(payload, {
+    updateSaleMutation({ uuid: saleDetails.uuid, data: payload }, {
       onSuccess: () => navigate({ to: '/inventory/sales' }),
     })
   }
@@ -356,6 +443,17 @@ export const SaleCreatePage = () => {
     setValue(`items.${index}.total_price`, totalPrice)
   }, [getValues, setValue])
 
+  if (isLoadingDetails) {
+    return (
+      <div className="min-h-screen bg-[#f1f0f5] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-[#64748b] font-medium text-[13px]">Loading Sale Details...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins">
       {/* Page Header */}
@@ -369,7 +467,7 @@ export const SaleCreatePage = () => {
               <ArrowLeft className="h-4 w-4" strokeWidth={3} />
               <span>Back</span>
             </Link>
-            <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">New Sales Transaction</h1>
+            <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Edit Sales Transaction <span className="text-[#64748b] text-[14px]">[{saleDetails?.invoice_id}]</span></h1>
           </div>
         </div>
       </div>
@@ -604,7 +702,7 @@ export const SaleCreatePage = () => {
               <div className="flex items-center justify-end gap-3 shrink-0">
                 <button type="button" onClick={handleDiscard} className="px-6 h-10 bg-white border border-gray-200 text-[#64748b] font-medium rounded-lg hover:bg-gray-50 transition-all text-[13px] shadow-sm">Cancel</button>
                 <button type="submit" form="sale-form" disabled={isSaving} className="px-8 h-10 bg-[#059669] hover:bg-[#047857] text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[13px]">
-                  {isSaving ? <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Check className="h-4 w-4" /> Save Transaction</>}
+                  {isSaving ? <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Check className="h-4 w-4" /> Update</>}
                 </button>
               </div>
             </div>
@@ -672,6 +770,16 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
     return r / noOfQty
   }, [rate, batchId, batchDataResponse])
 
+  // Automatically sync local avl_qty and unit if they are missing but batch data is ready
+  useEffect(() => {
+    const batches = batchDataResponse?.data?.batchData || {}
+    const selectedBatch = batches[batchId]
+    if (selectedBatch && (!avlQty || !unit)) {
+      setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
+      setValue(`items.${index}.unit`, selectedBatch.unit || '')
+    }
+  }, [batchDataResponse, batchId, avlQty, unit, index, setValue])
+
   const rowTotalPrice = useMemo(() => {
     const q = Number(qty) || 0
     const r = Number(rate) || 0
@@ -695,14 +803,14 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{avlQty || '0.00'}</td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{unit || 'Unit'}</td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input type="number" {...register(`items.${index}.quantity`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]" />
+        <input type="number" {...register(`items.${index}.quantity`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]" />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input type="number" {...register(`items.${index}.rate`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]" />
+        <input type="number" {...register(`items.${index}.rate`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]" />
       </td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{perPcsRate.toFixed(2)}</td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input type="number" {...register(`items.${index}.discount_per`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]" />
+        <input type="number" {...register(`items.${index}.discount_per`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]" />
       </td>
       <td className="px-2 py-2 text-right text-[13px] font-medium text-[#475569] border-r border-primary/10">{formatCurrency(rowTotalPrice, currency, currencyPosition).replace(currency, '').trim()}</td>
       <td className="px-2 py-2 text-center">

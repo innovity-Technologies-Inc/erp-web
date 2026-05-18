@@ -42,3 +42,29 @@
 - [x] **Task 6.1**: Refactor `Sidebar.tsx` to remove redundant Inventory sub-items and implement `activePaths` logic for the "Sale" item.
 - [x] **Task 6.2**: Fix SL (Serial Number) calculation across all inventory list views to support continuous pagination (currentPage/pageSize logic).
 - [x] **Task 6.3**: Update `columnDefs` dependencies in list views to react to page changes for SL updates.
+
+## Task Group 7: Sales Transaction Implementation
+- [x] **Task 7.1**: Build `SaleCreatePage.tsx` with a multi-step purchase header and interactive item table.
+- [x] **Task 7.2**: Implement a **Synchronous Calculation Engine** to provide instant feedback on grand totals and row-level pricing.
+- [x] **Task 7.3**: Enhance `RichEditor` with a custom toolbar and improved typography for professional sale terms.
+- [x] **Task 7.4**: Integrate dynamic API hooks for warehouse-product dependency and merchant detail fetching.
+- [x] **Task 7.5**: Implement payment type logic to automate credit sale transitions and paid amount resets.
+- [x] **Task 7.6**: Finalize the store payload structure to match backend multi-item transaction requirements.
+- [x] **Task 7.7**: Implement `SaleEditPage.tsx` using `useSaleDetails` to fetch initial data via the `getReturnData` endpoint, mapping response data to populate the dynamic form.
+- [x] **Task 7.8**: Configure React Router parameterized route for editing sales.
+- [x] **Task 7.9**: Implement `SaleViewPage.tsx` with a high-fidelity layout matching the reference design, including billing cards and a detailed product table.
+- [x] **Task 7.10**: Set up the parameterized route for the Sale View and link it to the Sales List.
+
+## Task Group 8: Vendor Management Implementation
+- [x] **Task 8.1**: Create `suppliers.api.ts` and `useSuppliers.ts` hooks for backend communication.
+- [x] **Task 8.2**: Implement `VendorListPage.tsx` with `ListPageLayout` and advanced multi-location filtering.
+- [x] **Task 8.3**: Build `VendorCreatePage.tsx` with a professional 7/5 multi-card form layout, optimized contact row, and Zod validation.
+- [x] **Task 8.4**: Build `VendorEditPage.tsx` featuring the same 7/5 split and automated data hydration using the `useSupplierData` hook.
+- [x] **Task 8.5**: Configure dedicated routes for Vendor workflow (`/inventory/vendors/create`, `/inventory/vendors/edit/$id`).
+- [x] **Task 8.6**: Refactor `ListPageLayout.tsx` to handle optional navigation tabs and standardized action buttons.
+- [x] **Task 8.7**: Integrate "Vendor" as a standalone menu item in the Sidebar with proper path synchronization (active highlight for Create/Edit routes).
+- [x] **Task 8.8**: Perform project-wide audit to standardize all primary, secondary, and icon buttons to match the established "Design Flow".
+- [x] **Task 8.9**: Update Vendor validation and UI (Create, Edit, Modal) to make only Vendor Name mandatory, removing asterisk marks and red borders from optional fields.
+- [x] **Task 8.10**: Implement **Column Visibility Toggle** and **Core Toolbar Filtering** (Search, Status, Date Range) in the Vendor List page, ensuring real-time server-side synchronization while maintaining a clean one-line layout.
+- [x] **Task 8.11**: Perform project-wide standardization of all `<input>`, `<textarea>`, and `Select2` focus and hover styles, replacing hardcoded hex values with `primary` color tokens and adding `hover:border-gray-300`.
+- [x] **Task 8.12**: Implement project-wide **Permission-Based UI**: Standardize permission strings to underscores, wrap action buttons in `PermissionGuard`, and dynamically hide table action columns. Added global bypass for **`super-admin`** role while enforcing strict validation for all other roles.

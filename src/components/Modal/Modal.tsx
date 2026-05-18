@@ -51,7 +51,7 @@ export const Modal = ({
       {/* Modal Content */}
       <div className={`relative w-full ${sizeClasses[size]} bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden transition-all transform scale-100 animate-in fade-in zoom-in duration-200`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-bottom border-[#1e4ba1]/30">
+        <div className="flex items-center justify-between px-6 py-4 border-bottom border-primary/30">
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
           <button
             onClick={onClose}
@@ -68,7 +68,7 @@ export const Modal = ({
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 bg-gray-50 border-top border-[#1e4ba1]/30">
+          <div className="px-6 py-4 bg-gray-50 border-top border-primary/30">
             {footer}
           </div>
         )}

@@ -12,9 +12,10 @@ import { useUsers } from '@/hooks/useUsers'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { Select2 } from '@/components/Select/Select2'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { usePermissions } from '@/hooks/usePermissions'
 
-const tabs: NavTab[] = [
-  { name: 'Manage Sale',          to: '/inventory/sales' },
+const tabs = [
+  { name: 'Manage Sale', to: '/inventory/sales' },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments', active: true },
   { name: 'Manage Sales Terms',   to: '/inventory/terms' },
   { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
@@ -37,6 +38,7 @@ export const InvoicePaymentListPage = () => {
   const { currency, currencyPosition } = useSettings()
   const { data: usersResponse } = useUsers()
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateConfirmStatus()
+  const { hasPermission } = usePermissions()
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
@@ -161,7 +163,7 @@ export const InvoicePaymentListPage = () => {
         // Backend returns HTML link. We extract text and style it.
         const text = params.value.replace(/<[^>]*>?/gm, '')
         return (
-          <span className="text-[#1e4ba1] font-bold hover:underline cursor-pointer">
+          <span className="text-primary font-bold hover:underline cursor-pointer">
             {text}
           </span>
         )
@@ -182,7 +184,7 @@ export const InvoicePaymentListPage = () => {
       flex: 0,
       hide: !visibleCols.invoiceNo,
       cellRenderer: (params: any) => (
-        <span className="text-[#1e4ba1] font-bold">
+        <span className="text-primary font-bold">
           #{params.value}
         </span>
       )
@@ -213,7 +215,7 @@ export const InvoicePaymentListPage = () => {
       hide: !visibleCols.paidAmount,
       headerClass: 'text-right',
       cellStyle: { textAlign: 'right' },
-      cellClass: 'font-bold text-[#1e4ba1]',
+      cellClass: 'font-bold text-primary',
       valueFormatter: (params) => formatCurrency(params.value, currency, currencyPosition)
     },
     {
@@ -265,10 +267,10 @@ export const InvoicePaymentListPage = () => {
       width: 160,
       flex: 0,
       pinned: 'right',
-      hide: !visibleCols.updateStatus,
+      hide: !visibleCols.updateStatus || !hasPermission('sales_payment_list'),
       cellRenderer: (params: any) => (
         <div className="flex items-center justify-center h-full px-2 py-1">
-          <PermissionGuard permission="edit-payments">
+          <PermissionGuard permission="sales_payment_list">
             <Select2
               options={[
                 { value: 2, label: 'Pending' },
@@ -287,7 +289,7 @@ export const InvoicePaymentListPage = () => {
         </div>
       )
     },
-  ], [visibleCols, currency, currencyPosition, currentPage, pageSize, handleStatusChange])
+  ], [visibleCols, currency, currencyPosition, currentPage, pageSize, handleStatusChange, hasPermission])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -336,7 +338,7 @@ export const InvoicePaymentListPage = () => {
         title="Invoice Payment List"
         backTo="/inventory/sales"
         tabs={tabs}
-        createPermission="create-payments"
+        createPermission="sales_payment_list"
         showStatusFilter={true}
         statusValue={status}
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}

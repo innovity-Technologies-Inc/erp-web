@@ -63,18 +63,67 @@ writing any code. Never deviate from these conventions without explicit user app
 - **Dynamic Branding**: Always use `useSettings()` hook to get `logo`, `siteName`, and colors. Never hardcode these.
 - **Backend-Driven Colors**: Use the 5 basic colors (Primary, Info, Success, Warning, Danger) provided by the backend `webSetting`. These MUST be applied project-wide via CSS variables.
 - **AG Grid for all tables**: Replace every DataTables instance with AG Grid Community.
-- **Permission-Based UI**: ALWAYS wrap action buttons (Create, Edit, Delete, View) with `PermissionGuard` or check permissions via `usePermissions`. Action buttons MUST NOT be visible if the user lacks the required permission. Use the `createPermission`, `editPermission`, `deletePermission` patterns.
-- **Super-Admin Access**: Users with the `Super-Admin` role (checked in `usePermissions`) have global access and bypass all permission guards. This is a project-wide standard.
+- **Permission-Based UI**: ALWAYS wrap action buttons (Create, Edit, Delete, View) with `PermissionGuard` or check permissions via `usePermissions`. Action buttons MUST NOT be visible if the user lacks the required permission. 
+  - **Naming Convention**: Permission strings MUST use **underscores** (e.g., `view_sales`, `edit_supplier`). Never use hyphens.
+  - **Dynamic Columns**: Datatable action columns MUST be dynamically hidden if the user has NO permissions for any action in that column.
+- **Super-Admin Bypass**: Users with the `super-admin` or `super admin` role (case-insensitive) bypass all permission guards and have global access. This logic is centralized in the `usePermissions` hook.
 
 ## 2.1 Engineering & Design Standards (STRICT)
 
-1. **Dropdowns (Select2)**: NEVER use native HTML `<select>` elements. Use the project-standard `Select2` component (located in `src/components/Select/Select2.tsx`) for all dropdowns to ensure searchability and React Virtual DOM compatibility.
-2. **Notifications**: DO NOT use small toast notifications for success or critical error messages. ALWAYS use the global `NotificationModal` (via `showNotificationModal` in `useUiStore`) for a premium, high-impact user experience.
-3. **Typography**: 
+1. **Standardized Button System**:
+   - **Save / Update (Primary Action)**: 
+     - **Color**: Green (`bg-[#059669]`, hover: `bg-[#047857]`).
+     - **Style**: `px-8 h-10 text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2`.
+     - **Font**: `text-[13px]`.
+   - **Cancel / Reset (Secondary Action)**:
+     - **Color**: White/Gray (`bg-white text-[#64748b] border border-gray-200`).
+     - **Style**: `px-6 h-10 rounded-lg hover:bg-gray-50 transition-all shadow-sm`.
+   - **Table Actions (Icon Buttons)**:
+     - **View**: `p-2 hover:bg-blue-50 text-[#1e4ba1] rounded-xl transition-all border border-transparent hover:border-blue-100` (Eye icon).
+     - **Edit**: `p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100` (Edit icon).
+     - **Delete**: `p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100` (Trash icon).
+     - **Hover Effect**: ALWAYS use `hover:scale-110` for action icons.
+
+2. **Dropdowns (Select2)**: NEVER use native HTML `<select>` elements. Use the project-standard `Select2` component (located in `src/components/Select/Select2.tsx`) for all dropdowns to ensure searchability and React Virtual DOM compatibility.
+
+3. **Standardized Input System**:
+   - **Focus Style**: `focus:ring-1 focus:ring-primary/30 focus:border-primary`.
+   - **Hover Style**: `hover:border-gray-300`.
+   - **General Classes**: `w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none transition-all font-medium text-[#475569]`.
+   - **Error State**: `border-rose-500 focus:ring-rose-500/10`.
+   - **Textarea**: Same as input, but use `p-3` or `p-4` and `min-h-[100px]`.
+
+4. **Notifications & Feedback**: 
+   - **Success Messages**: DO NOT use small toast notifications for success events (e.g., Save, Update, Delete). ALWAYS use the global `NotificationModal` (via `showNotificationModal` in `useUiStore`) for a premium, high-impact user experience.
+   - **Error Messages**: Use toast notifications for transient errors, but prefer the `NotificationModal` (variant="error") for critical submission failures.
+
+4. **Typography**: 
    - **Font Family**: Always use **Poppins**.
-   - **Font Sizes**: Strictly follow project standards (e.g., 10px-12px for small UI elements, 14px-16px for body/inputs, 20px+ for headers).
-4. **Responsiveness**: All new components and layouts MUST be fully responsive and tested for various screen sizes (Mobile, Tablet, Laptop, Desktop).
-5. **Backend Integrity**: NEVER modify backend API controllers, routes, or logic without explicit user approval. Your focus is strictly on the React frontend migration.
+   - **Font Weight**: 
+     - Use **font-medium** for labels, inputs, and general body text.
+     - Use **font-semibold** for section titles and important table values.
+     - Use **font-bold** or **font-black** ONLY for primary headers and high-impact totals.
+   - **Font Sizes**: 
+     - `10px - 11px`: Small UI elements, helper text, or dense table values.
+     - `12px - 14px`: Standard body, labels, and input text.
+     - `15px - 18px`: Card titles, sub-headers.
+     - `20px - 24px+`: Main page titles and critical grand totals.
+
+5. **Page Header Standards**:
+   - **Index/List Pages**: MUST use `ListPageLayout` which includes a header with **Navigation Tabs** (Manage Sale, Payments, Terms, etc.) and global filters.
+   - **Transaction Pages (Create, Edit, View)**: Header MUST follow the "List Page Style" (White background, `max-w-[1600px]`, `px-2 py-4`) but **WITHOUT navigation tabs**.
+   - **Header Elements**:
+     - **Back Button**: Branded box style (`bg-white border-gray-100 rounded-lg text-gray-400 hover:text-[#1e4ba1] shadow-sm`) with a thick `strokeWidth={3}` icon.
+     - **Title**: Standardized to `text-[20px] font-medium text-[#1e4ba1]`.
+
+6. **Spacing & Padding**:
+   - **Card Padding**: Use consistent padding for major sections (e.g., `p-4` or `p-6`).
+   - **Layout Margins**: Maintain uniform `space-y-6` between vertical sections.
+
+7. **Responsiveness**: All new components and layouts MUST be fully responsive and tested for various screen sizes (Mobile, Tablet, Laptop, Desktop).
+
+8. **Backend Integrity**: NEVER modify backend API controllers, routes, or logic without explicit user approval. Your focus is strictly on the React frontend migration.
+
 
 ---
 

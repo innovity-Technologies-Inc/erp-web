@@ -20,18 +20,18 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const variants = {
-    primary: 'bg-primary text-white hover:opacity-90 disabled:bg-gray-400',
+    primary: 'bg-[#059669] text-white hover:bg-[#047857] shadow-md shadow-emerald-500/20 disabled:bg-gray-400 disabled:shadow-none',
     secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:bg-gray-100',
-    outline: 'border border-[#1e4ba1]/30 text-[#1e4ba1] hover:bg-[#1e4ba1]/10 disabled:bg-transparent',
+    outline: 'bg-white text-[#64748b] border border-gray-200 hover:bg-gray-50 shadow-sm disabled:opacity-50',
     ghost: 'text-gray-600 hover:bg-gray-100 disabled:bg-transparent',
-    danger: 'bg-danger text-white hover:opacity-90 disabled:bg-gray-400',
-    warning: 'bg-warning text-white hover:opacity-90 disabled:bg-gray-400',
+    danger: 'bg-rose-500 text-white hover:bg-rose-600 shadow-md shadow-rose-500/20 disabled:bg-gray-400 disabled:shadow-none',
+    warning: 'bg-amber-500 text-white hover:bg-amber-600 shadow-md shadow-amber-500/20 disabled:bg-gray-400 disabled:shadow-none',
   }
 
   return (
     <button
       className={cn(
-        'px-4 py-2 rounded-md font-medium transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed',
+        'px-8 h-10 rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed text-[13px]',
         variants[variant],
         className
       )}

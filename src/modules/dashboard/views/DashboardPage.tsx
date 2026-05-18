@@ -351,7 +351,7 @@ export const DashboardPage = () => {
             {/* Dynamic Grid Lines */}
             <div className="absolute inset-0 left-44 right-2 flex justify-between pointer-events-none mb-10">
               {gridSteps.map(step => (
-                <div key={step} className="h-full border-l border-[#1e4ba1]/30 relative">
+                <div key={step} className="h-full border-l border-primary/30 relative">
                   <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] text-gray-400 font-semibold">
                     {step}
                   </span>

@@ -134,8 +134,8 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
                 className={clsx(
                   "h-8 w-8 rounded-lg text-[12px] font-medium transition-all flex items-center justify-center",
                   !isCurrentMonth && "opacity-0 pointer-events-none",
-                  isSelected ? "bg-[#1e4ba1] text-white shadow-lg" : 
-                  isInRange ? "bg-[#dbeafe] text-[#1e4ba1] rounded-none" : "hover:bg-gray-50 text-[#475569]",
+                  isSelected ? "bg-primary text-white shadow-lg" : 
+                  isInRange ? "bg-[#dbeafe] text-primary rounded-none" : "hover:bg-gray-50 text-[#475569]",
                   isSameDay(day, startDate) && endDate && "rounded-r-none",
                   isSameDay(day, endDate) && "rounded-l-none"
                 )}
@@ -155,7 +155,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
           "bg-[#f8fafc] border border-gray-100 px-4 py-2 rounded-full h-8 flex items-center gap-2 min-w-[320px] shadow-inner cursor-pointer hover:bg-white transition-all group",
-          isOpen && "ring-4 ring-[#1e4ba1]/5 border-[#1e4ba1]/20 bg-white"
+          isOpen && "ring-4 ring-primary/5 border-primary/20 bg-white"
         )}
       >
         <div className="flex items-center gap-2 flex-1 justify-center">
@@ -178,7 +178,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
            {(from || to) ? (
              <X onClick={clear} className="h-3 w-3 text-gray-400 hover:text-rose-500 transition-colors" />
            ) : (
-             <CalendarIcon className="h-3.5 w-3.5 text-[#1e4ba1] opacity-40" />
+             <CalendarIcon className="h-3.5 w-3.5 text-primary opacity-40" />
            )}
         </div>
       </div>
@@ -188,7 +188,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
           <div className="flex items-start gap-8">
              <button 
                onClick={() => setViewDate(subMonths(viewDate, 1))}
-               className="p-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-400 hover:text-[#1e4ba1]"
+               className="p-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-400 hover:text-primary"
              >
                <ChevronLeft className="h-5 w-5" />
              </button>
@@ -200,7 +200,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
 
              <button 
                onClick={() => setViewDate(addMonths(viewDate, 1))}
-               className="p-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-400 hover:text-[#1e4ba1]"
+               className="p-2 hover:bg-gray-50 rounded-xl transition-colors text-gray-400 hover:text-primary"
              >
                <ChevronRight className="h-5 w-5" />
              </button>
@@ -226,7 +226,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
                       onChange?.(format(start, 'yyyy-MM-dd'), format(end, 'yyyy-MM-dd'))
                       setIsOpen(false)
                     }}
-                    className="px-3 py-1.5 bg-gray-50 hover:bg-[#1e4ba1]/5 text-[#64748b] hover:text-[#1e4ba1] rounded-lg text-[11px] font-medium transition-all"
+                    className="px-3 py-1.5 bg-gray-50 hover:bg-primary/5 text-[#64748b] hover:text-primary rounded-lg text-[11px] font-medium transition-all"
                   >
                     {label}
                   </button>
@@ -234,7 +234,7 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
              </div>
              <button 
                onClick={() => setIsOpen(false)}
-               className="px-6 py-2 bg-[#1e4ba1] text-white rounded-xl text-[12px] font-medium shadow-lg shadow-[#1e4ba1]/20 hover:scale-105 active:scale-95 transition-all"
+               className="px-6 py-2 bg-primary text-white rounded-xl text-[12px] font-medium shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
              >
                Apply Filter
              </button>

@@ -5,6 +5,8 @@ import {
   getInvoicePaymentsDatatable, 
   updateConfirmStatus,
   createSale,
+  getSaleDetails,
+  updateSale,
   getWarehouses,
   getMerchants,
   getProducts,
@@ -18,6 +20,14 @@ export const useSalesDatatable = (params: any) => {
   return useQuery({
     queryKey: ['sales', 'datatable', params],
     queryFn: () => getSalesDatatable(params),
+  })
+}
+
+export const useSaleDetails = (id: number | null) => {
+  return useQuery({
+    queryKey: ['sales', 'details', id],
+    queryFn: () => getSaleDetails(id!),
+    enabled: !!id,
   })
 }
 
@@ -70,6 +80,30 @@ export const useCreateSale = () => {
       showNotificationModal(
         'Creation Failed',
         error.response?.data?.message || 'Failed to create sale. Please try again.',
+        'error'
+      )
+    }
+  })
+}
+
+export const useUpdateSale = () => {
+  const queryClient = useQueryClient()
+  const { showNotificationModal } = useUiStore()
+
+  return useMutation({
+    mutationFn: ({ uuid, data }: { uuid: string, data: any }) => updateSale(uuid, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sales'] })
+      showNotificationModal(
+        'Sale Updated!',
+        'The sales invoice has been updated successfully.',
+        'success'
+      )
+    },
+    onError: (error: any) => {
+      showNotificationModal(
+        'Update Failed',
+        error.response?.data?.message || 'Failed to update sale. Please try again.',
         'error'
       )
     }

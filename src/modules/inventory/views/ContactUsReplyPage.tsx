@@ -87,9 +87,9 @@ export const ContactUsReplyPage = () => {
 
   if (!details) {
     return (
-      <div className="text-center py-20 bg-white rounded-xl border border-[#1e4ba1]/30 shadow-sm">
+      <div className="text-center py-20 bg-white rounded-xl border border-primary/30 shadow-sm">
         <h2 className="text-xl font-semibold text-[#1e293b]">Contact message not found</h2>
-        <Link to="/inventory/contact-us" className="mt-4 text-[#1e4ba1] hover:underline inline-block font-medium">
+        <Link to="/inventory/contact-us" className="mt-4 text-primary hover:underline inline-block font-medium">
           Go back to list
         </Link>
       </div>
@@ -123,12 +123,12 @@ export const ContactUsReplyPage = () => {
         <div className="flex items-center gap-4">
           <Link
             to="/inventory/contact-us"
-            className="flex items-center gap-2 px-2 py-2 bg-white border border-[#1e4ba1]/30 rounded-lg text-gray-400 hover:text-[#1e4ba1] transition-colors shadow-sm text-[10px] font-medium"
+            className="flex items-center gap-2 px-2 py-2 bg-white border border-primary/30 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
           </Link>
-          <h1 className="text-[20px] font-medium text-[#1e4ba1] tracking-tight ml-2">
+          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
             Contact Us Replay
           </h1>
         </div>
@@ -156,9 +156,9 @@ export const ContactUsReplyPage = () => {
         <div className="space-y-6">
           
           {/* Client Info Card */}
-          <div className="bg-white rounded-[10px] border border-[#1e4ba1]/30 p-8 shadow-sm">
+          <div className="bg-white rounded-[10px] border border-primary/30 p-8 shadow-sm">
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-12 w-12 bg-[#1e4ba1] rounded-lg flex items-center justify-center">
+              <div className="h-12 w-12 bg-primary rounded-lg flex items-center justify-center">
                 <User className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -171,14 +171,14 @@ export const ContactUsReplyPage = () => {
               <div className="space-y-2">
                 <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Email Address</p>
                 <div className="flex items-center gap-2 text-[14px] font-semibold text-[#334155]">
-                  <Mail className="h-4 w-4 text-[#1e4ba1]" />
+                  <Mail className="h-4 w-4 text-primary" />
                   {details.email}
                 </div>
               </div>
               <div className="space-y-2">
                 <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Phone Number</p>
                 <div className="flex items-center gap-2 text-[14px] font-semibold text-[#334155]">
-                  <Phone className="h-4 w-4 text-[#1e4ba1]" />
+                  <Phone className="h-4 w-4 text-primary" />
                   {details.phone || '---'}
                 </div>
               </div>
@@ -186,13 +186,13 @@ export const ContactUsReplyPage = () => {
           </div>
 
           {/* Message Content Card */}
-          <div className="bg-white rounded-xl border border-[#1e4ba1]/30 p-8 shadow-sm relative overflow-hidden min-h-[250px] flex flex-col">
+          <div className="bg-white rounded-xl border border-primary/30 p-8 shadow-sm relative overflow-hidden min-h-[250px] flex flex-col">
              <div className="flex items-center gap-3 mb-6">
-               <span className="px-2.5 py-1 bg-[#dbeafe] text-[#1e4ba1] text-[10px] font-medium uppercase rounded-md">Subject</span>
+               <span className="px-2.5 py-1 bg-[#dbeafe] text-primary text-[10px] font-medium uppercase rounded-md">Subject</span>
                <h4 className="text-[16px] font-medium text-[#1e293b]">{details.subject}</h4>
              </div>
              
-             <div className="relative p-6 bg-[#f8fafc] rounded-lg flex-1 border-l-4 border-[#1e4ba1] overflow-hidden">
+             <div className="relative p-6 bg-[#f8fafc] rounded-lg flex-1 border-l-4 border-primary overflow-hidden">
                <Quote className="absolute -top-4 -right-1 h-20 w-20 text-gray-200/50 rotate-180" />
                <p className="text-[#334155] text-[14px] leading-relaxed relative z-10 font-normal">
                  "{details.message}"
@@ -209,11 +209,11 @@ export const ContactUsReplyPage = () => {
         </div>
 
         {/* Right Column: Compose Reply */}
-        <div className="bg-white rounded-xl border border-[#1e4ba1]/30 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
+        <div className="bg-white rounded-xl border border-primary/30 shadow-sm overflow-hidden flex flex-col min-h-[500px]">
           
           {/* Compose Header */}
           <div className="p-8 pb-4 flex items-center gap-3">
-            <Undo2 className="h-5 w-5 text-[#1e4ba1] -scale-x-100" />
+            <Undo2 className="h-5 w-5 text-primary -scale-x-100" />
             <h3 className="text-[18px] font-medium text-[#1e293b]">Compose Reply</h3>
           </div>
 
@@ -236,9 +236,8 @@ export const ContactUsReplyPage = () => {
               <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 gap-6 mt-4">
                 <div className="flex-1 flex flex-col gap-3">
                   <p className="text-[12px] font-medium text-gray-500">Your Message</p>
-                  <textarea
-                    {...register('replay_message')}
-                    className="flex-1 w-full border border-[#1e4ba1]/30 rounded-lg p-6 text-[15px] focus:ring-1 focus:ring-[#1e4ba1] focus:border-[#1e4ba1] outline-none resize-none bg-white transition-all placeholder:text-gray-300"
+                  <textarea {...register('replay_message')}
+                    className="flex-1 w-full border border-primary/30 rounded-lg p-6 text-[15px] outline-none resize-none bg-white placeholder:text-gray-300 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
                     placeholder="Enter your replay message here..."
                   />
                   {errors.replay_message && (
@@ -248,22 +247,22 @@ export const ContactUsReplyPage = () => {
 
                 {/* Attachment & Templates Bar */}
                 <div className="bg-[#f3f4f6] rounded-lg p-1.5 flex items-center h-12">
-                  <button type="button" className="flex-1 flex items-center justify-center gap-2 text-[13px] font-medium text-[#4b5563] hover:text-[#1e4ba1] transition-colors">
+                  <button type="button" className="flex-1 flex items-center justify-center gap-2 text-[13px] font-medium text-[#4b5563] hover:text-primary transition-colors">
                     <Paperclip className="h-4 w-4" />
                     Attach
                   </button>
                   <div className="w-[1px] h-6 bg-gray-300" />
-                  <button type="button" className="flex-1 flex items-center justify-center gap-2 text-[13px] font-medium text-[#4b5563] hover:text-[#1e4ba1] transition-colors">
+                  <button type="button" className="flex-1 flex items-center justify-center gap-2 text-[13px] font-medium text-[#4b5563] hover:text-primary transition-colors">
                     <History className="h-4 w-4" />
                     Templates
                   </button>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-end gap-4 mt-2">
+                <div className="flex items-center justify-end gap-3 mt-4">
                   <button 
                     type="button" 
-                    className="bg-[#f3f4f6] text-[#4b5563] hover:bg-rose-50 hover:text-rose-600 transition-all font-medium px-10 h-11 rounded-lg text-[14px]"
+                    className="px-6 h-10 bg-white border border-gray-200 text-[#64748b] font-medium rounded-lg hover:bg-gray-50 transition-all text-[13px] shadow-sm"
                     onClick={handleDiscard}
                     disabled={isReplying}
                   >
@@ -273,14 +272,14 @@ export const ContactUsReplyPage = () => {
                     <button 
                       type="submit"
                       disabled={isReplying}
-                      className="bg-[#0f172a] hover:bg-[#1e293b] text-white shadow-lg font-medium px-10 h-11 rounded-lg text-[14px] flex items-center gap-2 transition-all"
+                      className="px-10 h-10 bg-[#059669] hover:bg-[#047857] text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[13px]"
                     >
                       {isReplying ? (
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       ) : (
-                        <Send className="h-4 w-4 rotate-0" />
+                        <Send className="h-4 w-4" />
                       )}
-                      Send Replay
+                      Send Reply
                     </button>
                   </PermissionGuard>
                 </div>

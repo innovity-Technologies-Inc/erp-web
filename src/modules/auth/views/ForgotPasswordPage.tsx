@@ -37,7 +37,7 @@ export const ForgotPasswordPage = () => {
           We've sent a password reset link to your email address. Please follow the instructions to reset your password.
         </p>
         <Link to="/login">
-          <Button variant="outline" className="w-full py-3 border-[#1e4ba1]/30 text-[#1e4ba1] hover:bg-[#1e4ba1]/10 flex gap-2 justify-center items-center rounded-lg font-semibold text-sm transition-all">
+          <Button variant="outline" className="w-full py-3 border-primary/30 text-primary hover:bg-primary/10 flex gap-2 justify-center items-center rounded-lg font-semibold text-sm transition-all">
             <ArrowLeft className="h-4 w-4" />
             Back to Login
           </Button>
@@ -76,10 +76,9 @@ export const ForgotPasswordPage = () => {
           error={errors.email?.message}
           labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
         >
-          <input
-            {...register('email')}
+          <input {...register('email')}
             type="email"
-            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg outline-none placeholder:text-gray-400 text-sm hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
             placeholder="Enter your email address"
           />
         </FormField>

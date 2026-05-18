@@ -30,17 +30,64 @@ const menuItems = [
         icon: Scale, 
         to: '/inventory/sales', 
         permission: 'view_sales',
-        // Define paths that should also trigger this item as active
-        activePaths: ['/inventory/sales', '/inventory/terms', '/inventory/contact-us']
+        activePaths: ['/inventory/sales']
       },
-      { name: 'Vendor', icon: User, to: '/inventory/vendor', permission: 'view_supplier' },
-      { name: 'Product', icon: Package, to: '/inventory/product', permission: 'view_product' },
-      { name: 'Warehouse', icon: Warehouse, to: '/inventory/warehouse', permission: 'view_warehouse' },
-      { name: 'Purchase', icon: ShoppingCart, to: '/inventory/purchase', permission: 'view_purchase' },
-      { name: 'Merchant', icon: Users, to: '/inventory/merchant', permission: 'view_merchant' },
-      { name: 'Return', icon: RotateCcw, to: '/inventory/return', permission: 'sales_return' },
-      { name: 'Service', icon: Wrench, to: '/inventory/service', permission: 'view_service' },
-      { name: 'Quotation', icon: FileText, to: '/inventory/quotation', permission: 'view_quotation' },
+      { 
+        name: 'Vendor', 
+        icon: User, 
+        to: '/inventory/vendors', 
+        permission: 'view_supplier',
+        activePaths: ['/inventory/vendors']
+      },
+      { 
+        name: 'Product', 
+        icon: Package, 
+        to: '/inventory/product', 
+        permission: 'view_product',
+        activePaths: ['/inventory/product']
+      },
+      { 
+        name: 'Warehouse', 
+        icon: Warehouse, 
+        to: '/inventory/warehouse', 
+        permission: 'view_warehouse',
+        activePaths: ['/inventory/warehouse']
+      },
+      { 
+        name: 'Purchase', 
+        icon: ShoppingCart, 
+        to: '/inventory/purchase', 
+        permission: 'view_purchase',
+        activePaths: ['/inventory/purchase']
+      },
+      { 
+        name: 'Merchant', 
+        icon: Users, 
+        to: '/inventory/merchant', 
+        permission: 'view_merchant',
+        activePaths: ['/inventory/merchant']
+      },
+      { 
+        name: 'Return', 
+        icon: RotateCcw, 
+        to: '/inventory/return', 
+        permission: 'sales_return',
+        activePaths: ['/inventory/return']
+      },
+      { 
+        name: 'Service', 
+        icon: Wrench, 
+        to: '/inventory/service', 
+        permission: 'view_service',
+        activePaths: ['/inventory/service']
+      },
+      { 
+        name: 'Quotation', 
+        icon: FileText, 
+        to: '/inventory/quotation', 
+        permission: 'view_quotation',
+        activePaths: ['/inventory/quotation']
+      },
     ]
   }
 ]

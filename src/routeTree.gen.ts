@@ -15,11 +15,16 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedInventoryVendorsIndexRouteImport } from './routes/_authenticated/inventory/vendors.index'
 import { Route as AuthenticatedInventoryTermsIndexRouteImport } from './routes/_authenticated/inventory/terms.index'
 import { Route as AuthenticatedInventorySalesIndexRouteImport } from './routes/_authenticated/inventory/sales.index'
 import { Route as AuthenticatedInventoryContactUsIndexRouteImport } from './routes/_authenticated/inventory/contact-us.index'
+import { Route as AuthenticatedInventoryVendorsCreateRouteImport } from './routes/_authenticated/inventory/vendors.create'
 import { Route as AuthenticatedInventorySalesPaymentsRouteImport } from './routes/_authenticated/inventory/sales.payments'
 import { Route as AuthenticatedInventorySalesCreateRouteImport } from './routes/_authenticated/inventory/sales.create'
+import { Route as AuthenticatedInventoryVendorsEditIdRouteImport } from './routes/_authenticated/inventory/vendors.edit.$id'
+import { Route as AuthenticatedInventorySalesViewIdRouteImport } from './routes/_authenticated/inventory/sales.view.$id'
+import { Route as AuthenticatedInventorySalesEditIdRouteImport } from './routes/_authenticated/inventory/sales.edit.$id'
 import { Route as AuthenticatedInventoryContactUsReplyIdRouteImport } from './routes/_authenticated/inventory/contact-us.reply.$id'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -50,6 +55,12 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedInventoryVendorsIndexRoute =
+  AuthenticatedInventoryVendorsIndexRouteImport.update({
+    id: '/inventory/vendors/',
+    path: '/inventory/vendors/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryTermsIndexRoute =
   AuthenticatedInventoryTermsIndexRouteImport.update({
     id: '/inventory/terms/',
@@ -68,6 +79,12 @@ const AuthenticatedInventoryContactUsIndexRoute =
     path: '/inventory/contact-us/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryVendorsCreateRoute =
+  AuthenticatedInventoryVendorsCreateRouteImport.update({
+    id: '/inventory/vendors/create',
+    path: '/inventory/vendors/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventorySalesPaymentsRoute =
   AuthenticatedInventorySalesPaymentsRouteImport.update({
     id: '/inventory/sales/payments',
@@ -78,6 +95,24 @@ const AuthenticatedInventorySalesCreateRoute =
   AuthenticatedInventorySalesCreateRouteImport.update({
     id: '/inventory/sales/create',
     path: '/inventory/sales/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryVendorsEditIdRoute =
+  AuthenticatedInventoryVendorsEditIdRouteImport.update({
+    id: '/inventory/vendors/edit/$id',
+    path: '/inventory/vendors/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventorySalesViewIdRoute =
+  AuthenticatedInventorySalesViewIdRouteImport.update({
+    id: '/inventory/sales/view/$id',
+    path: '/inventory/sales/view/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventorySalesEditIdRoute =
+  AuthenticatedInventorySalesEditIdRouteImport.update({
+    id: '/inventory/sales/edit/$id',
+    path: '/inventory/sales/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryContactUsReplyIdRoute =
@@ -94,10 +129,15 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsRoute
+  '/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/inventory/contact-us/': typeof AuthenticatedInventoryContactUsIndexRoute
   '/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
   '/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
+  '/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
+  '/inventory/sales/edit/$id': typeof AuthenticatedInventorySalesEditIdRoute
+  '/inventory/sales/view/$id': typeof AuthenticatedInventorySalesViewIdRoute
+  '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -106,10 +146,15 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsRoute
+  '/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/inventory/contact-us': typeof AuthenticatedInventoryContactUsIndexRoute
   '/inventory/sales': typeof AuthenticatedInventorySalesIndexRoute
   '/inventory/terms': typeof AuthenticatedInventoryTermsIndexRoute
+  '/inventory/vendors': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
+  '/inventory/sales/edit/$id': typeof AuthenticatedInventorySalesEditIdRoute
+  '/inventory/sales/view/$id': typeof AuthenticatedInventorySalesViewIdRoute
+  '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -121,10 +166,15 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/_authenticated/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsRoute
+  '/_authenticated/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/_authenticated/inventory/contact-us/': typeof AuthenticatedInventoryContactUsIndexRoute
   '/_authenticated/inventory/sales/': typeof AuthenticatedInventorySalesIndexRoute
   '/_authenticated/inventory/terms/': typeof AuthenticatedInventoryTermsIndexRoute
+  '/_authenticated/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/_authenticated/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
+  '/_authenticated/inventory/sales/edit/$id': typeof AuthenticatedInventorySalesEditIdRoute
+  '/_authenticated/inventory/sales/view/$id': typeof AuthenticatedInventorySalesViewIdRoute
+  '/_authenticated/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -135,10 +185,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/inventory/sales/create'
     | '/inventory/sales/payments'
+    | '/inventory/vendors/create'
     | '/inventory/contact-us/'
     | '/inventory/sales/'
     | '/inventory/terms/'
+    | '/inventory/vendors/'
     | '/inventory/contact-us/reply/$id'
+    | '/inventory/sales/edit/$id'
+    | '/inventory/sales/view/$id'
+    | '/inventory/vendors/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -147,10 +202,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/inventory/sales/create'
     | '/inventory/sales/payments'
+    | '/inventory/vendors/create'
     | '/inventory/contact-us'
     | '/inventory/sales'
     | '/inventory/terms'
+    | '/inventory/vendors'
     | '/inventory/contact-us/reply/$id'
+    | '/inventory/sales/edit/$id'
+    | '/inventory/sales/view/$id'
+    | '/inventory/vendors/edit/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -161,10 +221,15 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/inventory/sales/create'
     | '/_authenticated/inventory/sales/payments'
+    | '/_authenticated/inventory/vendors/create'
     | '/_authenticated/inventory/contact-us/'
     | '/_authenticated/inventory/sales/'
     | '/_authenticated/inventory/terms/'
+    | '/_authenticated/inventory/vendors/'
     | '/_authenticated/inventory/contact-us/reply/$id'
+    | '/_authenticated/inventory/sales/edit/$id'
+    | '/_authenticated/inventory/sales/view/$id'
+    | '/_authenticated/inventory/vendors/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -216,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_authenticated/inventory/vendors/': {
+      id: '/_authenticated/inventory/vendors/'
+      path: '/inventory/vendors'
+      fullPath: '/inventory/vendors/'
+      preLoaderRoute: typeof AuthenticatedInventoryVendorsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/terms/': {
       id: '/_authenticated/inventory/terms/'
       path: '/inventory/terms'
@@ -237,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryContactUsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/vendors/create': {
+      id: '/_authenticated/inventory/vendors/create'
+      path: '/inventory/vendors/create'
+      fullPath: '/inventory/vendors/create'
+      preLoaderRoute: typeof AuthenticatedInventoryVendorsCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/sales/payments': {
       id: '/_authenticated/inventory/sales/payments'
       path: '/inventory/sales/payments'
@@ -249,6 +328,27 @@ declare module '@tanstack/react-router' {
       path: '/inventory/sales/create'
       fullPath: '/inventory/sales/create'
       preLoaderRoute: typeof AuthenticatedInventorySalesCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/vendors/edit/$id': {
+      id: '/_authenticated/inventory/vendors/edit/$id'
+      path: '/inventory/vendors/edit/$id'
+      fullPath: '/inventory/vendors/edit/$id'
+      preLoaderRoute: typeof AuthenticatedInventoryVendorsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/sales/view/$id': {
+      id: '/_authenticated/inventory/sales/view/$id'
+      path: '/inventory/sales/view/$id'
+      fullPath: '/inventory/sales/view/$id'
+      preLoaderRoute: typeof AuthenticatedInventorySalesViewIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/sales/edit/$id': {
+      id: '/_authenticated/inventory/sales/edit/$id'
+      path: '/inventory/sales/edit/$id'
+      fullPath: '/inventory/sales/edit/$id'
+      preLoaderRoute: typeof AuthenticatedInventorySalesEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/contact-us/reply/$id': {
@@ -279,10 +379,15 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedInventorySalesCreateRoute: typeof AuthenticatedInventorySalesCreateRoute
   AuthenticatedInventorySalesPaymentsRoute: typeof AuthenticatedInventorySalesPaymentsRoute
+  AuthenticatedInventoryVendorsCreateRoute: typeof AuthenticatedInventoryVendorsCreateRoute
   AuthenticatedInventoryContactUsIndexRoute: typeof AuthenticatedInventoryContactUsIndexRoute
   AuthenticatedInventorySalesIndexRoute: typeof AuthenticatedInventorySalesIndexRoute
   AuthenticatedInventoryTermsIndexRoute: typeof AuthenticatedInventoryTermsIndexRoute
+  AuthenticatedInventoryVendorsIndexRoute: typeof AuthenticatedInventoryVendorsIndexRoute
   AuthenticatedInventoryContactUsReplyIdRoute: typeof AuthenticatedInventoryContactUsReplyIdRoute
+  AuthenticatedInventorySalesEditIdRoute: typeof AuthenticatedInventorySalesEditIdRoute
+  AuthenticatedInventorySalesViewIdRoute: typeof AuthenticatedInventorySalesViewIdRoute
+  AuthenticatedInventoryVendorsEditIdRoute: typeof AuthenticatedInventoryVendorsEditIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -291,12 +396,22 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventorySalesCreateRoute,
   AuthenticatedInventorySalesPaymentsRoute:
     AuthenticatedInventorySalesPaymentsRoute,
+  AuthenticatedInventoryVendorsCreateRoute:
+    AuthenticatedInventoryVendorsCreateRoute,
   AuthenticatedInventoryContactUsIndexRoute:
     AuthenticatedInventoryContactUsIndexRoute,
   AuthenticatedInventorySalesIndexRoute: AuthenticatedInventorySalesIndexRoute,
   AuthenticatedInventoryTermsIndexRoute: AuthenticatedInventoryTermsIndexRoute,
+  AuthenticatedInventoryVendorsIndexRoute:
+    AuthenticatedInventoryVendorsIndexRoute,
   AuthenticatedInventoryContactUsReplyIdRoute:
     AuthenticatedInventoryContactUsReplyIdRoute,
+  AuthenticatedInventorySalesEditIdRoute:
+    AuthenticatedInventorySalesEditIdRoute,
+  AuthenticatedInventorySalesViewIdRoute:
+    AuthenticatedInventorySalesViewIdRoute,
+  AuthenticatedInventoryVendorsEditIdRoute:
+    AuthenticatedInventoryVendorsEditIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

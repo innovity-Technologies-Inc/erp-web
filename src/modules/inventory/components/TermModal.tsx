@@ -111,10 +111,9 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormField label="Description" error={errors.description?.message}>
-          <textarea
-            {...register('description')}
+          <textarea {...register('description')}
             rows={4}
-            className="erp-input min-h-[120px] resize-y py-3"
+            className="erp-input min-h-[120px] resize-y py-3 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
             placeholder="Enter sales term and condition..."
           />
         </FormField>

@@ -78,10 +78,9 @@ export const LoginPage = () => {
           error={errors.email?.message}
           labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
         >
-          <input
-            {...register('email')}
+          <input {...register('email')}
             type="text"
-            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+            className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg outline-none placeholder:text-gray-400 text-sm hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
             placeholder="Enter email or phone number"
           />
         </FormField>
@@ -92,10 +91,9 @@ export const LoginPage = () => {
           labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
         >
           <div className="relative">
-            <input
-              {...register('password')}
+            <input {...register('password')}
               type={showPassword ? 'text' : 'password'}
-              className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-gray-400 text-sm"
+              className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg outline-none placeholder:text-gray-400 text-sm hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
               placeholder="Enter password"
             />
             <button
@@ -111,12 +109,11 @@ export const LoginPage = () => {
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 cursor-pointer group">
             <div className="relative inline-flex items-center cursor-pointer">
-              <input
-                {...register('rememberMe')}
+              <input {...register('rememberMe')}
                 type="checkbox"
-                className="sr-only peer"
+                className="sr-only peer hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
               />
-              <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#1e4ba1]/30 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary"></div>
+              <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-primary/30 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary"></div>
             </div>
             <span className="text-xs font-medium text-gray-600 group-hover:text-gray-900 transition-colors">Remember me</span>
           </label>
@@ -127,7 +124,7 @@ export const LoginPage = () => {
 
         <Button 
           type="submit" 
-          className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-semibold text-sm shadow-sm transition-all active:scale-[0.98]" 
+          className="w-full py-3 bg-[#059669] hover:bg-[#047857] text-white rounded-lg font-bold text-sm shadow-md shadow-emerald-500/20 transition-all active:scale-[0.98]" 
           loading={isPending}
         >
           Sign in

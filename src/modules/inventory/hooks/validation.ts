@@ -46,3 +46,22 @@ export const saleSchema = z.object({
 
 export type SaleFormValues = z.infer<typeof saleSchema>
 
+export const supplierSchema = z.object({
+  supplier_name: z.string().min(1, 'Vendor name is required'),
+  mobile: z.string().optional().or(z.literal('')),
+  emailnumber: z.string().email('Invalid email address').optional().or(z.literal('')),
+  address: z.string().optional().or(z.literal('')),
+  address2: z.string().optional(),
+  contact: z.string().optional(),
+  phone: z.string().optional(),
+  fax: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+  country: z.string().optional(),
+  details: z.string().optional(),
+  status: z.union([z.number(), z.string()]).optional().default(1),
+})
+
+export type SupplierFormValues = z.infer<typeof supplierSchema>
+

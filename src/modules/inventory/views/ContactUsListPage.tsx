@@ -9,9 +9,10 @@ import { useNavigate } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import { formatDate } from '@/utils/formatters'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { usePermissions } from '@/hooks/usePermissions'
 
-const tabs: NavTab[] = [
-  { name: 'Manage Sale',          to: '/inventory/sales' },
+const tabs = [
+  { name: 'Manage Sale', to: '/inventory/sales' },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
   { name: 'Manage Sales Terms',   to: '/inventory/terms' },
   { name: 'Manage Contact Us',    to: '/inventory/contact-us', active: true },
@@ -25,6 +26,7 @@ export const ContactUsListPage = () => {
   const [pageSize, setPageSize]       = useState(10)
   const [gridApi, setGridApi]         = useState<any>(null)
   const navigate = useNavigate()
+  const { hasPermission } = usePermissions()
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
@@ -95,7 +97,7 @@ export const ContactUsListPage = () => {
       flex: 0,
       pinned: 'left',
       hide: !visibleCols.sl,
-      cellClass: 'text-gray-400 font-medium border-r border-[#1e4ba1]/30 flex items-center justify-center',
+      cellClass: 'text-gray-400 font-medium border-r border-primary/30 flex items-center justify-center',
     },
     {
       headerName: 'DATE',
@@ -167,22 +169,22 @@ export const ContactUsListPage = () => {
       sortable: false,
       filter: false,
       pinned: 'right',
-      hide: !visibleCols.action,
+      hide: !visibleCols.action || !hasPermission('view_sales'),
       cellRenderer: (params: any) => (
-        <div className="flex items-center justify-center h-full">
-          <PermissionGuard permission="view-contact-us">
+        <div className="flex items-center justify-center gap-1.5 h-full">
+          <PermissionGuard permission="view_sales">
             <button
               onClick={() => handleView(params.data.id)}
-              className="text-primary hover:scale-110 transition-transform group/view"
+              className="p-2 hover:bg-blue-50 text-primary rounded-xl transition-all border border-transparent hover:border-blue-100 hover:scale-110 group/view"
               title="View & Reply"
             >
-              <Mail className="h-5 w-5 text-primary group-hover/view:text-primary/80" />
+              <Mail className="h-4 w-4" />
             </button>
           </PermissionGuard>
         </div>
       ),
     },
-  ], [visibleCols, currentPage, pageSize])
+  ], [visibleCols, currentPage, pageSize, hasPermission])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
@@ -201,7 +203,7 @@ export const ContactUsListPage = () => {
         title="Manage Contact Us"
         backTo="/inventory/sales"
         tabs={tabs}
-        createPermission="create-contact-us"
+        createPermission="view_sales"
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}

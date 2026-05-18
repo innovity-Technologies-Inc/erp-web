@@ -37,7 +37,7 @@ export interface ListPageLayoutProps<T extends object> {
   backTo: string
 
   // ── Nav tabs (top-right) ──
-  tabs: NavTab[]
+  tabs?: NavTab[]
 
   // ── Toolbar (left side) ──
   /** Show the dark "+ Create" button. Pass onClick handler. */
@@ -65,8 +65,8 @@ export interface ListPageLayoutProps<T extends object> {
   /** Export */
   onExport?: () => void
 
-  /** Extra toolbar nodes rendered after the filters */
-  toolbarExtra?: ReactNode
+  /** Label for the dark create button. Defaults to 'Create' */
+  addLabel?: string
 
   // ── Table ──
   rowData: T[] | undefined
@@ -106,6 +106,7 @@ export const ListPageLayout = <T extends object>({
   toDate = '',
   onDateRangeChange,
   onExport,
+  addLabel,
   toolbarExtra,
   rowData,
   columnDefs,
@@ -162,19 +163,19 @@ export const ListPageLayout = <T extends object>({
         <div className="flex items-center gap-4">
           <Link
             to={backTo}
-            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-[#1e4ba1] transition-colors shadow-sm text-[10px] font-medium"
+            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
           </Link>
-          <h1 className="text-[20px] font-medium text-[#1e4ba1] tracking-tight ml-2">
+          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
             {title}
           </h1>
         </div>
 
         {/* Nav Tabs */}
         <div className="flex items-center gap-3">
-          {tabs.map((tab) => (
+          {tabs?.map((tab) => (
             <Link
               key={tab.name}
               to={tab.to}
@@ -204,16 +205,16 @@ export const ListPageLayout = <T extends object>({
                 <PermissionGuard permission={createPermission}>
                   <button
                     onClick={onCreate}
-                    className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
+                    className="bg-[#0f172a] hover:bg-[#1e293b] text-white px-4 py-2 rounded-xl flex items-center gap-2 h-10 transition-all shadow-lg shadow-slate-200 shrink-0 group active:scale-95"
                   >
-                    <Plus className="h-5 w-5" strokeWidth={3} />
-                    <span className="font-medium text-[12px]">Create</span>
+                    <Plus className="h-4 w-4 transition-transform group-hover:rotate-90" strokeWidth={3} />
+                    <span className="font-bold text-[13px]">{addLabel || 'Create'}</span>
                   </button>
                 </PermissionGuard>
               ) : (
                 <button
                   onClick={onCreate}
-                  className="bg-[#1e4ba1] hover:bg-[#1e4ba1]/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-[#1e4ba1]/10 shrink-0"
+                  className="bg-primary hover:bg-primary/90 text-white px-3 py-2 rounded-2xl flex items-center gap-2 h-8 transition-all shadow-md shadow-primary/10 shrink-0"
                 >
                   <Plus className="h-5 w-5" strokeWidth={3} />
                   <span className="font-medium text-[12px]">Create</span>
@@ -222,10 +223,9 @@ export const ListPageLayout = <T extends object>({
             )}
 
             <div className="relative w-full max-w-70">
-              <input
-                type="text"
+              <input type="text"
                 placeholder="Search everything..."
-                className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-8 focus:ring-4 focus:ring-[#1e4ba1]/5 outline-none pr-12 transition-all"
+                className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-8 outline-none pr-12 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
                 value={searchValue}
                 onChange={(e) => onSearchChange?.(e.target.value)}
               />
@@ -259,7 +259,7 @@ export const ListPageLayout = <T extends object>({
                    onClick={() => setColMenuOpen(!colMenuOpen)}
                    className={clsx(
                      "bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium h-8 flex items-center gap-2 transition-all",
-                     colMenuOpen ? "text-[#1e4ba1] border-[#1e4ba1]/30 bg-white" : "text-[#64748b] hover:bg-[#f1f5f9]"
+                     colMenuOpen ? "text-primary border-primary/30 bg-white" : "text-[#64748b] hover:bg-[#f1f5f9]"
                    )}
                  >
                    <ColumnsIcon className="h-4 w-4" />
@@ -280,19 +280,18 @@ export const ListPageLayout = <T extends object>({
                           <label key={col.field} className="flex items-center px-4 py-2 hover:bg-[#f8fafc] cursor-pointer gap-3 group transition-colors rounded-lg mx-1">
                              <div className={clsx(
                                "w-4 h-4 rounded border flex items-center justify-center transition-all",
-                               col.visible ? "bg-[#1e4ba1] border-[#1e4ba1]" : "bg-white border-gray-200 group-hover:border-gray-300"
+                               col.visible ? "bg-primary border-primary" : "bg-white border-gray-200 group-hover:border-gray-300"
                              )}>
                                {col.visible && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                              </div>
-                             <input 
-                               type="checkbox" 
+                             <input type="checkbox" 
                                checked={col.visible} 
                                onChange={() => onColumnToggle?.(col.field)}
                                className="hidden"
                              />
                              <span className={clsx(
                                "text-[13px] transition-colors",
-                               col.visible ? "text-[#1e4ba1] font-semibold" : "text-[#475569] font-medium"
+                               col.visible ? "text-primary font-semibold" : "text-[#475569] font-medium"
                              )}>
                                {col.name}
                              </span>
@@ -326,7 +325,7 @@ export const ListPageLayout = <T extends object>({
         </div>
 
         {/* ── Table ──────────────────────────────────────────────── */}
-        <div className="rounded-xl border border-[#1e4ba1]/20 overflow-hidden shadow-sm">
+        <div className="rounded-xl border border-primary/20 overflow-hidden shadow-sm">
           <DataTable
             rowData={rowData}
             columnDefs={columnDefs}
@@ -343,7 +342,7 @@ export const ListPageLayout = <T extends object>({
           />
           
           {/* ── Table Footer / Pagination ─────────────────────────── */}
-          <div className="bg-[#f8fafc] border-t border-[#1e4ba1]/20 px-6 py-2 flex items-center justify-between">
+          <div className="bg-[#f8fafc] border-t border-primary/20 px-6 py-2 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
                 <span className="text-[12px] text-[#94a3b8] font-medium uppercase tracking-widest">Per Page</span>
@@ -364,8 +363,8 @@ export const ListPageLayout = <T extends object>({
                 </div>
               </div>
 
-              <span className="text-[13px] text-[#64748b] font-medium border-l border-[#1e4ba1]/10 pl-8 py-1">
-                Showing <span className="text-[#1e4ba1] font-medium">{showingFrom}</span> to <span className="text-[#1e4ba1] font-medium">{showingTo}</span> of <span className="text-[#1e4ba1] font-medium">{recordsTotal}</span> entries
+              <span className="text-[13px] text-[#64748b] font-medium border-l border-primary/10 pl-8 py-1">
+                Showing <span className="text-primary font-medium">{showingFrom}</span> to <span className="text-primary font-medium">{showingTo}</span> of <span className="text-primary font-medium">{recordsTotal}</span> entries
               </span>
             </div>
 
@@ -373,7 +372,7 @@ export const ListPageLayout = <T extends object>({
               <button
                 onClick={() => onPageChange?.(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="p-1.5 rounded-lg border border-gray-200 text-[#94a3b8] hover:bg-white hover:text-[#1e4ba1] hover:border-[#1e4ba1]/20 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-all mr-1 shadow-sm"
+                className="p-1.5 rounded-lg border border-gray-200 text-[#94a3b8] hover:bg-white hover:text-primary hover:border-primary/20 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-all mr-1 shadow-sm"
                 title="Previous Page"
               >
                 <ChevronLeft className="h-4 w-4" strokeWidth={3} />
@@ -387,10 +386,10 @@ export const ListPageLayout = <T extends object>({
                   className={clsx(
                     'min-w-[34px] h-8 rounded-lg text-[13px] font-medium transition-all shadow-sm',
                     page === currentPage
-                      ? 'bg-[#1e4ba1] text-white shadow-[#1e4ba1]/20 shadow-md'
+                      ? 'bg-primary text-white shadow-primary/20 shadow-md'
                       : page === '...'
                       ? 'text-[#94a3b8] cursor-default'
-                      : 'bg-white text-[#64748b] border border-gray-200 hover:border-[#1e4ba1]/30 hover:text-[#1e4ba1] hover:bg-gray-50'
+                      : 'bg-white text-[#64748b] border border-gray-200 hover:border-primary/30 hover:text-primary hover:bg-gray-50'
                   )}
                 >
                   {page}
@@ -400,7 +399,7 @@ export const ListPageLayout = <T extends object>({
               <button
                 onClick={() => onPageChange?.(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="p-1.5 rounded-lg border border-gray-200 text-[#94a3b8] hover:bg-white hover:text-[#1e4ba1] hover:border-[#1e4ba1]/20 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-all mr-1 shadow-sm"
+                className="p-1.5 rounded-lg border border-gray-200 text-[#94a3b8] hover:bg-white hover:text-primary hover:border-primary/20 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-all mr-1 shadow-sm"
                 title="Next Page"
               >
                 <ChevronRight className="h-4 w-4" strokeWidth={3} />
