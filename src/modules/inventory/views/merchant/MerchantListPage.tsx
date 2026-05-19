@@ -1,19 +1,18 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Edit, Trash2, Eye, Plus, MapPin, Phone, Mail, Globe } from 'lucide-react'
-import { useSuppliersDatatable, useDeleteSupplier } from '../hooks/useSuppliers'
+import { Edit, Trash2, Eye, Plus, MapPin, Phone, Mail, FileText } from 'lucide-react'
+import { useMerchantsDatatable, useDeleteMerchant } from '../../hooks/useMerchants'
 import type { ColDef } from 'ag-grid-community'
-import type { SupplierListItem } from '../api/suppliers.api'
+import type { MerchantListItem } from '../../api/merchants.api'
 import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
-import { VendorModal } from '../components/VendorModal'
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
 
-export const VendorListPage = () => {
+export const MerchantListPage = () => {
   const navigate = useNavigate()
   const { showNotificationModal } = useUiStore()
   const { hasAnyPermission } = usePermissions()
@@ -23,30 +22,20 @@ export const VendorListPage = () => {
   const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string | undefined>(undefined)
-  const [country, setCountry] = useState<string | undefined>(undefined)
-  const [state, setState] = useState<string | undefined>(undefined)
-  const [city, setCity] = useState<string | undefined>(undefined)
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
 
-  // Modal States
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedVendor, setSelectedVendor] = useState<SupplierListItem | null>(null)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const [vendorToDelete, setVendorToDelete] = useState<{ id: number; uuid: string } | null>(null)
+  const [merchantToDelete, setVendorToDelete] = useState<{ id: number; uuid: string } | null>(null)
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
     sl: true,
-    id: true,
     name: true,
-    address: true,
-    date: true,
     mobile: true,
     email: true,
-    country: true,
-    state: true,
-    city: true,
-    zip: true,
+    spNo: true,
+    spFile: true,
+    balance: true,
     status: true,
     action: true
   })
@@ -58,23 +47,20 @@ export const VendorListPage = () => {
     length: pageSize,
     search: { value: search },
     status,
-    country,
-    state,
-    city,
     start_date: dateRange.start,
     end_date: dateRange.end,
-  }), [currentPage, pageSize, search, status, country, state, city, dateRange])
+  }), [currentPage, pageSize, search, status, dateRange])
 
-  const { data: vendorsData, isLoading } = useSuppliersDatatable(params)
-  const { mutate: deleteVendor, isPending: isDeleting } = useDeleteSupplier()
+  const { data: merchantsData, isLoading } = useMerchantsDatatable(params)
+  const { mutate: deleteMerchant, isPending: isDeleting } = useDeleteMerchant()
 
   // Actions
   const handleAdd = () => {
-    navigate({ to: '/inventory/vendors/create' })
+    navigate({ to: '/inventory/merchant/create' })
   }
 
   const handleEdit = (id: number) => {
-    navigate({ to: '/inventory/vendors/edit/$id', params: { id: id.toString() } })
+    navigate({ to: '/inventory/merchant/edit/$id', params: { id: id.toString() } })
   }
 
   const handleDeleteClick = (id: number, uuid: string) => {
@@ -83,14 +69,14 @@ export const VendorListPage = () => {
   }
 
   const handleConfirmDelete = () => {
-    if (vendorToDelete) {
-      deleteVendor({ id: vendorToDelete.id, uuid: vendorToDelete.uuid }, {
+    if (merchantToDelete) {
+      deleteMerchant({ id: merchantToDelete.id, uuid: merchantToDelete.uuid }, {
         onSuccess: () => {
           setIsConfirmOpen(false)
           setVendorToDelete(null)
           showNotificationModal(
-            'Vendor Deleted!',
-            'The vendor has been removed successfully.',
+            'Merchant Deleted!',
+            'The merchant has been removed successfully.',
             'success'
           )
         }
@@ -103,7 +89,7 @@ export const VendorListPage = () => {
   }
 
   // AG Grid Column Definitions
-  const columnDefs = useMemo<ColDef<SupplierListItem>[]>(() => [
+  const columnDefs = useMemo<ColDef<MerchantListItem>[]>(() => [
     {
       headerName: 'SL',
       valueGetter: (params) => {
@@ -116,76 +102,65 @@ export const VendorListPage = () => {
       cellClass: 'text-gray-400 font-medium border-r border-primary/10 flex items-center justify-center',
     },
     {
-      headerName: 'VENDOR ID',
-      field: 'id',
-      width: 100,
-      hide: !visibleCols.id,
-      cellClass: 'text-gray-600 flex items-center',
-    },
-    {
-      headerName: 'VENDOR NAME',
-      field: 'supplier_name',
+      headerName: 'MERCHANT NAME',
+      field: 'customer_name',
       minWidth: 180,
       flex: 1,
       hide: !visibleCols.name,
       cellClass: 'font-medium text-gray-900 flex items-center',
     },
     {
-      headerName: 'ADDRESS',
-      field: 'address',
-      minWidth: 200,
-      flex: 1.2,
-      hide: !visibleCols.address,
-      cellClass: 'text-gray-600 flex items-center',
-    },
-    {
-      headerName: 'DATE',
-      field: 'date',
-      width: 120,
-      hide: !visibleCols.date,
-      cellClass: 'text-gray-600 flex items-center',
-    },
-    {
       headerName: 'MOBILE NO',
-      field: 'mobile',
+      field: 'customer_mobile',
       width: 140,
       hide: !visibleCols.mobile,
       cellClass: 'text-gray-600 flex items-center',
     },
     {
       headerName: 'EMAIL',
-      field: 'emailnumber',
+      field: 'customer_email',
       width: 180,
       hide: !visibleCols.email,
       cellClass: 'text-gray-600 flex items-center',
     },
     {
-      headerName: 'COUNTRY',
-      field: 'country',
+      headerName: 'SP NO',
+      field: 'sales_permit_number',
       width: 120,
-      hide: !visibleCols.country,
+      hide: !visibleCols.spNo,
       cellClass: 'text-gray-600 flex items-center',
     },
     {
-      headerName: 'STATE',
-      field: 'state',
-      width: 120,
-      hide: !visibleCols.state,
-      cellClass: 'text-gray-600 flex items-center',
-    },
-    {
-      headerName: 'CITY',
-      field: 'city',
-      width: 120,
-      hide: !visibleCols.city,
-      cellClass: 'text-gray-600 flex items-center',
-    },
-    {
-      headerName: 'ZIP',
-      field: 'zip',
+      headerName: 'SP FILE',
+      field: 'sales_permit',
       width: 100,
-      hide: !visibleCols.zip,
-      cellClass: 'text-gray-600 flex items-center',
+      hide: !visibleCols.spFile,
+      cellRenderer: (params: any) => {
+        if (!params.value) return <span className="text-gray-300">---</span>
+        // Backend returns HTML. We extract URL if possible or just show a branded button.
+        const urlMatch = params.value.match(/href="([^"]+)"/)
+        const url = urlMatch ? urlMatch[1] : null
+        
+        return url ? (
+          <a 
+            href={url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-primary font-bold hover:underline"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>View</span>
+          </a>
+        ) : <span className="text-gray-300">---</span>
+      }
+    },
+    {
+      headerName: 'BALANCE',
+      field: 'balance',
+      width: 120,
+      hide: !visibleCols.balance,
+      cellClass: 'text-gray-600 flex items-center font-bold',
+      valueFormatter: (params) => formatCurrency(params.value, '$', 'left') // Replace with settings if needed
     },
     {
       headerName: 'STATUS',
@@ -193,13 +168,13 @@ export const VendorListPage = () => {
       width: 110,
       hide: !visibleCols.status,
       cellRenderer: (params: any) => {
-        const isActive = params.value === 'Active'
+        const isActive = params.value?.includes('Active')
         return (
           <span className={clsx(
             'px-3 py-1 rounded-full text-[11px] font-medium tracking-tight uppercase',
             isActive ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fef9c3] text-[#854d0e]'
           )}>
-            {params.value}
+            {isActive ? 'Active' : 'Inactive'}
           </span>
         )
       }
@@ -208,25 +183,25 @@ export const VendorListPage = () => {
       headerName: 'ACTIONS',
       width: 120,
       pinned: 'right',
-      hide: !visibleCols.action || !hasAnyPermission(['edit_supplier', 'delete_supplier']),
+      hide: !visibleCols.action || !hasAnyPermission(['edit_merchant', 'delete_merchant']),
       cellClass: 'flex items-center justify-center gap-1.5',
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-1.5 h-full">
-          <PermissionGuard permission="edit_supplier">
+          <PermissionGuard permission="edit_merchant">
             <button
               onClick={() => handleEdit(params.data.id)}
-              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 group/edit"
-              title="Edit Vendor"
+              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110 group/edit"
+              title="Edit Merchant"
             >
               <Edit className="h-4 w-4" />
             </button>
           </PermissionGuard>
 
-          <PermissionGuard permission="delete_supplier">
+          <PermissionGuard permission="delete_merchant">
             <button
               onClick={() => handleDeleteClick(params.data.id, params.data.uuid)}
-              className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 group/del"
-              title="Delete Vendor"
+              className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110 group/del"
+              title="Delete Merchant"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -238,16 +213,12 @@ export const VendorListPage = () => {
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
-    { name: 'Vendor ID', field: 'id', visible: visibleCols.id },
-    { name: 'Vendor Name', field: 'name', visible: visibleCols.name },
-    { name: 'Address', field: 'address', visible: visibleCols.address },
-    { name: 'Date', field: 'date', visible: visibleCols.date },
+    { name: 'Merchant Name', field: 'name', visible: visibleCols.name },
     { name: 'Mobile No', field: 'mobile', visible: visibleCols.mobile },
     { name: 'Email', field: 'email', visible: visibleCols.email },
-    { name: 'Country', field: 'country', visible: visibleCols.country },
-    { name: 'State', field: 'state', visible: visibleCols.state },
-    { name: 'City', field: 'city', visible: visibleCols.city },
-    { name: 'Zip', field: 'zip', visible: visibleCols.zip },
+    { name: 'SP No', field: 'spNo', visible: visibleCols.spNo },
+    { name: 'SP File', field: 'spFile', visible: visibleCols.spFile },
+    { name: 'Balance', field: 'balance', visible: visibleCols.balance },
     { name: 'Status', field: 'status', visible: visibleCols.status },
     { name: 'Action', field: 'action', visible: visibleCols.action },
   ]
@@ -257,23 +228,23 @@ export const VendorListPage = () => {
     { label: 'Inactive', value: '0' },
   ]
 
-  const totalPages = Math.ceil((vendorsData?.recordsTotal ?? 0) / pageSize)
+  const totalPages = Math.ceil((merchantsData?.recordsFiltered ?? 0) / pageSize)
 
   return (
     <>
       <ListPageLayout
-        title="Vendor List"
+        title="Merchant List"
         backTo="/"
         onCreate={handleAdd}
-        createPermission="create_supplier"
+        createPermission="create_merchant"
         searchValue={search}
         onSearchChange={(val) => { setSearch(val); setCurrentPage(1) }}
         isLoading={isLoading}
         // AG Grid Props
-        rowData={vendorsData?.data || []}
+        rowData={merchantsData?.data || []}
         columnDefs={columnDefs}
         // Pagination
-        recordsTotal={vendorsData?.recordsTotal || 0}
+        recordsTotal={merchantsData?.recordsFiltered || 0}
         currentPage={currentPage}
         pageSize={pageSize}
         totalPages={totalPages}
@@ -284,6 +255,8 @@ export const VendorListPage = () => {
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}
         statusValue={status}
         statusOptions={statusOptions}
+        fromDate={dateRange.start}
+        toDate={dateRange.end}
         onDateRangeChange={(start, end) => { setDateRange({ start, end }); setCurrentPage(1) }}
         // Column Filter
         showColumnFilter={true}
@@ -297,8 +270,8 @@ export const VendorListPage = () => {
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Delete Vendor?"
-        message="Are you sure you want to remove this vendor? This action will also affect related accounting records."
+        title="Delete Merchant?"
+        message="Are you sure you want to remove this merchant? This action will also affect related accounting records."
         confirmText="Yes, Delete"
         isLoading={isDeleting}
       />

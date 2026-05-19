@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Mail } from 'lucide-react'
-import { useContactUsDatatable } from '../hooks/useContactUs'
+import { useContactUsDatatable } from '../../hooks/useContactUs'
 import type { ColDef } from 'ag-grid-community'
-import type { ContactUsListItem } from '../api/contactUs.api'
+import type { ContactUsListItem } from '../../api/contactUs.api'
 import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
 import { exportToExcel } from '@/utils/exportUtils'
 import { useNavigate } from '@tanstack/react-router'
@@ -14,8 +14,8 @@ import { usePermissions } from '@/hooks/usePermissions'
 const tabs = [
   { name: 'Manage Sale', to: '/inventory/sales' },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
-  { name: 'Manage Sales Terms',   to: '/inventory/terms' },
-  { name: 'Manage Contact Us',    to: '/inventory/contact-us', active: true },
+  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms' },
+  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us', active: true },
 ]
 
 export const ContactUsListPage = () => {

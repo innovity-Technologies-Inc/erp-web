@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Edit, Trash2, Eye } from 'lucide-react'
-import { useSalesDatatable, useDeleteSale } from '../hooks/useSales'
+import { useSalesDatatable, useDeleteSale } from '../../hooks/useSales'
 import type { ColDef } from 'ag-grid-community'
-import type { SaleListItem } from '../api/sales.api'
+import type { SaleListItem } from '../../api/sales.api'
 import { clsx } from 'clsx'
 import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
 import { useUiStore } from '@/store/useUiStore'
@@ -17,8 +17,8 @@ import { usePermissions } from '@/hooks/usePermissions'
 const tabs = [
   { name: 'Manage Sale', to: '/inventory/sales', active: true },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
-  { name: 'Manage Sales Terms',   to: '/inventory/terms' },
-  { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
+  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms' },
+  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us' },
 ]
 
 export const SalesListPage = () => {

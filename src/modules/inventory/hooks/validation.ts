@@ -65,3 +65,68 @@ export const supplierSchema = z.object({
 
 export type SupplierFormValues = z.infer<typeof supplierSchema>
 
+export const merchantSchema = z.object({
+  customer_name: z.string().min(1, 'Merchant name is required'),
+  customer_mobile: z.string().min(1, 'Mobile number is required'),
+  customer_email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  email_address: z.string().email('Invalid secondary email').optional().or(z.literal('')),
+  vat_no: z.string().optional(),
+  contact: z.string().optional(),
+  phone: z.string().optional(),
+  fax: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip: z.string().optional(),
+  country: z.string().optional(),
+  customer_address: z.string().optional(),
+  address2: z.string().optional(),
+  sales_permit_number: z.string().optional(),
+  sales_permit: z.any().optional(),
+  status: z.union([z.number(), z.string()]).optional().default(1),
+  // Commission
+  comission_value: z.string().optional().or(z.number().transform(v => String(v))),
+  comission_type: z.union([z.number(), z.string()]).optional().default(1),
+  comission_note: z.string().optional(),
+  // Auth
+  password_option: z.string().optional(),
+  password: z.string().optional(), // Will handle conditional requirement in component or refined schema
+})
+
+export type MerchantFormValues = z.infer<typeof merchantSchema>
+
+export const warehouseSchema = z.object({
+  warehouse_code: z.string().min(1, 'Warehouse code is required'),
+  name: z.string().min(1, 'Warehouse name is required'),
+  contact_person: z.union([z.string(), z.number()]).optional().nullable(),
+  phone: z.string().optional().nullable(),
+  email: z.string().email('Invalid email address').optional().nullable().or(z.literal('')),
+  address_line1: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  country: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  status: z.union([z.number(), z.string()]).default(1),
+})
+
+export type WarehouseFormValues = z.infer<typeof warehouseSchema>
+
+export const stockMovementSchema = z.object({
+  from_warehouse_id: z.coerce.number({ required_error: 'From Warehouse is required' }),
+  to_warehouse_id: z.coerce.number({ required_error: 'To Warehouse is required' }),
+  movement_category: z.string().min(1, 'Category is required'),
+  movement_type: z.coerce.number({ required_error: 'Type is required' }),
+  reference_no: z.string().optional(),
+  remark: z.string().optional(),
+  batches: z.array(z.object({
+    batch_master_id: z.coerce.number({ required_error: 'Batch is required' }),
+    items: z.array(z.object({
+      product_id: z.coerce.number({ required_error: 'Product is required' }),
+      quantity: z.coerce.number().min(0.01, 'Qty must be > 0'),
+      avl_qty: z.coerce.number().optional(),
+    })).min(1, 'At least one item per batch is required'),
+  })).min(1, 'At least one batch is required'),
+})
+
+export type StockMovementFormValues = z.infer<typeof stockMovementSchema>
+
+

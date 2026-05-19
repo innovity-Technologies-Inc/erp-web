@@ -15,7 +15,7 @@ import {
   Calendar,
   Receipt
 } from 'lucide-react'
-import { useSaleDetails } from '../hooks/useSales'
+import { useSaleDetails } from '../../hooks/useSales'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { clsx } from 'clsx'

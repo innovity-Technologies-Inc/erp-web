@@ -35,3 +35,8 @@
 ## Task Group 4: Global Helpers
 - [x] **Task 4.1**: Implement `src/utils/formatters.ts`.
 - [x] **Task 4.2**: Implement `src/components/DataTable/DataTable.tsx`.
+
+## Task Group 5: Topbar & Navigation Refinement
+- [x] **Task 5.1**: Implement dynamic breadcrumbs in `Topbar.tsx` using TanStack Router's `useMatches`.
+- [x] **Task 5.2**: Make breadcrumb segments clickable and humanize path labels.
+- [x] **Task 5.3**: Optimize breadcrumb flow by skipping "Inventory" and redundant "Dashboard" segments.

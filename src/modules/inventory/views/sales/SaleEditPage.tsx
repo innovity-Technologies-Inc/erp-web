@@ -20,7 +20,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react'
 import { useNavigate, useParams, Link } from '@tanstack/react-router'
-import { saleSchema, type SaleFormValues } from '../hooks/validation'
+import { saleSchema, type SaleFormValues } from '../../hooks/validation'
 import { 
   useWarehouses, 
   useMerchants, 
@@ -30,7 +30,7 @@ import {
   usePaymentMethods,
   useUpdateSale,
   useSaleDetails
-} from '../hooks/useSales'
+} from '../../hooks/useSales'
 import { Select2 } from '@/components/Select/Select2'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
@@ -457,18 +457,16 @@ export const SaleEditPage = () => {
   return (
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins">
       {/* Page Header */}
-      <div className="pb-6">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link 
-              to="/inventory/sales"
-              className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
-            >
-              <ArrowLeft className="h-4 w-4" strokeWidth={3} />
-              <span>Back</span>
-            </Link>
-            <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Edit Sales Transaction <span className="text-[#64748b] text-[14px]">[{saleDetails?.invoice_id}]</span></h1>
-          </div>
+      <div className="max-w-[1600px] mx-auto pb-6">
+        <div className="flex items-center gap-4">
+          <Link 
+            to="/inventory/sales"
+            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
+          >
+            <ArrowLeft className="h-4 w-4" strokeWidth={3} />
+            <span>Back</span>
+          </Link>
+          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Edit Sales Transaction <span className="text-[#64748b] text-[14px]">[{saleDetails?.invoice_id}]</span></h1>
         </div>
       </div>
 

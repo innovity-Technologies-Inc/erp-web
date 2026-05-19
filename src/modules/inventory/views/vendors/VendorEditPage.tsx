@@ -13,8 +13,8 @@ import {
   Phone,
   Mail
 } from 'lucide-react'
-import { supplierSchema, type SupplierFormValues } from '../hooks/validation'
-import { useUpdateSupplier, useSupplierData } from '../hooks/useSuppliers'
+import { supplierSchema, type SupplierFormValues } from '../../hooks/validation'
+import { useUpdateSupplier, useSupplierData } from '../../hooks/useSuppliers'
 import { useState, useEffect } from 'react'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
@@ -91,23 +91,20 @@ export const VendorEditPage = () => {
   return (
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins">
       {/* Page Header */}
-      <div className="px-2 pb-6">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link 
-              to="/inventory/vendors"
-              className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
-            >
-              <ArrowLeft className="h-4 w-4" strokeWidth={3} />
-              <span>Back</span>
-            </Link>
-            <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Edit Vendor</h1>
-          </div>
-          
+      <div className="max-w-[1600px] mx-auto pb-6">
+        <div className="flex items-center gap-4">
+          <Link 
+            to="/inventory/vendors"
+            className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
+          >
+            <ArrowLeft className="h-4 w-4" strokeWidth={3} />
+            <span>Back</span>
+          </Link>
+          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Edit Vendor</h1>
         </div>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-2 space-y-6">
+      <div className="max-w-[1600px] mx-auto space-y-6">
         <form id="vendor-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

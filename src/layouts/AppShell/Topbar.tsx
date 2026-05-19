@@ -1,7 +1,7 @@
+import React, { useState } from 'react'
 import { Bell, Settings, User as UserIcon, LogOut, Expand, Shrink, Home, RotateCcw } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
-import { useState } from 'react'
 import { useMatches, Link } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import { useSettings } from '@/hooks/useSettings'
@@ -76,26 +76,57 @@ export const Topbar = () => {
         </Link>
         
         <div className="flex items-center text-[14px] font-medium font-poppins text-[#94a3b8] gap-2.5">
-           <span className="hover:text-primary cursor-pointer transition-colors">Dashboard</span>
-           <span className="text-gray-300 font-light text-lg">/</span>
+           <Link to="/" className="hover:text-primary cursor-pointer transition-colors">Dashboard</Link>
            
-           {pathParts.includes('inventory') && (
-             <>
-               <span className="hover:text-primary cursor-pointer transition-colors">Sales</span>
-               <span className="text-gray-300 font-light text-lg">/</span>
-             </>
-           )}
+           {(() => {
+             // Filter and prepare breadcrumbs
+             const breadcrumbs = pathParts
+               .map((part, index) => {
+                 const isId = !isNaN(Number(part)) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(part)
+                 const isSkippable = ['dashboard', 'inventory'].includes(part.toLowerCase()) || isId
+                 
+                 if (isSkippable) return null
 
-           <span className="text-[#003671] font-bold">
-             {(() => {
-               if (pathParts.includes('create')) return 'Add Sale'
-               if (pathParts.includes('terms')) return 'Manage Sales Terms'
-               if (pathParts.includes('payments')) return 'Manage Sales Payment'
-               if (pathParts.includes('contact-us')) return 'Manage Contact Us'
-               if (pathParts.includes('sales')) return 'Manage Sale'
-               return 'Dashboard'
-             })()}
-           </span>
+                 const path = `/${pathParts.slice(0, index + 1).join('/')}`
+                 
+                 // Humanize the part
+                 let label = part
+                   .replace(/-/g, ' ')
+                   .replace(/_/g, ' ')
+                   .split(' ')
+                   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                   .join(' ')
+                 
+                 // Special overrides for better UX
+                 if (part === 'vendors') label = 'Vendors'
+                 if (part === 'merchant') label = 'Merchants'
+                 if (part === 'sales') label = 'Sales'
+                 if (part === 'contact-us') label = 'Contact Us'
+                 if (part === 'terms') label = 'Terms & Conditions'
+                 if (part === 'create') label = 'Add New'
+                 if (part === 'edit') label = 'Edit'
+                 if (part === 'payments') label = 'Payments'
+
+                 return { path, label, originalPart: part }
+               })
+               .filter((b): b is { path: string, label: string, originalPart: string } => b !== null)
+
+             return breadcrumbs.map((b, index) => {
+               const isLast = index === breadcrumbs.length - 1
+               return (
+                 <React.Fragment key={b.path}>
+                   <span className="text-gray-300 font-light text-lg">/</span>
+                   {isLast ? (
+                     <span className="text-[#003671] font-bold">{b.label}</span>
+                   ) : (
+                     <Link to={b.path} className="hover:text-primary cursor-pointer transition-colors">
+                       {b.label}
+                     </Link>
+                   )}
+                 </React.Fragment>
+               )
+             })
+           })()}
         </div>
       </div>
 

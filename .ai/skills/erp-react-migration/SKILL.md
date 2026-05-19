@@ -111,10 +111,10 @@ writing any code. Never deviate from these conventions without explicit user app
 
 5. **Page Header Standards**:
    - **Index/List Pages**: MUST use `ListPageLayout` which includes a header with **Navigation Tabs** (Manage Sale, Payments, Terms, etc.) and global filters.
-   - **Transaction Pages (Create, Edit, View)**: Header MUST follow the "List Page Style" (White background, `max-w-[1600px]`, `px-2 py-4`) but **WITHOUT navigation tabs**.
+   - **Transaction Pages (Create, Edit, View)**: Header MUST follow the "List Page Style" (White background, `max-w-[1600px]`, `px-4 pb-6`) but **WITHOUT navigation tabs**.
    - **Header Elements**:
-     - **Back Button**: Branded box style (`bg-white border-gray-100 rounded-lg text-gray-400 hover:text-[#1e4ba1] shadow-sm`) with a thick `strokeWidth={3}` icon.
-     - **Title**: Standardized to `text-[20px] font-medium text-[#1e4ba1]`.
+     - **Back Button**: Simple **"Back"** text with branded box style (`bg-white border-gray-100 rounded-lg text-gray-400 hover:text-primary shadow-sm`) and a thick `strokeWidth={3}` icon.
+     - **Title**: Standardized to `text-[20px] font-medium text-primary tracking-tight ml-2`.
 
 6. **Spacing & Padding**:
    - **Card Padding**: Use consistent padding for major sections (e.g., `p-4` or `p-6`).
@@ -123,6 +123,31 @@ writing any code. Never deviate from these conventions without explicit user app
 7. **Responsiveness**: All new components and layouts MUST be fully responsive and tested for various screen sizes (Mobile, Tablet, Laptop, Desktop).
 
 8. **Backend Integrity**: NEVER modify backend API controllers, routes, or logic without explicit user approval. Your focus is strictly on the React frontend migration.
+
+9. **High-Fidelity Transaction Layouts**:
+   - **Main Grid**: ALWAYS use `grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch` for Create and Edit pages.
+   - **Column Ratio**: 
+     - **Left Column (`lg:col-span-7`)**: Primarily for "Business Information" and "Address" blocks.
+     - **Right Column (`lg:col-span-5`)**: Primarily for "Contact Details", "Settings", and "Auth" blocks.
+   - **Equal Height Alignment**: Both column containers MUST use `flex flex-col h-full`. The bottom-most card in each column MUST use `flex-1` to ensure both columns have identical heights and aligned bottom edges.
+   - **Standardized Action Row**: The "Save" and "Cancel" buttons MUST be placed in a dedicated, full-width `div` at the very bottom of the form (outside the main grid), ensuring a clear and consistent separation from data entry cards.
+   - **Autofill Protection**: ALL text/email inputs MUST use `autoComplete="off"`, and password inputs MUST use `autoComplete="new-password"` to prevent browser behavior from breaking the high-fidelity design.
+
+10. **Breadcrumb System**:
+    - **Dynamic Generation**: NEVER hardcode breadcrumbs in the Topbar. Use `useMatches` from TanStack Router to generate them dynamically from the path segments.
+    - **Redundancy**: Ensure "Dashboard" is only shown once. If the path starts with a "dashboard" segment, skip it in the dynamic loop to avoid "Dashboard / Dashboard".
+    - **Clickable Segments**: All intermediate breadcrumb segments MUST be wrapped in a `Link` component to allow users to navigate back to parent lists or modules.
+    - **Label Mapping**: Humanize path segments (e.g., `merchant` -> `Merchants`, `create` -> `Add New`).
+
+11. **Date Range Pickers in List Pages**:
+    - **State Synchronization**: When using `ListPageLayout`, ALWAYS pass both `fromDate={state.start}` and `toDate={state.end}` props. Failure to pass these will result in the `DateRangePicker` not reflecting the selected dates in the UI.
+    - **OnChange**: The `onDateRangeChange` handler must update the local state which is then passed back to the `ListPageLayout`.
+    - **Backend Sync**: Ensure the backend controller explicitly handles `start_date` and `end_date` (or equivalent) in the datatable/listing query.
+
+12. **Documentation & Progress Tracking**:
+    - **Update Mandate**: For EVERY significant feature implementation, bug fix, or architectural change, you MUST update the corresponding files in `.ai/requirements/*.md` and `.ai/tasks/*.md`.
+    - **Marking Progress**: Use `[x]` to mark completed tasks and requirements immediately after implementation and verification.
+    - **Sync**: Ensure the `SKILL.md`, `requirements`, and `tasks` are always in sync with the actual state of the codebase.
 
 
 ---
@@ -161,7 +186,11 @@ src/
 │   │   ├── components/ # Private components for inventory
 │   │   ├── hooks/    # Custom queries (useGetProducts, etc.)
 │   │   ├── store/    # Zustand store for inventory
-│   │   ├── views/    # Main pages (ProductList, StockEntry)
+│   │   ├── views/    # Entity-specific subfolders (merchant, sales, vendors, warehouse)
+│   │   │   ├── sales/
+│   │   │   ├── merchant/
+│   │   │   ├── vendors/
+│   │   │   └── warehouse/
 │   │   └── index.ts  # Public API for this module
 │   └── accounting/
 ├── store/            # Global state (User info, Theme, Settings)

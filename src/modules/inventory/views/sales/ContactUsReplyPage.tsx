@@ -13,9 +13,9 @@ import {
   Clock,
   Quote
 } from 'lucide-react'
-import { contactUsReplySchema } from '../hooks/validation'
-import type { ContactUsReplyValues } from '../hooks/validation'
-import { useContactUsDetails, useReplyContactUs } from '../hooks/useContactUs'
+import { contactUsReplySchema } from '../../hooks/validation'
+import type { ContactUsReplyValues } from '../../hooks/validation'
+import { useContactUsDetails, useReplyContactUs } from '../../hooks/useContactUs'
 import { useUiStore } from '@/store/useUiStore'
 import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
@@ -122,7 +122,7 @@ export const ContactUsReplyPage = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
-            to="/inventory/contact-us"
+            to="/inventory/sales/contact-us"
             className="flex items-center gap-2 px-2 py-2 bg-white border border-primary/30 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />

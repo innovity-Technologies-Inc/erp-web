@@ -68,3 +68,45 @@
 - [x] **Task 8.10**: Implement **Column Visibility Toggle** and **Core Toolbar Filtering** (Search, Status, Date Range) in the Vendor List page, ensuring real-time server-side synchronization while maintaining a clean one-line layout.
 - [x] **Task 8.11**: Perform project-wide standardization of all `<input>`, `<textarea>`, and `Select2` focus and hover styles, replacing hardcoded hex values with `primary` color tokens and adding `hover:border-gray-300`.
 - [x] **Task 8.12**: Implement project-wide **Permission-Based UI**: Standardize permission strings to underscores, wrap action buttons in `PermissionGuard`, and dynamically hide table action columns. Added global bypass for **`super-admin`** role while enforcing strict validation for all other roles.
+
+## Task Group 9: Merchant Management Implementation
+- [x] **Task 9.1**: Create `merchants.api.ts` and `useMerchants.ts` hooks for backend communication.
+- [x] **Task 9.2**: Implement `MerchantListPage.tsx` with `ListPageLayout`, AG Grid, and professional filtering.
+- [x] **Task 9.3**: Build `MerchantCreatePage.tsx` with a high-fidelity 7/5 multi-card form layout, matching the **Business Information**, **Registered Address**, **Contact Details**, and **Commission & Settings** visual blocks exactly.
+- [x] **Task 9.4**: Build `MerchantEditPage.tsx` featuring automated data hydration and high-fidelity card-based UI matching the Create design.
+- [x] **Task 9.5**: Configure dedicated routes for Merchant workflow (`/inventory/merchant`, `/inventory/merchant/create`, `/inventory/merchant/edit/$id`).
+- [x] **Task 9.6**: Implement specialized UI components: **Upload Button** with status feedback, **Active Merchant Switch**, and **Password Visibility Toggle**.
+- [x] **Task 9.7**: Enforce strict **Zod validation** for all mandatory fields identified in the design breakdown images.
+- [x] **Task 9.8**: Refactor Merchant forms into a **two-row grid layout** to ensure perfect horizontal bottom alignment (equal heights) for Business Info/Contact and Address/Commission cards.
+- [x] Task 9.9: Fix **Merchant List filtering** (Status, Date Range) by implementing explicit filter handling in the backend `MerchantApiController@datatable`.
+- [x] Task 9.10: Resolve **Document Preview** issues in Edit page by handling both HTML links and raw paths returned from the backend.
+
+## Task Group 10: Late-Phase UI Fixes & Refinements
+- [x] **Task 10.1**: Fix **DateRange selection persistence** in Merchant and Vendor list pages by correctly passing state props to `ListPageLayout`.
+- [x] **Task 10.2**: Restructure **Sales Sub-routes** to move "Terms" and "Contact Us" under `/inventory/sales/*`, updating all route definitions and navigation tabs.
+- [x] **Task 10.3**: Fix **Vendor List Pagination** to use `recordsFiltered` for accurate total page calculation during server-side filtering.
+- [x] **Task 10.4**: Update project **SKILL.md** to mandate dynamic breadcrumb generation and DateRange state synchronization to prevent regressions.
+
+## Task Group 11: Warehouse Management Implementation
+- [x] **Task 11.1**: Update `WarehouseApiController.php` payload to use null-coalescing and add `DB::beginTransaction()` for safety.
+- [x] **Task 11.2**: Implement `getData` in `WarehouseApiController` and register the route in `api.php`.
+- [x] **Task 11.3**: Update `WarehouseListPage.tsx` to use numeric ID for edit navigation and standard AG Grid action renderers.
+- [x] **Task 11.4**: Refactor `WarehouseEditPage.tsx` to handle numeric ID parameters, fetch data via `get-data`, and use `uuid` internally for updates.
+- [x] **Task 11.5**: Standardize `WarehouseEditPage` header with `[Warehouse Name]` decoration and professional loading state.
+- [x] **Task 11.6**: Implement ID-masking logic in `Topbar.tsx` to hide numeric/UUID segments from breadcrumbs.
+
+## Task Group 12: Architectural Reorganization
+- [x] **Task 12.1**: Restructure `src/modules/inventory/views` into entity-specific subfolders (`merchant`, `sales`, `vendors`, `warehouse`).
+- [x] **Task 12.2**: Update all view exports in `src/modules/inventory/index.ts` to reflect new folder paths.
+- [x] **Task 12.3**: Update project **SKILL.md** to establish the folder-based view convention as a mandatory standard for future modules.
+
+## Task Group 13: Stock Movement Implementation
+- [x] **Task 13.1**: Update `stockMovementSchema` in `validation.ts` to use `z.coerce.number()` for all ID and quantity fields to handle string inputs from dropdowns.
+- [x] **Task 13.2**: Implement `StockMovementCreatePage.tsx` with a two-column layout: **Movement Details** and **Batch Details**.
+- [x] **Task 13.3**: Build specialized sub-components (`BatchCard`, `ItemRow`) to handle complex nested form state with React Hook Form's `useFieldArray`.
+- [x] **Task 13.4**: Implement dynamic cross-filtering logic for batches and products using `useMemo` and `useWatch`.
+- [x] **Task 13.5**: Integrate real-time `avl_qty` fetching and validation with immediate user feedback via `NotificationModal`.
+- [x] **Task 13.6**: Implement state synchronization: Resetting dependent fields (To Warehouse, Batches) when primary selections change.
+- [x] **Task 13.7**: Update `onSubmit` handler to flatten nested batch/item data into the API payload format and enforce a final duplicate entry check.
+- [x] **Task 13.8**: Configure successful submission to trigger a full form reset (`reset()`) instead of navigation, returning the UI to its initial state.
+

@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Edit, Trash2, Eye } from 'lucide-react'
-import { useTermsDatatable, useDeleteTerm } from '../hooks/useTerms'
+import { useTermsDatatable, useDeleteTerm } from '../../hooks/useTerms'
 import type { ColDef } from 'ag-grid-community'
-import type { TermListItem } from '../api/terms.api'
-import { TermModal } from '../components/TermModal'
+import type { TermListItem } from '../../api/terms.api'
+import { TermModal } from '../../components/TermModal'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
-import type { TermFormValues } from '../hooks/validation'
+import type { TermFormValues } from '../../hooks/validation'
 import { useUiStore } from '@/store/useUiStore'
 import { exportToExcel } from '@/utils/exportUtils'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
@@ -16,8 +16,8 @@ import { usePermissions } from '@/hooks/usePermissions'
 const tabs = [
   { name: 'Manage Sale', to: '/inventory/sales' },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
-  { name: 'Manage Sales Terms',   to: '/inventory/terms', active: true },
-  { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
+  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms', active: true },
+  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us' },
 ]
 
 export const TermsListPage = () => {

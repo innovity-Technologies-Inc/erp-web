@@ -1,7 +1,7 @@
 import { useMemo, useState, useCallback } from 'react'
-import { useInvoicePaymentsDatatable, useUpdateConfirmStatus } from '../hooks/useSales'
+import { useInvoicePaymentsDatatable, useUpdateConfirmStatus } from '../../hooks/useSales'
 import type { ColDef } from 'ag-grid-community'
-import type { InvoicePaymentListItem } from '../api/sales.api'
+import type { InvoicePaymentListItem } from '../../api/sales.api'
 import { clsx } from 'clsx'
 import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
 import { useUiStore } from '@/store/useUiStore'
@@ -17,8 +17,8 @@ import { usePermissions } from '@/hooks/usePermissions'
 const tabs = [
   { name: 'Manage Sale', to: '/inventory/sales' },
   { name: 'Manage Sales Payment', to: '/inventory/sales/payments', active: true },
-  { name: 'Manage Sales Terms',   to: '/inventory/terms' },
-  { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
+  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms' },
+  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us' },
 ]
 
 export const InvoicePaymentListPage = () => {
