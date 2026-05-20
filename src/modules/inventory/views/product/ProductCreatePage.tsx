@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { useNavigate, Link } from '@tanstack/react-router'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -54,14 +54,30 @@ export const ProductCreatePage = () => {
       price: 0,
       supplier_price: 0,
       per_pcs_price: 0,
-      no_of_qty: 0,
+      no_of_qty: 1,
       product_vat: 0,
       status: 1,
+      main_category_id: undefined,
     },
   })
 
   const status = watch('status')
   const mainCategoryId = watch('main_category_id')
+  const price = watch('price')
+  const noOfQty = watch('no_of_qty')
+
+  // Auto-calculate Per Pcs Price
+  useEffect(() => {
+    const sellPrice = parseFloat(String(price)) || 0
+    const qty = parseInt(String(noOfQty)) || 1
+    
+    if (qty > 0) {
+      const perPcs = sellPrice / qty
+      setValue('per_pcs_price', parseFloat(perPcs.toFixed(2)), { shouldDirty: true })
+    } else {
+      setValue('per_pcs_price', 0, { shouldDirty: true })
+    }
+  }, [price, noOfQty, setValue])
 
   const { data: subCategories } = useSubCategorySelect2(mainCategoryId || null)
 
@@ -295,12 +311,12 @@ export const ProductCreatePage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[13px] font-semibold text-[#475569]">Cost Price ($)</label>
+                    <label className="text-[13px] font-semibold text-[#475569]">Quantity per Unit (Pcs)</label>
                     <input
-                      {...register('supplier_price')}
+                      {...register('no_of_qty')}
                       type="number"
-                      step="0.01"
-                      placeholder="0.00"
+                      min="1"
+                      placeholder="1"
                       className="w-full h-[44px] px-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-right"
                     />
                   </div>
@@ -312,16 +328,18 @@ export const ProductCreatePage = () => {
                       type="number"
                       step="0.01"
                       placeholder="0.00"
-                      className="w-full h-[44px] px-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-right"
+                      readOnly
+                      className="w-full h-[44px] px-4 bg-gray-50 border border-gray-200 rounded-lg text-[13px] outline-none font-bold text-right text-primary cursor-not-allowed"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[13px] font-semibold text-[#475569]">Stock Quantity (Pcs)</label>
+                    <label className="text-[13px] font-semibold text-[#475569]">Cost Price ($)</label>
                     <input
-                      {...register('no_of_qty')}
+                      {...register('supplier_price')}
                       type="number"
-                      placeholder="01"
+                      step="0.01"
+                      placeholder="0.00"
                       className="w-full h-[44px] px-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-right"
                     />
                   </div>

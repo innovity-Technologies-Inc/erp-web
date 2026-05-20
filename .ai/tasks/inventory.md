@@ -120,5 +120,18 @@
 - [x] **Task 14.7**: Perform final backend validation audit to ensure `sometimes|required` logic for partial updates (Status Toggling) is correctly implemented.
 - [x] **Task 14.8**: Implement `useToggleProductStatus` hook and update `ProductListPage.tsx` with a functional status toggle column and backend filtering synchronization.
 
+## Task Group 15: Product High-Fidelity Redesign
+- [x] **Task 15.1**: Update `productSchema` in `validation.ts` to include `status`, `no_of_qty`, and frontend-only `main_category_id`.
+- [x] **Task 15.2**: Refactor `ProductCreatePage.tsx` with high-fidelity two-column grid (7/5 split) and standard card components (Basic Info, Pricing, Details, Media, Vendor).
+- [x] **Task 15.3**: Implement dependent category dropdowns: `useMainCategorySelect2` and `useSubCategorySelect2(parentId)`.
+- [x] **Task 15.4**: Build sophisticated **Product Media** upload component with dotted borders, file feedback, and preview handling.
+- [x] **Task 15.5**: Add branded **Active Product Toggle** in Vendor & Status section.
+- [x] **Task 15.6**: Build `ProductEditPage.tsx` matching Create design, featuring automated parent category resolution to hydrate the Main Category dropdown correctly.
+- [x] **Task 15.7**: Resolve runtime `ReferenceError` for missing hook imports in Create/Edit pages.
+- [x] **Task 15.8**: Finalize form submission to correctly map sub-category to `category_id` and handle multipart/form-data for image uploads.
+- [x] **Task 15.9**: Implement real-time **Per Pcs Price** calculation logic (`Sell Price / Pcs`) with read-only UI and pack-size label standardization.
+- [x] **Task 15.10**: Fix stale cache issue in **Product Edit** page by invalidating `product-details` query key in update hooks.
+- [x] **Task 15.11**: Implement recursive sub-category path generation in **Select2 API** to show full hierarchical depth (e.g., `Sub > Child`) in Product Create/Edit dropdowns.
+
 
 

@@ -149,23 +149,18 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
     },
     {
       headerName: isSubCategory ? 'CATEGORY NAME' : 'PARENT CATEGORY',
-      field: 'parent_name',
+      field: isSubCategory ? 'parent_category_name' : 'parent_name',
       width: 200,
       hide: !isSubCategory,
       cellClass: 'text-gray-500 font-medium flex items-center',
     },
     {
       headerName: isSubCategory ? 'SUB CATEGORY NAME' : 'CATEGORY NAME',
-      field: 'category_name',
+      field: isSubCategory ? 'sub_category_path' : 'category_name',
       minWidth: 300,
       flex: 1,
       hide: !visibleCols.name,
       cellRenderer: (params: any) => {
-        // If sub-category page, strip the hierarchy prefixes (=> and &nbsp;)
-        if (isSubCategory) {
-          const cleanName = params.value.replace(/(&nbsp;)*=>\s*/g, '')
-          return <div className="font-medium text-gray-900">{cleanName}</div>
-        }
         // Render with HTML for main category list to show indentation if any
         return <div dangerouslySetInnerHTML={{ __html: params.value }} className="font-medium text-gray-900" />
       }

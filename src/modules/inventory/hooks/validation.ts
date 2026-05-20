@@ -160,6 +160,7 @@ export const productSchema = z.object({
   product_details: z.string().optional().nullable(),
   image: z.any().optional().nullable(),
   status: z.union([z.number(), z.boolean()]).optional().default(1),
+  main_category_id: z.coerce.number().optional().nullable(),
 })
 
 export type ProductFormValues = z.infer<typeof productSchema>

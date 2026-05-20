@@ -34,6 +34,7 @@ export const useUpdateProduct = () => {
     mutationFn: api.updateProduct,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['product-details'] })
       showNotificationModal(
         'Product Updated!',
         res.message || 'Product details have been updated successfully.',
@@ -54,6 +55,7 @@ export const useToggleProductStatus = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['product-details'] })
     },
   })
 }

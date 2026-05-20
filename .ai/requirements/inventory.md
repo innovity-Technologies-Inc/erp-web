@@ -135,9 +135,12 @@ This document outlines the requirements for the Inventory module in the `erp_fro
     - Implement **Status Toggle**: Functional `ToggleLeft`/`ToggleRight` icons in the list for real-time status updates with loading feedback.
     - Implement `UnitModal` for quick CRUD operations.
 - [x] **Product Management**:
-    - Implement `ProductListPage` with professional filtering (Search, Status).
-    - Implement **Status Toggle**: Functional `ToggleLeft`/`ToggleRight` icons in the list for real-time status updates with loading feedback, consistent with Units and Categories.
-    - Updated backend `ProductApiController` and `ProductStoreRequest` to support partial updates for seamless status toggling.
+    *   **High-Fidelity Redesign**: Implemented a standalone, two-column professional layout for Create and Edit pages matching the sample designs exactly (Basic Info, Pricing, Details, Media, Vendor/Status blocks).
+    *   **Dependent Category Logic**: Implemented "Main Category" selection that dynamically filters "Sub-Category" dropdowns.
+    *   **Interactive UI**: Integrated a branded status toggle, barcode/QR icon integration, and a sophisticated drag-and-drop media upload area.
+    *   **Field Standardization**: Added support for Stock Quantity, Serial Number, and Barcode fields with professional styling.
+    *   **List Page Features**: Implement `ProductListPage` with professional filtering (Search, Status) and functional status toggling.
+    *   **Backend Synchronization**: Updated `ProductApiController` and `ProductStoreRequest` to support status toggling and extended product fields.
 - [x] **Category & Sub-Category Management**:
     - **Dual-View System**: Separate list pages for Categories (root level) and Sub-Categories (nested levels) using the same component logic.
     - **Status Toggling**: Integrated status toggle buttons in the list view for both categories and sub-categories.
