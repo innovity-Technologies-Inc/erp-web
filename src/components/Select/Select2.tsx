@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import ReactSelect from 'react-select'
 import type { GroupBase, Props } from 'react-select'
 import { clsx } from 'clsx'
@@ -32,12 +33,22 @@ export const Select2 = ({
   size = 'md',
   variant = 'outline',
   menuPortalTarget = typeof document !== 'undefined' ? document.body : undefined,
+  menuPosition = 'fixed',
   ...rest
 }: Select2Props) => {
   // Find the selected option object based on the value string/number
-  const selectedOption = isMulti
-    ? options.filter((opt) => (value as any[])?.includes(opt.value))
-    : options.find((opt) => String(opt.value) === String(value)) || null
+  const selectedOption = useMemo(() => {
+    if (value === undefined || value === null || value === '') return isMulti ? [] : null
+
+    if (isMulti) {
+      const valArray = Array.isArray(value) ? value : [value]
+      return options.filter((opt) => 
+        valArray.some(v => String(v) === String(opt.value))
+      )
+    }
+
+    return options.find((opt) => String(opt.value) === String(value)) || null
+  }, [options, value, isMulti])
 
   const handleChange = (selected: any) => {
     if (onChange) {
@@ -60,7 +71,11 @@ export const Select2 = ({
         onChange={handleChange}
         isMulti={isMulti}
         menuPortalTarget={menuPortalTarget}
+        menuPosition={menuPosition}
         unstyled
+        styles={{
+          menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+        }}
         classNames={{
           control: (state) =>
             clsx(
@@ -81,8 +96,9 @@ export const Select2 = ({
           multiValue: () => 'bg-gray-100 rounded-md px-2 py-0.5 text-xs text-gray-700 mr-1 flex items-center',
           multiValueLabel: () => 'mr-1',
           multiValueRemove: () => 'hover:bg-rose-100 hover:text-rose-600 rounded cursor-pointer',
-          menu: () => 'bg-white mt-1 border border-gray-200 rounded-lg shadow-xl overflow-hidden z-50 text-[13px]',
+          menu: () => 'bg-white mt-1 border border-gray-200 rounded-lg shadow-xl overflow-hidden z-[9999] text-[13px]',
           menuList: () => 'p-1 custom-scrollbar max-h-60',
+          menuPortal: () => 'z-[9999]',
           option: (state) =>
             clsx(
               'px-3 py-2 cursor-pointer transition-colors rounded-md',

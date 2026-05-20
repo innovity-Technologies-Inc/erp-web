@@ -41,3 +41,8 @@ export const getSupplierData = async (id: number): Promise<ApiResponse<any>> => 
   const response = await apiClient.get<ApiResponse<any>>(`/inventory/supplier/get-data/${id}`)
   return response.data
 }
+
+export const getVendorSelect2 = async (): Promise<any[]> => {
+  const response = await apiClient.get<any[]>('/select2/get-vendor-select2')
+  return response.data
+}

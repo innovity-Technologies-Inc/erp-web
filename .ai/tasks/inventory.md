@@ -110,3 +110,15 @@
 - [x] **Task 13.7**: Update `onSubmit` handler to flatten nested batch/item data into the API payload format and enforce a final duplicate entry check.
 - [x] **Task 13.8**: Configure successful submission to trigger a full form reset (`reset()`) instead of navigation, returning the UI to its initial state.
 
+## Task Group 14: Product Management Refinement
+- [x] **Task 14.1**: Implement `useToggleUnitStatus` and `useToggleCategoryStatus` hooks for real-time list updates.
+- [x] **Task 14.2**: Update `ProductCategoryApiController.php` to include `created_at` and support server-side filtering by `status` and `date_range`.
+- [x] **Task 14.3**: Refactor `CategoryListPage.tsx` to support both Category and Sub-Category views with dynamic column headers and clean name rendering.
+- [x] **Task 14.4**: Implement hierarchical traversal for the Category selection dropdown with `-- ` prefixes.
+- [x] **Task 14.5**: Add "DATE" column to `UnitListPage` and `CategoryListPage` with full filter synchronization.
+- [x] **Task 14.6**: Update `CategoryModal.tsx` to conditionally hide the Parent Category field based on the module context (Category vs Sub-Category).
+- [x] **Task 14.7**: Perform final backend validation audit to ensure `sometimes|required` logic for partial updates (Status Toggling) is correctly implemented.
+- [x] **Task 14.8**: Implement `useToggleProductStatus` hook and update `ProductListPage.tsx` with a functional status toggle column and backend filtering synchronization.
+
+
+

@@ -128,3 +128,26 @@ This document outlines the requirements for the Inventory module in the `erp_fro
     - Changing a Batch automatically resets its associated item list.
 - [x] Implement **Post-Save Form Reset**: Upon successful submission, the form resets to its initial empty state for continuous data entry.
 - [x] Implement **Strict Submission Integrity**: Final duplicate check at the submission layer to ensure data consistency across complex nested structures.
+
+## 12. Product Management (Category, Sub-Category, Unit)
+    - **Unit Management**:
+    - Implement `UnitListPage` with professional filtering (Search, Status, Date Range).
+    - Implement **Status Toggle**: Functional `ToggleLeft`/`ToggleRight` icons in the list for real-time status updates with loading feedback.
+    - Implement `UnitModal` for quick CRUD operations.
+- [x] **Product Management**:
+    - Implement `ProductListPage` with professional filtering (Search, Status).
+    - Implement **Status Toggle**: Functional `ToggleLeft`/`ToggleRight` icons in the list for real-time status updates with loading feedback, consistent with Units and Categories.
+    - Updated backend `ProductApiController` and `ProductStoreRequest` to support partial updates for seamless status toggling.
+- [x] **Category & Sub-Category Management**:
+    - **Dual-View System**: Separate list pages for Categories (root level) and Sub-Categories (nested levels) using the same component logic.
+    - **Status Toggling**: Integrated status toggle buttons in the list view for both categories and sub-categories.
+    - **Date Tracking**: Added a formatted "DATE" column and server-side date range filtering.
+    - **Hierarchical Display**: 
+        - Category list shows plain names for root items.
+        - Sub-category list strips hierarchical prefixes (`=>`) for a clean look but keeps parent category context.
+        - Modal dropdowns use hierarchical prefixes (`-- `) to clearly visualize the tree structure during parent selection.
+    - **Context-Aware Modal**: 
+        - **Parent Category Field**: Automatically hidden when editing root categories to prevent invalid self-parenting or structural errors.
+        - **Sub-Category Mode**: Parent selection is mandatory and always visible when creating/editing sub-categories.
+    - **Backend Synchronization**: Refactored `ProductCategoryApiController` to support tree traversal, post-processing filters (Status, Date, Search), and partial updates for status toggling.
+

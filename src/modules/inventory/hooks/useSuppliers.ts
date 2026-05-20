@@ -4,7 +4,8 @@ import {
   createSupplier, 
   updateSupplier, 
   deleteSupplier, 
-  getSupplierData 
+  getSupplierData,
+  getVendorSelect2
 } from '../api/suppliers.api'
 import { useUiStore } from '@/store/useUiStore'
 
@@ -12,6 +13,13 @@ export const useSuppliersDatatable = (params: any) => {
   return useQuery({
     queryKey: ['suppliers', 'datatable', params],
     queryFn: () => getSuppliersDatatable(params),
+  })
+}
+
+export const useVendorSelect2 = () => {
+  return useQuery({
+    queryKey: ['vendors', 'select2'],
+    queryFn: () => getVendorSelect2(),
   })
 }
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Save, PenLine } from 'lucide-react'
@@ -39,12 +39,24 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
 
   useEffect(() => {
     if (isOpen) {
-      reset(initialData || {
-        description: '',
-        status: 1,
-      })
+      if (initialData) {
+        reset({
+          description: initialData.description || '',
+          status: initialData.status !== undefined ? Number(initialData.status) : 1,
+        })
+      } else {
+        reset({
+          description: '',
+          status: 1,
+        })
+      }
     }
   }, [isOpen, initialData, reset])
+
+  const statusOptions = useMemo(() => [
+    { value: 1, label: 'Active' },
+    { value: 0, label: 'Inactive' }
+  ], [])
 
   const onSubmit = (data: TermFormValues) => {
     // Convert status to number if it's not
@@ -124,13 +136,11 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
             control={control}
             render={({ field }) => (
               <Select2
-                options={[
-                  { value: 1, label: 'Active' },
-                  { value: 0, label: 'Inactive' }
-                ]}
+                options={statusOptions}
                 value={field.value}
                 onChange={(val) => field.onChange(val)}
                 className="w-full"
+                menuPortalTarget={document.body}
               />
             )}
           />

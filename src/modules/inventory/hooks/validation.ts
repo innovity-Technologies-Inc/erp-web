@@ -129,4 +129,39 @@ export const stockMovementSchema = z.object({
 
 export type StockMovementFormValues = z.infer<typeof stockMovementSchema>
 
+export const unitSchema = z.object({
+  unit_name: z.string().min(1, 'Unit name is required'),
+  status: z.union([z.number(), z.boolean(), z.string()]).optional().default(1),
+})
+
+export type UnitFormValues = z.infer<typeof unitSchema>
+
+export const productCategorySchema = z.object({
+  category_name: z.string().min(1, 'Category name is required'),
+  parent_id: z.union([z.number(), z.string()]).optional().nullable(),
+  status: z.union([z.number(), z.boolean(), z.string()]).optional().default(1),
+})
+
+export type ProductCategoryFormValues = z.infer<typeof productCategorySchema>
+
+export const productSchema = z.object({
+  product_id: z.string().optional().nullable(),
+  product_name: z.string().min(1, 'Product name is required'),
+  category_id: z.coerce.number({ required_error: 'Category is required' }),
+  supplier_id: z.coerce.number({ required_error: 'Supplier is required' }),
+  unit_id: z.coerce.number().optional().nullable(),
+  model: z.string().optional().nullable(),
+  price: z.coerce.number().optional().nullable(),
+  supplier_price: z.coerce.number().optional().nullable(),
+  per_pcs_price: z.coerce.number().optional().nullable(),
+  no_of_qty: z.coerce.number().optional().nullable(),
+  serial_no: z.string().optional().nullable(),
+  product_vat: z.coerce.number().optional().nullable(),
+  product_details: z.string().optional().nullable(),
+  image: z.any().optional().nullable(),
+  status: z.union([z.number(), z.boolean()]).optional().default(1),
+})
+
+export type ProductFormValues = z.infer<typeof productSchema>
+
 
