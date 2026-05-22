@@ -18,6 +18,7 @@ import { useUpdateSupplier, useSupplierData } from '../../hooks/useSuppliers'
 import { useState, useEffect } from 'react'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
+import { LoadingState } from '@/components/Loading/LoadingState'
 
 export const VendorEditPage = () => {
   const navigate = useNavigate()
@@ -78,14 +79,7 @@ export const VendorEditPage = () => {
   }
 
   if (isLoadingDetails) {
-    return (
-      <div className="min-h-screen bg-[#f1f0f5] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-[#64748b] font-bold text-[13px]">Loading Vendor Details...</p>
-        </div>
-      </div>
-    )
+    return <LoadingState message="Loading vendor details..." />
   }
 
   return (

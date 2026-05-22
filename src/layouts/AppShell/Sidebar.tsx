@@ -105,7 +105,7 @@ export const Sidebar = () => {
   return (
     <aside 
       className={clsx(
-        "bg-sidebar text-white transition-all duration-300 flex flex-col relative shrink-0 rounded-tr-2xl",
+        "bg-sidebar text-white transition-all duration-300 flex flex-col relative shrink-0 rounded-tr-2xl print:hidden",
         sidebarOpen ? "w-64" : "w-20"
       )}
     >

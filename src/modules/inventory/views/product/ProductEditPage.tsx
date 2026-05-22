@@ -24,6 +24,7 @@ import { useUnitSelect2 } from '../../hooks/useUnits'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { Select2 } from '@/components/Select/Select2'
+import { LoadingState } from '@/components/Loading/LoadingState'
 
 export const ProductEditPage = () => {
   const { id } = useParams({ from: '/_authenticated/inventory/product/edit/$id' })
@@ -190,11 +191,7 @@ export const ProductEditPage = () => {
   }
 
   if (isFetching) {
-    return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    )
+    return <LoadingState message="Loading product details..." />
   }
 
   return (

@@ -57,12 +57,21 @@
 
 @layer base {
   body {
-    @apply bg-main-bg text-gray-900 font-sans m-0 overflow-hidden;
+    @apply bg-main-bg text-gray-900 font-sans m-0 overflow-hidden print:overflow-visible print:h-auto print:bg-white;
   }
 
   #root {
     @apply w-full min-h-svh flex flex-col;
     box-sizing: border-box;
+  }
+
+  @media print {
+    #root { 
+      display: block !important; 
+      height: auto !important; 
+      min-height: 0 !important; 
+      overflow: visible !important;
+    }
   }
 }
 

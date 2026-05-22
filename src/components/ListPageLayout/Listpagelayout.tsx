@@ -235,6 +235,8 @@ export const ListPageLayout = <T extends object>({
               />
             </div>
 
+            {toolbarExtra}
+
             {showStatusFilter && (
               <div className="relative shrink-0 min-w-[120px] z-50">
                 <Select2
@@ -302,8 +304,6 @@ export const ListPageLayout = <T extends object>({
                  )}
                </div>
             )}
-
-            {toolbarExtra}
           </div>
 
           {/* Right side */}

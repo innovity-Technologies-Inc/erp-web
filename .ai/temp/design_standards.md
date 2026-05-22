@@ -55,7 +55,16 @@ This document defines the **STRICT** visual and structural standards for all new
 
 ---
 
-## 5. Button & Action System
+## 5. Standardized Loading Indicators
+- **Component**: ALWAYS use the global `LoadingState` component from `@/components/Loading/LoadingState`.
+- **Icon**: Uses `Loader2` from `lucide-react` with `animate-spin` and `text-primary`.
+- **Text**: Standard font `text-[14px] font-medium text-[#64748b]`.
+- **Message**: Provide a context-specific message (e.g., "Loading merchant details...").
+- **Constraint**: Custom spinners, localized loading logic, or different icons for full-page or section loading are strictly forbidden.
+
+---
+
+## 6. Button & Action System
 - **Save / Primary**: 
     - **Class**: `px-16 h-12 bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2`.
     - **Text**: `Save` or `Update`.

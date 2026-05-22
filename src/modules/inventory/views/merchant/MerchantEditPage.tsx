@@ -12,7 +12,6 @@ import {
   Lock,
   Percent,
   RefreshCw,
-  Loader2,
   Upload,
   Eye,
   EyeOff,
@@ -23,6 +22,7 @@ import { merchantSchema, type MerchantFormValues } from '../../hooks/validation'
 import { useMerchantData, useUpdateMerchant } from '../../hooks/useMerchants'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
+import { LoadingState } from '@/components/Loading/LoadingState'
 import { Select2 } from '@/components/Select/Select2'
 
 export const MerchantEditPage = () => {
@@ -127,14 +127,7 @@ export const MerchantEditPage = () => {
   }
 
   if (isLoadingDetails) {
-    return (
-      <div className="min-h-screen bg-[#f1f0f5] flex items-center justify-center font-poppins">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-[#64748b] font-medium text-[13px]">Loading Merchant Details...</p>
-        </div>
-      </div>
-    )
+    return <LoadingState message="Loading merchant details..." />
   }
 
   return (

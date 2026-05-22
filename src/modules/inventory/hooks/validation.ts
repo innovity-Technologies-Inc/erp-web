@@ -144,6 +144,35 @@ export const productCategorySchema = z.object({
 
 export type ProductCategoryFormValues = z.infer<typeof productCategorySchema>
 
+export const purchaseSchema = z.object({
+  supplier_id: z.coerce.number({ required_error: 'Vendor is required' }),
+  purchase_date: z.string().min(1, 'Purchase date is required'),
+  chalan_no: z.string().min(1, 'Chalan number is required'),
+  batch_no: z.string().min(1, 'Batch number is required'),
+  invoice_file: z.any().optional(),
+  
+  items: z.array(z.object({
+    item_id: z.coerce.number({ required_error: 'Item is required' }),
+    expiry_date: z.string().optional(),
+    rate: z.coerce.number().min(0, 'Rate must be >= 0'),
+    discount_percent: z.coerce.number().min(0).max(100).default(0),
+    discount_value: z.coerce.number().default(0),
+    total: z.coerce.number().default(0),
+    
+    warehouses: z.array(z.object({
+      warehouse_id: z.coerce.number({ required_error: 'Warehouse is required' }),
+      quantity: z.coerce.number().min(1, 'Qty must be >= 1')
+    })).min(1, 'At least one warehouse is required'),
+  })).min(1, 'At least one item is required'),
+  
+  details: z.string().optional(),
+  purchase_discount: z.coerce.number().default(0),
+  paid_amount: z.coerce.number().default(0),
+  payment_type_id: z.union([z.coerce.number(), z.string()]).optional(),
+})
+
+export type PurchaseFormValues = z.infer<typeof purchaseSchema>
+
 export const productSchema = z.object({
   product_id: z.string().optional().nullable(),
   product_name: z.string().min(1, 'Product name is required'),

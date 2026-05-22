@@ -63,6 +63,9 @@ writing any code. Never deviate from these conventions without explicit user app
 - **Dynamic Branding**: Always use `useSettings()` hook to get `logo`, `siteName`, and colors. Never hardcode these.
 - **Backend-Driven Colors**: Use the 5 basic colors (Primary, Info, Success, Warning, Danger) provided by the backend `webSetting`. These MUST be applied project-wide via CSS variables.
 - **AG Grid for all tables**: Replace every DataTables instance with AG Grid Community.
+- **Standardized Currency Formatting**: ALWAYS use the `formatCurrency` utility (from `@/utils/formatters`) for all monetary displays. NEVER use native `toLocaleString` with dynamic currency codes, as non-ISO codes like "TK" will cause a `RangeError` and crash the application.
+- **Standardized Loading Indicators**: ALWAYS use the global `LoadingState` component (from `@/components/Loading/LoadingState`) for all full-page or section-level loading states. Local or custom spinners are strictly forbidden to ensure system-wide consistency.
+- **Global RichEditor**: For all multi-line text inputs requiring formatting (e.g., Sale/Purchase Details, Notes, Terms), ALWAYS use the global `RichEditor` component (from `@/components/RichEditor/RichEditor`). Local definitions of rich editors are strictly forbidden.
 - **Permission-Based UI**: ALWAYS wrap action buttons (Create, Edit, Delete, View) with `PermissionGuard` or check permissions via `usePermissions`. Action buttons MUST NOT be visible if the user lacks the required permission. 
   - **Naming Convention**: Permission strings MUST use **underscores** (e.g., `view_sales`, `edit_supplier`). Never use hyphens.
   - **Dynamic Columns**: Datatable action columns MUST be dynamically hidden if the user has NO permissions for any action in that column.
@@ -120,8 +123,7 @@ writing any code. Never deviate from these conventions without explicit user app
    - **Card Padding**: Use consistent padding for major sections (e.g., `p-4` or `p-6`).
    - **Layout Margins**: Maintain uniform `space-y-6` between vertical sections.
 
-7. **Responsiveness**: All new components and layouts MUST be fully responsive and tested for various screen sizes (Mobile, Tablet, Laptop, Desktop).
-
+7. **Responsiveness**: All new components and layouts MUST be fully responsive and provide a seamless experience for mobile, tablet, and desktop.
 8. **Backend Integrity**: NEVER modify backend API controllers, routes, or logic without explicit user approval. Your focus is strictly on the React frontend migration.
 
 9. **High-Fidelity Transaction Layouts**:

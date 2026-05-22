@@ -55,6 +55,7 @@ This document outlines the requirements for the Inventory module in the `erp_fro
 - [x] Implement **Continuous Serial Numbers (SL)**: Serial numbers must follow across pages (e.g., 1-10 on page 1, 11-20 on page 2).
 - [x] Implement **Navigation Synchronization**: The Sidebar "Sale" item must remain active when navigating through sub-modules like Terms, Contact Us, and Sales Payments.
 - [x] **DateRange Synchronization**: When using `ListPageLayout`, the `fromDate` and `toDate` props MUST be passed to the layout to ensure the picker reflects current filter state.
+- [x] **Standardized Loading Indicators**: All data-fetching states must use the global `LoadingState` component to ensure system-wide visual consistency.
 
 ## 6. Sales Transaction (Create/Edit)
 - [x] Implement dynamic warehouse-based product loading (must select warehouse before product).
@@ -65,7 +66,9 @@ This document outlines the requirements for the Inventory module in the `erp_fro
 - [x] Standardize on a professional multi-column header and interactive item table layout.
 - [x] Implement robust Zod validation for complex nested item structures.
 - [x] Implement **Sale Edit functionality** (`SaleEditPage`) replicating the Create design while seamlessly fetching, hydrating, and updating existing invoice data safely without touching legacy backend code.
-- [x] Implement a professional **Sale View Page** (`SaleViewPage`) matching the reference design, featuring pro-style billing cards, interactive status badges, a comprehensive payment summary, and high-fidelity print capabilities.
+- [x] **Robust Backend Integration**:
+    - Updated `SaleApiController` to include a robust `delete` method with approval checks, automated stock restoration (returning quantities to BatchProduct), and transaction safety.
+- [x] Implement a professional **Sale View Page** (`SaleViewPage`) matching the reference design, featuring pro-style billing cards, interactive status badges, a comprehensive payment summary, and high-fidelity print capabilities (including sidebar/header exclusion and single-page optimization).
 
 ## 7. Vendor Management (Standalone Workflow)
 - [x] Implement a dedicated **Vendor List Page** using `ListPageLayout` with AG Grid and professional filtering.
@@ -134,13 +137,27 @@ This document outlines the requirements for the Inventory module in the `erp_fro
     - Implement `UnitListPage` with professional filtering (Search, Status, Date Range).
     - Implement **Status Toggle**: Functional `ToggleLeft`/`ToggleRight` icons in the list for real-time status updates with loading feedback.
     - Implement `UnitModal` for quick CRUD operations.
-- [x] **Product Management**:
-    *   **High-Fidelity Redesign**: Implemented a standalone, two-column professional layout for Create and Edit pages matching the sample designs exactly (Basic Info, Pricing, Details, Media, Vendor/Status blocks).
-    *   **Dependent Category Logic**: Implemented "Main Category" selection that dynamically filters "Sub-Category" dropdowns.
-    *   **Interactive UI**: Integrated a branded status toggle, barcode/QR icon integration, and a sophisticated drag-and-drop media upload area.
-    *   **Field Standardization**: Added support for Stock Quantity, Serial Number, and Barcode fields with professional styling.
-    *   **List Page Features**: Implement `ProductListPage` with professional filtering (Search, Status) and functional status toggling.
-    *   **Backend Synchronization**: Updated `ProductApiController` and `ProductStoreRequest` to support status toggling and extended product fields.
+- [x] **Category & Sub-Category Management**:
+    *   **Performance Optimization**: Refactored `ProductCategoryApiController` to use direct SQL queries for root-level categories, ensuring high performance even with large datasets.
+    *   **Hierarchical Visualization**: Implemented a two-column management strategy. The "Category" tab shows root-level nodes, while the "Sub-Category" tab displays the full breadcrumb path (e.g., `Parent | Sub > Child`).
+    *   **Recursive Selection**: Updated the Select2 API to recursively fetch all descendants with formatted paths for intuitive product categorization.
+    *   **Dynamic UI**: Integrated real-time status toggling and advanced date/status filtering in the list view.
+
+- [x] **Purchase Management**:
+    *   **High-Fidelity Form Redesign**: Implemented a standalone, ultra-professional Purchase Create/Edit experience with 32px rounded cards, sticky payment summaries, and nested item-to-warehouse allocations matching visual samples exactly.
+    *   **Custom UI Components**: Built specialized components for Invoice Upload (green rounded button), expandable Item Detail cards with blue sub-headers, and dashed-border "Add Item" containers.
+    *   **Real-time Calculations**: Built a synchronous calculation engine for line-item totals, sub-totals, discounts, and due amounts with sophisticated visual feedback (red balance indicators).
+    *   **Data Transformation**: Handled seamless flattening of nested frontend state into the structure required by the legacy Laravel API.
+    *   **Asynchronous Validation**: Integrated real-time debounced checks for Chalan and Batch number uniqueness.
+    *   **Vendor Integration**: Implemented supplier-locked product selection with automatic rate and stock fetching.
+    *   **High-Fidelity List View**: Built a professional list page with side-by-side Vendor/Status filters, standardized column formatting (plain text IDs, clean dates), and status badges.
+    *   **Robust Backend Integration**:
+        *   Updated `PurchaseApiController` to include a `delete` method for safe removal of purchases, details, batches, and accounting vouchers.
+        *   Enforced transaction integrity and approval checks during the deletion process.
+    *   **High-Fidelity Invoice View**: Created a print-ready, branded invoice details page with organizational and supplier context. Specifically optimized for Purchase:
+        *   **Header**: Displays system Invoice ID prominently.
+        *   **Status Badges**: Grouped Payment Status, Chalan Number, and Batch Number side-by-side for quick reference.
+        *   **Print**: Fully optimized for single-page physical output with auto-exclusion of web UI elements.
 - [x] **Category & Sub-Category Management**:
     - **Dual-View System**: Separate list pages for Categories (root level) and Sub-Categories (nested levels) using the same component logic.
     - **Status Toggling**: Integrated status toggle buttons in the list view for both categories and sub-categories.

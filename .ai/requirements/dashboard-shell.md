@@ -29,6 +29,8 @@
 - [x] Integrate custom branded PNG icons into StatCards with interactive color transitions.
 - [x] Add dark drop shadows and smoothed area gradients to the monthly trend visualization.
 - [x] Add robust loading states for a polished SPA experience.
+- [x] **Contextual Filtering**: Implemented a master Topbar Date Range Picker and individual section Month-Year pickers with synchronized "Read-Only" states.
+- [x] **Robust Backend Support**: Updated `DashboardApiController` to handle `from` and `to` date parameters for all charts, stats, and report tables, ensuring data consistency between frontend and backend.
 ## 4. Shared Domain Utilities
 - [ ] Implement currency formatters (BDT).
 - [ ] Implement date/time formatters consistent with ERP standards.

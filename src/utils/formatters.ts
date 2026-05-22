@@ -12,9 +12,12 @@ export const formatCurrency = (amount: number | string, currency = '৳', positi
 
 export const formatDate = (date: string | Date) => {
   if (!date) return 'N/A'
+  const d = new Date(date)
+  if (isNaN(d.getTime())) return 'N/A'
+  
   return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  }).format(new Date(date))
+  }).format(d)
 }

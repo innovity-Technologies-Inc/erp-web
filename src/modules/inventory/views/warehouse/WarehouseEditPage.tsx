@@ -17,6 +17,7 @@ import { useUpdateWarehouse, useEmployees, useWarehouseDetails } from '../../hoo
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { Select2 } from '@/components/Select/Select2'
+import { LoadingState } from '@/components/Loading/LoadingState'
 
 export const WarehouseEditPage = () => {
   const { id } = useParams({ strict: false })
@@ -70,14 +71,7 @@ export const WarehouseEditPage = () => {
   })) || []
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#f1f0f5] flex items-center justify-center font-poppins">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-[#64748b] font-medium text-[13px]">Loading Warehouse Details...</p>
-        </div>
-      </div>
-    )
+    return <LoadingState message="Loading warehouse details..." />
   }
 
   return (

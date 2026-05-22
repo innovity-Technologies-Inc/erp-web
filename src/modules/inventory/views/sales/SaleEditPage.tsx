@@ -36,7 +36,7 @@ import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
-import { Loader2 } from 'lucide-react'
+import { LoadingState } from '@/components/Loading/LoadingState'
 
 // ─── Simple Rich Text Editor ───────────────────────────────────────────────────
 
@@ -444,14 +444,7 @@ export const SaleEditPage = () => {
   }, [getValues, setValue])
 
   if (isLoadingDetails) {
-    return (
-      <div className="min-h-screen bg-[#f1f0f5] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-[#64748b] font-medium text-[13px]">Loading Sale Details...</p>
-        </div>
-      </div>
-    )
+    return <LoadingState message="Loading sale details..." />
   }
 
   return (

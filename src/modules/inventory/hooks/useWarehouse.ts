@@ -25,6 +25,9 @@ export const useWarehouses = () => {
   })
 }
 
+export const useWarehouseSelect2 = useWarehouses
+
+
 export const useWarehouseDatatable = (params: any) => {
   return useQuery({
     queryKey: ['warehouse', 'datatable', params],

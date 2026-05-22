@@ -14,7 +14,7 @@
 - [x] **Task 2.3**: Configure custom columns for Sales (Invoice No, Sales By, Channel, etc.).
 - [x] **Task 2.4**: Update backend `SaleApiController` to support status and date range filtering.
 - [x] **Task 2.5**: Implement navigation to separate Create/Edit pages.
-- [x] **Task 2.6**: Fix pagination footer to use `recordsFiltered` for accurate results count.
+- [x] **Task 2.7**: Implement a robust backend `delete` method in `SaleApiController` with approval checks, automated stock restoration, and transaction integrity.
 
 ## Task Group 3: Shared UI Utilities
 - [x] **Task 3.1**: Create `ConfirmationModal.tsx` for destructive actions.
@@ -54,6 +54,7 @@
 - [x] **Task 7.8**: Configure React Router parameterized route for editing sales.
 - [x] **Task 7.9**: Implement `SaleViewPage.tsx` with a high-fidelity layout matching the reference design, including billing cards and a detailed product table.
 - [x] **Task 7.10**: Set up the parameterized route for the Sale View and link it to the Sales List.
+- [x] **Task 7.11**: Implement high-fidelity **Print Support** for `SaleViewPage`, including global UI exclusion (sidebar/header/devtools) and single-page layout optimization.
 
 ## Task Group 8: Vendor Management Implementation
 - [x] **Task 8.1**: Create `suppliers.api.ts` and `useSuppliers.ts` hooks for backend communication.
@@ -132,6 +133,34 @@
 - [x] **Task 15.9**: Implement real-time **Per Pcs Price** calculation logic (`Sell Price / Pcs`) with read-only UI and pack-size label standardization.
 - [x] **Task 15.10**: Fix stale cache issue in **Product Edit** page by invalidating `product-details` query key in update hooks.
 - [x] **Task 15.11**: Implement recursive sub-category path generation in **Select2 API** to show full hierarchical depth (e.g., `Sub > Child`) in Product Create/Edit dropdowns.
+
+## Task Group 16: Purchase Management Implementation
+- [x] **Task 16.1**: Create `purchase.api.ts` with comprehensive endpoints for datatable, store, update, delete, and retrieval.
+- [x] **Task 16.2**: Implement `usePurchases.ts` TanStack Query hooks including specialized hooks for Chalan/Batch availability checks.
+- [x] **Task 16.3**: Update `validation.ts` with a robust `purchaseSchema` supporting nested item-warehouse structures.
+- [x] **Task 16.4**: Build `PurchaseCreatePage.tsx` with high-fidelity two-column layout and sticky payment summary.
+- [x] **Task 16.5**: Implement `PurchaseItemRow` component with nested `useFieldArray` for granular warehouse allocations.
+- [x] **Task 16.6**: Develop synchronous calculation engine for real-time item totals and global billing aggregation.
+- [x] **Task 16.7**: Implement frontend-to-backend data flattening logic to ensure nested state matches legacy API expectations.
+- [x] **Task 16.8**: Build `PurchaseListPage.tsx` featuring professional status badges, advanced filtering, and Excel export.
+- [x] **Task 16.9**: Build `PurchaseEditPage.tsx` with complex data re-nesting/hydration logic to correctly populate the multi-warehouse UI from flattened API data.
+- [x] **Task 16.10**: Create `PurchaseViewPage.tsx` (Invoice) with high-fidelity branding, organizational context, and print support (including sidebar/header exclusion and single-page optimization).
+- [x] **Task 16.11**: Implement backend `delete` method in `PurchaseApiController` to safely handle removal of purchase records and associated accounting/batch data.
+- [x] **Task 16.11**: Define type-safe routes for all purchase views and register them in the modular inventory index.
+- [x] **Task 16.12**: Reorganize `ListPageLayout` and `PurchaseListPage` toolbar to group Search, Vendor, and Status filters side-by-side with high-fidelity styling.
+- [x] **Task 16.13**: Resolve `RangeError: Invalid time value` by implementing a robust global `formatDate` utility with malformed date protection.
+- [x] **Task 16.14**: Refactor `PurchaseApiController@datatable` to support server-side filtering by Vendor, Status, and Date Range while ensuring plain-text clean data output.
+- [x] **Task 16.15**: Apply high-fidelity design updates to **Purchase Create/Edit** pages, matching visual samples for header styling, nested item cards, sticky summaries, and custom upload components.
+- [x] **Task 16.16**: Implement global **Duplicate Item Prevention** logic across multiple rows with high-impact error notifications.
+- [x] **Task 16.17**: Develop reactive **Warehouse Stock Tracking** within nested item rows using specialized API hooks.
+- [x] **Task 16.18**: Implement **Transaction-Aware Stock Calculation** for Edit mode to accurately reflect available quantities.
+- [x] **Task 16.19**: Refine **Chalan & Batch Validation** to support intelligent self-conflict checks during record updates.
+
+## Task Group 17: System-Wide Standardization
+- [x] **Task 17.1**: Create global `LoadingState` component in `src/components/Loading/LoadingState.tsx` featuring branded animations and typography.
+- [x] **Task 17.2**: Surgically integrate `LoadingState` across all management modules (Purchase, Sale, Merchant, Vendor, Product, Warehouse) to replace inconsistent localized spinners.
+- [x] **Task 17.3**: Standardize **Payment Summary** and **Add Item** visuals (colors, icons, spacing) across all transaction modules for a unified user experience.
+- [x] **Task 17.4**: Perform project-wide cleanup of unused `Loader2` imports and manual loading blocks to ensure code quality.
 
 
 

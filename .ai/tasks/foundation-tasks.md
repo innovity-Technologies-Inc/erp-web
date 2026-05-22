@@ -52,3 +52,8 @@
 - [x] **Task 9.3**: Update `ListPageLayout` to support `createPermission` prop for the standard "+ Create" button.
 - [x] **Task 9.4**: Retrofit existing modules (Inventory, etc.) to use `PermissionGuard` for Edit, Delete, and View actions.
 
+## Task Group 10: Global Print Infrastructure
+- [x] **Task 10.1**: Implement global `print:hidden` utility across foundational layout components (`Topbar`, `Sidebar`, `AppShell`).
+- [x] **Task 10.2**: Configure global CSS overrides in `globals.css` to handle `overflow: hidden` and `height: 100vh` during printing to support multi-page documents.
+- [x] **Task 10.3**: Wrap developer-only tools (e.g., `TanStackRouterDevtools`) in print-protected containers to ensure clean physical outputs.
+

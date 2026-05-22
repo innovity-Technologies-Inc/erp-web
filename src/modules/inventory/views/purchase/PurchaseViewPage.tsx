@@ -9,27 +9,28 @@ import {
   Building2,
   User,
   ShieldCheck,
-  Truck,
   FileText,
   Clock,
   Calendar,
-  Smile
+  Package,
+  Hash
 } from 'lucide-react'
-import { useSaleDetails } from '../../hooks/useSales'
+import { usePurchaseData } from '../../hooks/usePurchases'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency, formatDate } from '@/utils/formatters'
-import { clsx } from 'clsx'
 import { LoadingState } from '@/components/Loading/LoadingState'
 
-export const SaleViewPage = () => {
+export const PurchaseViewPage = () => {
   const navigate = useNavigate()
   // Use explicit from path to ensure ID is captured correctly
-  const { id } = useParams({ from: '/_authenticated/inventory/sales/view/$id' })
+  const { id } = useParams({ from: '/_authenticated/inventory/purchase/view/$id' })
   const { currency, currencyPosition, companyInformation, webSetting } = useSettings()
 
-  const saleId = id ? parseInt(id as string, 10) : null
-  const { data: saleDetails, isLoading } = useSaleDetails(saleId)
-
+  // Convert id to number if necessary, as done in Sales module
+  const purchaseId = id ? parseInt(id as string, 10) : null
+  const { data: purchaseResponse, isLoading } = usePurchaseData(purchaseId)
+  const purchase = purchaseResponse
+  
   // Helper for consistent formatting
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)
 
@@ -38,44 +39,33 @@ export const SaleViewPage = () => {
   }
 
   if (isLoading) {
-    return <LoadingState message="Loading invoice details..." />
+    return <LoadingState message="Loading purchase details..." />
   }
 
-  if (!saleDetails) {
+  if (!purchase) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6 text-center">
         <div className="bg-white p-10 rounded-2xl border border-gray-200 shadow-sm max-w-md w-full">
            <div className="p-4 bg-rose-50 rounded-full text-rose-500 w-fit mx-auto mb-6">
               <FileText className="w-10 h-10" />
            </div>
-           <h2 className="text-[20px] font-bold text-gray-900 mb-3 tracking-tight">Invoice Not Found</h2>
-           <p className="text-[#64748b] text-[14px] leading-relaxed mb-8">The requested invoice could not be found or has been removed from the system.</p>
+           <h2 className="text-[20px] font-bold text-gray-900 mb-3 tracking-tight">Purchase Not Found</h2>
+           <p className="text-[#64748b] text-[14px] leading-relaxed mb-8">The requested purchase record could not be found or has been removed from the system.</p>
            <button 
-             onClick={() => navigate({ to: '/inventory/sales' })}
+             onClick={() => navigate({ to: '/inventory/purchase' })}
              className="w-full py-3 bg-primary text-white rounded-xl font-bold text-[14px] hover:bg-primary/90 transition-all shadow-sm active:scale-[0.98]"
            >
-             Return to Sales List
+             Return to Purchase List
            </button>
         </div>
       </div>
     )
   }
 
-  const items = Array.isArray(saleDetails.InvoiceDetails) ? saleDetails.InvoiceDetails : 
-                Array.isArray(saleDetails.invoice_details) ? saleDetails.invoice_details : [];
+  const items = Array.isArray(purchase.product_purchase_details) ? purchase.product_purchase_details : [];
 
-  const paymentStatus = parseFloat(saleDetails.due_amount) <= 0 ? 'Paid' : 
-                       parseFloat(saleDetails.paid_amount) > 0 ? 'Partial' : 'Unpaid';
-
-  const deliveryStatusMap: Record<string, string> = {
-    '0': 'Pending',
-    '1': 'Confirmed',
-    '2': 'Picked Up',
-    '3': 'In Transit',
-    '4': 'Delivered',
-    '5': 'Cancelled'
-  };
-  const deliveryStatus = deliveryStatusMap[saleDetails.delivery_status?.toString()] || 'Pending';
+  const paymentStatus = parseFloat(purchase.due_amount) <= 0 ? 'Paid' : 
+                       parseFloat(purchase.paid_amount) > 0 ? 'Partial' : 'Unpaid';
 
   return (
     <div className="min-h-screen font-poppins print:bg-white print:pb-0">
@@ -83,13 +73,13 @@ export const SaleViewPage = () => {
       <div className="flex items-center justify-between pb-6 print:hidden">
         <div className="flex items-center gap-4">
           <Link 
-            to="/inventory/sales"
+            to="/inventory/purchase"
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
           </Link>
-          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Invoice Details</h1>
+          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Purchase Details</h1>
         </div>
 
         <button
@@ -119,15 +109,15 @@ export const SaleViewPage = () => {
           </div>
 
           <div className="text-right">
-            <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight mb-2 print:text-[18px] print:mb-1">Invoice #{saleDetails.invoice_id}</h2>
+            <h2 className="text-[20px] font-semibold text-gray-900 tracking-tight mb-2 print:text-[18px] print:mb-1">Invoice #{purchase.purchase_id || purchase.id}</h2>
             <div className="flex items-center justify-end gap-4 text-[#64748b] text-[11px] font-medium print:gap-2">
               <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-primary print:w-3.5 print:h-3.5" />
-                  {formatDate(saleDetails.date)}
+                  {formatDate(purchase.purchase_date)}
               </div>
               <div className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-primary print:w-3.5 print:h-3.5" />
-                  {new Date(saleDetails.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
+                  {new Date(purchase.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
               </div>
             </div>
           </div>
@@ -135,56 +125,56 @@ export const SaleViewPage = () => {
 
         {/* Billing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6 px-8 pb-6 print:px-4 print:pb-4 print:gap-4">
-          {/* Billing From */}
+          {/* Billing From (Vendor) */}
           <div className="relative p-4 bg-white rounded-xl border border-gray-200 print:break-inside-avoid print:p-3">
               <div className="flex justify-between items-start mb-4 print:mb-2">
-                <span className="inline-block px-3 py-1 bg-blue-100 text-[#1e4ba1] text-[10px] font-bold uppercase tracking-wider rounded-full">Billing From</span>
-                <div className="p-2 bg-blue-50 rounded-lg text-[#1e4ba1] print:bg-blue-50 print:p-1.5">
+                <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-[10px] font-bold uppercase tracking-wider rounded-full">Supplier Details</span>
+                <div className="p-2 bg-orange-50 rounded-lg text-orange-600 print:bg-orange-50 print:p-1.5">
                   <Building2 className="w-4 h-4 print:w-3.5 print:h-3.5" />
                 </div>
               </div>
               
+              <h3 className="text-[18px] font-semibold text-gray-900 mb-4 print:text-[16px] print:mb-2">{purchase.supplier?.supplier_name || 'Vendor Name'}</h3>
+              
+              <div className="space-y-3 print:space-y-1.5">
+                <div className="flex items-start gap-3 text-[13px] text-gray-500 font-medium leading-relaxed print:text-[11px]">
+                  <MapPin className="w-4 h-4 mt-0.5 shrink-0 print:w-3.5 print:h-3.5" />
+                  <span>{purchase.supplier?.address || 'Supplier address not provided'}</span>
+                </div>
+                <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
+                  <Phone className="w-4 h-4 shrink-0 print:w-3.5 print:h-3.5" />
+                  <span>{purchase.supplier?.mobile || 'No contact provided'}</span>
+                </div>
+                <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
+                  <Mail className="w-4 h-4 shrink-0 print:w-3.5 print:h-3.5" />
+                  <span>{purchase.supplier?.email || 'No email provided'}</span>
+                </div>
+              </div>
+          </div>
+
+          {/* Billing To (Company) */}
+          <div className="relative p-4 bg-white rounded-xl border border-gray-200 print:break-inside-avoid print:p-3">
+              <div className="flex justify-between items-start mb-4 print:mb-2">
+                <span className="inline-block px-3 py-1 bg-blue-100 text-[#1e4ba1] text-[10px] font-bold uppercase tracking-wider rounded-full">Purchased By</span>
+                <div className="p-2 bg-blue-50 rounded-lg text-[#1e4ba1] print:bg-blue-50 print:p-1.5">
+                  <User className="w-4 h-4 print:w-3.5 print:h-3.5" />
+                </div>
+              </div>
+
               <h3 className="text-[18px] font-semibold text-gray-900 mb-4 print:text-[16px] print:mb-2">{companyInformation?.company_name || 'Deshi Shad Inc'}</h3>
               
               <div className="space-y-3 print:space-y-1.5">
                 <div className="flex items-start gap-3 text-[13px] text-gray-500 font-medium leading-relaxed print:text-[11px]">
                   <MapPin className="w-4 h-4 mt-0.5 shrink-0 print:w-3.5 print:h-3.5" />
-                  <span>{companyInformation?.address || 'Street address not provided'}</span>
+                  <span>{companyInformation?.address || 'Company address not available'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
                   <Phone className="w-4 h-4 shrink-0 print:w-3.5 print:h-3.5" />
-                  <span>{companyInformation?.mobile || 'No contact provided'}</span>
+                  <span>{companyInformation?.mobile || 'No phone provided'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
                   <Mail className="w-4 h-4 shrink-0 print:w-3.5 print:h-3.5" />
                   <span>{companyInformation?.email || 'No email provided'}</span>
-                </div>
-              </div>
-          </div>
-
-          {/* Billing To */}
-          <div className="relative p-4 bg-white rounded-xl border border-gray-200 print:break-inside-avoid print:p-3">
-              <div className="flex justify-between items-start mb-4 print:mb-2">
-                <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-[10px] font-bold uppercase tracking-wider rounded-full">Billing To</span>
-                <div className="p-2 bg-orange-50 rounded-lg text-orange-600 print:bg-orange-50 print:p-1.5">
-                  <User className="w-4 h-4 print:w-3.5 print:h-3.5" />
-                </div>
-              </div>
-
-              <h3 className="text-[18px] font-semibold text-gray-900 mb-4 print:text-[16px] print:mb-2">{saleDetails.customer?.customer_name || 'Merchant Name'}</h3>
-              
-              <div className="space-y-3 print:space-y-1.5">
-                <div className="flex items-start gap-3 text-[13px] text-gray-500 font-medium leading-relaxed print:text-[11px]">
-                  <MapPin className="w-4 h-4 mt-0.5 shrink-0 print:w-3.5 print:h-3.5" />
-                  <span>{saleDetails.customer?.customer_address || 'Customer address not available'}</span>
-                </div>
-                <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
-                  <Phone className="w-4 h-4 shrink-0 print:w-3.5 print:h-3.5" />
-                  <span>{saleDetails.customer?.customer_mobile || 'No phone provided'}</span>
-                </div>
-                <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
-                  <Mail className="w-4 h-4 shrink-0 print:w-3.5 print:h-3.5" />
-                  <span>{saleDetails.customer?.customer_email || 'No email provided'}</span>
                 </div>
               </div>
           </div>
@@ -193,7 +183,7 @@ export const SaleViewPage = () => {
         {/* Ordered Products Section */}
         <div className="border-t border-gray-100 mx-8 py-4 print:mx-4 print:py-2">
             <div className="flex items-center justify-between mb-4 print:mb-2">
-              <h3 className="text-[16px] font-semibold text-gray-900 print:text-[14px]">Ordered Products</h3>
+              <h3 className="text-[16px] font-semibold text-gray-900 print:text-[14px]">Purchased Items</h3>
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">{items.length} {items.length === 1 ? 'Item' : 'Items'} Invoiced</span>
             </div>
             
@@ -205,10 +195,9 @@ export const SaleViewPage = () => {
                       <th className="px-6 py-4 w-16 print:px-3 print:py-2">SL.</th>
                       <th className="px-4 py-4 min-w-[250px] print:min-w-0 print:px-2 print:py-2">Product Name</th>
                       <th className="px-4 py-4 print:px-2 print:py-2">Warehouse</th>
-                      <th className="px-4 py-4 print:px-2 print:py-2">Unit</th>
+                      <th className="px-4 py-4 print:px-2 print:py-2">Exp Date</th>
                       <th className="px-4 py-4 text-center print:px-2 print:py-2">Qty</th>
                       <th className="px-4 py-4 text-right print:px-2 print:py-2">Rate</th>
-                      <th className="px-4 py-4 text-right print:px-2 print:py-2">Per Pcs Rate</th>
                       <th className="px-4 py-4 text-center print:px-2 print:py-2">Discount%</th>
                       <th className="px-6 py-4 text-right print:px-3 print:py-2">Amount</th>
                     </tr>
@@ -220,18 +209,17 @@ export const SaleViewPage = () => {
                         <td className="px-4 py-4 print:px-2 print:py-2">
                           <div className="flex flex-col gap-0.5">
                             <span className="font-semibold text-[#1e4ba1] text-[14px] print:text-[12px]">{item.product?.product_name || 'Product Name'}</span>
-                            <span className="text-[11px] text-gray-400 font-medium print:text-[9px]">SKU: {item.product?.sku || 'BP-' + item.product_id}</span>
+                            <span className="text-[11px] text-gray-400 font-medium print:text-[9px]">SKU: {item.product?.sku || 'PROD-' + item.product_id}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-gray-700 font-medium print:px-2 print:py-2">{item.warehouse?.warehouse_name || 'MD/VA'}</td>
+                        <td className="px-4 py-4 text-gray-700 font-medium print:px-2 print:py-2">{item.batch_product?.warehouse?.name || 'Main'}</td>
                         <td className="px-4 py-4 print:px-2 print:py-2">
-                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-md print:bg-gray-100 print:text-[9px] print:px-1.5 print:py-0.5">{item.product?.unit?.unit_name || 'Pack'}</span>
+                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-md print:bg-gray-100 print:text-[9px] print:px-1.5 print:py-0.5">{item.expiry_date ? formatDate(item.expiry_date) : 'N/A'}</span>
                         </td>
-                        <td className="px-4 py-4 text-center font-semibold text-gray-900 print:px-2 print:py-2">{parseFloat(item.quantity).toFixed(2)}</td>
+                        <td className="px-4 py-4 text-center font-semibold text-gray-900 print:px-2 print:py-2">{item.quantity}</td>
                         <td className="px-4 py-4 text-right text-gray-700 print:px-2 print:py-2">{formatValue(item.rate)}</td>
-                        <td className="px-4 py-4 text-right text-gray-700 print:px-2 print:py-2">{formatValue(parseFloat(item.rate) / (parseFloat(item.batchMaster?.no_of_qty) || 1))}</td>
-                        <td className="px-4 py-4 text-center text-rose-500 font-semibold print:px-2 print:py-2">{parseFloat(item.discount_per || 0)}%</td>
-                        <td className="px-6 py-4 text-right font-bold text-[#1e4ba1] text-[14px] print:text-[12px] print:px-3 print:py-2">{formatValue(item.total_price)}</td>
+                        <td className="px-4 py-4 text-center text-rose-500 font-semibold print:px-2 print:py-2">{parseFloat(item.discount || 0)}%</td>
+                        <td className="px-6 py-4 text-right font-bold text-[#1e4ba1] text-[14px] print:text-[12px] print:px-3 print:py-2">{formatValue(item.total_amount)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -247,17 +235,17 @@ export const SaleViewPage = () => {
           <div className="lg:col-span-8 print:col-span-7 space-y-6 print:space-y-3">
               {/* Thank you message */}
 
-              {saleDetails.invoice_details_text && (
+              {purchase.purchase_details && (
                 <div className="p-5 bg-[#f8fafc] rounded-xl border border-gray-200 print:bg-[#f8fafc] print:p-3">
                     <div 
                       className="text-[13px] text-gray-600 leading-relaxed print:text-[11px]"
-                      dangerouslySetInnerHTML={{ __html: saleDetails.invoice_details_text }}
+                      dangerouslySetInnerHTML={{ __html: purchase.purchase_details }}
                     />
                 </div>
               )}
 
               {/* Status Badges Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-4 print:gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2">
                 <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
                   <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0 print:bg-blue-50 print:p-1.5">
                     <ShieldCheck className="w-5 h-5 print:w-4 print:h-4" />
@@ -269,12 +257,22 @@ export const SaleViewPage = () => {
                 </div>
 
                 <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
-                  <div className="p-2.5 bg-orange-50 text-orange-600 rounded-lg shrink-0 print:bg-orange-50 print:p-1.5">
-                    <Truck className="w-5 h-5 print:w-4 print:h-4" />
+                  <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 print:bg-indigo-50 print:p-1.5">
+                    <FileText className="w-5 h-5 print:w-4 print:h-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Delivery Status</span>
-                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">{deliveryStatus}</span>
+                    <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Chalan No</span>
+                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">{purchase.chalan_no || 'N/A'}</span>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
+                  <div className="p-2.5 bg-orange-50 text-orange-600 rounded-lg shrink-0 print:bg-orange-50 print:p-1.5">
+                    <Hash className="w-5 h-5 print:w-4 print:h-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Batch No</span>
+                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">{purchase.product_purchase_details?.[0]?.batch_master?.batch_no || 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -288,28 +286,24 @@ export const SaleViewPage = () => {
                 <div className="space-y-3.5 bg-white text-[14px] p-4 print:text-[12px] print:p-2 print:space-y-1.5">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Total Gross:</span>
-                    <span className="text-gray-900 font-semibold">{formatValue(items.reduce((acc: number, item: any) => acc + (parseFloat(item.quantity) * parseFloat(item.rate)), 0))}</span>
+                    <span className="text-gray-900 font-semibold">{formatValue(purchase.total_amount)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Discount Value:</span>
-                    <span className="text-rose-600 font-semibold">- {formatValue(parseFloat(saleDetails.total_discount) || 0)}</span>
+                    <span className="text-gray-500">Total Discount:</span>
+                    <span className="text-rose-600 font-semibold">- {formatValue(purchase.total_discount)}</span>
                   </div>
                   <div className="flex justify-between items-center pt-3 pb-3 border-t border-b border-gray-200 my-2 print:pt-1 print:pb-1 print:my-1">
                     <span className="text-gray-900 font-bold">Total Net Amount:</span>
-                    <span className="text-[16px] text-[#1e4ba1] font-bold print:text-[14px]">{formatValue(saleDetails.total_amount)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Previous Balance Due:</span>
-                    <span className="text-gray-500">{formatValue(saleDetails.prevous_due || 0)}</span>
+                    <span className="text-[16px] text-[#1e4ba1] font-bold print:text-[14px]">{formatValue(purchase.grand_total)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Paid Amount:</span>
-                    <span className="text-[#1e4ba1] font-semibold">{formatValue(saleDetails.paid_amount)}</span>
+                    <span className="text-[#1e4ba1] font-semibold">{formatValue(purchase.paid_amount)}</span>
                   </div>
                   
                   <div className="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-100 flex items-center justify-between print:bg-rose-50 print:p-2 print:mt-1">
                     <span className="text-[14px] font-semibold text-rose-600 print:text-[12px]">Remaining Due:</span>
-                    <span className="text-[16px] font-bold text-rose-600 print:text-[14px]">{formatValue(saleDetails.due_amount)}</span>
+                    <span className="text-[16px] font-bold text-rose-600 print:text-[14px]">{formatValue(purchase.due_amount)}</span>
                   </div>
                 </div>
               </div>
@@ -317,7 +311,7 @@ export const SaleViewPage = () => {
               {/* Net Balance Bottom Bar */}
               <div className="bg-[#0f2d5c] p-5 flex items-center justify-between text-white rounded-b-xl border border-[#0f2d5c] print:bg-[#0f2d5c] print:p-3">
                 <span className="text-[13px] font-bold tracking-wider print:text-[11px]">NET BALANCE</span>
-                <span className="text-[20px] font-bold print:text-[16px]">{formatValue(parseFloat(saleDetails.due_amount) + (parseFloat(saleDetails.prevous_due) || 0))}</span>
+                <span className="text-[20px] font-bold print:text-[16px]">{formatValue(purchase.due_amount)}</span>
               </div>
           </div>
           

@@ -6,6 +6,9 @@ import { useMatches, Link } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import { useSettings } from '@/hooks/useSettings'
 
+import { useDashboardStore } from '@/store/useDashboardStore'
+import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
+
 export const Topbar = () => {
   const user = useAuthStore((state) => state.user)
   const clearUser = useAuthStore((state) => state.clearUser)
@@ -13,11 +16,13 @@ export const Topbar = () => {
   const [profileOpen, setProfileOpen] = useState(false)
   const { logo, siteName } = useSettings()
   
+  const { globalRange, setGlobalRange, resetDashboard, isCustomGlobal } = useDashboardStore()
+  
   const matches = useMatches()
-  const lastMatch = matches[matches.length - 1]
+  const isDashboard = matches.some(m => m.routeId === '/_authenticated/')
   
   // Breadcrumb logic
-  const pathParts = lastMatch?.pathname.split('/').filter(Boolean) || []
+  const pathParts = matches[matches.length - 1]?.pathname.split('/').filter(Boolean) || []
   
   const handleLogout = () => {
     clearUser()
@@ -27,7 +32,7 @@ export const Topbar = () => {
   const userFullName = user ? `${user.first_name} ${user.last_name}` : 'Kazi Sakib'
 
   return (
-    <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.5)] px-0">
+    <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.5)] px-0 print:hidden">
       {/* Logo Area */}
       <div className={clsx(
         "flex items-center justify-between px-6 transition-all duration-300 shrink-0 border-r border-gray-100 h-full",
@@ -132,11 +137,24 @@ export const Topbar = () => {
 
       {/* Right Side */}
       <div className="flex items-center gap-4 px-6">
-        {/* Reset Button */}
-        <button className="flex items-center gap-2 px-5 py-2 bg-[#f1f5f9] text-[#7c8db5] rounded-full text-[14px] font-medium hover:bg-gray-200 transition-all mr-2">
-          <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
-          Reset
-        </button>
+        {/* Dashboard Specific Filters */}
+        {isDashboard && (
+          <div className="flex items-center animate-in fade-in slide-in-from-right-4 duration-500">
+            <DateRangePicker 
+              from={globalRange.from}
+              to={globalRange.to}
+              onChange={(from, to) => setGlobalRange(from, to)}
+            />
+            
+            <button 
+              onClick={resetDashboard}
+              className="flex items-center gap-2 px-5 py-2 bg-[#f1f5f9] text-[#7c8db5] rounded-full text-[14px] font-medium hover:bg-gray-200 transition-all ml-4 mr-2"
+            >
+              <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
+              Reset
+            </button>
+          </div>
+        )}
 
         <button className="p-2 text-[#94a3b8] hover:text-primary transition-colors">
           <Settings className="h-5.5 w-5.5" />

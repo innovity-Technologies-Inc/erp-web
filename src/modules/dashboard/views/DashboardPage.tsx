@@ -1,6 +1,9 @@
+import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { 
   ChevronDown,
   Loader2,
+  ExternalLink
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { 
@@ -14,6 +17,9 @@ import {
 } from 'recharts'
 import { useGetDashboardAnalytics } from '../api/dashboard.api'
 import { useSettings } from '@/hooks/useSettings'
+import { useDashboardStore } from '@/store/useDashboardStore'
+import { format } from 'date-fns'
+import { MonthPicker } from '@/components/DateRangePicker/MonthPicker'
 
 // Icons
 import ChannelWiseIcon from '@/assets/icons/Channel_Wise_Sale_icon.png'
@@ -52,13 +58,32 @@ const StatCard = ({ name, value, icon, className }: StatCardProps) => (
   </div>
 )
 
-const DonutChart = ({ data, centerLabel, centerValue, size = 160 }: { data: any[], centerLabel: string, centerValue: string | number, size?: number }) => {
+const DonutChart = ({ 
+  data, 
+  size = 160,
+  valueFormatter 
+}: { 
+  data: any[], 
+  centerLabel?: string, 
+  centerValue?: string | number, 
+  size?: number,
+  valueFormatter?: (v: number) => string
+}) => {
+  const [hovered, setHovered] = useState<any>(null);
+  
+  // Find the segment with the largest value to highlight by default
+  const maxItem = data.length > 0 
+    ? data.reduce((prev, current) => (prev.value > current.value) ? prev : current)
+    : null;
+
+  const displayItem = hovered || maxItem;
+  
   const total = data.reduce((acc, curr) => acc + curr.value, 0) || 1;
   const circumference = 2 * Math.PI * 38;
   let cumulativePercent = 0;
 
   return (
-    <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+    <div className="relative flex items-center justify-center shrink-0 group/donut" style={{ width: size, height: size }}>
       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
         {/* Shadow layer for donut */}
         <circle cx="50" cy="50" r="38" stroke="rgba(0,0,0,0.05)" strokeWidth="14" fill="transparent" />
@@ -71,19 +96,23 @@ const DonutChart = ({ data, centerLabel, centerValue, size = 160 }: { data: any[
 
           if (percent === 0) return null;
 
+          const isActive = displayItem?.label === item.label;
+
           return (
             <circle
               key={idx}
               cx="50" cy="50" r="38"
               stroke={item.color}
-              strokeWidth={idx === 0 ? "13" : "12"} // Slightly thicker for the first segment
+              strokeWidth={isActive ? "15" : "11"}
               strokeDasharray={circumference}
               strokeDashoffset={offset}
               fill="transparent"
+              onMouseEnter={() => setHovered(item)}
+              onMouseLeave={() => setHovered(null)}
+              className="cursor-pointer transition-all duration-300"
               style={{ 
                 transform: `rotate(${rotation}deg)`, 
                 transformOrigin: 'center',
-                transition: 'all 0.5s ease'
               }}
             />
           );
@@ -91,9 +120,20 @@ const DonutChart = ({ data, centerLabel, centerValue, size = 160 }: { data: any[
       </svg>
 
       {/* Center White Circle with Shadow */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-full w-[60%] h-[60%] m-auto shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),0_10px_20px_rgba(0,0,0,0.06)] text-center">
-        <span className="text-[14px] font-bold text-gray-800 leading-tight font-poppins px-2 truncate w-full">{centerLabel}</span>
-        <span className="text-[20px] font-bold text-gray-800 leading-tight font-poppins mt-0.5">{centerValue}</span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-full w-[60%] h-[60%] m-auto shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),0_10px_20px_rgba(0,0,0,0.06)] text-center pointer-events-none transition-all duration-300">
+        <span className={clsx(
+          "text-[11px] font-bold leading-tight font-poppins px-2 truncate w-full transition-colors duration-300 capitalize",
+          hovered ? "text-primary" : "text-gray-800"
+        )}>
+          {displayItem?.label}
+        </span>
+        <span className={clsx(
+          "font-bold leading-tight font-poppins mt-0.5 transition-colors duration-300 px-1 break-all",
+          hovered ? "text-primary" : "text-gray-800",
+          (displayItem?.value?.toString().length || 0) > 10 ? "text-[14px]" : "text-[16px]"
+        )}>
+          {displayItem ? (valueFormatter ? valueFormatter(displayItem.value) : displayItem.value.toLocaleString()) : ''}
+        </span>
       </div>
     </div>
   );
@@ -135,7 +175,6 @@ const LegendItem = ({
     "flex gap-3 py-0.5",
     variant === 'inline' ? "items-center" : "items-start"
   )}>
-    {/* Stacked Square Icon */}
     <div className="relative w-4 h-4 shrink-0 mt-1">
       <div className="absolute top-0 left-0 w-3 h-3 rounded-[2px] opacity-30" style={{ backgroundColor: color }}></div>
       <div className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-[2.5px] shadow-sm" style={{ backgroundColor: color }}></div>
@@ -175,28 +214,77 @@ const LegendItem = ({
 )
 
 const HorizontalBar = ({ name, value, max, color }: { name: string, value: number, max: number, color: string }) => (
-  <div className="flex items-center gap-4 w-full">
-    <div className="w-44 shrink-0 text-[11px] font-medium text-gray-500 truncate text-left">
+  <div className="flex items-center gap-4 w-full group cursor-pointer relative">
+    <div className="absolute -top-14 left-44 z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 pointer-events-none">
+      <div className="bg-white p-2.5 border border-primary/20 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col gap-1.5 min-w-[160px]">
+        <div className="text-[#3b3b5e] text-[10px] font-bold uppercase px-1 line-clamp-2 leading-tight">{name}</div>
+        <div className="flex items-center justify-between bg-primary/5 p-1.5 rounded-lg border border-primary/10">
+          <span className="text-[9px] text-primary font-bold uppercase">Qty:</span>
+          <span className="text-[13px] text-primary font-black">{value.toLocaleString()}</span>
+        </div>
+      </div>
+      <div className="w-2.5 h-2.5 bg-white border-b border-r border-primary/20 rotate-45 absolute -bottom-1.5 left-6 shadow-sm"></div>
+    </div>
+
+    <div className="w-44 shrink-0 text-[11px] font-medium text-gray-500 truncate text-left group-hover:text-primary transition-colors">
       {name}
     </div>
     <div className="flex-1 h-6 relative flex items-center">
       <div 
-        className="h-3.5 rounded-full transition-all duration-1000 relative z-10" 
+        className="h-3.5 rounded-full transition-all duration-1000 relative z-10 group-hover:brightness-110 group-hover:shadow-[0_0_15px_rgba(0,0,0,0.1)]" 
         style={{ width: `${Math.max((value / (max || 1)) * 100, 2)}%`, backgroundColor: color }}
       />
     </div>
   </div>
 )
 
+const ViewAllButton = ({ to }: { to: string }) => (
+  <Link 
+    to={to}
+    className="flex items-center gap-1.5 px-3 py-1 bg-primary/5 text-primary rounded-full text-[10px] font-bold hover:bg-primary hover:text-white transition-all active:scale-95 group"
+  >
+    <span>View All</span>
+    <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+  </Link>
+)
+
+const LoadingOverlay = () => (
+  <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center rounded-2xl">
+    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+  </div>
+)
+
 export const DashboardPage = () => {
-  const { data, isLoading } = useGetDashboardAnalytics()
+  const { 
+    globalRange, 
+    expenseRange, 
+    bestSaleRange, 
+    trendRange, 
+    channelRange,
+    setExpenseRange,
+    setBestSaleRange,
+    setTrendRange,
+    setChannelRange,
+    isCustomGlobal 
+  } = useDashboardStore()
+
+  // Base analytics for stats and tables (unfiltered default in store = lifetime)
+  const { data: globalData, isLoading: isGlobalLoading, isFetching: isGlobalFetching } = useGetDashboardAnalytics(globalRange)
+
+  // Independent analytics for specific sections - disabled if global range is active
+  const { data: expenseAnalytics, isFetching: isExpenseLoading } = useGetDashboardAnalytics(expenseRange, { enabled: !isCustomGlobal })
+  const { data: bestSaleAnalytics, isFetching: isBestSaleLoading } = useGetDashboardAnalytics(bestSaleRange, { enabled: !isCustomGlobal })
+  const { data: trendAnalytics, isFetching: isTrendLoading } = useGetDashboardAnalytics(trendRange, { enabled: !isCustomGlobal })
+  const { data: channelAnalytics, isFetching: isChannelLoading } = useGetDashboardAnalytics(channelRange, { enabled: !isCustomGlobal })
+
   const { currency, currencyPosition, webSetting } = useSettings()
 
   const formatCurrency = (amount: number | string) => {
-    return currencyPosition === 'left' ? `${currency}${amount}` : `${amount}${currency}`
+    return currencyPosition === '0' ? `${currency}${amount}` : `${amount}${currency}`
   }
 
-  if (isLoading) {
+  // Base loader only for initial load
+  if (isGlobalLoading && !globalData) {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-12 w-12 text-primary animate-spin" strokeWidth={1.5} />
@@ -205,7 +293,17 @@ export const DashboardPage = () => {
     )
   }
 
-  // Dynamic colors from theme or defaults
+  const data = globalData
+  const expenseData = (isCustomGlobal ? globalData : expenseAnalytics)?.expense_statement || { total_purchase: 0, total_sales: 0, total_expense: 0, total_salary: 0, total_service: 0 }
+  const bestProducts = (isCustomGlobal ? globalData : bestSaleAnalytics)?.best_selling_products || []
+  const trendData = (isCustomGlobal ? globalData : trendAnalytics)?.monthly_trend || []
+  const channelSalesData = (isCustomGlobal ? globalData : channelAnalytics)?.channel_wise_sales || []
+
+  const isChannelFetching = isCustomGlobal ? isGlobalFetching : isChannelLoading
+  const isExpenseFetching = isCustomGlobal ? isGlobalFetching : isExpenseLoading
+  const isBestSaleFetching = isCustomGlobal ? isGlobalFetching : isBestSaleLoading
+  const isTrendFetching = isCustomGlobal ? isGlobalFetching : isTrendLoading
+
   const colors = {
     primary: webSetting?.color_primary || 'var(--color-primary)',
     info: webSetting?.color_info || 'var(--color-info)',
@@ -214,79 +312,48 @@ export const DashboardPage = () => {
     danger: webSetting?.color_danger || 'var(--color-danger)',
   }
 
-  // Dynamic Channel Wise Sale Data
-  const channelSales = data?.channel_wise_sales || []
-  const totalChannelSale = channelSales.reduce((sum, item) => sum + item.total, 0) || 1
+  const totalChannelSale = channelSalesData.reduce((sum: number, item: any) => sum + item.total, 0) || 1
   const channelColors = [colors.warning, colors.primary, colors.info, colors.success, colors.danger]
+  const totalExpenseVal = Object.values(expenseData).reduce((a, b) => (a as number) + (b as number), 0) || 1
 
-  // Dynamic Expense Statement Data
-  const expenseData = data?.expense_statement || {
-    total_purchase: 0,
-    total_sales: 0,
-    total_expense: 0,
-    total_salary: 0,
-    total_service: 0
-  }
-  const totalExpenseVal = Object.values(expenseData).reduce((a, b) => a + b, 0) || 1
-
-  // Dynamic Today's Overview
-  const todaysOverview = data?.todays_overview || {
-    total_sales: 0,
-    total_purchase: 0,
-    last_sales: 0
-  }
-
-  const bestProducts = data?.best_selling_products || []
-  const maxProductRaw = Math.max(...bestProducts.map(p => p.value), 0);
-  
-  // Calculate dynamic grid steps for Best Sale Product
-  const chartMax = maxProductRaw > 0 ? Math.ceil(maxProductRaw / 100) * 100 : 1000;
+  const todaysOverview = data?.todays_overview || { total_sales: 0, total_purchase: 0, last_sales: 0 }
+  const maxProductRaw = Math.max(...bestProducts.map((p: any) => p.value), 0);
   const stepCount = 5;
-  const stepSize = chartMax / stepCount;
-  const gridSteps = Array.from({ length: stepCount + 1 }, (_, i) => Math.round(i * stepSize));
-
-  // Trend Chart Data
-  const trendData = data?.monthly_trend || []
+  const stepSize = maxProductRaw > 0 ? Math.ceil(maxProductRaw / stepCount) : 20;
+  const chartMax = stepSize * stepCount;
+  const gridSteps = Array.from({ length: stepCount + 1 }, (_, i) => i * stepSize);
 
   return (
-    <div className="p-1 space-y-6 animate-in fade-in duration-700">
-      {/* Responsive Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-        {/* Row 1 */}
-        <StatCard name="Total Product" value={data?.stats.total_product ?? 143} icon={TotalProductIcon} />
-        <StatCard name="Total Merchant" value={data?.stats.total_customer ?? 132} icon={TotalMerchantIcon} />
-        <StatCard name="Total Vendor" value={data?.stats.total_suppliers ?? 14} icon={TotalVendorIcon} />
-        <StatCard name="Total Warehouse" value={data?.stats.total_warehouse ?? "05"} icon={TotalWarehouseIcon} />
+    <div className="p-1 space-y-6 animate-in fade-in duration-700 relative">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-4">
+        <StatCard name="Total Product" value={data?.stats.total_product ?? 0} icon={TotalProductIcon} />
+        <StatCard name="Total Merchant" value={data?.stats.total_customer ?? 0} icon={TotalMerchantIcon} />
+        <StatCard name="Total Vendor" value={data?.stats.total_suppliers ?? 0} icon={TotalVendorIcon} />
+        <StatCard name="Total Warehouse" value={data?.stats.total_warehouse ?? "0"} icon={TotalWarehouseIcon} />
 
-        {/* Row 2 */}
-        <StatCard name="Total Purchase" value={data?.stats.total_purchase_count ?? 143} icon={TotalPurchaseIcon} />
-        <StatCard name="Total Contact Msg" value={data?.stats.total_contact_msg ?? 14} icon={TotalContactIcon} />
-        <StatCard name="Total Sale" value={data?.stats.total_sales_count ?? 497} icon={TotalSaleIcon} />
+        <StatCard name="Total Purchase" value={data?.stats.total_purchase_count ?? 0} icon={TotalPurchaseIcon} />
+        <StatCard name="Total Contact Msg" value={data?.stats.total_contact_msg ?? 0} icon={TotalContactIcon} />
+        <StatCard name="Total Sale" value={data?.stats.total_sales_count ?? 0} icon={TotalSaleIcon} />
         
         {/* Channel Wise Sale */}
-        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:row-span-2 flex flex-col items-center justify-between">
-          <div className="flex justify-between items-start w-full mb-4 px-2">
-            <h3 
-              className="text-gray-500 text-xs font-semibold"
-            >
-              Channel Wise Sale
-            </h3>
-            <div className="shrink-0">
-               <img src={ChannelWiseIcon} alt="Channel Wise Sale" className="h-6 w-6 object-contain" />
-            </div>
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:row-span-2 flex flex-col items-center justify-between relative">
+          {isChannelLoading && <LoadingOverlay />}
+          <div className="flex justify-between items-center w-full mb-6">
+            <h3 className="text-[#3b3b5e] font-bold text-[12px]">Channel Wise Sale</h3>
+            <MonthPicker variant="compact" from={channelRange.from} onChange={setChannelRange} disabled={isCustomGlobal} />
           </div>
           
           <DonutChart 
-            centerLabel={channelSales[0]?.channel || 'Admin'} 
-            centerValue={channelSales[0]?.total || 0} 
-            data={channelSales.map((item, idx) => ({
+            valueFormatter={(v) => v.toLocaleString()}
+            data={channelSalesData.map((item: any, idx: number) => ({
+              label: item.channel,
               value: item.total,
               color: channelColors[idx % channelColors.length]
             }))}
           />
 
           <div className="w-full space-y-4 mt-8 px-2">
-            {channelSales.map((item, idx) => (
+            {channelSalesData.map((item: any, idx: number) => (
               <LegendItem 
                 key={idx}
                 label={item.channel} 
@@ -298,31 +365,24 @@ export const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Expense Statement (occupies 3 columns on LG) */}
-        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-3 flex flex-col">
+        {/* Expense Statement */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-3 flex flex-col relative">
+          {isExpenseLoading && <LoadingOverlay />}
           <div className="flex justify-between items-center mb-8">
-            <h3 
-              className="text-gray-500 font-semibold text-[16px]"
-            >
-              Expense Statement ({currency})
-            </h3>
-            <div className="flex items-center gap-2 px-4 py-1.5 bg-main-bg rounded-lg text-[11px] font-bold text-gray-500 cursor-pointer">
-              <span>Monthly</span>
-              <ChevronDown className="h-3.5 w-3.5" />
-            </div>
+            <h3 className="text-gray-500 font-semibold text-[16px]">Expense Statement ({currency})</h3>
+            <MonthPicker from={expenseRange.from} onChange={setExpenseRange} disabled={isCustomGlobal} />
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-8 sm:gap-16">
             <DonutChart 
-              centerLabel="Purchase" 
-              centerValue={formatCurrency(expenseData.total_purchase)} 
               size={170}
+              valueFormatter={formatCurrency}
               data={[
-                { value: expenseData.total_purchase, color: colors.warning },
-                { value: expenseData.total_sales, color: colors.danger },
-                { value: expenseData.total_expense, color: colors.primary },
-                { value: expenseData.total_salary, color: colors.info },
-                { value: expenseData.total_service, color: colors.primary },
+                { label: 'Total Purchase', value: expenseData.total_purchase, color: colors.warning },
+                { label: 'Total Sale', value: expenseData.total_sales, color: colors.danger },
+                { label: 'Total Expense', value: expenseData.total_expense, color: colors.primary },
+                { label: 'Employee Salary', value: expenseData.total_salary, color: colors.info },
+                { label: 'Service', value: expenseData.total_service, color: colors.primary },
               ]}
             />
 
@@ -336,39 +396,25 @@ export const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Best Sale Product (occupies 2 columns on LG) */}
-        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col h-full">
+        {/* Best Sale Product */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col h-full relative">
+          {isBestSaleLoading && <LoadingOverlay />}
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-[#3b3b5e] font-bold text-[17px]">
-              Best Sale Product
-            </h3>
-            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
-              <span>Monthly</span>
-              <ChevronDown className="h-3 w-3" />
-            </div>
+            <h3 className="text-[#3b3b5e] font-bold text-[17px]">Best Sale Product</h3>
+            <MonthPicker from={bestSaleRange.from} onChange={setBestSaleRange} disabled={isCustomGlobal} />
           </div>
           <div className="relative flex-1 pt-1 pb-10">
-            {/* Dynamic Grid Lines */}
             <div className="absolute inset-0 left-44 right-2 flex justify-between pointer-events-none mb-10">
               {gridSteps.map(step => (
                 <div key={step} className="h-full border-l border-primary/30 relative">
-                  <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] text-gray-400 font-semibold">
-                    {step}
-                  </span>
+                  <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[9px] text-gray-400 font-semibold">{step}</span>
                 </div>
               ))}
             </div>
-            
             <div className="space-y-3.5 relative z-10">
               {bestProducts.length > 0 ? (
-                bestProducts.map((p, idx) => (
-                  <HorizontalBar 
-                    key={idx} 
-                    name={p.name} 
-                    value={p.value} 
-                    max={chartMax} 
-                    color={idx % 3 === 0 ? colors.warning : (idx % 3 === 1 ? colors.primary : '#1e293b')} 
-                  />
+                bestProducts.map((p: any, idx: number) => (
+                  <HorizontalBar key={idx} name={p.name} value={p.value} max={chartMax} color={idx % 3 === 0 ? colors.warning : (idx % 3 === 1 ? colors.primary : '#1e293b')} />
                 ))
               ) : (
                 <p className="text-gray-400 text-sm text-center py-10 font-medium">No sales data available</p>
@@ -377,49 +423,36 @@ export const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Todays Overview (occupies 2 columns on LG) - Semantic Table Redesign */}
+        {/* Todays Overview */}
         <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col">
-          <h3 className="text-[#3b3b5e] font-bold text-[17px] mb-6">
-            Todays Overview
-          </h3>
+          <h3 className="text-[#3b3b5e] font-bold text-[17px] mb-6">Todays Overview</h3>
           <div className="space-y-4 flex-1 flex flex-col justify-center">
-            {/* Top Table - Report */}
             <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
               <table className="w-full border-collapse">
                 <thead className="bg-primary/5 border-b border-primary/20">
                   <tr>
                     <th className="px-6 py-3.5 text-left text-primary font-bold text-[14px] w-[45%]">Todays Report</th>
-                    <th className="px-6 py-3.5 text-center text-primary font-bold text-[14px] border-l border-primary/20">
-                      {currency}
-                    </th>
+                    <th className="px-6 py-3.5 text-center text-primary font-bold text-[14px] border-l border-primary/20">{currency}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-primary/20">
                   <tr className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-3 text-gray-500 font-medium text-[13px]">Total Sales</td>
-                    <td className="px-6 py-3 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">
-                      {formatCurrency(todaysOverview.total_sales)}
-                    </td>
+                    <td className="px-6 py-3 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">{formatCurrency(todaysOverview.total_sales)}</td>
                   </tr>
                   <tr className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-3 text-gray-500 font-medium text-[13px]">Total Purchase</td>
-                    <td className="px-6 py-3 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">
-                      {formatCurrency(todaysOverview.total_purchase)}
-                    </td>
+                    <td className="px-6 py-3 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">{formatCurrency(todaysOverview.total_purchase)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-
-            {/* Bottom Table - Last Sales */}
             <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
               <table className="w-full border-collapse">
                 <tbody>
                   <tr className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4.5 text-gray-500 font-medium text-[13px] w-[45%]">Last Sales</td>
-                    <td className="px-6 py-4.5 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">
-                      {todaysOverview.last_sales ? formatCurrency(todaysOverview.last_sales) : currency}
-                    </td>
+                    <td className="px-6 py-4.5 text-gray-800 font-bold text-[15px] border-l border-primary/20 text-center">{todaysOverview.last_sales ? formatCurrency(todaysOverview.last_sales) : currency}</td>
                   </tr>
                 </tbody>
               </table>
@@ -427,11 +460,11 @@ export const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Monthly Sales & Purchase Report Area Chart */}
-        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:col-span-4 flex flex-col min-h-[400px]">
+        {/* Monthly Sales & Purchase Report */}
+        <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:col-span-4 flex flex-col min-h-[400px] relative">
+          {isTrendLoading && <LoadingOverlay />}
           <div className="flex flex-wrap justify-between items-center mb-8 gap-4 px-2">
             <h3 className="text-[#3b3b5e] font-bold text-[18px]">Monthly Sales & Purchase Report</h3>
-            
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
@@ -443,11 +476,7 @@ export const DashboardPage = () => {
                   <span className="text-gray-500 font-semibold text-[12px]">Sales</span>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-main-bg rounded-full text-[11px] font-bold text-gray-500 cursor-pointer">
-                <span>Monthly</span>
-                <ChevronDown className="h-3.5 w-3.5" />
-              </div>
+              <MonthPicker from={trendRange.from} onChange={setTrendRange} disabled={isCustomGlobal} />
             </div>
           </div>
 
@@ -460,56 +489,21 @@ export const DashboardPage = () => {
                     <feOffset dx="0" dy="4" result="offsetBlur" />
                     <feFlood floodColor="black" floodOpacity="0.2" result="offsetColor" />
                     <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="shadow" />
-                    <feMerge>
-                      <feMergeNode in="shadow" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
+                    <feMerge><feMergeNode in="shadow" /><feMergeNode in="SourceGraphic" /></feMerge>
                   </filter>
                   <linearGradient id="colorPurchase" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={colors.primary} stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor={colors.primary} stopOpacity={0}/>
+                    <stop offset="5%" stopColor={colors.primary} stopOpacity={0.15}/><stop offset="95%" stopColor={colors.primary} stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={colors.success} stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor={colors.success} stopOpacity={0}/>
+                    <stop offset="5%" stopColor={colors.success} stopOpacity={0.15}/><stop offset="95%" stopColor={colors.success} stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f3f9" />
-                <XAxis 
-                  dataKey="month" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} 
-                  dy={15}
-                />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }}
-                  tickFormatter={(value) => value.toLocaleString()}
-                  dx={-10}
-                />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={15} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} tickFormatter={(value) => value.toLocaleString()} dx={-10} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area 
-                  type="monotone" 
-                  dataKey="purchase" 
-                  stroke={colors.primary} 
-                  strokeWidth={3}
-                  filter="url(#lineShadow)"
-                  fillOpacity={1} 
-                  fill="url(#colorPurchase)" 
-                  activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="sales" 
-                  stroke={colors.success} 
-                  strokeWidth={3}
-                  filter="url(#lineShadow)"
-                  fillOpacity={1} 
-                  fill="url(#colorSales)" 
-                  activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }}
-                />
+                <Area type="monotone" dataKey="purchase" stroke={colors.primary} strokeWidth={3} filter="url(#lineShadow)" fillOpacity={1} fill="url(#colorPurchase)" activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }} />
+                <Area type="monotone" dataKey="sales" stroke={colors.success} strokeWidth={3} filter="url(#lineShadow)" fillOpacity={1} fill="url(#colorSales)" activeDot={{ r: 5, stroke: '#fff', strokeWidth: 2 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -519,10 +513,7 @@ export const DashboardPage = () => {
         <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[#3b3b5e] font-bold text-[17px]">Todays Sales Due</h3>
-            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
-              <span>Monthly</span>
-              <ChevronDown className="h-3 w-3" />
-            </div>
+            <ViewAllButton to="/inventory/sales" />
           </div>
           <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
             <table className="w-full border-collapse">
@@ -536,26 +527,24 @@ export const DashboardPage = () => {
               </thead>
               <tbody className="divide-y divide-primary/20">
                 {data?.todays_sales_due && data.todays_sales_due.length > 0 ? (
-                  data.todays_sales_due.map((item, idx) => (
+                  data.todays_sales_due.map((item: any, idx: number) => (
                     <tr key={item.id} className="hover:bg-gray-50/50 transition-colors text-[13px]">
                       <td className="px-4 py-3 text-gray-500">{idx + 1}</td>
                       <td className="px-4 py-3 text-gray-600 font-medium border-l border-primary/20 truncate max-w-[120px]">{item.customer_name}</td>
-                      <td className="px-4 py-3 text-gray-600 border-l border-primary/20">{item.invoice}</td>
+                      <td className="px-4 py-3 text-gray-600 border-l border-primary/20">
+                        <Link to="/inventory/sales/view/$id" params={{ id: item.id.toString() }} className="text-primary hover:underline font-bold transition-all">{item.invoice}</Link>
+                      </td>
                       <td className="px-4 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.due_amount)}</td>
                     </tr>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">Record not found</td>
-                  </tr>
+                  <tr><td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">Record not found</td></tr>
                 )}
               </tbody>
               <tfoot className="bg-white border-t border-primary/20 font-bold text-[14px]">
                 <tr>
                   <td colSpan={3} className="px-4 py-3 text-right text-gray-600">Total</td>
-                  <td className="px-4 py-3 text-gray-800 border-l border-primary/20 text-center">
-                    {formatCurrency(data?.todays_sales_due?.reduce((sum, item) => sum + Number(item.due_amount), 0) || 0)}
-                  </td>
+                  <td className="px-4 py-3 text-gray-800 border-l border-primary/20 text-center">{formatCurrency(data?.todays_sales_due?.reduce((sum: number, item: any) => sum + Number(item.due_amount), 0) || 0)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -566,10 +555,7 @@ export const DashboardPage = () => {
         <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:col-span-2 lg:col-span-2 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[#3b3b5e] font-bold text-[17px]">Todays Purchase Due</h3>
-            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
-              <span>Monthly</span>
-              <ChevronDown className="h-3 w-3" />
-            </div>
+            <ViewAllButton to="/inventory/purchase" />
           </div>
           <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
             <table className="w-full border-collapse">
@@ -583,26 +569,24 @@ export const DashboardPage = () => {
               </thead>
               <tbody className="divide-y divide-primary/20">
                 {data?.todays_purchase_due && data.todays_purchase_due.length > 0 ? (
-                  data.todays_purchase_due.map((item, idx) => (
+                  data.todays_purchase_due.map((item: any, idx: number) => (
                     <tr key={item.id} className="hover:bg-gray-50/50 transition-colors text-[13px]">
                       <td className="px-4 py-3 text-gray-500">{idx + 1}</td>
                       <td className="px-4 py-3 text-gray-600 font-medium border-l border-primary/20 truncate max-w-[120px]">{item.customer_name}</td>
-                      <td className="px-4 py-3 text-gray-600 border-l border-primary/20">{item.purchase_id}</td>
+                      <td className="px-4 py-3 text-gray-600 border-l border-primary/20">
+                        <Link to="/inventory/purchase/view/$id" params={{ id: item.id.toString() }} className="text-primary hover:underline font-bold transition-all">{item.purchase_id}</Link>
+                      </td>
                       <td className="px-4 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.due_amount)}</td>
                     </tr>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">Record not found</td>
-                  </tr>
+                  <tr><td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm italic">Record not found</td></tr>
                 )}
               </tbody>
               <tfoot className="bg-white border-t border-primary/20 font-bold text-[14px]">
                 <tr>
                   <td colSpan={3} className="px-4 py-3 text-right text-gray-600">Total</td>
-                  <td className="px-4 py-3 text-gray-800 border-l border-primary/20 text-center">
-                    {formatCurrency(data?.todays_purchase_due?.reduce((sum, item) => sum + Number(item.due_amount), 0) || 0)}
-                  </td>
+                  <td className="px-4 py-3 text-gray-800 border-l border-primary/20 text-center">{formatCurrency(data?.todays_purchase_due?.reduce((sum: number, item: any) => sum + Number(item.due_amount), 0) || 0)}</td>
                 </tr>
               </tfoot>
             </table>
@@ -613,10 +597,7 @@ export const DashboardPage = () => {
         <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] lg:col-span-4 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-[#3b3b5e] font-bold text-[17px]">Todays Sales Report</h3>
-            <div className="flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 cursor-pointer">
-              <span>Weekly</span>
-              <ChevronDown className="h-3 w-3" />
-            </div>
+            <ViewAllButton to="/inventory/sales" />
           </div>
           <div className="border border-primary/20 rounded-xl overflow-hidden shadow-sm">
             <table className="w-full border-collapse">
@@ -631,30 +612,26 @@ export const DashboardPage = () => {
               </thead>
               <tbody className="divide-y divide-primary/20">
                 {data?.todays_sales_report && data.todays_sales_report.length > 0 ? (
-                  data.todays_sales_report.map((item, idx) => (
+                  data.todays_sales_report.map((item: any, idx: number) => (
                     <tr key={item.id} className="hover:bg-gray-50/50 transition-colors text-[13px]">
                       <td className="px-6 py-3 text-gray-500">{idx + 1}</td>
                       <td className="px-6 py-3 text-gray-600 font-medium border-l border-primary/20">{item.customer_name}</td>
-                      <td className="px-6 py-3 text-gray-600 border-l border-primary/20">{item.invoice}</td>
+                      <td className="px-6 py-3 text-gray-600 border-l border-primary/20">
+                        <Link to="/inventory/sales/view/$id" params={{ id: item.id.toString() }} className="text-primary hover:underline font-bold transition-all">{item.invoice}</Link>
+                      </td>
                       <td className="px-6 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.total_amount)}</td>
                       <td className="px-6 py-3 text-gray-800 font-bold border-l border-primary/20 text-center">{formatCurrency(item.paid_amount)}</td>
                     </tr>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm italic">Record not found</td>
-                  </tr>
+                  <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm italic">Record not found</td></tr>
                 )}
               </tbody>
               <tfoot className="bg-white border-t border-primary/20 font-bold text-[14px]">
                 <tr>
                   <td colSpan={3} className="px-6 py-4 text-right text-gray-600">Total</td>
-                  <td className="px-6 py-4 text-gray-800 border-l border-primary/20 text-center">
-                    {formatCurrency(data?.todays_sales_report?.reduce((sum, item) => sum + Number(item.total_amount), 0) || 0)}
-                  </td>
-                  <td className="px-6 py-4 text-gray-800 border-l border-primary/20 text-center">
-                    {formatCurrency(data?.todays_sales_report?.reduce((sum, item) => sum + Number(item.paid_amount), 0) || 0)}
-                  </td>
+                  <td className="px-6 py-4 text-gray-800 border-l border-primary/20 text-center">{formatCurrency(data?.todays_sales_report?.reduce((sum: number, item: any) => sum + Number(item.total_amount), 0) || 0)}</td>
+                  <td className="px-6 py-4 text-gray-800 border-l border-primary/20 text-center">{formatCurrency(data?.todays_sales_report?.reduce((sum: number, item: any) => sum + Number(item.paid_amount), 0) || 0)}</td>
                 </tr>
               </tfoot>
             </table>

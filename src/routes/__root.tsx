@@ -7,7 +7,9 @@ export const Route = createRootRoute({
     <>
       <Outlet />
       <ToastContainer />
-      <TanStackRouterDevtools />
+      <div className="print:hidden">
+        <TanStackRouterDevtools />
+      </div>
     </>
   ),
 })

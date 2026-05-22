@@ -1,23 +1,14 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { 
   ArrowLeft, 
   Plus, 
-  Undo2, 
   Check, 
   X,
   Info,
   ShoppingCart,
-  Receipt,
-  FileText,
-  Bold,
-  Italic,
-  Underline,
-  List,
-  ListOrdered,
-  Link as LinkIcon,
-  Image as ImageIcon
+  FileText
 } from 'lucide-react'
 import { useNavigate, Link } from '@tanstack/react-router'
 import { saleSchema, type SaleFormValues } from '../../hooks/validation'
@@ -35,84 +26,7 @@ import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
-
-// ─── Simple Rich Text Editor ───────────────────────────────────────────────────
-
-const RichEditor = ({ value, onChange, placeholder }: { value: string, onChange: (val: string) => void, placeholder?: string }) => {
-  const editorRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value || ''
-    }
-  }, [value])
-
-  const handleCommand = (command: string, arg: string | undefined = undefined) => {
-    document.execCommand(command, false, arg)
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML)
-    }
-  }
-
-  const handleLink = () => {
-    const url = prompt('Enter URL:')
-    if (url) handleCommand('createLink', url)
-  }
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const dataUrl = event.target?.result as string
-        handleCommand('insertImage', dataUrl)
-      }
-      reader.readAsDataURL(file)
-    }
-    // Reset input
-    e.target.value = ''
-  }
-
-  return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-primary/20 transition-all flex flex-col min-h-[300px] bg-white">
-      <input type="file" 
-        ref={fileInputRef} 
-        className="hidden hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" 
-        accept="image/*" 
-        onChange={handleFileChange}
-      />
-      <div className="bg-[#f8fafc] border-b border-gray-200 p-2 flex items-center gap-1 shrink-0">
-        <div className="flex items-center gap-0.5 px-1">
-          <button type="button" onClick={() => handleCommand('bold')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Bold"><Bold className="w-4 h-4" /></button>
-          <button type="button" onClick={() => handleCommand('italic')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Italic"><Italic className="w-4 h-4" /></button>
-          <button type="button" onClick={() => handleCommand('underline')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Underline"><Underline className="w-4 h-4" /></button>
-        </div>
-        <div className="w-[1px] h-4 bg-gray-300 mx-1"></div>
-        <div className="flex items-center gap-0.5 px-1">
-          <button type="button" onClick={() => handleCommand('insertUnorderedList')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Bullet List"><List className="w-4 h-4" /></button>
-          <button type="button" onClick={() => handleCommand('insertOrderedList')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Numbered List"><ListOrdered className="w-4 h-4" /></button>
-        </div>
-        <div className="w-[1px] h-4 bg-gray-300 mx-1"></div>
-        <div className="flex items-center gap-0.5 px-1">
-          <button type="button" onClick={handleLink} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Insert Link"><LinkIcon className="w-4 h-4" /></button>
-          <button type="button" onClick={handleImageClick} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Insert Image"><ImageIcon className="w-4 h-4" /></button>
-        </div>
-      </div>
-      <div
-        ref={editorRef}
-        contentEditable
-        onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        className="w-full flex-1 p-4 text-[14px] outline-none min-h-[250px] text-[#475569] leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
-        data-placeholder={placeholder}
-      />
-    </div>
-  )
-}
+import { RichEditor } from '@/components/RichEditor/RichEditor'
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 
@@ -533,7 +447,7 @@ export const SaleCreatePage = () => {
                   <RichEditor 
                     value={field.value} 
                     onChange={field.onChange} 
-                    placeholder="Enter special instructions or purchase terms here..."
+                    placeholder="Enter special instructions or sale terms here..."
                   />
                 )}
               />
@@ -576,16 +490,16 @@ export const SaleCreatePage = () => {
               <div className="bg-white rounded-xl border border-primary/20 p-6 space-y-5 flex-1 shadow-sm">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Sale Discount ({currency})</label>
+                    <label className="text-[12px] font-medium text-gray-500">Sale Discount ({currencyPosition === '0' ? currency : ''} {currencyPosition === '1' ? currency : ''})</label>
                     <input type="number" {...register('invoice_discount', { valueAsNumber: true })} className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" placeholder="0.00" />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Shipping Cost ({currency})</label>
+                    <label className="text-[12px] font-medium text-gray-500">Shipping Cost ({currencyPosition === '0' ? currency : ''} {currencyPosition === '1' ? currency : ''})</label>
                     <input type="number" {...register('shipping_cost', { valueAsNumber: true })} className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" placeholder="0.00" />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[12px] font-medium text-gray-500">Paid Amount ({currency})</label>
+                  <label className="text-[12px] font-medium text-gray-500">Paid Amount ({currencyPosition === '0' ? currency : ''} {currencyPosition === '1' ? currency : ''})</label>
                   <input type="number" {...register('paid_amount', { valueAsNumber: true })} disabled={payment_type_id === 0} className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-primary hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">

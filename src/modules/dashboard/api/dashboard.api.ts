@@ -4,15 +4,16 @@ import type { DashboardAnalyticsResponse } from './types';
 
 export const dashboardKeys = {
   all: ['dashboard'] as const,
-  analytics: () => [...dashboardKeys.all, 'analytics'] as const,
+  analytics: (params?: any) => [...dashboardKeys.all, 'analytics', params] as const,
 };
 
-export const useGetDashboardAnalytics = () => {
+export const useGetDashboardAnalytics = (params?: any, options?: any) => {
   return useQuery({
-    queryKey: dashboardKeys.analytics(),
+    queryKey: dashboardKeys.analytics(params),
     queryFn: async () => {
-      const { data } = await apiClient.get<DashboardAnalyticsResponse>('/dashboard/analytics');
+      const { data } = await apiClient.get<DashboardAnalyticsResponse>('/dashboard/analytics', { params });
       return data;
     },
+    ...options
   });
 };

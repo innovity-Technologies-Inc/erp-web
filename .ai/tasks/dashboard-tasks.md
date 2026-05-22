@@ -40,3 +40,11 @@
 - [x] **Task 5.1**: Implement dynamic breadcrumbs in `Topbar.tsx` using TanStack Router's `useMatches`.
 - [x] **Task 5.2**: Make breadcrumb segments clickable and humanize path labels.
 - [x] **Task 5.3**: Optimize breadcrumb flow by skipping "Inventory" and redundant "Dashboard" segments.
+
+## Task Group 6: Advanced Filtering & Backend Sync
+- [x] **Task 6.1**: Implement global Dashboard state management in `useDashboardStore.ts` with support for decoupled section filtering.
+- [x] **Task 6.2**: Refactor `Topbar.tsx` to include a context-aware master Date Range Picker and Reset button.
+- [x] **Task 6.3**: Implement high-fidelity `MonthPicker.tsx` component with year navigation and clean "Nothing Selected" state.
+- [x] **Task 6.4**: Integrate independent `MonthPicker` instances into "Expense Statement", "Best Sale Product", and "Monthly Trend" sections.
+- [x] **Task 6.5**: Update `DashboardApiController.php` to handle `from` and `to` date parameters for all charts, stats, and report tables.
+- [x] **Task 6.6**: Localize loading states using section-specific overlays to improve UI responsiveness during independent updates.
