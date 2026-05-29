@@ -28,7 +28,8 @@ export const PurchaseViewPage = () => {
 
   const purchaseId = id ? parseInt(id as string, 10) : null
   const { data: purchaseResponse, isLoading } = usePurchaseData(purchaseId)
-  const purchase = purchaseResponse?.data
+  
+  const purchase = purchaseResponse || null
   
   // Helper for consistent formatting
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)

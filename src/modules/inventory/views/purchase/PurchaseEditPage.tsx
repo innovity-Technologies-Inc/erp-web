@@ -348,7 +348,7 @@ export const PurchaseEditPage = () => {
   
   // Data Fetching
   const { data: purchaseResponse, isLoading: isFetching } = usePurchaseData(id)
-  const purchase = purchaseResponse?.data
+  const purchase = purchaseResponse || null
   const { mutate: updatePurchase, isPending } = useUpdatePurchase()
 
   // Lookups
