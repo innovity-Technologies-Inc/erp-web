@@ -9,7 +9,6 @@ export interface Option {
 }
 
 export interface Select2Props extends Omit<Props<Option, boolean, GroupBase<Option>>, 'onChange' | 'value'> {
-
   options: Option[]
   value?: string | number | null | any[]
   onChange?: (value: any, option: any) => void
@@ -34,6 +33,7 @@ export const Select2 = ({
   variant = 'outline',
   menuPortalTarget = typeof document !== 'undefined' ? document.body : undefined,
   menuPosition = 'fixed',
+  filterOption,
   ...rest
 }: Select2Props) => {
   // Find the selected option object based on the value string/number
@@ -73,6 +73,7 @@ export const Select2 = ({
         menuPortalTarget={menuPortalTarget}
         menuPosition={menuPosition}
         unstyled
+        filterOption={filterOption || (rest.onInputChange ? () => true : undefined)}
         styles={{
           menuPortal: (base) => ({ ...base, zIndex: 9999 }),
         }}

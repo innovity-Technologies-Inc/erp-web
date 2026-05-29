@@ -23,7 +23,8 @@ export const WarehouseEditPage = () => {
   const { id } = useParams({ strict: false })
   const navigate = useNavigate()
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
-  const { data: warehouseResponse, isLoading } = useWarehouseDetails(id)
+  const warehouseId = id ? parseInt(id as string, 10) : null
+  const { data: warehouseResponse, isLoading } = useWarehouseDetails(warehouseId)
   const { mutate: updateWarehouse, isPending: isSaving } = useUpdateWarehouse()
   const { data: employees } = useEmployees()
 

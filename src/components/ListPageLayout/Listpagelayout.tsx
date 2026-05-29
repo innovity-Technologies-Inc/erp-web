@@ -316,11 +316,13 @@ export const ListPageLayout = <T extends object>({
               Export
             </button>
 
-            <DateRangePicker 
-              from={fromDate}
-              to={toDate}
-              onChange={onDateRangeChange}
-            />
+            {onDateRangeChange && (
+              <DateRangePicker 
+                from={fromDate}
+                to={toDate}
+                onChange={onDateRangeChange}
+              />
+            )}
           </div>
         </div>
 

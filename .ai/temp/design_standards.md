@@ -79,6 +79,23 @@ This document defines the **STRICT** visual and structural standards for all new
 
 ---
 
+---
+
+## 7. AG Grid & Filtering Standards (MANDATORY)
+
+### 1. Column Visibility Control
+- **Logic**: Use a `visibleCols` state object (Boolean mapping).
+- **AG Grid Integration**: Bind the `hide` property of each `ColDef` to the negative of the visibility state (e.g., `hide: !visibleCols.name`).
+- **Dependencies**: The `columnDefs` `useMemo` MUST depend on `visibleCols`.
+- **Menu**: Populate the `columns` prop in `ListPageLayout` with an array of objects: `{ name: string, field: string, visible: boolean }`.
+- **Vertical Alignment**: ALL cells (especially those with badges or icons) MUST use `flex items-center` to maintain visual integrity when columns are toggled.
+
+### 2. Date Range Filtering
+- **Backend Parameters**: Must use `start_date` and `end_date` as keys in the API request.
+- **Frontend State**: Maintain `fromDate` and `toDate` local states.
+- **Synchronization**: Pass both states and the `onDateRangeChange` handler to `ListPageLayout`.
+- **Fallback**: The layout will automatically hide the `DateRangePicker` if no handler is provided.
+
 ## 6. Table Standards (AG Grid)
 - **Cell Height**: `px-4 py-3`.
 - **Header Style**: `bg-[#dae8ff] text-[12px] font-bold text-[#003671] uppercase tracking-wider`.

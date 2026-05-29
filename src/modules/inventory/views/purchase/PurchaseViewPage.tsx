@@ -26,10 +26,9 @@ export const PurchaseViewPage = () => {
   const { id } = useParams({ from: '/_authenticated/inventory/purchase/view/$id' })
   const { currency, currencyPosition, companyInformation, webSetting } = useSettings()
 
-  // Convert id to number if necessary, as done in Sales module
   const purchaseId = id ? parseInt(id as string, 10) : null
   const { data: purchaseResponse, isLoading } = usePurchaseData(purchaseId)
-  const purchase = purchaseResponse
+  const purchase = purchaseResponse?.data
   
   // Helper for consistent formatting
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)

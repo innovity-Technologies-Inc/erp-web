@@ -23,7 +23,7 @@ export const PurchaseListPage = () => {
   const [fromDate, setFromDate]       = useState('')
   const [toDate, setToDate]           = useState('')
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const [selectedPurchaseUuid, setSelectedPurchaseUuid] = useState<string | null>(null)
+  const [selectedPurchaseId, setSelectedPurchaseId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize]       = useState(10)
   
@@ -70,25 +70,30 @@ export const PurchaseListPage = () => {
     navigate({ to: '/inventory/purchase/create' })
   }
 
-  const handleEdit = (id: string) => {
-    navigate({ to: '/inventory/purchase/edit/$id', params: { id: id } })
+  const handleEdit = (id: number) => {
+    navigate({ to: '/inventory/purchase/edit/$id', params: { id: id.toString() } })
   }
 
-  const handleView = (id: string) => {
-    navigate({ to: '/inventory/purchase/view/$id', params: { id: id } })
+  const handleView = (id: number) => {
+    navigate({ to: '/inventory/purchase/view/$id', params: { id: id.toString() } })
   }
 
-  const handleDelete = (uuid: string) => {
-    setSelectedPurchaseUuid(uuid)
+  const handleDelete = (id: number) => {
+    setSelectedPurchaseId(id)
     setIsConfirmOpen(true)
   }
 
   const confirmDelete = () => {
-    if (selectedPurchaseUuid) {
-      deletePurchase(selectedPurchaseUuid, {
+    if (selectedPurchaseId) {
+      deletePurchase(selectedPurchaseId, {
         onSuccess: () => {
           setIsConfirmOpen(false)
-          setSelectedPurchaseUuid(null)
+          setSelectedPurchaseId(null)
+          showNotificationModal(
+            'Deleted Successfully!',
+            'The purchase record has been deleted.',
+            'success'
+          )
         }
       })
     }
@@ -108,7 +113,7 @@ export const PurchaseListPage = () => {
     ]
 
     const exportData = purchasesData.data.map((item, index) => ({
-      sl: index + 1,
+      sl: (currentPage - 1) * pageSize + index + 1,
       chalan_no: item.chalan_no,
       purchase_id: item.purchase_id,
       supplier_name: item.supplier_name,
@@ -210,7 +215,7 @@ export const PurchaseListPage = () => {
     },
     {
       headerName: 'ACTION',
-      field: 'uuid',
+      field: 'id',
       width: 120,
       pinned: 'right',
       hide: !visibleCols.action || !hasAnyPermission(['view_purchase', 'edit_purchase', 'delete_purchase']),
@@ -229,7 +234,7 @@ export const PurchaseListPage = () => {
           </PermissionGuard>
 
           <PermissionGuard permission="delete_purchase">
-            <button onClick={() => handleDelete(params.data.uuid)} className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110" title="Delete">
+            <button onClick={() => handleDelete(params.data.id)} className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110" title="Delete">
               <Trash2 className="h-4 w-4" />
             </button>
           </PermissionGuard>
@@ -300,7 +305,7 @@ export const PurchaseListPage = () => {
         isOpen={isConfirmOpen}
         onClose={() => {
           setIsConfirmOpen(false)
-          setSelectedPurchaseUuid(null)
+          setSelectedPurchaseId(null)
         }}
         onConfirm={confirmDelete}
         title="Delete Purchase?"

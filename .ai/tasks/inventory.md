@@ -162,5 +162,31 @@
 - [x] **Task 17.3**: Standardize **Payment Summary** and **Add Item** visuals (colors, icons, spacing) across all transaction modules for a unified user experience.
 - [x] **Task 17.4**: Perform project-wide cleanup of unused `Loader2` imports and manual loading blocks to ensure code quality.
 
+## Task Group 18: Service Management Implementation
+- [x] **Task 18.1**: Create `service.api.ts` and `useService.ts` hooks for backend communication.
+- [x] **Task 18.2**: Implement `ServiceListPage.tsx` using `ListPageLayout` with AG Grid and standard action renderers.
+- [x] **Task 18.3**: Build `ServiceFormModal.tsx` featuring a high-fidelity design, 2-column layout for Charge/VAT, and a visual status toggle.
+- [x] **Task 18.4**: Implement server-side filtering (Search, Status, Date Range) in `ServiceApiController@datatable`.
+- [x] **Task 18.5**: Implement **Column Visibility Toggle** in `ServiceListPage` and ensure AG Grid reactivity via `useMemo` dependencies.
+- [x] **Task 18.6**: Fix `SyntaxError` issues by standardizing API exports and imports across modular files.
+
+## Task Group 19: Service Invoice Management Implementation
+- [x] **Task 19.1**: Update `ServiceApiController` to include `showServiceInvoice` and support numeric ID lookups.
+- [x] **Task 19.2**: Build `ServiceInvoiceListPage.tsx` with navigation tabs and advanced server-side filtering.
+- [x] **Task 19.3**: Develop `ServiceInvoiceForm.tsx` with a high-fidelity 7/5 grid layout and sticky payment summary.
+- [x] **Task 19.4**: Implement dynamic row management with `useFieldArray` and real-time calculation synchronization.
+- [x] **Task 19.5**: Build `ServiceInvoiceCreatePage.tsx` and `ServiceInvoiceEditPage.tsx` with automated data mapping and persistent `Select2` selection logic.
+- [x] **Task 19.6**: Implement `ServiceInvoiceViewPage.tsx` featuring a premium layout matching the Sale View design with organizational context and print support.
+- [x] **Task 19.7**: Refine form submission logic to use standard `onSubmit` with calculated totals (`payment_amount`, etc.) to resolve backend array key errors.
+- [x] **Task 19.8**: Standardize all transaction buttons with branded icons (`Save`, `PenLine`) and disabled automatic error focus.
+
+## Task Group 20: Project-Wide Routing Standardization
+- [x] **Task 20.1**: Perform a project-wide sweep to rename all `$uuid.tsx` route files back to `$id.tsx`.
+- [x] **Task 20.2**: Update all `createFileRoute` definitions to use the standardized `$id` parameter.
+- [x] **Task 20.3**: Refactor all `useParams` calls to destructure `id` only, removing all `uuid` parameter references from component code.
+- [x] **Task 20.4**: Audit and update all `navigate` calls to consistently use the `id` key in the `params` object, passing UUID strings where required by the backend.
+- [x] **Task 20.5**: Remove legacy `parseInt` logic from view components that were incorrectly treating UUID strings as numeric IDs.
+- [x] **Task 20.6**: Update **Select2** component to support `filterOption={() => true}` by default when server-side searching is active, preventing incorrect local filtering of valid results.
+
 
 

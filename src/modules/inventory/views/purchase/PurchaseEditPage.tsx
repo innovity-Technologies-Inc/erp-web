@@ -337,18 +337,19 @@ const PurchaseItemRow = ({
     </div>
   )
 }
-
 export const PurchaseEditPage = () => {
   const { id } = useParams({ from: '/_authenticated/inventory/purchase/edit/$id' })
   const navigate = useNavigate()
   const { currency, currencyPosition } = useSettings()
-  const { mutate: updatePurchase, isPending } = useUpdatePurchase()
+
   const { showNotificationModal } = useUiStore()
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   // Data Fetching
-  const { data: purchase, isLoading: isFetching } = usePurchaseData(id)
+  const { data: purchaseResponse, isLoading: isFetching } = usePurchaseData(id)
+  const purchase = purchaseResponse?.data
+  const { mutate: updatePurchase, isPending } = useUpdatePurchase()
 
   // Lookups
   const { data: vendors } = useVendorSelect2()
@@ -714,7 +715,7 @@ export const PurchaseEditPage = () => {
                        errors={errors}
                        warehouses={warehouses}
                        allSelectedItems={allSelectedItems}
-                       purchaseId={Number(id)}
+                       purchaseId={purchase?.id ? Number(purchase.id) : undefined}
                     />
                  ))}
                  

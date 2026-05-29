@@ -183,7 +183,7 @@ export const WarehouseListPage = () => {
     },
     {
       headerName: 'ACTION',
-      field: 'uuid',
+      field: 'id',
       width: 120,
       pinned: 'right',
       sortable: false,
@@ -194,8 +194,8 @@ export const WarehouseListPage = () => {
           <PermissionGuard permission="edit_warehouse">
             <button
               onClick={() => handleEdit(params.data.id)}
-              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110 group/edit"
-              title="Edit"
+              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 group/edit"
+              title="Edit Warehouse"
             >
               <Edit className="h-4 w-4" />
             </button>

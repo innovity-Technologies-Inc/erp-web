@@ -213,12 +213,11 @@ export const VendorListPage = () => {
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-1.5 h-full">
           <PermissionGuard permission="edit_supplier">
-            <button
-              onClick={() => handleEdit(params.data.id)}
-              className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 group/edit"
-              title="Edit Vendor"
-            >
-              <Edit className="h-4 w-4" />
+           <button
+             onClick={() => handleEdit(params.data.id)}
+             className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 group/edit"
+             title="Edit Vendor"
+           >              <Edit className="h-4 w-4" />
             </button>
           </PermissionGuard>
 

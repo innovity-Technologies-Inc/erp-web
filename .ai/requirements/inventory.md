@@ -169,5 +169,34 @@ This document outlines the requirements for the Inventory module in the `erp_fro
     - **Context-Aware Modal**: 
         - **Parent Category Field**: Automatically hidden when editing root categories to prevent invalid self-parenting or structural errors.
         - **Sub-Category Mode**: Parent selection is mandatory and always visible when creating/editing sub-categories.
-    - **Backend Synchronization**: Refactored `ProductCategoryApiController` to support tree traversal, post-processing filters (Status, Date, Search), and partial updates for status toggling.
+    - [x] **Backend Synchronization**: Refactored `ProductCategoryApiController` to support tree traversal, post-processing filters (Status, Date, Search), and partial updates for status toggling.
+
+    ## 13. Service Management (Master Data)
+    - [x] Implement a dedicated **Service List Page** using `ListPageLayout` with AG Grid and professional filtering.
+    - [x] Implement **Status Toggle Modal**: Create and Edit services using a high-fidelity modal with a visual toggle switch for status.
+    - [x] Implement **Core Filtering**: Enable server-side filtering by **Search**, **Status**, and **Date Range** (creation date).
+    - [x] Implement **Column Visibility Toggle**: Allow users to show/hide specific columns (SL, Date, Service Name, Charge, VAT, Status, Description, Action).
+    - [x] Implement robust Zod validation ensuring Service Name and Charge are mandatory while allowing nulls for description and VAT from legacy data.
+    - [x] Integrate with legacy backend `/api/inventory/service` API for all CRUD operations.
+
+## 14. Service Invoice Management (Transactions)
+- [x] Implement a dedicated **Service Invoice List Page** with navigation tabs ("Manage Service", "Manage Service Invoice").
+- [x] Implement **High-Fidelity Form Design**: Separate Create and Edit pages matching visual samples exactly, using a 7/5 grid ratio.
+- [x] Implement **Dynamic Items Table**: Support adding/removing multiple service items with real-time row-level calculations (Qty * Charge - Discount + VAT).
+- [x] Implement **Synchronous Calculation Engine**: Real-time aggregation of Sub Total, Total Discount, Total VAT, Grand Total, and Remaining Balance.
+- [x] Implement merchant-specific logic: Auto-fetch previous due balances upon selection.
+- [x] **Persistent Selection Logic**: Ensured selected Merchants, Employees, and Services remain visible in `Select2` dropdowns even when search terms are cleared or on initial page load (Edit mode).
+- [x] Integrate **Rich Text Editor** for high-fidelity Sale Details.
+- [x] Implement **High-Fidelity View Page**: Read-only invoice details matching the **Sale View Page** design, featuring professional billing cards, status badges, and comprehensive print support.
+- [x] **Backend Integration**: 
+    - Added `showServiceInvoice` and updated `updateServiceInvoice` in `ServiceApiController` to support numeric ID lookups while maintaining internal UUID integrity.
+    - Updated backend datatable logic to support Status and Date Range filtering for service invoices.
+
+## 15. Routing & Parameter Standardization (Project-Wide)
+- [x] **Consistently use `$id` as the URL parameter name** across all modules (Merchant, Product, Sale, Purchase, Vendor, Warehouse, Contact Us, Service Invoice) for Edit and View routes.
+- [x] Ensure all route files in `erp_frontend/src/routes/_authenticated/inventory` are named using the `.$id.tsx` pattern.
+- [x] **Numeric ID for SEO/URLs**: Use numeric IDs in the visible browser URL to maintain a clean and standardized navigation experience.
+- [x] **UUID for Security**: Pass the record's UUID string as the value for the `$id` parameter when required by the backend API, ensuring high data integrity for updates and deletions.
+- [x] **Project-Wide Audit**: Verified that all `useParams` calls destructure `id` only, and all `navigate` calls use the `id` key in the `params` object.
+
 

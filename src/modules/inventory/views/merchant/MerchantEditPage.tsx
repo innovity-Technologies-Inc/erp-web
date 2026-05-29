@@ -26,7 +26,7 @@ import { LoadingState } from '@/components/Loading/LoadingState'
 import { Select2 } from '@/components/Select/Select2'
 
 export const MerchantEditPage = () => {
-  const { id } = useParams({ strict: false })
+  const { id } = useParams({ from: '/_authenticated/inventory/merchant/edit/$id' })
   const navigate = useNavigate()
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
   const { mutate: updateMerchant, isPending: isSaving } = useUpdateMerchant()

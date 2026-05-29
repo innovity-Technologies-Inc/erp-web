@@ -71,6 +71,21 @@ writing any code. Never deviate from these conventions without explicit user app
   - **Dynamic Columns**: Datatable action columns MUST be dynamically hidden if the user has NO permissions for any action in that column.
 - **Super-Admin Bypass**: Users with the `super-admin` or `super admin` role (case-insensitive) bypass all permission guards and have global access. This logic is centralized in the `usePermissions` hook.
 
+## 2.2 List Page & Filtering Standards (CRITICAL)
+
+1. **Column Visibility Control**:
+   - **State Pattern**: ALWAYS use a local `visibleCols` state object to track the visibility of each column.
+   - **Reactivity**: The `columnDefs` (AG Grid) MUST include `visibleCols` in its `useMemo` dependency array. Failure to do so will cause the table to remain static when users toggle columns in the menu.
+   - **Integration**: ALWAYS pass the `columns` list and the `onColumnToggle` handler to the `ListPageLayout` component.
+   - **Cell Alignment**: Ensure cells using custom renderers maintain vertical alignment (e.g., `flex items-center`) even when columns are resized or toggled.
+
+2. **Date Range Filtering**:
+   - **State Synchronization**: ALWAYS use `fromDate` and `toDate` (ISO format string) local states.
+   - **Props**: Pass these states and the `onDateRangeChange` handler to `ListPageLayout`.
+   - **Backend Integration**: Date range parameters MUST be sent to the backend as `start_date` and `end_date`.
+   - **Backend Logic**: Ensure the corresponding Laravel Controller's `datatable` method explicitly handles these two parameters and applies `whereBetween` on the relevant date column.
+   - **Conditional Display**: The `DateRangePicker` in the layout should only be enabled/rendered if `onDateRangeChange` is provided to prevent non-functional UI elements.
+
 ## 2.1 Engineering & Design Standards (STRICT)
 
 1. **Standardized Button System**:
