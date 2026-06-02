@@ -188,5 +188,19 @@
 - [x] **Task 20.5**: Remove legacy `parseInt` logic from view components that were incorrectly treating UUID strings as numeric IDs.
 - [x] **Task 20.6**: Update **Select2** component to support `filterOption={() => true}` by default when server-side searching is active, preventing incorrect local filtering of valid results.
 
+## Task Group 21: Quotation UI Refactor
+- [x] **Task 21.1**: Refactor `QuotationForm.tsx` to implement the modular summary card pattern for Items.
+- [x] **Task 21.2**: Implement the matching summary card pattern for Service Quotation.
+- [x] **Task 21.3**: Update the "Add Service Quotation" button with specific blue branding and left-aligned layout matching high-fidelity samples.
+- [x] **Task 21.4**: Standardize the final action buttons container width to `400px` to match summary cards.
+- [x] **Task 21.5**: Fix **Warehouse Select2** data mapping in `QuotationForm.tsx` to safely handle varied API response structures.
+- [x] **Task 21.6**: Resolve JSX **PARSE_ERROR** by wrapping sibling elements in a fragment within the Service Quotation section.
+- [x] **Task 21.7**: Standardize **Service Select2** and **Product Select2** data mapping to handle `.data`, `.results`, or raw array responses with robust label fallbacks (`text`, `service_name`, `product_name`).
+- [x] **Task 21.8**: Refactor row components (`SaleItemRow`, `ServiceItemRow`) to use options passed from the parent, eliminating redundant internal fetches and resolving data loading bugs.
+- [x] **Task 21.9**: Implement backend and frontend integration for `start_date`, `end_date`, and `status` filters on the `QuotationListPage`.
+- [x] **Task 21.10**: Adjust padding (`px-2 py-0`) on the "Added to Invoice" status badges to prevent overflow in tightly constrained AG Grid table cells.
+- [x] **Task 21.11**: Fix React "Cannot update a component while rendering a different component" warning by wrapping the Zustand state mutation (`clearUser`) inside a `useEffect` hook in `AuthGuard.tsx`.
+- [x] **Task 21.12**: Fix login page scrolling by adding `overflow-y-auto max-h-screen` to the form container in `AuthLayout.tsx`.
+
 
 

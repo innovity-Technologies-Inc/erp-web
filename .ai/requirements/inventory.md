@@ -199,4 +199,14 @@ This document outlines the requirements for the Inventory module in the `erp_fro
 - [x] **UUID for Security**: Pass the record's UUID string as the value for the `$id` parameter when required by the backend API, ensuring high data integrity for updates and deletions.
 - [x] **Project-Wide Audit**: Verified that all `useParams` calls destructure `id` only, and all `navigate` calls use the `id` key in the `params` object.
 
+## 16. Quotation Management (UI Refactor)
+- [x] Implement separate summary cards for **Items Quotation** and **Service Quotation**.
+- [x] Standardize on a professional two-column layout for both item and service sections (Table + Summary Card).
+- [x] Redesign the **"Add Service Quotation"** toggle button with branded blue background (`bg-[#004ba0]`) and left-aligned placement matching high-fidelity samples.
+- [x] Implement dedicated **Sale Discount** and **Service Discount** inputs within each section's summary card for granular control.
+- [x] Ensure real-time reactive calculation of **Total Discount** and **Grand Total** within each section's modular summary card.
+- [x] Simplify the final form footer by removing the global grand total and placing standard action buttons (Save/Cancel) in a clean, aligned row.
+- [x] **ID Width Synchronization**: Standardize the action buttons container width to `400px` to match the summary cards, ensuring a perfectly balanced vertical alignment on the right side of the form.
+- [x] **Data Mapping Robustness**: Updated Select2 mappings to safely handle diverse API response structures (`data`, `results`, or raw arrays).
+
 

@@ -74,14 +74,14 @@ export const LoginPage = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <FormField 
-          label="Email or Phone number" 
+          label="Email" 
           error={errors.email?.message}
           labelClassName="text-[11px] font-normal text-gray-500 leading-[12px] tracking-[0.3px] mb-1.5"
         >
           <input {...register('email')}
             type="text"
             className="w-full px-4 py-3 bg-gray-100 border-none rounded-lg outline-none placeholder:text-gray-400 text-sm hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
-            placeholder="Enter email or phone number"
+            placeholder="Enter email"
           />
         </FormField>
 
@@ -124,7 +124,7 @@ export const LoginPage = () => {
 
         <Button 
           type="submit" 
-          className="w-full py-3 bg-[#059669] hover:bg-[#047857] text-white rounded-lg font-bold text-sm shadow-md shadow-emerald-500/20 transition-all active:scale-[0.98]" 
+          className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-semibold text-sm shadow-sm transition-all active:scale-[0.98]" 
           loading={isPending}
         >
           Sign in

@@ -1,9 +1,10 @@
 import { Outlet } from '@tanstack/react-router'
 import { useSettings } from '@/hooks/useSettings'
+import LoginSidebarImage from '@/assets/images/login_sidbar.png'
 
 export const AuthLayout = () => {
   const { webSetting } = useSettings()
-  const sidebarImage = webSetting?.login_sidebar_image_url || "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2070"
+  const sidebarImage = webSetting?.login_sidebar_image_url || LoginSidebarImage
 
   return (
     <div className="min-h-screen flex bg-white font-sans">
@@ -21,8 +22,8 @@ export const AuthLayout = () => {
       </div>
 
       {/* Right Side: Auth Form */}
-      <main className="w-full lg:w-2/5 xl:w-1/3 flex flex-col justify-center px-8 sm:px-16 lg:px-12 xl:px-20 py-12">
-        <div className="w-full max-w-sm mx-auto">
+      <main className="w-full lg:w-2/5 xl:w-1/3 flex flex-col justify-center px-8 sm:px-16 lg:px-12 xl:px-20 py-12 overflow-y-auto max-h-screen">
+        <div className="w-full max-w-sm mx-auto my-auto">
           <Outlet />
         </div>
       </main>
