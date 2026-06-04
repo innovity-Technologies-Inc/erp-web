@@ -209,4 +209,13 @@ This document outlines the requirements for the Inventory module in the `erp_fro
 - [x] **ID Width Synchronization**: Standardize the action buttons container width to `400px` to match the summary cards, ensuring a perfectly balanced vertical alignment on the right side of the form.
 - [x] **Data Mapping Robustness**: Updated Select2 mappings to safely handle diverse API response structures (`data`, `results`, or raw arrays).
 
+## 17. Return & Exchange Management
+- [x] **Return to Vendor Implementation**:
+    - [x] Implement a dedicated **Vendor Return List Page** with professional filtering, date range synchronization, and status badges.
+    - [x] Build high-fidelity **Return to Vendor Create Page** featuring a full-width header and reactive 8:4 summary/reason layout matching the high-fidelity design standards.
+    - [x] Implement **Automatic Invoice Mapping**: Selecting an invoice automatically fetches and populates vendor, date, and chalan information.
+    - [x] Implement **Real-Time Return Calculations**: Synchronous calculation of line-item totals, deductions, and the final net refund amount.
+    - [x] **Robust Backend Integration**: Updated backend `ReturnApiController` to provide a dedicated `supplierReturnDetails` endpoint and fixed pagination counting logic to ensure accurate "Showing X to Y" footers.
+    - [x] Implement high-fidelity **Vendor Return View Page** matching the Sale/Purchase View design, featuring printable invoice headers, billing cards, and standardized summary tables.
+
 

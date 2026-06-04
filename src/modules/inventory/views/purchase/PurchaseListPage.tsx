@@ -259,7 +259,7 @@ export const PurchaseListPage = () => {
     <>
       <ListPageLayout<PurchaseListItem>
         title="Purchase List"
-        backTo="/inventory/purchase"
+        backTo="/"
         onCreate={handleCreate}
         createPermission="create_purchase"
         showColumnFilter={true}

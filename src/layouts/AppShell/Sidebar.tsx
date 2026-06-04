@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import { 
   LayoutDashboard, 
@@ -70,7 +71,7 @@ const menuItems = [
       { 
         name: 'Return', 
         icon: RotateCcw, 
-        to: '/inventory/return', 
+        to: '/inventory/return/vendor', 
         permission: 'sales_return',
         activePaths: ['/inventory/return']
       },
@@ -96,6 +97,7 @@ export const Sidebar = () => {
   const { sidebarOpen } = useUiStore()
   const { hasPermission } = usePermissions()
   const location = useLocation()
+  const [hoveredItem, setHoveredItem] = useState<{ name: string, top: number, left: number } | null>(null)
 
   const filteredMenuItems = menuItems.map(group => ({
     ...group,
@@ -110,7 +112,10 @@ export const Sidebar = () => {
       )}
     >
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar px-3">
+      <nav className={clsx(
+        "flex-1 py-4 custom-scrollbar px-3 overflow-y-auto overflow-x-hidden",
+        !sidebarOpen && "scrollbar-none" // Hide scrollbar visually when collapsed
+      )}>
         {filteredMenuItems.map((group, idx) => (
           <div key={idx} className="mb-6">
             {sidebarOpen && (
@@ -129,19 +134,25 @@ export const Sidebar = () => {
                     key={item.name}
                     to={item.to as any}
                     className={clsx(
-                      "flex items-center px-4 py-3 transition-all duration-200 group relative rounded-xl font-medium text-[14px] font-poppins hover:bg-white hover:text-primary",
-                      isActive ? "bg-white text-primary shadow-xl" : "text-white",
-                      !sidebarOpen && "justify-center px-0"
+                      "flex items-center px-4 py-3 transition-all duration-200 group relative font-medium text-[14px] font-poppins",
+                      isActive 
+                        ? "bg-[#3b82f6] text-white shadow-lg rounded-xl pointer-events-none" // Disable hover on active
+                        : "text-white hover:bg-[#3b82f6] hover:text-white rounded-xl",
+                      !sidebarOpen && [
+                        "justify-center px-0 h-12 w-12 mx-auto mb-1",
+                        !isActive && "hover:rounded-r-none z-[100]"
+                      ]
                     )}
+                    onMouseEnter={(e) => {
+                      if (!sidebarOpen && !isActive) {
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        setHoveredItem({ name: item.name, top: rect.top, left: rect.right })
+                      }
+                    }}
+                    onMouseLeave={() => setHoveredItem(null)}
                   >
-                    <item.icon className={clsx("w-5 h-5 shrink-0", sidebarOpen ? "mr-3" : "mr-0")} strokeWidth={2} />
+                    <item.icon className={clsx("w-5 h-5 shrink-0", sidebarOpen ? "mr-3" : "mr-0")} strokeWidth={2.5} />
                     {sidebarOpen && <span>{item.name}</span>}
-                    
-                    {!sidebarOpen && (
-                      <div className="absolute left-full ml-4 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap shadow-xl">
-                        {item.name}
-                      </div>
-                    )}
                   </Link>
                 )
               })}
@@ -149,6 +160,20 @@ export const Sidebar = () => {
           </div>
         ))}
       </nav>
+
+      {/* Flyout Label for Collapsed Sidebar */}
+      {!sidebarOpen && hoveredItem && (
+        <div 
+          className="fixed bg-[#3b82f6] text-white text-[14px] rounded-r-xl z-[9999] flex items-center px-4 font-semibold shadow-xl pointer-events-none animate-in fade-in slide-in-from-left-1 duration-200"
+          style={{ 
+            top: hoveredItem.top, 
+            left: hoveredItem.left,
+            height: 48 // h-12 = 48px
+          }}
+        >
+          {hoveredItem.name}
+        </div>
+      )}
     </aside>
   )
 }

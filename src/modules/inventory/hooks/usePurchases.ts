@@ -101,6 +101,14 @@ export const useCheckBatchNo = (batchNo: string) => {
   })
 }
 
+export const usePurchaseSelect2 = (term: string = '', supplierId: number | string | null = null) => {
+  return useQuery({
+    queryKey: ['purchase-select2', term, supplierId],
+    queryFn: () => api.getPurchaseSelect2(term, supplierId || ''),
+    enabled: true,
+  })
+}
+
 export const useVendorProductsSelect2 = (supplierId: number | string | null) => {
   return useQuery({
     queryKey: ['vendor-products-select2', supplierId],

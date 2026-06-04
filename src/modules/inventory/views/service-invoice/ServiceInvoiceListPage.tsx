@@ -197,7 +197,6 @@ export const ServiceInvoiceListPage = () => {
       ),
     },
   ], [currency, currencyPosition, currentPage, pageSize, hasAnyPermission, visibleCols])
-
   return (
     <>
       <ListPageLayout<ServiceInvoiceListItem>

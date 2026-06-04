@@ -223,7 +223,7 @@ export const ServiceListPage = () => {
     <>
       <ListPageLayout<ServiceListItem>
         title="Manage Service"
-        backTo="/inventory/service"
+        backTo="/"
         tabs={tabs}
         onCreate={handleCreate}
         createPermission="create_service"

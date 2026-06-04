@@ -67,6 +67,9 @@ export interface ListPageLayoutProps<T extends object> {
 
   /** Label for the dark create button. Defaults to 'Create' */
   addLabel?: string
+  
+  /** Extra component to show in the toolbar */
+  toolbarExtra?: ReactNode
 
   // ── Table ──
   rowData: T[] | undefined

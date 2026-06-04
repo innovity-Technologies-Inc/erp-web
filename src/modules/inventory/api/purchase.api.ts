@@ -83,6 +83,13 @@ export const getWarehouseStock = async (productId: number, warehouseId: number):
   return response.data
 }
 
+export const getPurchaseSelect2 = async (term: string = '', supplierId: number | string = ''): Promise<any[]> => {
+  const response = await apiClient.get<any[]>('/select2/get-purchase-select2', {
+    params: { term, supplier_id: supplierId }
+  })
+  return response.data
+}
+
 export const getVendorProductsSelect2 = async (supplierId: number | string): Promise<any[]> => {
   const response = await apiClient.get<any[]>('/select2/get-product-select2', {
     params: { supplier_id: supplierId }

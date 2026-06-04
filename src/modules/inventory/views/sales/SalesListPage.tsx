@@ -293,7 +293,7 @@ export const SalesListPage = () => {
     <>
       <ListPageLayout<SaleListItem>
         title="Manage Sales"
-        backTo="/inventory/sales"
+        backTo="/"
         tabs={tabs}
         onCreate={handleCreate}
         createPermission="create_sales"

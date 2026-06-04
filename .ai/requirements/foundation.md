@@ -28,7 +28,10 @@ This document outlines the requirements for setting up the initial foundation of
 ## 4. Authentication Foundation
 - [x] Create `useAuthStore` with support for JWT persistence in `localStorage`.
 - [x] Define basic TypeScript interfaces for `User` and `Permission`.
-- [x] Set up an `AuthGuard` for route protection (Logical implementation in router).
+- [x] Set up an `AuthGuard` for route protection and ensure state mutations (like token expiration) happen safely outside the render phase.
+- [x] Ensure the `AuthLayout` is fully scrollable (`overflow-y-auto`) to prevent content clipping on small screens or during inspection.
+- [x] Integrate full **Forgot Password** and **Reset Password** flows, ensuring API payloads and frontend routing match backend expectations.
+- [x] Establish backend coordination for unauthenticated email dispatch using `DynamicMailConfigService`.
 
 ## 6. Dynamic Branding & Settings
 - [x] Create a public API endpoint for fetching global site settings (web_settings, company_information).

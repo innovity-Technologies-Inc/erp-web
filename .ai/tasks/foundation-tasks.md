@@ -25,6 +25,9 @@
 ## Task Group 4: Verification
 - [x] **Task 4.1**: Verify environment variables loading.
 - [x] **Task 4.2**: Test basic route protection with high-fidelity login implementation.
+- [x] **Task 4.3**: Fix `AuthGuard` "update state during render" warning using `useEffect`.
+- [x] **Task 4.4**: Make `AuthLayout` scrollable to fix viewport clipping on small screens.
+- [x] **Task 4.5**: Fix Password Reset email routing and frontend payload integration.
 
 ## Task Group 6: Dynamic Branding & Global Settings
 - [x] **Task 6.1**: Create `GlobalSettingsController` in backend to expose `web_settings` and `company_information`.

@@ -202,5 +202,15 @@
 - [x] **Task 21.11**: Fix React "Cannot update a component while rendering a different component" warning by wrapping the Zustand state mutation (`clearUser`) inside a `useEffect` hook in `AuthGuard.tsx`.
 - [x] **Task 21.12**: Fix login page scrolling by adding `overflow-y-auto max-h-screen` to the form container in `AuthLayout.tsx`.
 
+## Task Group 22: Return & Exchange Implementation
+- [x] **Task 22.1**: Update backend `Select2ApiController@getPurchaseSelect2` to support `supplier_id` filtering.
+- [x] **Task 22.2**: Implement `storeSupplierReturn` and `getPurchaseSelect2` in `return.api.ts` and `purchase.api.ts`.
+- [x] **Task 22.3**: Build `VendorReturnCreatePage.tsx` with a high-fidelity full-width layout and reactive 8:4 summary split matching visual mockups.
+- [x] **Task 22.4**: Update backend `ReturnApiController` to fix pagination counting using `distinct()` and add a dedicated JSON `supplierReturnDetails` endpoint.
+- [x] **Task 22.5**: Fix `VendorReturnListPage.tsx` filtering logic by mapping `fromDate/toDate` to matching backend parameter keys.
+- [x] **Task 22.6**: Build `VendorReturnDetailsPage.tsx` featuring high-fidelity printable invoice structure, billing cards, and standardized summary tables matching the Sale/Purchase View design.
+- [x] **Task 22.7**: Link "View Details" action in the Return List to the newly created details route using parameterized navigation.
+
+
 
 

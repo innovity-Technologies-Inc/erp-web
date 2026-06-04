@@ -194,4 +194,43 @@ export const productSchema = z.object({
 
 export type ProductFormValues = z.infer<typeof productSchema>
 
+export const vendorReturnSchema = z.object({
+  supplier_id: z.coerce.number({ required_error: 'Vendor is required' }),
+  purchase_id: z.coerce.number({ required_error: 'Invoice is required' }),
+  return_date: z.string().min(1, 'Return date is required'),
+  payment_type_id: z.coerce.number({ required_error: 'Payment Type is required' }),
+  items: z.array(z.object({
+    purchase_detail_id: z.number(),
+    item_id: z.number(),
+    product_name: z.string(),
+    batch_no: z.string(),
+    quantity: z.number(),
+    available_quantity: z.number(),
+    return_quantity: z.number().min(0.01, 'Return qty must be > 0'),
+    rate: z.number(),
+    deduction_percent: z.number().min(0).max(100).default(0),
+    deduction_value: z.number().default(0),
+    total: z.number().default(0),
+    selected: z.boolean().default(false),
+  })).superRefine((items, ctx) => {
+    items.forEach((item, index) => {
+      if (item.selected && item.return_quantity > item.available_quantity) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Return quantity cannot exceed available quantity (${item.available_quantity})`,
+          path: [index, 'return_quantity']
+        })
+      }
+    })
+  }).refine(items => items.some(item => item.selected), {
+    message: 'Please select at least one item to return'
+  }),
+  details: z.string().optional(),
+  primary_category: z.string().optional(),
+  total_deduction: z.number().default(0),
+  grand_total: z.number().default(0),
+})
+
+export type VendorReturnFormValues = z.infer<typeof vendorReturnSchema>
+
 

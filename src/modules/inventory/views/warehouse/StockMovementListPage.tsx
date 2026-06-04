@@ -124,7 +124,7 @@ export const StockMovementListPage = () => {
   return (
     <ListPageLayout<StockMovementListItem>
       title="Stock Movement List"
-      backTo="/inventory"
+      backTo="/inventory/warehouse"
       tabs={tabs}
       onCreate={handleCreate}
       createPermission="warehouse_stock_movement"

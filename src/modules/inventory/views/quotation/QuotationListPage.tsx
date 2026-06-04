@@ -246,6 +246,7 @@ export const QuotationListPage = () => {
     <>
       <ListPageLayout<QuotationListItem>
         title="Quotation List"
+        backTo="/"
         onCreate={handleCreate}
         addLabel="Create Quotation"
         createPermission="create_quotation"

@@ -60,3 +60,10 @@ export * from './hooks/useProducts'
 export * from './hooks/usePurchases'
 export * from './hooks/useService'
 export * from './hooks/useQuotation'
+export * from './hooks/useReturn'
+
+// Return Views
+export { VendorReturnListPage } from './views/return/VendorReturnListPage'
+export { VendorReturnCreatePage } from './views/return/VendorReturnCreatePage'
+export { MerchantReturnListPage } from './views/return/MerchantReturnListPage'
+export { WastageListPage } from './views/return/WastageListPage'
