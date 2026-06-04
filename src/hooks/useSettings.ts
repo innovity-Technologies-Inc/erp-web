@@ -1,11 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { getGlobalSettings } from '@/api/settings.api'
 import { useSettingsStore } from '@/store/useSettingsStore'
 import { useEffect, useCallback } from 'react'
 
 export const useSettings = () => {
   const { setSettings, webSetting, companyInformation } = useSettingsStore()
-  const queryClient = useQueryClient()
 
   // We rely on the persisted Zustand store as the primary source.
   // The query is only "enabled" (auto-runs) if we don't have any data yet.

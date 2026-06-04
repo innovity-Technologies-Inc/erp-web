@@ -271,7 +271,7 @@ export const StockMovementCreatePage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<StockMovementFormValues>({
-    resolver: zodResolver(stockMovementSchema),
+    resolver: zodResolver(stockMovementSchema) as any,
     defaultValues: {
       batches: [{
         batch_master_id: undefined as any,

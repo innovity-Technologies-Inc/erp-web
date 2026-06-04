@@ -3,11 +3,10 @@ import { Mail } from 'lucide-react'
 import { useContactUsDatatable } from '../../hooks/useContactUs'
 import type { ColDef } from 'ag-grid-community'
 import type { ContactUsListItem } from '../../api/contactUs.api'
-import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
 import { exportToExcel } from '@/utils/exportUtils'
 import { useNavigate } from '@tanstack/react-router'
 import { clsx } from 'clsx'
-import { formatDate } from '@/utils/formatters'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 
@@ -24,7 +23,6 @@ export const ContactUsListPage = () => {
   const [toDate, setToDate]           = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize]       = useState(10)
-  const [gridApi, setGridApi]         = useState<any>(null)
   const navigate = useNavigate()
   const { hasPermission } = usePermissions()
 
@@ -144,7 +142,7 @@ export const ContactUsListPage = () => {
     },
     {
       headerName: 'STATUS',
-      field: 'status',
+      field: 'status' as any,
       width: 120,
       flex: 0,
       hide: !visibleCols.status,
@@ -223,7 +221,7 @@ export const ContactUsListPage = () => {
         searchValue={searchTerm}
         onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
         gridOptions={{
-          onGridReady: (params) => setGridApi(params.api)
+          onGridReady: () => {}
         }}
       />
     </>

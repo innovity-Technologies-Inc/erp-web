@@ -12,13 +12,11 @@ import {
   Truck,
   FileText,
   Clock,
-  Calendar,
-  Smile
+  Calendar
 } from 'lucide-react'
 import { useSaleDetails } from '../../hooks/useSales'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency, formatDate } from '@/utils/formatters'
-import { clsx } from 'clsx'
 import { LoadingState } from '@/components/Loading/LoadingState'
 
 export const SaleViewPage = () => {
@@ -28,7 +26,7 @@ export const SaleViewPage = () => {
   const { currency, currencyPosition, companyInformation, webSetting } = useSettings()
 
   const saleId = id ? parseInt(id as string, 10) : null
-  const { data: saleDetails, isLoading } = useSaleDetails(saleId ? saleId.toString() : null)
+  const { data: saleDetails, isLoading } = useSaleDetails(saleId)
 
   // Helper for consistent formatting
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)
@@ -77,6 +75,8 @@ export const SaleViewPage = () => {
   };
   const deliveryStatus = deliveryStatusMap[saleDetails.delivery_status?.toString()] || 'Pending';
 
+  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url || undefined;
+
   return (
     <div className="min-h-screen font-poppins print:bg-white print:pb-0">
       {/* Page Header - Standardized to match other pages */}
@@ -106,8 +106,8 @@ export const SaleViewPage = () => {
         {/* Top Section: Logo & Meta */}
         <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 print:flex-row print:items-center print:p-4">
           <div>
-            {webSetting?.logo_url || companyInformation?.logo_url ? (
-              <img src={webSetting?.logo_url || companyInformation?.logo_url} alt="Logo" className="h-12 object-contain print:h-10" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="h-12 object-contain print:h-10" />
             ) : (
               <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight print:text-xl">
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white print:w-8 print:h-8">

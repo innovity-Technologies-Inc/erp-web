@@ -4,11 +4,10 @@ import * as z from 'zod'
 import { Modal } from '@/components/Modal/Modal'
 import { Button } from '@/components/Button/Button'
 import { useCreateService, useUpdateService } from '../hooks/useService'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { clsx } from 'clsx'
 import { Save, PenLine } from 'lucide-react'
 import type { ServiceListItem } from '../api/service.api'
-import { Select2 } from '@/components/Select/Select2'
 import { useUiStore } from '@/store/useUiStore'
 
 const serviceSchema = z.object({
@@ -38,7 +37,7 @@ export const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalP
     control,
     formState: { errors }
   } = useForm<ServiceFormValues>({
-    resolver: zodResolver(serviceSchema),
+    resolver: zodResolver(serviceSchema) as any,
     shouldFocusError: false,
     defaultValues: {
       service_name: '',
@@ -74,11 +73,6 @@ export const ServiceFormModal = ({ isOpen, onClose, service }: ServiceFormModalP
       })
     }
   }, [service, reset, isOpen])
-
-  const statusOptions = useMemo(() => [
-    { value: 1, label: 'Active' },
-    { value: 0, label: 'Inactive' }
-  ], [])
 
   const { notify } = useUiStore()
 

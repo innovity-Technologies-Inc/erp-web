@@ -30,7 +30,7 @@ export const UnitModal = ({ isOpen, onClose, unitId, initialData }: UnitModalPro
     reset,
     formState: { errors },
   } = useForm<UnitFormValues>({
-    resolver: zodResolver(unitSchema),
+    resolver: zodResolver(unitSchema) as any,
     defaultValues: {
       unit_name: '',
       status: 1,
@@ -145,7 +145,7 @@ export const UnitModal = ({ isOpen, onClose, unitId, initialData }: UnitModalPro
               render={({ field }) => (
                 <Select2
                   options={statusOptions}
-                  value={field.value}
+                  value={field.value as any}
                   onChange={(val) => field.onChange(val)}
                   className="w-full"
                   menuPortalTarget={document.body}

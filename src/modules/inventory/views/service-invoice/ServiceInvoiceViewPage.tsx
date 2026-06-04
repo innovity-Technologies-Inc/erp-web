@@ -60,6 +60,8 @@ export const ServiceInvoiceViewPage = () => {
   const paymentStatus = parseFloat(invoice.due_amount) <= 0 ? 'Paid' : 
                        parseFloat(invoice.paid_amount) > 0 ? 'Partial' : 'Unpaid';
 
+  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url || undefined;
+
   return (
     <div className="min-h-screen font-poppins print:bg-white print:pb-0">
       {/* Page Header */}
@@ -89,8 +91,8 @@ export const ServiceInvoiceViewPage = () => {
         {/* Top Section: Logo & Meta */}
         <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 print:flex-row print:items-center print:p-4">
           <div>
-            {webSetting?.logo_url || companyInformation?.logo_url ? (
-              <img src={webSetting?.logo_url || companyInformation?.logo_url} alt="Logo" className="h-12 object-contain print:h-10" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="h-12 object-contain print:h-10" />
             ) : (
               <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight print:text-xl">
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white print:w-8 print:h-8">

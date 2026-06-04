@@ -85,7 +85,7 @@ export const PurchaseListPage = () => {
 
   const confirmDelete = () => {
     if (selectedPurchaseId) {
-      deletePurchase(selectedPurchaseId, {
+      deletePurchase(selectedPurchaseId as any, {
         onSuccess: () => {
           setIsConfirmOpen(false)
           setSelectedPurchaseId(null)

@@ -36,6 +36,7 @@
     "@tailwindcss/postcss": "^4.2.4",
     "@tanstack/router-devtools": "^1.166.13",
     "@tanstack/router-vite-plugin": "^1.166.47",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

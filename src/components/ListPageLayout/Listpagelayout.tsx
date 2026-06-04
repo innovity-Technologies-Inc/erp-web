@@ -15,7 +15,6 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  Filter,
   Columns as ColumnsIcon,
   X
 } from 'lucide-react'
@@ -67,6 +66,9 @@ export interface ListPageLayoutProps<T extends object> {
 
   /** Label for the dark create button. Defaults to 'Create' */
   addLabel?: string
+
+  /** Extra content to show in the toolbar */
+  toolbarExtra?: ReactNode
 
   // ── Table ──
   rowData: T[] | undefined

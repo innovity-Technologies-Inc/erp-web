@@ -149,14 +149,14 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
     },
     {
       headerName: isSubCategory ? 'CATEGORY NAME' : 'PARENT CATEGORY',
-      field: isSubCategory ? 'parent_category_name' : 'parent_name',
+      field: (isSubCategory ? 'parent_category_name' : 'parent_name') as any,
       width: 200,
       hide: !isSubCategory,
       cellClass: 'text-gray-500 font-medium flex items-center',
     },
     {
       headerName: isSubCategory ? 'SUB CATEGORY NAME' : 'CATEGORY NAME',
-      field: isSubCategory ? 'sub_category_path' : 'category_name',
+      field: (isSubCategory ? 'sub_category_path' : 'category_name') as any,
       minWidth: 300,
       flex: 1,
       hide: !visibleCols.name,

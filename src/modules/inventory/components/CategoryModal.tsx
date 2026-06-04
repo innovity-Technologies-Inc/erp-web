@@ -8,7 +8,6 @@ import { FormField } from '@/components/Form/FormField'
 import { productCategorySchema } from '../hooks/validation'
 import type { ProductCategoryFormValues } from '../hooks/validation'
 import { useStoreCategory, useUpdateCategory, useCategoryList } from '../hooks/useCategories'
-import { useUiStore } from '@/store/useUiStore'
 import { Select2 } from '@/components/Select/Select2'
 
 interface CategoryModalProps {
@@ -31,7 +30,6 @@ export const CategoryModal = ({
   const { mutate: storeCategory, isPending: isStoring } = useStoreCategory()
   const { mutate: updateCategory, isPending: isUpdating } = useUpdateCategory()
   const { data: categoryListData } = useCategoryList()
-  const { showNotificationModal } = useUiStore()
 
   const {
     register,
@@ -40,7 +38,7 @@ export const CategoryModal = ({
     reset,
     formState: { errors },
   } = useForm<ProductCategoryFormValues>({
-    resolver: zodResolver(productCategorySchema),
+    resolver: zodResolver(productCategorySchema) as any,
     defaultValues: {
       category_name: '',
       parent_id: null,
@@ -172,7 +170,7 @@ export const CategoryModal = ({
             render={({ field }) => (
               <Select2
                 options={statusOptions}
-                value={field.value}
+                value={field.value as any}
                 onChange={(val) => field.onChange(val)}
                 className="w-full"
                 menuPortalTarget={document.body}

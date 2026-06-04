@@ -1,4 +1,4 @@
-import { AlertTriangle, X } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { Modal } from '../Modal/Modal'
 import { Button } from '../Button/Button'
 
@@ -47,6 +47,7 @@ export const ConfirmationModal = ({
 
   return (
     <Modal
+      title=""
       isOpen={isOpen}
       onClose={onClose}
       showCloseButton={false}
@@ -75,7 +76,7 @@ export const ConfirmationModal = ({
             {cancelText}
           </Button>
           <Button 
-            variant={variant} 
+            variant={current.buttonVariant} 
             onClick={onConfirm} 
             className="flex-1 rounded-xl h-11"
             loading={isLoading}

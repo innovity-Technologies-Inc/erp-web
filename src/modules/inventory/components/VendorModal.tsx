@@ -24,7 +24,7 @@ export const VendorModal = ({ isOpen, onClose, vendorId, vendorUuid, initialData
     reset,
     formState: { errors },
   } = useForm<SupplierFormValues>({
-    resolver: zodResolver(supplierSchema),
+    resolver: zodResolver(supplierSchema) as any,
     defaultValues: {
       status: 1,
     },

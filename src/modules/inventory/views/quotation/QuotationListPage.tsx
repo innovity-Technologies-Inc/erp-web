@@ -177,7 +177,8 @@ export const QuotationListPage = () => {
         if (!hasPermission('add_to_invoice')) return null;
         return (
           <Link
-            to={`/inventory/quotation/add-to-invoice/${params.data.id}`}
+            to="/inventory/quotation/add-to-invoice/$id"
+            params={{ id: params.data.id.toString() }}
             className="px-2 py-0 leading-normal bg-[#dbeafe] text-[#1e40af] hover:bg-[#bfdbfe] rounded-full text-[11px] font-bold transition-colors inline-block border border-blue-200"
           >
             Add to Invoice
@@ -246,6 +247,7 @@ export const QuotationListPage = () => {
     <>
       <ListPageLayout<QuotationListItem>
         title="Quotation List"
+        backTo="/inventory/sales"
         onCreate={handleCreate}
         addLabel="Create Quotation"
         createPermission="create_quotation"

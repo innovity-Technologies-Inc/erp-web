@@ -18,7 +18,6 @@ export const AddQuotationToInvoicePage = () => {
   const initialData: Partial<QuotationFormValues> = {
     warehouse_id: quotation.quot_products_used?.[0]?.warehouse_id || '',
     customer_id: quotation.customer_id,
-    _merchant_fallback: quotation.customer_name || quotation.customer?.customer_name,
     quotdate: quotation.quotdate,
     expire_date: quotation.expire_date,
     quot_description: quotation.quot_description || '',

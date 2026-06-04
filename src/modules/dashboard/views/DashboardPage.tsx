@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { 
-  ChevronDown,
   Loader2,
   ExternalLink
 } from 'lucide-react'
@@ -16,13 +15,12 @@ import {
   ResponsiveContainer 
 } from 'recharts'
 import { useGetDashboardAnalytics } from '../api/dashboard.api'
+import type { DashboardAnalyticsResponse } from '../api/types'
 import { useSettings } from '@/hooks/useSettings'
 import { useDashboardStore } from '@/store/useDashboardStore'
-import { format } from 'date-fns'
 import { MonthPicker } from '@/components/DateRangePicker/MonthPicker'
 
 // Icons
-import ChannelWiseIcon from '@/assets/icons/Channel_Wise_Sale_icon.png'
 import TotalProductIcon from '@/assets/icons/total_product_card_icon.png'
 import TotalMerchantIcon from '@/assets/icons/total_merchante_card_icon.png'
 import TotalVendorIcon from '@/assets/icons/total_vendor_card_icon.png'
@@ -269,13 +267,26 @@ export const DashboardPage = () => {
   } = useDashboardStore()
 
   // Base analytics for stats and tables (unfiltered default in store = lifetime)
-  const { data: globalData, isLoading: isGlobalLoading, isFetching: isGlobalFetching } = useGetDashboardAnalytics(globalRange)
+  const globalAnalytics = useGetDashboardAnalytics(globalRange)
+  const globalData = globalAnalytics.data as DashboardAnalyticsResponse | undefined
+  const isGlobalLoading = globalAnalytics.isLoading
 
   // Independent analytics for specific sections - disabled if global range is active
-  const { data: expenseAnalytics, isFetching: isExpenseLoading } = useGetDashboardAnalytics(expenseRange, { enabled: !isCustomGlobal })
-  const { data: bestSaleAnalytics, isFetching: isBestSaleLoading } = useGetDashboardAnalytics(bestSaleRange, { enabled: !isCustomGlobal })
-  const { data: trendAnalytics, isFetching: isTrendLoading } = useGetDashboardAnalytics(trendRange, { enabled: !isCustomGlobal })
-  const { data: channelAnalytics, isFetching: isChannelLoading } = useGetDashboardAnalytics(channelRange, { enabled: !isCustomGlobal })
+  const expenseAnalyticsQuery = useGetDashboardAnalytics(expenseRange, { enabled: !isCustomGlobal })
+  const expenseAnalytics = expenseAnalyticsQuery.data as DashboardAnalyticsResponse | undefined
+  const isExpenseLoading = expenseAnalyticsQuery.isFetching
+
+  const bestSaleAnalyticsQuery = useGetDashboardAnalytics(bestSaleRange, { enabled: !isCustomGlobal })
+  const bestSaleAnalytics = bestSaleAnalyticsQuery.data as DashboardAnalyticsResponse | undefined
+  const isBestSaleLoading = bestSaleAnalyticsQuery.isFetching
+
+  const trendAnalyticsQuery = useGetDashboardAnalytics(trendRange, { enabled: !isCustomGlobal })
+  const trendAnalytics = trendAnalyticsQuery.data as DashboardAnalyticsResponse | undefined
+  const isTrendLoading = trendAnalyticsQuery.isFetching
+
+  const channelAnalyticsQuery = useGetDashboardAnalytics(channelRange, { enabled: !isCustomGlobal })
+  const channelAnalytics = channelAnalyticsQuery.data as DashboardAnalyticsResponse | undefined
+  const isChannelLoading = channelAnalyticsQuery.isFetching
 
   const { currency, currencyPosition, webSetting } = useSettings()
 
@@ -294,15 +305,17 @@ export const DashboardPage = () => {
   }
 
   const data = globalData
-  const expenseData = (isCustomGlobal ? globalData : expenseAnalytics)?.expense_statement || { total_purchase: 0, total_sales: 0, total_expense: 0, total_salary: 0, total_service: 0 }
-  const bestProducts = (isCustomGlobal ? globalData : bestSaleAnalytics)?.best_selling_products || []
-  const trendData = (isCustomGlobal ? globalData : trendAnalytics)?.monthly_trend || []
-  const channelSalesData = (isCustomGlobal ? globalData : channelAnalytics)?.channel_wise_sales || []
-
-  const isChannelFetching = isCustomGlobal ? isGlobalFetching : isChannelLoading
-  const isExpenseFetching = isCustomGlobal ? isGlobalFetching : isExpenseLoading
-  const isBestSaleFetching = isCustomGlobal ? isGlobalFetching : isBestSaleLoading
-  const isTrendFetching = isCustomGlobal ? isGlobalFetching : isTrendLoading
+  const activeExpense = isCustomGlobal ? globalData : expenseAnalytics
+  const expenseData = activeExpense?.expense_statement || { total_purchase: 0, total_sales: 0, total_expense: 0, total_salary: 0, total_service: 0 }
+  
+  const activeBestProducts = isCustomGlobal ? globalData : bestSaleAnalytics
+  const bestProducts = activeBestProducts?.best_selling_products || []
+  
+  const activeTrend = isCustomGlobal ? globalData : trendAnalytics
+  const trendData = activeTrend?.monthly_trend || []
+  
+  const activeChannel = isCustomGlobal ? globalData : channelAnalytics
+  const channelSalesData = activeChannel?.channel_wise_sales || []
 
   const colors = {
     primary: webSetting?.color_primary || 'var(--color-primary)',

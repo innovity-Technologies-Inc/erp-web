@@ -32,7 +32,6 @@ import { useVendorSelect2 } from '../../hooks/useSuppliers'
 import { useWarehouseSelect2 } from '../../hooks/useWarehouse'
 import { Select2 } from '@/components/Select/Select2'
 import { clsx } from 'clsx'
-import { apiClient } from '@/api/client'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
@@ -258,7 +257,7 @@ const PurchaseItemRow = ({
                   value={field.value}
                   onChange={handleItemChange}
                   placeholder="Select"
-                  disabled={!supplierId}
+                  isDisabled={!supplierId}
                   className={errors?.items?.[index]?.item_id ? "border-rose-500" : ""}
                 />
               )}
@@ -353,7 +352,7 @@ export const PurchaseCreatePage = () => {
   const paymentMethodOptions = useMemo(() => paymentMethods?.map((p: any) => ({ value: p.id, label: p.text })) || [], [paymentMethods])
 
   const { register, control, handleSubmit, watch, setValue, getValues, formState: { errors, isDirty } } = useForm<PurchaseFormValues>({
-    resolver: zodResolver(purchaseSchema),
+    resolver: zodResolver(purchaseSchema) as any,
     defaultValues: {
       purchase_date: new Date().toISOString().split('T')[0],
       purchase_discount: 0,

@@ -6,12 +6,7 @@ import {
   Check, 
   Building2, 
   UserCircle2, 
-  MapPin, 
-  Undo2,
-  X,
-  Loader2,
-  Phone,
-  Mail
+  MapPin
 } from 'lucide-react'
 import { supplierSchema, type SupplierFormValues } from '../../hooks/validation'
 import { useUpdateSupplier, useSupplierData } from '../../hooks/useSuppliers'
@@ -35,7 +30,7 @@ export const VendorEditPage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<SupplierFormValues>({
-    resolver: zodResolver(supplierSchema),
+    resolver: zodResolver(supplierSchema) as any,
   })
 
   // Hydrate form
@@ -137,15 +132,11 @@ export const VendorEditPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Phone Number <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">Phone Number</label>
                     <input {...register('mobile')}
                       placeholder="Enter phone number"
-                      className={clsx(
-                        "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all hover:border-gray-300",
-                        errors.mobile ? "border-rose-500 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all hover:border-gray-300" : "border-gray-200 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
-                      )}
+                      className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
                     />
-                    {errors.mobile && <span className="text-rose-500 text-[11px] font-medium">{errors.mobile.message}</span>}
                   </div>
 
                   <div className="space-y-1.5">
@@ -169,15 +160,11 @@ export const VendorEditPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Address 1 <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">Address 1</label>
                     <input {...register('address')}
                       placeholder="Enter street name, building number and floor..."
-                      className={clsx(
-                        "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all hover:border-gray-300",
-                        errors.address ? "border-rose-500 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all hover:border-gray-300" : "border-gray-200 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
-                      )}
+                      className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
                     />
-                    {errors.address && <span className="text-rose-500 text-[11px] font-medium">{errors.address.message}</span>}
                   </div>
 
                   <div className="space-y-1.5">
@@ -189,7 +176,7 @@ export const VendorEditPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Country <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">Country</label>
                     <input {...register('country')}
                       placeholder="Select country"
                       className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
@@ -197,7 +184,7 @@ export const VendorEditPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">State <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">State</label>
                     <input {...register('state')}
                       placeholder="Select state"
                       className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
@@ -205,7 +192,7 @@ export const VendorEditPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">City <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">City</label>
                     <input {...register('city')}
                       placeholder="Select city"
                       className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
@@ -213,7 +200,7 @@ export const VendorEditPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Zip Code <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">Zip Code</label>
                     <input {...register('zip')}
                       placeholder="XXXXX"
                       className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
@@ -236,7 +223,7 @@ export const VendorEditPage = () => {
                 <div className="space-y-6 flex-1 overflow-y-auto">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-[12px] font-medium text-gray-500">Contact Person Name <span className="text-rose-500">*</span></label>
+                      <label className="text-[12px] font-medium text-gray-500">Contact Person Name</label>
                       <input {...register('contact')}
                         placeholder="Enter contact name"
                         className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
@@ -244,7 +231,7 @@ export const VendorEditPage = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[12px] font-medium text-gray-500">Phone Number <span className="text-rose-500">*</span></label>
+                      <label className="text-[12px] font-medium text-gray-500">Phone Number</label>
                       <input {...register('phone')}
                         placeholder="Enter phone number"
                         className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
@@ -253,7 +240,7 @@ export const VendorEditPage = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[12px] font-medium text-gray-500">Email Address <span className="text-rose-500">*</span></label>
+                    <label className="text-[12px] font-medium text-gray-500">Email Address</label>
                     <input {...register('emailnumber')}
                       placeholder="contact@warehouse.com"
                       className={clsx(

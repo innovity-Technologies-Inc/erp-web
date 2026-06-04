@@ -9,12 +9,10 @@ import {
   Image as ImageIcon, 
   FileText, 
   DollarSign,
-  Package,
   QrCode,
   Building2,
   Upload,
-  X,
-  RefreshCw
+  X
 } from 'lucide-react'
 import { productSchema, type ProductFormValues } from '../../hooks/validation'
 import { useUpdateProduct, useProductData } from '../../hooks/useProducts'
@@ -53,7 +51,7 @@ export const ProductEditPage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<ProductFormValues & { main_category_id?: number }>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema) as any,
   })
 
   const status = watch('status')
@@ -280,7 +278,7 @@ export const ProductEditPage = () => {
                             value={field.value}
                             onChange={(val) => {
                               field.onChange(val)
-                              setValue('category_id', undefined)
+                              setValue('category_id', 0)
                             }}
                             placeholder="Select product category"
                           />
@@ -299,7 +297,7 @@ export const ProductEditPage = () => {
                             value={field.value}
                             onChange={field.onChange}
                             placeholder="Select sub-category"
-                            disabled={!mainCategoryId}
+                            isDisabled={!mainCategoryId}
                             className={errors.category_id ? "border-rose-500" : ""}
                           />
                         )}

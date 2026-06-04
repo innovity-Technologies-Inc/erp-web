@@ -7,10 +7,6 @@ import {
   Check, 
   Building2, 
   MapPin, 
-  Phone, 
-  Mail, 
-  Lock,
-  Percent,
   RefreshCw,
   Upload,
   Eye,
@@ -44,7 +40,7 @@ export const MerchantEditPage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<MerchantFormValues>({
-    resolver: zodResolver(merchantSchema),
+    resolver: zodResolver(merchantSchema) as any,
   })
 
   useEffect(() => {
@@ -75,7 +71,6 @@ export const MerchantEditPage = () => {
     }
   }, [merchantDetails, reset])
 
-  const passwordOption = watch('password_option')
   const commissionType = watch('comission_type')
   const status = watch('status')
 
@@ -92,7 +87,7 @@ export const MerchantEditPage = () => {
     fileInputRef.current?.click()
   }
 
-  const onSubmit = (data: MerchantFormValues) => {
+  const onSubmit = (data: any) => {
     const formData = new FormData()
     
     if (merchantDetails?.data?.uuid) {

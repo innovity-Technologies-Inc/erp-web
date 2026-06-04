@@ -49,12 +49,11 @@ export const SaleCreatePage = () => {
     register,
     control,
     handleSubmit,
-    watch,
     setValue,
     getValues,
     formState: { errors, isDirty },
   } = useForm<SaleFormValues>({
-    resolver: zodResolver(saleSchema),
+    resolver: zodResolver(saleSchema) as any,
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
       warehouse_id: undefined,
@@ -445,7 +444,7 @@ export const SaleCreatePage = () => {
                 name="details"
                 render={({ field }) => (
                   <RichEditor 
-                    value={field.value} 
+                    value={field.value || ''} 
                     onChange={field.onChange} 
                     placeholder="Enter special instructions or sale terms here..."
                   />

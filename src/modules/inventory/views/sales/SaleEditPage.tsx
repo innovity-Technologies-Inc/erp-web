@@ -4,12 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { 
   ArrowLeft, 
   Plus, 
-  Undo2, 
   Check, 
   X,
   Info,
   ShoppingCart,
-  Receipt,
   FileText,
   Bold,
   Italic,
@@ -125,13 +123,6 @@ const RichEditor = ({ value, onChange, placeholder }: { value: string, onChange:
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 
-const tabs = [
-  { name: 'Manage Sale',          to: '/inventory/sales', active: true },
-  { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
-  { name: 'Manage Sales Terms',   to: '/inventory/terms' },
-  { name: 'Manage Contact Us',    to: '/inventory/contact-us' },
-]
-
 export const SaleEditPage = () => {
   const navigate = useNavigate()
   const { id } = useParams({ strict: false })
@@ -158,13 +149,12 @@ export const SaleEditPage = () => {
     register,
     control,
     handleSubmit,
-    watch,
     setValue,
     getValues,
     reset,
     formState: { errors, isDirty },
   } = useForm<SaleFormValues>({
-    resolver: zodResolver(saleSchema),
+    resolver: zodResolver(saleSchema) as any,
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
       warehouse_id: undefined,
@@ -622,7 +612,7 @@ export const SaleEditPage = () => {
                 name="details"
                 render={({ field }) => (
                   <RichEditor 
-                    value={field.value} 
+                    value={typeof field.value === 'string' ? field.value : ''} 
                     onChange={field.onChange} 
                     placeholder="Enter special instructions or purchase terms here..."
                   />

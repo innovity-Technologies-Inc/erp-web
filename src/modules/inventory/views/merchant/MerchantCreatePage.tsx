@@ -7,10 +7,6 @@ import {
   Check, 
   Building2, 
   MapPin, 
-  Phone, 
-  Mail, 
-  Lock,
-  Percent,
   RefreshCw,
   Upload,
   Eye,
@@ -39,7 +35,7 @@ export const MerchantCreatePage = () => {
     setValue,
     formState: { errors, isDirty },
   } = useForm<MerchantFormValues>({
-    resolver: zodResolver(merchantSchema),
+    resolver: zodResolver(merchantSchema) as any,
     defaultValues: {
       status: 1,
       comission_type: 1,
@@ -48,7 +44,6 @@ export const MerchantCreatePage = () => {
     },
   })
 
-  const passwordOption = watch('password_option')
   const commissionType = watch('comission_type')
   const status = watch('status')
 
@@ -65,7 +60,7 @@ export const MerchantCreatePage = () => {
     fileInputRef.current?.click()
   }
 
-  const onSubmit = (data: MerchantFormValues) => {
+  const onSubmit = (data: any) => {
     const formData = new FormData()
     
     Object.entries(data).forEach(([key, value]) => {

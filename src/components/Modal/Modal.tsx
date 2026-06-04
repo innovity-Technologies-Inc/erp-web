@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 
@@ -9,6 +9,7 @@ interface ModalProps {
   children: ReactNode
   footer?: ReactNode
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  showCloseButton?: boolean
 }
 
 const sizeClasses = {
@@ -26,6 +27,7 @@ export const Modal = ({
   children,
   footer,
   size = 'md',
+  showCloseButton = true,
 }: ModalProps) => {
   useEffect(() => {
     if (isOpen) {
@@ -53,12 +55,14 @@ export const Modal = ({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-primary/30">
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          <button
-            onClick={onClose}
-            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          {showCloseButton && (
+            <button
+              onClick={onClose}
+              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
 
         {/* Body */}

@@ -30,7 +30,7 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
     reset,
     formState: { errors },
   } = useForm<TermFormValues>({
-    resolver: zodResolver(termSchema),
+    resolver: zodResolver(termSchema) as any,
     defaultValues: {
       description: '',
       status: 1,
@@ -137,7 +137,7 @@ export const TermModal = ({ isOpen, onClose, termId, initialData }: TermModalPro
             render={({ field }) => (
               <Select2
                 options={statusOptions}
-                value={field.value}
+                value={field.value as any}
                 onChange={(val) => field.onChange(val)}
                 className="w-full"
                 menuPortalTarget={document.body}

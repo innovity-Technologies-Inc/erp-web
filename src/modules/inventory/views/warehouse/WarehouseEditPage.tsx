@@ -9,8 +9,7 @@ import {
   MapPin, 
   Phone, 
   Mail, 
-  Info,
-  Loader2
+  Info
 } from 'lucide-react'
 import { warehouseSchema, type WarehouseFormValues } from '../../hooks/validation'
 import { useUpdateWarehouse, useEmployees, useWarehouseDetails } from '../../hooks/useWarehouse'
@@ -37,7 +36,7 @@ export const WarehouseEditPage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<WarehouseFormValues>({
-    resolver: zodResolver(warehouseSchema),
+    resolver: zodResolver(warehouseSchema) as any,
   })
 
   useEffect(() => {
@@ -53,7 +52,7 @@ export const WarehouseEditPage = () => {
 
   const onSubmit = (data: WarehouseFormValues) => {
     if (!warehouseResponse?.data?.uuid) return
-    updateWarehouse({ ...data, uuid: warehouseResponse.data.uuid }, {
+    updateWarehouse({ ...data, uuid: warehouseResponse.data.uuid } as any, {
       onSuccess: () => navigate({ to: '/inventory/warehouse' }),
     })
   }
