@@ -4,8 +4,7 @@ import { useWarehouseDatatable, useDeleteWarehouse } from '../../hooks/useWareho
 import type { ColDef } from 'ag-grid-community'
 import type { WarehouseListItem } from '../../api/warehouse.api'
 import { clsx } from 'clsx'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
-import { useUiStore } from '@/store/useUiStore'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { useNavigate } from '@tanstack/react-router'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -27,7 +26,6 @@ export const WarehouseListPage = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [selectedWarehouse, setSelectedWarehouse] = useState<{ uuid: string; id: number } | null>(null)
   
-  const { showNotificationModal } = useUiStore()
   const navigate = useNavigate()
   const { hasAnyPermission } = usePermissions()
 

@@ -4,7 +4,7 @@ import { useSalesDatatable, useDeleteSale } from '../../hooks/useSales'
 import type { ColDef } from 'ag-grid-community'
 import type { SaleListItem } from '../../api/sales.api'
 import { clsx } from 'clsx'
-import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { useUiStore } from '@/store/useUiStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
@@ -30,7 +30,6 @@ export const SalesListPage = () => {
   const [selectedSaleId, setSelectedSaleId] = useState<number | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize]       = useState(10)
-  const [gridApi, setGridApi]         = useState<any>(null)
   
   const { currency, currencyPosition } = useSettings()
   const { showNotificationModal } = useUiStore()
@@ -320,7 +319,7 @@ export const SalesListPage = () => {
         searchValue={searchTerm}
         onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
         gridOptions={{
-          onGridReady: (params) => setGridApi(params.api)
+          onGridReady: () => {}
         }}
       />
 

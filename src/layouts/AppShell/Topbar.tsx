@@ -16,7 +16,7 @@ export const Topbar = () => {
   const [profileOpen, setProfileOpen] = useState(false)
   const { logo, siteName } = useSettings()
   
-  const { globalRange, setGlobalRange, resetDashboard, isCustomGlobal } = useDashboardStore()
+  const { globalRange, setGlobalRange, resetDashboard } = useDashboardStore()
   
   const matches = useMatches()
   const isDashboard = matches.some(m => m.routeId === '/_authenticated/')

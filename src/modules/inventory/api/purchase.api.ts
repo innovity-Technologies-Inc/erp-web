@@ -43,8 +43,8 @@ export const deletePurchase = async (uuid: string): Promise<ApiResponse<any>> =>
   return response.data
 }
 
-export const getPurchaseData = async (id: number | string): Promise<ApiResponse<any>> => {
-  const response = await apiClient.get<ApiResponse<any>>(`/inventory/purchase/get-data/${id}`)
+export const getPurchaseData = async (id: number | string): Promise<any> => {
+  const response = await apiClient.get<any>(`/inventory/purchase/get-data/${id}`)
   return response.data
 }
 

@@ -11,8 +11,6 @@ import {
   FileText,
   Clock,
   Calendar,
-  ShoppingCart,
-  Briefcase,
   ShieldCheck,
   Zap
 } from 'lucide-react'
@@ -39,7 +37,7 @@ export const QuotationDetailsPage = () => {
     return <LoadingState message="Loading quotation details..." />
   }
 
-  const quotation = quotationResponse?.data
+  const quotation = (quotationResponse as any)?.data
 
   if (!quotation) {
     return (
@@ -98,7 +96,7 @@ export const QuotationDetailsPage = () => {
         <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 print:flex-row print:items-center print:p-4">
           <div>
             {webSetting?.logo_url || companyInformation?.logo_url ? (
-              <img src={webSetting?.logo_url || companyInformation?.logo_url} alt="Logo" className="h-12 object-contain print:h-10" />
+              <img src={webSetting?.logo_url || companyInformation?.logo_url || undefined} alt="Logo" className="h-12 object-contain print:h-10" />
             ) : (
               <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight print:text-xl">
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white print:w-8 print:h-8">

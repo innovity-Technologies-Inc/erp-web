@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Edit, Trash2, Eye, Plus, MapPin, Phone, Mail, Globe } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { useSuppliersDatatable, useDeleteSupplier } from '../../hooks/useSuppliers'
 import type { ColDef } from 'ag-grid-community'
 import type { SupplierListItem } from '../../api/suppliers.api'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
-import { formatCurrency, formatDate } from '@/utils/formatters'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
-import { VendorModal } from '../../components/VendorModal'
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -23,14 +21,9 @@ export const VendorListPage = () => {
   const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string | undefined>(undefined)
-  const [country, setCountry] = useState<string | undefined>(undefined)
-  const [state, setState] = useState<string | undefined>(undefined)
-  const [city, setCity] = useState<string | undefined>(undefined)
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
 
   // Modal States
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedVendor, setSelectedVendor] = useState<SupplierListItem | null>(null)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [vendorToDelete, setVendorToDelete] = useState<{ id: number; uuid: string } | null>(null)
 
@@ -58,12 +51,9 @@ export const VendorListPage = () => {
     length: pageSize,
     search: { value: search },
     status,
-    country,
-    state,
-    city,
     start_date: dateRange.start,
     end_date: dateRange.end,
-  }), [currentPage, pageSize, search, status, country, state, city, dateRange])
+  }), [currentPage, pageSize, search, status, dateRange])
 
   const { data: vendorsData, isLoading } = useSuppliersDatatable(params)
   const { mutate: deleteVendor, isPending: isDeleting } = useDeleteSupplier()

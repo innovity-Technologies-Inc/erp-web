@@ -1,10 +1,9 @@
-import { useForm, useFieldArray, useWatch, Controller } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useEffect, useMemo, useState } from 'react'
-import { Trash2, Plus, ArrowLeft, Calendar as CalendarIcon, Info, Save, PenLine, FileText, X } from 'lucide-react'
+import { Plus, ArrowLeft, Calendar as CalendarIcon, Info, Save, PenLine, FileText, X } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Button } from '@/components/Button/Button'
 import { Select2 } from '@/components/Select/Select2'
 import { RichEditor } from '@/components/RichEditor/RichEditor'
 import { useSettings } from '@/hooks/useSettings'
@@ -80,7 +79,7 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
     reset,
     formState: { errors }
   } = useForm<InvoiceFormValues>({
-    resolver: zodResolver(invoiceSchema),
+    resolver: zodResolver(invoiceSchema) as any,
     shouldFocusError: false,
     defaultValues: initialData || {
       customer_id: '',
@@ -225,7 +224,7 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
     
     try {
       const result = await getService(serviceId)
-      if (result.status) {
+      if (result.success) {
         const service = result.data
         setValue(`items.${index}.charge`, service.charge)
         setValue(`items.${index}.vat`, service.service_vat || 0)

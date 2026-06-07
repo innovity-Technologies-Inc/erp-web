@@ -51,6 +51,7 @@ import { Route as AuthenticatedInventorySalesViewIdRouteImport } from './routes/
 import { Route as AuthenticatedInventorySalesPrintIdRouteImport } from './routes/_authenticated/inventory/sales.print.$id'
 import { Route as AuthenticatedInventorySalesEditIdRouteImport } from './routes/_authenticated/inventory/sales.edit.$id'
 import { Route as AuthenticatedInventoryReturnVendorCreateRouteImport } from './routes/_authenticated/inventory/return.vendor.create'
+import { Route as AuthenticatedInventoryReturnMerchantCreateRouteImport } from './routes/_authenticated/inventory/return.merchant.create'
 import { Route as AuthenticatedInventoryQuotationViewIdRouteImport } from './routes/_authenticated/inventory/quotation.view.$id'
 import { Route as AuthenticatedInventoryQuotationEditIdRouteImport } from './routes/_authenticated/inventory/quotation.edit.$id'
 import { Route as AuthenticatedInventoryQuotationAddToInvoiceIdRouteImport } from './routes/_authenticated/inventory/quotation.add-to-invoice.$id'
@@ -59,7 +60,9 @@ import { Route as AuthenticatedInventoryPurchaseEditIdRouteImport } from './rout
 import { Route as AuthenticatedInventoryProductEditIdRouteImport } from './routes/_authenticated/inventory/product.edit.$id'
 import { Route as AuthenticatedInventoryMerchantEditIdRouteImport } from './routes/_authenticated/inventory/merchant.edit.$id'
 import { Route as AuthenticatedInventoryContactUsReplyIdRouteImport } from './routes/_authenticated/inventory/contact-us.reply.$id'
+import { Route as AuthenticatedInventoryReturnWastageDetailsIdRouteImport } from './routes/_authenticated/inventory/return.wastage.details.$id'
 import { Route as AuthenticatedInventoryReturnVendorDetailsIdRouteImport } from './routes/_authenticated/inventory/return.vendor.details.$id'
+import { Route as AuthenticatedInventoryReturnMerchantDetailsIdRouteImport } from './routes/_authenticated/inventory/return.merchant.details.$id'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -305,6 +308,12 @@ const AuthenticatedInventoryReturnVendorCreateRoute =
     path: '/inventory/return/vendor/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryReturnMerchantCreateRoute =
+  AuthenticatedInventoryReturnMerchantCreateRouteImport.update({
+    id: '/inventory/return/merchant/create',
+    path: '/inventory/return/merchant/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryQuotationViewIdRoute =
   AuthenticatedInventoryQuotationViewIdRouteImport.update({
     id: '/inventory/quotation/view/$id',
@@ -353,10 +362,22 @@ const AuthenticatedInventoryContactUsReplyIdRoute =
     path: '/inventory/contact-us/reply/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryReturnWastageDetailsIdRoute =
+  AuthenticatedInventoryReturnWastageDetailsIdRouteImport.update({
+    id: '/inventory/return/wastage/details/$id',
+    path: '/inventory/return/wastage/details/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryReturnVendorDetailsIdRoute =
   AuthenticatedInventoryReturnVendorDetailsIdRouteImport.update({
     id: '/inventory/return/vendor/details/$id',
     path: '/inventory/return/vendor/details/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReturnMerchantDetailsIdRoute =
+  AuthenticatedInventoryReturnMerchantDetailsIdRouteImport.update({
+    id: '/inventory/return/merchant/details/$id',
+    path: '/inventory/return/merchant/details/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -397,6 +418,7 @@ export interface FileRoutesByFullPath {
   '/inventory/quotation/add-to-invoice/$id': typeof AuthenticatedInventoryQuotationAddToInvoiceIdRoute
   '/inventory/quotation/edit/$id': typeof AuthenticatedInventoryQuotationEditIdRoute
   '/inventory/quotation/view/$id': typeof AuthenticatedInventoryQuotationViewIdRoute
+  '/inventory/return/merchant/create': typeof AuthenticatedInventoryReturnMerchantCreateRoute
   '/inventory/return/vendor/create': typeof AuthenticatedInventoryReturnVendorCreateRoute
   '/inventory/sales/edit/$id': typeof AuthenticatedInventorySalesEditIdRoute
   '/inventory/sales/print/$id': typeof AuthenticatedInventorySalesPrintIdRoute
@@ -409,7 +431,9 @@ export interface FileRoutesByFullPath {
   '/inventory/return/merchant/': typeof AuthenticatedInventoryReturnMerchantIndexRoute
   '/inventory/return/vendor/': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/inventory/return/wastage/': typeof AuthenticatedInventoryReturnWastageIndexRoute
+  '/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
+  '/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -448,6 +472,7 @@ export interface FileRoutesByTo {
   '/inventory/quotation/add-to-invoice/$id': typeof AuthenticatedInventoryQuotationAddToInvoiceIdRoute
   '/inventory/quotation/edit/$id': typeof AuthenticatedInventoryQuotationEditIdRoute
   '/inventory/quotation/view/$id': typeof AuthenticatedInventoryQuotationViewIdRoute
+  '/inventory/return/merchant/create': typeof AuthenticatedInventoryReturnMerchantCreateRoute
   '/inventory/return/vendor/create': typeof AuthenticatedInventoryReturnVendorCreateRoute
   '/inventory/sales/edit/$id': typeof AuthenticatedInventorySalesEditIdRoute
   '/inventory/sales/print/$id': typeof AuthenticatedInventorySalesPrintIdRoute
@@ -460,7 +485,9 @@ export interface FileRoutesByTo {
   '/inventory/return/merchant': typeof AuthenticatedInventoryReturnMerchantIndexRoute
   '/inventory/return/vendor': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/inventory/return/wastage': typeof AuthenticatedInventoryReturnWastageIndexRoute
+  '/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
+  '/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -502,6 +529,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/quotation/add-to-invoice/$id': typeof AuthenticatedInventoryQuotationAddToInvoiceIdRoute
   '/_authenticated/inventory/quotation/edit/$id': typeof AuthenticatedInventoryQuotationEditIdRoute
   '/_authenticated/inventory/quotation/view/$id': typeof AuthenticatedInventoryQuotationViewIdRoute
+  '/_authenticated/inventory/return/merchant/create': typeof AuthenticatedInventoryReturnMerchantCreateRoute
   '/_authenticated/inventory/return/vendor/create': typeof AuthenticatedInventoryReturnVendorCreateRoute
   '/_authenticated/inventory/sales/edit/$id': typeof AuthenticatedInventorySalesEditIdRoute
   '/_authenticated/inventory/sales/print/$id': typeof AuthenticatedInventorySalesPrintIdRoute
@@ -514,7 +542,9 @@ export interface FileRoutesById {
   '/_authenticated/inventory/return/merchant/': typeof AuthenticatedInventoryReturnMerchantIndexRoute
   '/_authenticated/inventory/return/vendor/': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/_authenticated/inventory/return/wastage/': typeof AuthenticatedInventoryReturnWastageIndexRoute
+  '/_authenticated/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/_authenticated/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
+  '/_authenticated/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -555,6 +585,7 @@ export interface FileRouteTypes {
     | '/inventory/quotation/add-to-invoice/$id'
     | '/inventory/quotation/edit/$id'
     | '/inventory/quotation/view/$id'
+    | '/inventory/return/merchant/create'
     | '/inventory/return/vendor/create'
     | '/inventory/sales/edit/$id'
     | '/inventory/sales/print/$id'
@@ -567,7 +598,9 @@ export interface FileRouteTypes {
     | '/inventory/return/merchant/'
     | '/inventory/return/vendor/'
     | '/inventory/return/wastage/'
+    | '/inventory/return/merchant/details/$id'
     | '/inventory/return/vendor/details/$id'
+    | '/inventory/return/wastage/details/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -606,6 +639,7 @@ export interface FileRouteTypes {
     | '/inventory/quotation/add-to-invoice/$id'
     | '/inventory/quotation/edit/$id'
     | '/inventory/quotation/view/$id'
+    | '/inventory/return/merchant/create'
     | '/inventory/return/vendor/create'
     | '/inventory/sales/edit/$id'
     | '/inventory/sales/print/$id'
@@ -618,7 +652,9 @@ export interface FileRouteTypes {
     | '/inventory/return/merchant'
     | '/inventory/return/vendor'
     | '/inventory/return/wastage'
+    | '/inventory/return/merchant/details/$id'
     | '/inventory/return/vendor/details/$id'
+    | '/inventory/return/wastage/details/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -659,6 +695,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/quotation/add-to-invoice/$id'
     | '/_authenticated/inventory/quotation/edit/$id'
     | '/_authenticated/inventory/quotation/view/$id'
+    | '/_authenticated/inventory/return/merchant/create'
     | '/_authenticated/inventory/return/vendor/create'
     | '/_authenticated/inventory/sales/edit/$id'
     | '/_authenticated/inventory/sales/print/$id'
@@ -671,7 +708,9 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/return/merchant/'
     | '/_authenticated/inventory/return/vendor/'
     | '/_authenticated/inventory/return/wastage/'
+    | '/_authenticated/inventory/return/merchant/details/$id'
     | '/_authenticated/inventory/return/vendor/details/$id'
+    | '/_authenticated/inventory/return/wastage/details/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -975,6 +1014,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryReturnVendorCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/return/merchant/create': {
+      id: '/_authenticated/inventory/return/merchant/create'
+      path: '/inventory/return/merchant/create'
+      fullPath: '/inventory/return/merchant/create'
+      preLoaderRoute: typeof AuthenticatedInventoryReturnMerchantCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/quotation/view/$id': {
       id: '/_authenticated/inventory/quotation/view/$id'
       path: '/inventory/quotation/view/$id'
@@ -1031,11 +1077,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryContactUsReplyIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/return/wastage/details/$id': {
+      id: '/_authenticated/inventory/return/wastage/details/$id'
+      path: '/inventory/return/wastage/details/$id'
+      fullPath: '/inventory/return/wastage/details/$id'
+      preLoaderRoute: typeof AuthenticatedInventoryReturnWastageDetailsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/return/vendor/details/$id': {
       id: '/_authenticated/inventory/return/vendor/details/$id'
       path: '/inventory/return/vendor/details/$id'
       fullPath: '/inventory/return/vendor/details/$id'
       preLoaderRoute: typeof AuthenticatedInventoryReturnVendorDetailsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/return/merchant/details/$id': {
+      id: '/_authenticated/inventory/return/merchant/details/$id'
+      path: '/inventory/return/merchant/details/$id'
+      fullPath: '/inventory/return/merchant/details/$id'
+      preLoaderRoute: typeof AuthenticatedInventoryReturnMerchantDetailsIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -1104,6 +1164,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryQuotationAddToInvoiceIdRoute: typeof AuthenticatedInventoryQuotationAddToInvoiceIdRoute
   AuthenticatedInventoryQuotationEditIdRoute: typeof AuthenticatedInventoryQuotationEditIdRoute
   AuthenticatedInventoryQuotationViewIdRoute: typeof AuthenticatedInventoryQuotationViewIdRoute
+  AuthenticatedInventoryReturnMerchantCreateRoute: typeof AuthenticatedInventoryReturnMerchantCreateRoute
   AuthenticatedInventoryReturnVendorCreateRoute: typeof AuthenticatedInventoryReturnVendorCreateRoute
   AuthenticatedInventorySalesEditIdRoute: typeof AuthenticatedInventorySalesEditIdRoute
   AuthenticatedInventorySalesPrintIdRoute: typeof AuthenticatedInventorySalesPrintIdRoute
@@ -1115,7 +1176,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryReturnMerchantIndexRoute: typeof AuthenticatedInventoryReturnMerchantIndexRoute
   AuthenticatedInventoryReturnVendorIndexRoute: typeof AuthenticatedInventoryReturnVendorIndexRoute
   AuthenticatedInventoryReturnWastageIndexRoute: typeof AuthenticatedInventoryReturnWastageIndexRoute
+  AuthenticatedInventoryReturnMerchantDetailsIdRoute: typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   AuthenticatedInventoryReturnVendorDetailsIdRoute: typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
+  AuthenticatedInventoryReturnWastageDetailsIdRoute: typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -1182,6 +1245,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryQuotationEditIdRoute,
   AuthenticatedInventoryQuotationViewIdRoute:
     AuthenticatedInventoryQuotationViewIdRoute,
+  AuthenticatedInventoryReturnMerchantCreateRoute:
+    AuthenticatedInventoryReturnMerchantCreateRoute,
   AuthenticatedInventoryReturnVendorCreateRoute:
     AuthenticatedInventoryReturnVendorCreateRoute,
   AuthenticatedInventorySalesEditIdRoute:
@@ -1204,8 +1269,12 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryReturnVendorIndexRoute,
   AuthenticatedInventoryReturnWastageIndexRoute:
     AuthenticatedInventoryReturnWastageIndexRoute,
+  AuthenticatedInventoryReturnMerchantDetailsIdRoute:
+    AuthenticatedInventoryReturnMerchantDetailsIdRoute,
   AuthenticatedInventoryReturnVendorDetailsIdRoute:
     AuthenticatedInventoryReturnVendorDetailsIdRoute,
+  AuthenticatedInventoryReturnWastageDetailsIdRoute:
+    AuthenticatedInventoryReturnWastageDetailsIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

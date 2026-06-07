@@ -16,7 +16,20 @@ import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
 
-const menuItems = [
+interface MenuItem {
+  name: string
+  icon: any
+  to: string
+  permission?: string
+  activePaths?: string[]
+}
+
+interface MenuGroup {
+  group: string
+  items: MenuItem[]
+}
+
+const menuItems: MenuGroup[] = [
   {
     group: 'DASHBOARD',
     items: [

@@ -5,13 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { 
   ArrowLeft, 
   Check, 
-  Building2, 
   MapPin, 
-  Phone, 
-  Mail, 
   Contact2,
-  Info,
-  Settings2
+  Info
 } from 'lucide-react'
 import { warehouseSchema, type WarehouseFormValues } from '../../hooks/validation'
 import { useCreateWarehouse, useEmployees } from '../../hooks/useWarehouse'
@@ -34,7 +30,7 @@ export const WarehouseCreatePage = () => {
     setValue,
     formState: { errors, isDirty },
   } = useForm<WarehouseFormValues>({
-    resolver: zodResolver(warehouseSchema),
+    resolver: zodResolver(warehouseSchema) as any,
     defaultValues: {
       status: 1,
     },
@@ -43,7 +39,7 @@ export const WarehouseCreatePage = () => {
   const status = watch('status')
 
   const onSubmit = (data: WarehouseFormValues) => {
-    createWarehouse(data, {
+    createWarehouse(data as any, {
       onSuccess: () => navigate({ to: '/inventory/warehouse' }),
     })
   }

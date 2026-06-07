@@ -4,8 +4,6 @@ import {
   startOfMonth, 
   endOfMonth, 
   setMonth,
-  setYear,
-  eachYearOfInterval,
   subYears,
   addYears
 } from 'date-fns'

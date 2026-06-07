@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react'
 import { useStockMovementDatatable } from '../../hooks/useWarehouse'
 import type { ColDef } from 'ag-grid-community'
 import type { StockMovementListItem } from '../../api/warehouse.api'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { useNavigate } from '@tanstack/react-router'
-import { usePermissions } from '@/hooks/usePermissions'
 
 const tabs = [
   { name: 'Manage Warehouse', to: '/inventory/warehouse' },
@@ -17,7 +16,6 @@ export const StockMovementListPage = () => {
   const [pageSize, setPageSize] = useState(10)
   
   const navigate = useNavigate()
-  const { hasAnyPermission } = usePermissions()
 
   const [visibleCols, setVisibleColumns] = useState({
     sl: true,

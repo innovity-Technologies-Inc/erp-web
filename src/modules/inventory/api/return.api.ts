@@ -53,6 +53,18 @@ export const getInvoiceReturnDetails = async (invoiceId: number | string): Promi
   return response.data
 }
 
+export const storeInvoiceReturn = async (data: any): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>('/inventory/invoice-return', data)
+  return response.data
+}
+
+export const getInvoiceSelect2 = async (term: string = ''): Promise<any[]> => {
+  const response = await apiClient.get<any[]>('/select2/get-invoice-select2', {
+    params: { term }
+  })
+  return response.data
+}
+
 // ---------------------------------------------------------
 // Wastage
 // ---------------------------------------------------------

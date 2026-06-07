@@ -9,12 +9,10 @@ import {
   Image as ImageIcon, 
   FileText, 
   DollarSign,
-  Package,
   QrCode,
   Building2,
   Upload,
-  X,
-  RefreshCw
+  X
 } from 'lucide-react'
 import { productSchema, type ProductFormValues } from '../../hooks/validation'
 import { useUpdateProduct, useProductData } from '../../hooks/useProducts'
@@ -53,7 +51,7 @@ export const ProductEditPage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<ProductFormValues & { main_category_id?: number }>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema) as any,
   })
 
   const status = watch('status')
@@ -80,50 +78,71 @@ export const ProductEditPage = () => {
 
   const { data: subCategories } = useSubCategorySelect2(mainCategoryId || null)
 
+  const [isInitialized, setIsInitialized] = useState(false)
+
   useEffect(() => {
-    if (product) {
+    if (product && !isInitialized) {
+      // Logic: 
+      // Main Category should always be the ROOT (parent_id is null)
+      // Sub Category is the product's immediate category_id
+      const mainId = Number(product.root_category_id || product.category_id);
+      const subId = Number(product.category_id);
+      
       reset({
         product_id: product.product_id,
         product_name: product.product_name,
-        category_id: product.category_id,
-        supplier_id: product.supplier_id,
-        unit_id: product.unit_id,
+        category_id: subId,
+        supplier_id: Number(product.supplier_id),
+        unit_id: product.unit_id ? Number(product.unit_id) : null,
         model: product.product_model,
-        price: product.price,
-        supplier_price: product.supplier_price,
-        per_pcs_price: product.per_pcs_price,
-        no_of_qty: product.no_of_qty || 0,
+        price: Number(product.price) || 0,
+        supplier_price: Number(product.supplier_price) || 0,
+        per_pcs_price: Number(product.per_pcs_price) || 0,
+        no_of_qty: Number(product.no_of_qty) || 0,
         serial_no: product.serial_no,
-        product_vat: product.product_vat,
+        product_vat: Number(product.product_vat) || 0,
         product_details: product.product_details,
         status: product.status,
+        main_category_id: mainId,
       })
       if (product.image) {
-          setPreviewUrl(product.image.startsWith('http') ? product.image : `/storage/${product.image}`)
+          const backendUrl = import.meta.env.VITE_API_URL.replace('/api', '')
+          setPreviewUrl(product.image.startsWith('http') ? product.image : `${backendUrl}/storage/${product.image}`)
           setFileName(product.image.split('/').pop() || 'product-image.jpg')
       }
+      setIsInitialized(true)
     }
-  }, [product, reset])
+  }, [product, isInitialized, reset])
 
-  // Set main_category_id once we have category data from backend
-  useEffect(() => {
-    if (categoryData) {
-      if (categoryData.parent_id) {
-        setValue('main_category_id', categoryData.parent_id)
-      } else {
-        // If it's a root category, it is the main category
-        setValue('main_category_id', categoryData.id)
-      }
+  const mainCategoryOptions = useMemo(() => {
+    const options = mainCategories?.map((c: any) => ({ value: Number(c.id), label: c.text })) || []
+    
+    // Ensure currently selected ROOT category is visible immediately
+    const currentRootId = Number(product?.root_category_id || product?.category_id)
+    if (isInitialized && currentRootId && !options.find(o => o.value === currentRootId)) {
+      options.unshift({ 
+        value: currentRootId, 
+        label: product?.root_category_name || 'Loading...' 
+      })
     }
-  }, [categoryData, setValue])
+    
+    return options
+  }, [mainCategories, isInitialized, product])
 
-  const mainCategoryOptions = useMemo(() => 
-    mainCategories?.map((c: any) => ({ value: c.id, label: c.text })) || [], [mainCategories]
-  )
-
-  const subCategoryOptions = useMemo(() => 
-    subCategories?.map((c: any) => ({ value: c.id, label: c.text })) || [], [subCategories]
-  )
+  const subCategoryOptions = useMemo(() => {
+    const options = subCategories?.map((c: any) => ({ value: Number(c.id), label: c.text })) || []
+    
+    // Ensure currently selected sub-category is visible immediately
+    const currentSubId = Number(product?.category_id)
+    if (isInitialized && currentSubId && !options.find(o => o.value === currentSubId)) {
+      options.unshift({ 
+        value: currentSubId, 
+        label: product?.category?.category_name || 'Loading...' 
+      })
+    }
+    
+    return options
+  }, [subCategories, isInitialized, product])
 
   const vendorOptions = useMemo(() => 
     vendors?.map((v: any) => ({ value: v.id, label: v.text })) || [], [vendors]
@@ -140,8 +159,13 @@ export const ProductEditPage = () => {
     const file = e.target.files?.[0]
     if (file) {
       setValue('image', e.target.files, { shouldDirty: true })
-      setPreviewUrl(URL.createObjectURL(file))
       setFileName(file.name)
+      
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -280,7 +304,7 @@ export const ProductEditPage = () => {
                             value={field.value}
                             onChange={(val) => {
                               field.onChange(val)
-                              setValue('category_id', undefined)
+                              setValue('category_id', 0)
                             }}
                             placeholder="Select product category"
                           />
@@ -299,7 +323,7 @@ export const ProductEditPage = () => {
                             value={field.value}
                             onChange={field.onChange}
                             placeholder="Select sub-category"
-                            disabled={!mainCategoryId}
+                            isDisabled={!mainCategoryId}
                             className={errors.category_id ? "border-rose-500" : ""}
                           />
                         )}

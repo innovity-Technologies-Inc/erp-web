@@ -4,8 +4,7 @@ import { Edit, Trash2, Eye } from 'lucide-react'
 import { useServiceInvoicesDatatable, useDeleteServiceInvoice } from '../../hooks/useService'
 import type { ColDef } from 'ag-grid-community'
 import type { ServiceInvoiceListItem } from '../../api/service.api'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
-import { useUiStore } from '@/store/useUiStore'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
@@ -41,9 +40,7 @@ export const ServiceInvoiceListPage = () => {
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
   }
-
   const { currency, currencyPosition } = useSettings()
-  const { showNotificationModal } = useUiStore()
   const navigate = useNavigate()
   const { hasAnyPermission } = usePermissions()
 

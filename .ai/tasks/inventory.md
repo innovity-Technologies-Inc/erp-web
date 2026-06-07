@@ -211,6 +211,38 @@
 - [x] **Task 22.6**: Build `VendorReturnDetailsPage.tsx` featuring high-fidelity printable invoice structure, billing cards, and standardized summary tables matching the Sale/Purchase View design.
 - [x] **Task 22.7**: Link "View Details" action in the Return List to the newly created details route using parameterized navigation.
 
+## Task Group 23: Build System & Type Safety Fixes
+- [x] **Task 23.1**: Resolve project-wide **casing errors** for `ListPageLayout.tsx` and update all 18 import statements to match the file's PascalCase naming.
+- [x] **Task 23.2**: Fix **Duplicate Identifier** errors in `ListPageLayout` by removing redundant `toolbarExtra` property declarations.
+- [x] **Task 23.3**: Update `validation.ts` to fix **Zod coercion** issues: Replace `required_error` with explicit `.min(1, '...')` for numeric ID fields.
+- [x] **Task 23.4**: Fix **API Response Mapping**: Update `VendorReturnCreatePage.tsx` and `purchase.api.ts` to correctly handle raw object responses vs. wrapped `ApiResponse` structures.
+- [x] **Task 23.5**: Install and integrate `@types/file-saver` to provide type safety for the global export utilities.
+- [x] **Task 23.6**: Remove unused imports (Search, Save, Info, clsx) and unused declarations (`getInvoiceReturnDetails`) to satisfy strict build requirements.
+- [x] **Task 23.7**: Implement null-safety for logo images in `VendorReturnDetailsPage.tsx` to prevent runtime crashes.
+- [x] **Task 23.8**: Resolve **TanStack Router path validation** errors by applying surgical `as any` casting to dynamically generated return-module routes.
+
+## Task Group 24: Return Data Persistence Improvements
+- [x] **Task 24.1**: Create Laravel migration to add `primary_category` and `detailed_description` columns to the `product_return` table.
+- [x] **Task 24.2**: Update backend `ReturnApiController` to capture and store these two new fields for both Supplier and Invoice returns.
+- [x] **Task 24.3**: Update `VendorReturnCreatePage.tsx` to include `primaryCategory` and `detailedDescription` in the store payload.
+- [x] **Task 24.4**: Enhance `VendorReturnDetailsPage.tsx` to display the saved category and rich-text description in a dedicated "Return Information" section.
+
+## Task Group 25: Merchant Return (Return & Exchange) Implementation
+- [x] **Task 25.1**: Add `storeInvoiceReturn`, `getInvoiceSelect2`, and `getInvoiceReturnDetails` to `return.api.ts`.
+- [x] **Task 25.2**: Create `useStoreInvoiceReturn`, `useInvoiceSelect2`, and `useInvoiceReturnDetails` hooks in `useReturn.ts`.
+- [x] **Task 25.3**: Build high-fidelity `MerchantReturnCreatePage.tsx` with a dual-table workflow (Return + Exchange) and real-time net balance calculations.
+- [x] **Task 25.4**: Implement **Return Header** and **Return Summary Card** in Create page matching high-fidelity design references.
+- [x] **Task 25.5**: Standardize **Reorder / New Order** table and **Payment Summary** (Blue Card) to ensure visual consistency with Sale module.
+- [x] **Task 25.6**: Implement `MerchantReturnDetailsPage.tsx` with high-fidelity design, billing context, and print support.
+- [x] **Task 25.7**: Create specialized `WastageDetailsPage.tsx` for viewing discarded items.
+
+## Task Group 26: Return Module Standardization & UX Refinement
+- [x] **Task 26.1**: Overhaul **Wastage Details** design to exactly match the Blue Primary theme and layout of standard return details.
+- [x] **Task 26.2**: Standardize **Header ID Display**: Update all return views to show Original Invoice/Purchase ID as main title and unique Return ID as subtitle.
+- [x] **Task 26.3**: Clean up **List Pages**: Remove HTML anchor tags from Invoice No columns in Vendor, Merchant, and Wastage lists to show plain-text IDs.
+- [x] **Task 26.4**: Configure module exports and TanStack Router routes for the Merchant Return submodule.
+- [x] **Task 26.5**: Perform project-wide TypeScript cleanup and ensure a zero-warning build for the entire Return module.
+
 
 
 

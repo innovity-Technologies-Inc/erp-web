@@ -19,7 +19,6 @@ import { useContactUsDetails, useReplyContactUs } from '../../hooks/useContactUs
 import { useUiStore } from '@/store/useUiStore'
 import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
-import { clsx } from 'clsx'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 
 export const ContactUsReplyPage = () => {
@@ -63,7 +62,7 @@ export const ContactUsReplyPage = () => {
             'Your reply has been sent successfully.',
             'success'
           )
-          navigate({ to: '/inventory/contact-us' })
+          navigate({ to: '/inventory/sales/contact-us' })
         },
       }
     )
@@ -74,7 +73,7 @@ export const ContactUsReplyPage = () => {
   }
 
   const confirmDiscard = () => {
-    navigate({ to: '/inventory/contact-us' })
+    navigate({ to: '/inventory/sales/contact-us' })
   }
 
   if (isLoadingDetails) {
@@ -89,7 +88,7 @@ export const ContactUsReplyPage = () => {
     return (
       <div className="text-center py-20 bg-white rounded-xl border border-primary/30 shadow-sm">
         <h2 className="text-xl font-semibold text-[#1e293b]">Contact message not found</h2>
-        <Link to="/inventory/contact-us" className="mt-4 text-primary hover:underline inline-block font-medium">
+        <Link to="/inventory/sales/contact-us" className="mt-4 text-primary hover:underline inline-block font-medium">
           Go back to list
         </Link>
       </div>

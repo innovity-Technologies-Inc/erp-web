@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Lock, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { Link, useSearch } from '@tanstack/react-router'
 import { Button } from '@/components/Button/Button'
 import { FormField } from '@/components/Form/FormField'

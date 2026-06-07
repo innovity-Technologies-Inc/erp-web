@@ -49,7 +49,7 @@ export const MerchantReturnListPage = () => {
   const { data: returnData, isLoading } = useInvoiceReturnDatatable(params)
 
   const handleCreate = () => {
-    navigate({ to: '/inventory/return/merchant/create' })
+    navigate({ to: '/inventory/return/merchant/create' as any })
   }
 
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)
@@ -111,7 +111,7 @@ export const MerchantReturnListPage = () => {
         <div className="flex items-center justify-center gap-1.5 h-full">
           <PermissionGuard permission="sales_return">
             <Link
-              to={`/inventory/return/merchant/details/${params.data.id}`}
+              to={`/inventory/return/merchant/details/${params.data.id}` as any}
               className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110"
               title="View Details"
             >
@@ -155,7 +155,7 @@ export const MerchantReturnListPage = () => {
         rowData={returnData?.data}
         columnDefs={columns}
         isLoading={isLoading}
-        searchTerm={searchTerm}
+        searchValue={searchTerm}
         onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
         recordsTotal={returnData?.recordsFiltered || 0}
         currentPage={currentPage}

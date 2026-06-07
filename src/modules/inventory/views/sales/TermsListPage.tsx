@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react'
-import { Edit, Trash2, Eye } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { useTermsDatatable, useDeleteTerm } from '../../hooks/useTerms'
 import type { ColDef } from 'ag-grid-community'
 import type { TermListItem } from '../../api/terms.api'
 import { TermModal } from '../../components/TermModal'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
-import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import type { TermFormValues } from '../../hooks/validation'
 import { useUiStore } from '@/store/useUiStore'
 import { exportToExcel } from '@/utils/exportUtils'
@@ -31,14 +31,12 @@ export const TermsListPage = () => {
   const [selectedTermData, setSelectedTermData] = useState<TermFormValues | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize]       = useState(10)
-  const [gridApi, setGridApi]         = useState<any>(null)
   const { showNotificationModal } = useUiStore()
   const { hasAnyPermission } = usePermissions()
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
     sl: true,
-    date: true,
     description: true,
     status: true,
     action: true
@@ -98,14 +96,12 @@ export const TermsListPage = () => {
 
     const exportColumns = [
       { header: 'SL', key: 'sl', width: 8 },
-      { header: 'Date', key: 'created_at', width: 20 },
       { header: 'Description', key: 'description', width: 60 },
       { header: 'Status', key: 'status', width: 15 },
     ]
 
     const exportData = termsData.data.map((item, index) => ({
       sl: index + 1,
-      created_at: (item as any).created_at ? new Date((item as any).created_at) : '',
       description: item.description,
       status: item.status,
     }))
@@ -130,14 +126,6 @@ export const TermsListPage = () => {
       pinned: 'left',
       hide: !visibleCols.sl,
       cellClass: 'text-gray-400 font-medium border-r border-primary/30 flex items-center justify-center',
-    },
-    {
-      headerName: 'DATE',
-      field: 'created_at',
-      width: 140,
-      flex: 0,
-      hide: !visibleCols.date,
-      cellClass: 'text-[#475569] font-medium',
     },
     {
       headerName: 'DESCRIPTION',
@@ -205,7 +193,6 @@ export const TermsListPage = () => {
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
-    { name: 'Date', field: 'date', visible: visibleCols.date },
     { name: 'Description', field: 'description', visible: visibleCols.description },
     { name: 'Status', field: 'status', visible: visibleCols.status },
     { name: 'Action', field: 'action', visible: visibleCols.action },
@@ -227,7 +214,7 @@ export const TermsListPage = () => {
         onColumnToggle={toggleColumn}
         fromDate={fromDate}
         toDate={toDate}
-        onDateRangeChange={(from, to) => { setFromDate(from); setToDate(to); setCurrentPage(1) }}
+        onDateRangeChange={(start, end) => { setFromDate(start); setToDate(end); setCurrentPage(1) }}
         onExport={handleExport}
         rowData={termsData?.data}
         columnDefs={columnDefs}
@@ -241,7 +228,7 @@ export const TermsListPage = () => {
         searchValue={searchTerm}
         onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
         gridOptions={{
-          onGridReady: (params) => setGridApi(params.api)
+          onGridReady: () => {}
         }}
       />
 

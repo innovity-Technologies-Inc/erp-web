@@ -1,23 +1,18 @@
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { 
   ArrowLeft, 
-  Save, 
-  Plus, 
-  Trash2, 
-  X, 
-  Info, 
-  ShoppingCart, 
   FileText, 
   Check, 
-  Clock, 
-  Receipt,
-  Briefcase,
   PlusCircle,
   XCircle,
-  Box
+  Box,
+  Plus,
+  Info,
+  Trash2,
+  Briefcase
 } from 'lucide-react'
 import { Select2 } from '@/components/Select/Select2'
 import { quotationSchema, type QuotationFormValues } from './schema'
@@ -94,8 +89,8 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
   // Watches
   const watchWarehouse = useWatch({ control, name: 'warehouse_id' })
   const watchCustomer = useWatch({ control, name: 'customer_id' })
-  const watchSaleItems = useWatch({ control, name: 'sale_items' })
-  const watchServiceItems = useWatch({ control, name: 'service_items' })
+  const watchSaleItems = useWatch({ control, name: 'sale_items' }) || []
+  const watchServiceItems = useWatch({ control, name: 'service_items' }) || []
   const watchSelectService = useWatch({ control, name: 'selectService' })
   const watchQuotDisItem = useWatch({ control, name: 'quot_dis_item' }) || 0
   const watchQuotDisService = useWatch({ control, name: 'quot_dis_service' }) || 0
@@ -163,8 +158,9 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
   }, [services, initialData])
 
   const paymentOptions = useMemo(() => {
-    if (!paymentMethods) return []
-    return paymentMethods.map((p: any) => ({ value: p.id, label: p.text }))
+    const rawData = paymentMethods as any
+    const dataList = Array.isArray(rawData) ? rawData : rawData?.data || []
+    return dataList.map((p: any) => ({ value: p.id, label: p.text || p.name }))
   }, [paymentMethods])
 
   // ------------------ Calculations ------------------
@@ -428,9 +424,6 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
                           canRemove={saleFields.fields.length > 1}
                           warehouseId={watchWarehouse}
                           updateCalculations={updateSaleTotals}
-                          currency={currency}
-                          currencyPosition={currencyPosition}
-                          productSearch={productSearch}
                           setProductSearch={setProductSearch}
                           productOptions={productOptions}
                           mode={mode}
@@ -491,7 +484,7 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
                 {/* Grand Total Bar */}
                 <div className="bg-[#dae8ff] p-4 rounded-lg flex items-center justify-between">
                   <span className="text-[15px] font-bold text-[#1e4ba1]">Grand Total</span>
-                  <span className="text-[20px] font-black text-[#1e4ba1] tracking-tight">{formatValue(watch('item_total_amount'))}</span>
+                  <span className="text-[20px] font-black text-[#1e4ba1] tracking-tight">{formatValue(watch('item_total_amount') || 0)}</span>
                 </div>
               </div>
             </div>
@@ -557,9 +550,6 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
                                           append={serviceFields.append}
                                           canRemove={serviceFields.fields.length > 1}
                                           updateCalculations={updateServiceTotals}
-                                          currency={currency}
-                                          currencyPosition={currencyPosition}
-                                          serviceSearch={serviceSearch}
                                           setServiceSearch={setServiceSearch}
                                           serviceOptions={serviceOptions}
                                       />
@@ -599,16 +589,17 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
                       <span className="text-[16px] font-bold text-gray-900">
                         {formatValue(watchServiceItems.reduce((acc, item) => acc + (Number(item.discount_value) || 0), 0) + (Number(watchQuotDisService) || 0))}
                       </span>
-                    </div>
+                      </div>
 
-                    {/* Grand Total Bar */}
-                    <div className="bg-[#dae8ff] p-4 rounded-lg flex items-center justify-between">
+                      {/* Grand Total Bar */}
+                      <div className="bg-[#dae8ff] p-4 rounded-lg flex items-center justify-between">
                       <span className="text-[15px] font-bold text-[#1e4ba1]">Grand Total</span>
-                      <span className="text-[20px] font-black text-[#1e4ba1] tracking-tight">{formatValue(watch('service_total_amount'))}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                      <span className="text-[20px] font-black text-[#1e4ba1] tracking-tight">{formatValue(watch('service_total_amount') || 0)}</span>
+                      </div>
+                      </div>
+                      </div>
+                      </div>
+
             </>
           )}
 
@@ -705,7 +696,7 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
 
 // ─── Sub-Components ──────────────────────────────────────────────────────────
 
-const SaleItemRow = ({ index, control, register, setValue, getValues, remove, append, canRemove, warehouseId, updateCalculations, currency, currencyPosition, productSearch, setProductSearch, productOptions, mode }: any) => {
+const SaleItemRow = ({ index, control, register, setValue, getValues, remove, append, canRemove, warehouseId, updateCalculations, setProductSearch, productOptions, mode }: any) => {
   const watchProductId = useWatch({ control, name: `sale_items.${index}.product_id` })
   const qty = useWatch({ control, name: `sale_items.${index}.quantity` })
   const rate = useWatch({ control, name: `sale_items.${index}.rate` })
@@ -863,8 +854,7 @@ const SaleItemRow = ({ index, control, register, setValue, getValues, remove, ap
   )
 }
 
-const ServiceItemRow = ({ index, control, register, setValue, remove, append, canRemove, updateCalculations, currency, currencyPosition, serviceSearch, setServiceSearch, serviceOptions }: any) => {
-  const watchServiceId = useWatch({ control, name: `service_items.${index}.service_id` })
+const ServiceItemRow = ({ index, control, register, setValue, remove, append, canRemove, updateCalculations, setServiceSearch, serviceOptions }: any) => {
   const qty = useWatch({ control, name: `service_items.${index}.qty` })
   const charge = useWatch({ control, name: `service_items.${index}.charge` })
   const discPer = useWatch({ control, name: `service_items.${index}.discount` })

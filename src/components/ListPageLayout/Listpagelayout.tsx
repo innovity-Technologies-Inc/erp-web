@@ -15,7 +15,6 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  Filter,
   Columns as ColumnsIcon,
   X
 } from 'lucide-react'

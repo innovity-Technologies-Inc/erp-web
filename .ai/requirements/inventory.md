@@ -217,5 +217,36 @@ This document outlines the requirements for the Inventory module in the `erp_fro
     - [x] Implement **Real-Time Return Calculations**: Synchronous calculation of line-item totals, deductions, and the final net refund amount.
     - [x] **Robust Backend Integration**: Updated backend `ReturnApiController` to provide a dedicated `supplierReturnDetails` endpoint and fixed pagination counting logic to ensure accurate "Showing X to Y" footers.
     - [x] Implement high-fidelity **Vendor Return View Page** matching the Sale/Purchase View design, featuring printable invoice headers, billing cards, and standardized summary tables.
+    - [x] **Data Persistence**: Support saving and displaying `primary_category` and `detailed_description` for every return record to improve auditing and history tracking.
+
+## 17. Merchant Return (Return & Exchange)
+- [x] **Dual-Table Transaction**: Implement a unique workflow where users can return items from an existing invoice and simultaneously add new items for exchange in a single form.
+- [x] **Intelligent Balance Logic**:
+    - **Refund Mode**: Automatically detect when return credit exceeds the new purchase amount and display a "Refundable" balance.
+    - **Payable Mode**: Calculate "Payable" amounts and enable payment collection fields (Payment Type, Paid Amount) only when new items exceed the return credit.
+- [x] **Real-Time Synchronous Calculations**: Maintain zero-lag updates for gross credit, deductions, exchange totals, and net transaction balances.
+- [x] **Return Strategy Selection**: Allow users to toggle between "Adjust Stock" (inventory increase) and "Wastage" (loss recording) via professional radio buttons in a dedicated summary card.
+- [x] **High-Fidelity Creation UI**:
+    - **Return Header**: Standardized 4-column layout (Invoice No, Warehouse, Merchant, Date) with Poppins typography and branded icons.
+    - **Return Summary Card**: High-impact blue card for total item counts and return quantities, paired with a white card for financial deductions and refund values.
+    - **Reorder Section**: Standardized "Reorder / New Order" table matching the sale item design, featuring real-time "Per Pcs Rate" and total calculations.
+    - **Exchange Billing**: Sticky-style payment summary with a high-impact blue card and a prominent "GRAND TOTAL".
+- [x] **Universal Detail View Standards**:
+    - Overhauled **Wastage**, **Merchant Return**, and **Vendor Return** details pages to be 100% identical in design and layout.
+    - Standardized on the **Blue Primary** theme across all return views (including Wastage) for system-wide visual unity.
+    - **Branded Header**: Displays "Return From" and "Return To/Received By" context using professional badges and icons.
+    - **Financial Integrity**: Consistent refund/wastage summary blocks and high-impact bottom status bars.
+
+## 18. Return Module Navigation & Identity
+- [x] **Standardized Header IDs**:
+    - **Main Title**: Always displays the **Original Transaction ID** (e.g., `Return Invoice #100`) for immediate context.
+    - **Subtitle**: Displays the unique **Return ID** or **Loss ID** for record-level tracking.
+- [x] **Clean Data Lists**: All return list pages (Vendor, Merchant, Wastage) display the **Invoice No** as plain text, removing inconsistent HTML links to ensure a unified and decoupled architecture.
+
+## 19. Build System & Stability Standards
+- [x] **PascalCase Naming**: Enforce PascalCase for all React components (e.g., `ListPageLayout.tsx`) and ensure all imports match the file casing to prevent build failures on case-sensitive file systems.
+- [x] **API Consistency**: Standardize API hooks to handle varied backend response shapes (raw objects vs. wrapped `ApiResponse`) using explicit type definitions.
+- [x] **Strict Type Safety**: Eliminate `any` usage in core utilities and install missing `@types/*` packages for all third-party libraries.
+- [x] **Zero Warning Build**: Maintain a clean build by removing unused imports, variables, and satisfying all Zod validation requirements (e.g., proper coercion for numeric fields).
 
 

@@ -6,5 +6,5 @@ export const Route = createFileRoute('/_authenticated/inventory/sales/print/$id'
 })
 
 function SalePrintPage() {
-  return <SaleViewPage isPrintView={true} />
+  return <SaleViewPage />
 }

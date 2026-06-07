@@ -3,9 +3,8 @@ import { useInvoicePaymentsDatatable, useUpdateConfirmStatus } from '../../hooks
 import type { ColDef } from 'ag-grid-community'
 import type { InvoicePaymentListItem } from '../../api/sales.api'
 import { clsx } from 'clsx'
-import { ListPageLayout, type NavTab } from '@/components/ListPageLayout/Listpagelayout'
-import { useUiStore } from '@/store/useUiStore'
-import { formatCurrency, formatDate } from '@/utils/formatters'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
+import { formatCurrency } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
 import { exportToExcel } from '@/utils/exportUtils'
 import { useUsers } from '@/hooks/useUsers'
@@ -29,7 +28,6 @@ export const InvoicePaymentListPage = () => {
   const [toDate, setToDate]             = useState('')
   const [currentPage, setCurrentPage]   = useState(1)
   const [pageSize, setPageSize]         = useState(10)
-  const [gridApi, setGridApi]           = useState<any>(null)
   
   // Confirmation state
   const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false)
@@ -363,7 +361,7 @@ export const InvoicePaymentListPage = () => {
         searchValue={searchTerm}
         onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
         gridOptions={{
-          onGridReady: (params) => setGridApi(params.api)
+          onGridReady: () => {}
         }}
       />
 

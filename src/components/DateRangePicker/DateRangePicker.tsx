@@ -12,7 +12,6 @@ import {
   addDays, 
   eachDayOfInterval, 
   isWithinInterval, 
-  isAfter, 
   isBefore,
   parseISO,
   isValid
@@ -136,8 +135,8 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
                   !isCurrentMonth && "opacity-0 pointer-events-none",
                   isSelected ? "bg-primary text-white shadow-lg" : 
                   isInRange ? "bg-[#dbeafe] text-primary rounded-none" : "hover:bg-gray-50 text-[#475569]",
-                  isSameDay(day, startDate) && endDate && "rounded-r-none",
-                  isSameDay(day, endDate) && "rounded-l-none"
+                  !!(startDate && isSameDay(day, startDate)) && endDate && "rounded-r-none",
+                  !!(endDate && isSameDay(day, endDate)) && "rounded-l-none"
                 )}
               >
                 {format(day, 'd')}

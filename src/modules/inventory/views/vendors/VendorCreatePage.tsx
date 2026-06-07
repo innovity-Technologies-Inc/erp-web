@@ -6,9 +6,7 @@ import {
   Check, 
   Building2, 
   UserCircle2, 
-  MapPin, 
-  Undo2,
-  X
+  MapPin
 } from 'lucide-react'
 import { supplierSchema, type SupplierFormValues } from '../../hooks/validation'
 import { useCreateSupplier } from '../../hooks/useSuppliers'
@@ -24,10 +22,9 @@ export const VendorCreatePage = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isDirty },
   } = useForm<SupplierFormValues>({
-    resolver: zodResolver(supplierSchema),
+    resolver: zodResolver(supplierSchema) as any,
     defaultValues: {
       status: 1,
     },

@@ -7,9 +7,12 @@ import {
   getWastageDatatable,
   storeSupplierReturn,
   getSupplierReturnDetails,
-  getInvoiceReturnDetails
+  getInvoiceReturnDetails,
+  storeInvoiceReturn,
+  getInvoiceSelect2
 } from '../api/return.api'
 import { useUiStore } from '@/store/useUiStore'
+import { type ApiResponse } from '@/api/types'
 
 // ---------------------------------------------------------
 // Supplier Return (Vendor Return)
@@ -72,6 +75,39 @@ export const useInvoiceReturnDatatable = (params: any) => {
   return useQuery({
     queryKey: ['invoice-returns', 'datatable', params],
     queryFn: () => getInvoiceReturnDatatable(params),
+  })
+}
+
+export const useInvoiceReturnDetails = (invoiceId: number | string | null) => {
+  return useQuery({
+    queryKey: ['invoice-return', 'details', invoiceId],
+    queryFn: () => getInvoiceReturnDetails(invoiceId!),
+    enabled: !!invoiceId,
+  })
+}
+
+export const useStoreInvoiceReturn = () => {
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  const { showNotificationModal } = useUiStore.getState()
+
+  return useMutation({
+    mutationFn: (payload: any) => storeInvoiceReturn(payload),
+    onSuccess: (data: ApiResponse<any>) => {
+      showNotificationModal('Success', data.message || 'Return/Exchange Successful!', 'success')
+      queryClient.invalidateQueries({ queryKey: ['invoice-returns'] })
+      navigate({ to: '/inventory/return/merchant' })
+    },
+    onError: (error: any) => {
+      showNotificationModal('Error', error.response?.data?.message || 'Failed to save return', 'error')
+    }
+  })
+}
+
+export const useInvoiceSelect2 = (term: string = '') => {
+  return useQuery({
+    queryKey: ['invoice-select2', term],
+    queryFn: () => getInvoiceSelect2(term),
   })
 }
 

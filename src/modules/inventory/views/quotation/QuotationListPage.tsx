@@ -3,7 +3,7 @@ import { Edit, Trash2, Eye } from 'lucide-react'
 import { useQuotationDatatable, useDeleteQuotation } from '../../hooks/useQuotation'
 import type { ColDef } from 'ag-grid-community'
 import type { QuotationListItem } from '../../api/quotation.api'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { useUiStore } from '@/store/useUiStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
@@ -177,7 +177,8 @@ export const QuotationListPage = () => {
         if (!hasPermission('add_to_invoice')) return null;
         return (
           <Link
-            to={`/inventory/quotation/add-to-invoice/${params.data.id}`}
+            to="/inventory/quotation/add-to-invoice/$id"
+            params={{ id: params.data.id.toString() }}
             className="px-2 py-0 leading-normal bg-[#dbeafe] text-[#1e40af] hover:bg-[#bfdbfe] rounded-full text-[11px] font-bold transition-colors inline-block border border-blue-200"
           >
             Add to Invoice

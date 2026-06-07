@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Search, Save, Info, Package, AlertCircle, FileText, Check, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Package, AlertCircle, FileText, Check, AlertTriangle } from 'lucide-react'
 import { Select2 } from '@/components/Select/Select2'
 import { RichEditor } from '@/components/RichEditor/RichEditor'
 import { useStoreSupplierReturn } from '../../hooks/useReturn'
@@ -9,7 +9,6 @@ import { LoadingState } from '@/components/Loading/LoadingState'
 import { useUiStore } from '@/store/useUiStore'
 import { formatCurrency } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
-import { clsx } from 'clsx'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 
 interface ReturnItem {
@@ -63,7 +62,7 @@ export const VendorReturnCreatePage = () => {
 
     if (purchaseDataResponse) {
       const purchase = purchaseDataResponse
-      if (!purchase.id) {
+      if (!purchase?.id) {
         setItems([])
         showNotificationModal('Error', 'Data not found!', 'error')
         return
@@ -169,6 +168,8 @@ export const VendorReturnCreatePage = () => {
       payment_type_id: paymentTypeId,
       total_deduction: totalDeduction,
       grand_total: grandTotal,
+      primary_category: primaryCategory,
+      detailed_description: detailedDescription,
       items: selectedItems.map(item => ({
         purchase_detail_id: item.purchase_detail_id,
         quantity: item.purchase_quantity,

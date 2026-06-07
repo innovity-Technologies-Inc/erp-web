@@ -3,7 +3,7 @@ import { Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react'
 import { useCategoriesDatatable, useDeleteCategory, useToggleCategoryStatus } from '../../hooks/useCategories'
 import type { ColDef } from 'ag-grid-community'
 import type { CategoryListItem } from '../../api/categories.api'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
@@ -149,14 +149,14 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
     },
     {
       headerName: isSubCategory ? 'CATEGORY NAME' : 'PARENT CATEGORY',
-      field: isSubCategory ? 'parent_category_name' : 'parent_name',
+      field: (isSubCategory ? 'parent_category_name' : 'parent_name') as any,
       width: 200,
       hide: !isSubCategory,
       cellClass: 'text-gray-500 font-medium flex items-center',
     },
     {
       headerName: isSubCategory ? 'SUB CATEGORY NAME' : 'CATEGORY NAME',
-      field: isSubCategory ? 'sub_category_path' : 'category_name',
+      field: (isSubCategory ? 'sub_category_path' : 'category_name') as any,
       minWidth: 300,
       flex: 1,
       hide: !visibleCols.name,

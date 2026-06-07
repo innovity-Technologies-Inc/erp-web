@@ -5,7 +5,7 @@ import { useVendorSelect2 } from '../../hooks/useSuppliers'
 import type { ColDef } from 'ag-grid-community'
 import type { PurchaseListItem } from '../../api/purchase.api'
 import { clsx } from 'clsx'
-import { ListPageLayout } from '@/components/ListPageLayout/Listpagelayout'
+import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { useUiStore } from '@/store/useUiStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
@@ -85,7 +85,7 @@ export const PurchaseListPage = () => {
 
   const confirmDelete = () => {
     if (selectedPurchaseId) {
-      deletePurchase(selectedPurchaseId, {
+      deletePurchase(selectedPurchaseId as any, {
         onSuccess: () => {
           setIsConfirmOpen(false)
           setSelectedPurchaseId(null)

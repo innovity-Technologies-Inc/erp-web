@@ -31,7 +31,6 @@ import { useVendorSelect2 } from '../../hooks/useSuppliers'
 import { useWarehouseSelect2 } from '../../hooks/useWarehouse'
 import { Select2 } from '@/components/Select/Select2'
 import { clsx } from 'clsx'
-import { apiClient } from '@/api/client'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
@@ -144,10 +143,8 @@ const WarehouseRow = ({
 
 // --- Nested ItemRow Component ---
 const PurchaseItemRow = ({ 
-  control, register, index, remove, supplierId, setValue, getValues, errors, warehouses, allSelectedItems, purchaseId
-}: { 
-  control: any, register: any, index: number, remove: () => void, supplierId: number, setValue: any, getValues: any, errors: any, warehouses: any[], allSelectedItems: number[], purchaseId?: number
-}) => {
+  control, register, index, remove, supplierId, setValue, errors, warehouses, allSelectedItems, purchaseId 
+}: any) => {
   const [isExpanded, setIsExpanded] = useState(true)
   const { showNotificationModal } = useUiStore()
   const isInitialRef = useRef(true)
@@ -261,7 +258,7 @@ const PurchaseItemRow = ({
                   value={field.value}
                   onChange={handleItemChange}
                   placeholder="Select"
-                  disabled={!supplierId}
+                  isDisabled={!supplierId}
                   className={errors?.items?.[index]?.item_id ? "border-rose-500" : ""}
                 />
               )}
@@ -412,21 +409,21 @@ export const PurchaseEditPage = () => {
     const paymentTypeVal = rawData.payment_type_id || rawData.initial_payment_method_id || rawData.payment_method_id || rawData.payment_type;
 
     return {
-      supplier_id: supplierIdVal ? Number(supplierIdVal) : undefined,
+      supplier_id: supplierIdVal ? Number(supplierIdVal) : 0,
       purchase_date: rawData.purchase_date || rawData.date || '',
       chalan_no: rawData.chalan_no || rawData.invoice_no || '',
       batch_no: details[0]?.batch_master?.batch_no || details[0]?.batchMaster?.batch_no || details[0]?.batch_no || rawData.batch_no || '',
       details: rawData.purchase_details || rawData.purchaseDetails || rawData.details || '',
       purchase_discount: parseFloat(String(purchaseDiscountVal)),
       paid_amount: parseFloat(String(paidAmountVal)),
-      payment_type_id: paymentTypeVal ? Number(paymentTypeVal) : undefined,
-      items: finalItems.length > 0 ? (finalItems as any) : [{ item_id: undefined as any, rate: 0, discount_percent: 0, discount_value: 0, total: 0, warehouses: [{ warehouse_id: undefined as any, quantity: 1 }] }]
+      payment_type_id: paymentTypeVal ? Number(paymentTypeVal) : 0,
+      items: finalItems.length > 0 ? (finalItems as any) : [{ item_id: 0, rate: 0, discount_percent: 0, discount_value: 0, total: 0, warehouses: [{ warehouse_id: 0, quantity: 1 }] }]
     }
   }, [purchase]);
 
-  const { register, control, handleSubmit, watch, setValue, getValues, reset, formState: { errors, isDirty } } = useForm<PurchaseFormValues>({
-    resolver: zodResolver(purchaseSchema),
-    values: formValues, // Reactive form values
+  const { register, control, handleSubmit, watch, setValue, getValues, formState: { errors, isDirty } } = useForm<PurchaseFormValues>({
+    resolver: zodResolver(purchaseSchema) as any,
+    values: formValues as any, // Reactive form values
     defaultValues: {
       items: []
     }
@@ -715,7 +712,7 @@ export const PurchaseEditPage = () => {
                        errors={errors}
                        warehouses={warehouses}
                        allSelectedItems={allSelectedItems}
-                       purchaseId={purchase?.id ? Number(purchase.id) : undefined}
+                       purchaseId={(purchase as any)?.id ? Number((purchase as any).id) : undefined}
                     />
                  ))}
                  
