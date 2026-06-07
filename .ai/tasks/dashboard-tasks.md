@@ -48,3 +48,8 @@
 - [x] **Task 6.4**: Integrate independent `MonthPicker` instances into "Expense Statement", "Best Sale Product", and "Monthly Trend" sections.
 - [x] **Task 6.5**: Update `DashboardApiController.php` to handle `from` and `to` date parameters for all charts, stats, and report tables.
 - [x] **Task 6.6**: Localize loading states using section-specific overlays to improve UI responsiveness during independent updates.
+
+## Task Group 7: Sidebar UX Refinement
+- [x] **Task 7.1**: Implement custom CSS sliding animations for collapsed sidebar menu flyouts.
+- [x] **Task 7.2**: Restore clickability to active sidebar menu items by removing `pointer-events-none`.
+- [x] **Task 7.3**: Implement automatic dismissal of sidebar hover flyouts upon menu click.

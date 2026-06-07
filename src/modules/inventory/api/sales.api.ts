@@ -54,6 +54,11 @@ export const getSaleDetails = async (id: number): Promise<any> => {
   return response.data
 }
 
+export const getInvoicePaymentDetails = async (id: number): Promise<any> => {
+  const response = await apiClient.get<any>(`/inventory/sales/invoice-payment-details/${id}`)
+  return response.data
+}
+
 export const updateSale = async (uuid: string, data: any): Promise<ApiResponse<any>> => {
   const response = await apiClient.post<ApiResponse<any>>(`/inventory/sales/update/${uuid}`, data)
   return response.data

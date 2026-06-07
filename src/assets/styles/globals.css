@@ -257,4 +257,20 @@
   .action-btn-delete {
     @apply text-rose-500 hover:bg-rose-50;
   }
+
+  /* Sidebar Flyout Animation */
+  @keyframes flyout-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-flyout-in {
+    animation: flyout-slide-in 0.50s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }

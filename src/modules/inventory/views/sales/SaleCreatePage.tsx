@@ -288,13 +288,13 @@ export const SaleCreatePage = () => {
       <div className="max-w-[1600px] mx-auto space-y-6">
         <form id="sale-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
-          {/* Row 1: Purchase Header */}
+          {/* Row 1: Sales Header */}
           <div className="bg-white rounded-xl border border-primary/20 p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-primary/5 rounded-lg text-primary">
                 <Info className="h-5 w-5" />
               </div>
-              <h2 className="text-[16px] font-medium text-[#1e293b]">Purchase Header</h2>
+              <h2 className="text-[16px] font-medium text-[#1e293b]">Sales Header</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -408,6 +408,7 @@ export const SaleCreatePage = () => {
                       control={control}
                       register={register}
                       setValue={setValue}
+                      getValues={getValues}
                       remove={remove}
                       canRemove={fields.length > 1}
                       warehouseId={watchWarehouseId}
@@ -439,21 +440,15 @@ export const SaleCreatePage = () => {
                 </div>
                 <h2 className="text-[16px] font-medium text-[#1e293b]">Sale Details</h2>
               </div>
-              <Controller
-                control={control}
-                name="details"
-                render={({ field }) => (
-                  <RichEditor 
-                    value={field.value || ''} 
-                    onChange={field.onChange} 
-                    placeholder="Enter special instructions or sale terms here..."
-                  />
-                )}
+              <textarea
+                {...register('details')}
+                placeholder="Enter special instructions or sale terms here..."
+                className="w-full flex-1 p-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all resize-none min-h-[300px]"
               />
             </div>
 
             {/* Payment Summary - Using totals (Derived State) directly for synchronous updates */}
-            <div className="lg:col-span-3 bg-primary rounded-xl p-6 text-white shadow-md flex flex-col justify-between">
+            <div className="lg:col-span-3 bg-[#1B4D90] rounded-xl p-6 text-white shadow-md flex flex-col justify-between">
               <div>
                 <h2 className="text-[14px] font-medium mb-6 opacity-90">Payment Summary</h2>
                 <div className="space-y-4">
@@ -515,7 +510,7 @@ export const SaleCreatePage = () => {
               <div className="flex items-center justify-end gap-3 shrink-0">
                 <button type="button" onClick={handleDiscard} className="px-6 h-10 bg-white border border-gray-200 text-[#64748b] font-medium rounded-lg hover:bg-gray-50 transition-all text-[13px] shadow-sm">Cancel</button>
                 <button type="submit" form="sale-form" disabled={isSaving} className="px-8 h-10 bg-[#059669] hover:bg-[#047857] text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[13px]">
-                  {isSaving ? <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Check className="h-4 w-4" /> Save Transaction</>}
+                  {isSaving ? <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Check className="h-4 w-4" /> Save</>}
                 </button>
               </div>
             </div>
@@ -528,7 +523,7 @@ export const SaleCreatePage = () => {
   )
 }
 
-const ItemRow = ({ index, control, register, setValue, remove, canRemove, warehouseId, productSearch, setProductSearch, updateCalculations, currency, currencyPosition }: any) => {
+const ItemRow = ({ index, control, register, setValue, getValues, remove, canRemove, warehouseId, productSearch, setProductSearch, updateCalculations, currency, currencyPosition }: any) => {
   const { data: productsData } = useProductsSearch(productSearch)
   
   // Use useWatch for guaranteed reactivity of all row-level fields
@@ -559,7 +554,6 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
     setValue(`items.${index}.avl_qty`, 0)
     setValue(`items.${index}.unit`, '')
     setValue(`items.${index}.rate`, 0)
-    setValue(`items.${index}.description`, '')
     updateCalculations()
   }
 
@@ -571,10 +565,30 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
       setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
       setValue(`items.${index}.unit`, selectedBatch.unit || '')
       setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
-      setValue(`items.${index}.description`, batchDataResponse?.data?.product_details || '')
     }
     updateCalculations()
   }
+
+  // Automatically sync description, avl_qty and unit if they are missing but batch data is ready
+  useEffect(() => {
+    if (batchDataResponse?.data) {
+      const batches = batchDataResponse.data.batchData || {}
+      const selectedBatch = batches[batchId]
+      
+      // Auto-load product description
+      if (batchDataResponse.data.product_details) {
+        setValue(`items.${index}.description`, batchDataResponse.data.product_details)
+      }
+
+      if (selectedBatch) {
+        setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
+        setValue(`items.${index}.unit`, selectedBatch.unit || '')
+        if (selectedBatch.price && !getValues(`items.${index}.rate`)) {
+           setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
+        }
+      }
+    }
+  }, [batchDataResponse, batchId, index, setValue, getValues])
 
   const perPcsRate = useMemo(() => {
     const r = Number(rate) || 0
@@ -598,7 +612,13 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
         <Controller control={control} name={`items.${index}.product_id`} render={({ field }) => ( <Select2 options={productOptions} value={field.value} onChange={onProductChange} onInputChange={(val) => setProductSearch(val)} placeholder="Select product" variant="ghost" className="font-medium text-[#1e293b]" isDisabled={!warehouseId} menuPortalTarget={document.body} /> )} />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input {...register(`items.${index}.description`)} className="w-full bg-transparent text-[13px] text-[#475569] outline-none font-medium placeholder:text-gray-300 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" placeholder="Desc" />
+        <input 
+          {...register(`items.${index}.description`)} 
+          readOnly 
+          tabIndex={-1}
+          className="w-full bg-transparent text-[13px] text-[#475569] outline-none font-medium placeholder:text-gray-300 transition-all cursor-default" 
+          placeholder="Desc" 
+        />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
         <Controller control={control} name={`items.${index}.batch_master_id`} render={({ field }) => ( <Select2 options={batchOptions} value={field.value} onChange={onBatchChange} placeholder="Select Batch" variant="ghost" isDisabled={!watchProductId || !warehouseId} menuPortalTarget={document.body} /> )} />

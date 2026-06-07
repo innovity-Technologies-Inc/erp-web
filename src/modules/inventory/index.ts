@@ -7,6 +7,7 @@ export { SaleCreatePage } from './views/sales/SaleCreatePage'
 export { SaleEditPage } from './views/sales/SaleEditPage'
 export { SaleViewPage } from './views/sales/SaleViewPage'
 export { InvoicePaymentListPage } from './views/sales/InvoicePaymentListPage'
+export { InvoicePaymentViewPage } from './views/sales/InvoicePaymentViewPage'
 export { ContactUsListPage } from './views/sales/ContactUsListPage'
 export { ContactUsReplyPage } from './views/sales/ContactUsReplyPage'
 export { WarehouseListPage } from './views/warehouse/WarehouseListPage'
@@ -55,6 +56,7 @@ export {
   updateConfirmStatus,
   createSale,
   getSaleDetails,
+  getInvoicePaymentDetails,
   updateSale,
   getWarehouses as getSalesWarehouses,
   getMerchants as getSalesMerchants,

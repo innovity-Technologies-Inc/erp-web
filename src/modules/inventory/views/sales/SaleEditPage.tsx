@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { 
@@ -8,14 +8,7 @@ import {
   X,
   Info,
   ShoppingCart,
-  FileText,
-  Bold,
-  Italic,
-  Underline,
-  List,
-  ListOrdered,
-  Link as LinkIcon,
-  Image as ImageIcon
+  FileText
 } from 'lucide-react'
 import { useNavigate, useParams, Link } from '@tanstack/react-router'
 import { saleSchema, type SaleFormValues } from '../../hooks/validation'
@@ -35,91 +28,6 @@ import { formatCurrency } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { LoadingState } from '@/components/Loading/LoadingState'
-
-// ─── Simple Rich Text Editor ───────────────────────────────────────────────────
-
-const RichEditor = ({ value, onChange, placeholder }: { value: string, onChange: (val: string) => void, placeholder?: string }) => {
-  const editorRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const isFirstMount = useRef(true)
-
-  useEffect(() => {
-    // Defensively handle cases where 'value' might be an object/array due to naming collisions
-    const safeValue = typeof value === 'string' ? value : ''
-    
-    // Set content on initial mount or when value actually changes from outside
-    if (editorRef.current && (isFirstMount.current || (editorRef.current.innerHTML !== safeValue && document.activeElement !== editorRef.current))) {
-      editorRef.current.innerHTML = safeValue
-      isFirstMount.current = false
-    }
-  }, [value])
-
-  const handleCommand = (command: string, arg: string | undefined = undefined) => {
-    document.execCommand(command, false, arg)
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML)
-    }
-  }
-
-  const handleLink = () => {
-    const url = prompt('Enter URL:')
-    if (url) handleCommand('createLink', url)
-  }
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const dataUrl = event.target?.result as string
-        handleCommand('insertImage', dataUrl)
-      }
-      reader.readAsDataURL(file)
-    }
-    // Reset input
-    e.target.value = ''
-  }
-
-  return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-primary/20 transition-all flex flex-col min-h-[300px] bg-white">
-      <input type="file" 
-        ref={fileInputRef} 
-        className="hidden hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" 
-        accept="image/*" 
-        onChange={handleFileChange}
-      />
-      <div className="bg-[#f8fafc] border-b border-gray-200 p-2 flex items-center gap-1 shrink-0">
-        <div className="flex items-center gap-0.5 px-1">
-          <button type="button" onClick={() => handleCommand('bold')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Bold"><Bold className="w-4 h-4" /></button>
-          <button type="button" onClick={() => handleCommand('italic')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Italic"><Italic className="w-4 h-4" /></button>
-          <button type="button" onClick={() => handleCommand('underline')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Underline"><Underline className="w-4 h-4" /></button>
-        </div>
-        <div className="w-[1px] h-4 bg-gray-300 mx-1"></div>
-        <div className="flex items-center gap-0.5 px-1">
-          <button type="button" onClick={() => handleCommand('insertUnorderedList')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Bullet List"><List className="w-4 h-4" /></button>
-          <button type="button" onClick={() => handleCommand('insertOrderedList')} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Numbered List"><ListOrdered className="w-4 h-4" /></button>
-        </div>
-        <div className="w-[1px] h-4 bg-gray-300 mx-1"></div>
-        <div className="flex items-center gap-0.5 px-1">
-          <button type="button" onClick={handleLink} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Insert Link"><LinkIcon className="w-4 h-4" /></button>
-          <button type="button" onClick={handleImageClick} className="p-1.5 hover:bg-gray-200 rounded text-[#475569] transition-colors" title="Insert Image"><ImageIcon className="w-4 h-4" /></button>
-        </div>
-      </div>
-      <div
-        ref={editorRef}
-        contentEditable
-        onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        onBlur={(e) => onChange(e.currentTarget.innerHTML)}
-        className="w-full flex-1 p-4 text-[14px] outline-none min-h-[250px] text-[#475569] leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
-        data-placeholder={placeholder}
-      />
-    </div>
-  )
-}
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 
@@ -456,13 +364,13 @@ export const SaleEditPage = () => {
       <div className="max-w-[1600px] mx-auto space-y-6">
         <form id="sale-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
-          {/* Row 1: Purchase Header */}
+          {/* Row 1: Sales Header */}
           <div className="bg-white rounded-xl border border-primary/20 p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-primary/5 rounded-lg text-primary">
                 <Info className="h-5 w-5" />
               </div>
-              <h2 className="text-[16px] font-medium text-[#1e293b]">Purchase Header</h2>
+              <h2 className="text-[16px] font-medium text-[#1e293b]">Sales Header</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -576,6 +484,7 @@ export const SaleEditPage = () => {
                       control={control}
                       register={register}
                       setValue={setValue}
+                      getValues={getValues}
                       remove={remove}
                       canRemove={fields.length > 1}
                       warehouseId={watchWarehouseId}
@@ -607,21 +516,15 @@ export const SaleEditPage = () => {
                 </div>
                 <h2 className="text-[16px] font-medium text-[#1e293b]">Sale Details</h2>
               </div>
-              <Controller
-                control={control}
-                name="details"
-                render={({ field }) => (
-                  <RichEditor 
-                    value={typeof field.value === 'string' ? field.value : ''} 
-                    onChange={field.onChange} 
-                    placeholder="Enter special instructions or purchase terms here..."
-                  />
-                )}
+              <textarea
+                {...register('details')}
+                placeholder="Enter special instructions or sale terms here..."
+                className="w-full flex-1 p-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all resize-none min-h-[300px]"
               />
             </div>
 
             {/* Payment Summary - Using totals (Derived State) directly for synchronous updates */}
-            <div className="lg:col-span-3 bg-primary rounded-xl p-6 text-white shadow-md flex flex-col justify-between">
+            <div className="lg:col-span-3 bg-[#1B4D90] rounded-xl p-6 text-white shadow-md flex flex-col justify-between">
               <div>
                 <h2 className="text-[14px] font-medium mb-6 opacity-90">Payment Summary</h2>
                 <div className="space-y-4">
@@ -696,7 +599,7 @@ export const SaleEditPage = () => {
   )
 }
 
-const ItemRow = ({ index, control, register, setValue, remove, canRemove, warehouseId, productSearch, setProductSearch, updateCalculations, currency, currencyPosition }: any) => {
+const ItemRow = ({ index, control, register, setValue, getValues, remove, canRemove, warehouseId, productSearch, setProductSearch, updateCalculations, currency, currencyPosition }: any) => {
   const { data: productsData } = useProductsSearch(productSearch)
   
   // Use useWatch for guaranteed reactivity of all row-level fields
@@ -727,7 +630,6 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
     setValue(`items.${index}.avl_qty`, 0)
     setValue(`items.${index}.unit`, '')
     setValue(`items.${index}.rate`, 0)
-    setValue(`items.${index}.description`, '')
     updateCalculations()
   }
 
@@ -739,7 +641,6 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
       setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
       setValue(`items.${index}.unit`, selectedBatch.unit || '')
       setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
-      setValue(`items.${index}.description`, batchDataResponse?.data?.product_details || '')
     }
     updateCalculations()
   }
@@ -751,15 +652,28 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
     return r / noOfQty
   }, [rate, batchId, batchDataResponse])
 
-  // Automatically sync local avl_qty and unit if they are missing but batch data is ready
+  // Automatically sync description, avl_qty and unit if they are missing but batch data is ready
   useEffect(() => {
-    const batches = batchDataResponse?.data?.batchData || {}
-    const selectedBatch = batches[batchId]
-    if (selectedBatch && (!avlQty || !unit)) {
-      setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
-      setValue(`items.${index}.unit`, selectedBatch.unit || '')
+    if (batchDataResponse?.data) {
+      const batches = batchDataResponse.data.batchData || {}
+      const selectedBatch = batches[batchId]
+      
+      // Auto-load product description
+      if (batchDataResponse.data.product_details) {
+        setValue(`items.${index}.description`, batchDataResponse.data.product_details)
+      }
+
+      if (selectedBatch) {
+        if (!avlQty || !unit) {
+          setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
+          setValue(`items.${index}.unit`, selectedBatch.unit || '')
+        }
+        if (selectedBatch.price && !getValues(`items.${index}.rate`)) {
+           setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
+        }
+      }
     }
-  }, [batchDataResponse, batchId, avlQty, unit, index, setValue])
+  }, [batchDataResponse, batchId, avlQty, unit, index, setValue, getValues])
 
   const rowTotalPrice = useMemo(() => {
     const q = Number(qty) || 0
@@ -776,7 +690,13 @@ const ItemRow = ({ index, control, register, setValue, remove, canRemove, wareho
         <Controller control={control} name={`items.${index}.product_id`} render={({ field }) => ( <Select2 options={productOptions} value={field.value} onChange={onProductChange} onInputChange={(val) => setProductSearch(val)} placeholder="Select product" variant="ghost" className="font-medium text-[#1e293b]" isDisabled={!warehouseId} menuPortalTarget={document.body} /> )} />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input {...register(`items.${index}.description`)} className="w-full bg-transparent text-[13px] text-[#475569] outline-none font-medium placeholder:text-gray-300 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" placeholder="Desc" />
+        <input 
+          {...register(`items.${index}.description`)} 
+          readOnly 
+          tabIndex={-1}
+          className="w-full bg-transparent text-[13px] text-[#475569] outline-none font-medium placeholder:text-gray-300 transition-all cursor-default" 
+          placeholder="Desc" 
+        />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
         <Controller control={control} name={`items.${index}.batch_master_id`} render={({ field }) => ( <Select2 options={batchOptions} value={field.value} onChange={onBatchChange} placeholder="Select Batch" variant="ghost" isDisabled={!watchProductId || !warehouseId} menuPortalTarget={document.body} /> )} />

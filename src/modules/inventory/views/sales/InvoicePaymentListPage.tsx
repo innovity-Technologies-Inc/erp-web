@@ -12,6 +12,7 @@ import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { Select2 } from '@/components/Select/Select2'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
+import { Link } from '@tanstack/react-router'
 
 const tabs = [
   { name: 'Manage Sale', to: '/inventory/sales' },
@@ -161,9 +162,13 @@ export const InvoicePaymentListPage = () => {
         // Backend returns HTML link. We extract text and style it.
         const text = params.value.replace(/<[^>]*>?/gm, '')
         return (
-          <span className="text-primary font-bold hover:underline cursor-pointer">
+          <Link 
+            to="/inventory/sales/payments/$id" 
+            params={{ id: params.data.id.toString() }}
+            className="text-primary font-bold hover:underline cursor-pointer"
+          >
             {text}
-          </span>
+          </Link>
         )
       }
     },

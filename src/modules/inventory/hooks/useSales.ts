@@ -6,6 +6,7 @@ import {
   updateConfirmStatus,
   createSale,
   getSaleDetails,
+  getInvoicePaymentDetails,
   updateSale,
   getWarehouses,
   getMerchants,
@@ -27,6 +28,14 @@ export const useSaleDetails = (id: number | null) => {
   return useQuery({
     queryKey: ['sales', 'details', id],
     queryFn: () => getSaleDetails(id!),
+    enabled: !!id,
+  })
+}
+
+export const useInvoicePaymentDetails = (id: number | null) => {
+  return useQuery({
+    queryKey: ['sales', 'payments', 'details', id],
+    queryFn: () => getInvoicePaymentDetails(id!),
     enabled: !!id,
   })
 }

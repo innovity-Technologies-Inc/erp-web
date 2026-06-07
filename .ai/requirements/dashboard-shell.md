@@ -6,6 +6,7 @@
 - [x] Implement a collapsible sidebar logic using `useUiStore`.
 - [x] Implement **Path Synchronization** for Sidebar items: Items remain active when navigating to related sub-modules (e.g., "Sale" active for Terms/Payments).
 - [x] Implement **Dynamic & Clickable Breadcrumbs**: Topbar must dynamically generate clickable breadcrumbs from path segments, humanizing labels and skipping redundant segments like "Inventory" or "Dashboard".
+- [x] **Enhanced Sidebar UX**: Implemented smooth left-to-right sliding animations for menu titles in collapsed mode, restored clickability for active menu items, and ensured flyout labels dismiss immediately upon navigation.
 
 ## 2. Authentication Guards
 - [x] Create a reusable `AuthGuard` component to wrap private routes.

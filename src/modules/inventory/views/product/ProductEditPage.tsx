@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { productSchema, type ProductFormValues } from '../../hooks/validation'
 import { useUpdateProduct, useProductData } from '../../hooks/useProducts'
-import { useMainCategorySelect2, useSubCategorySelect2, useCategoryData } from '../../hooks/useCategories'
+import { useMainCategorySelect2, useSubCategorySelect2 } from '../../hooks/useCategories'
 import { useVendorSelect2 } from '../../hooks/useSuppliers'
 import { useUnitSelect2 } from '../../hooks/useUnits'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
@@ -71,10 +71,6 @@ export const ProductEditPage = () => {
       setValue('per_pcs_price', 0, { shouldDirty: true })
     }
   }, [price, noOfQty, setValue])
-
-  // Fetch parent category info to set main_category_id
-  const { data: categoryResponse } = useCategoryData(product?.category_id || null)
-  const categoryData = categoryResponse?.data?.row_data
 
   const { data: subCategories } = useSubCategorySelect2(mainCategoryId || null)
 

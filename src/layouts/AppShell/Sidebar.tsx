@@ -146,10 +146,11 @@ export const Sidebar = () => {
                   <Link
                     key={item.name}
                     to={item.to as any}
+                    onClick={() => setHoveredItem(null)}
                     className={clsx(
-                      "flex items-center px-4 py-3 transition-all duration-200 group relative font-medium text-[14px] font-poppins",
+                      "flex items-center px-4 py-3 transition-all duration-200 group relative font-medium text-[14px] font-poppins cursor-pointer",
                       isActive 
-                        ? "bg-[#3b82f6] text-white shadow-lg rounded-xl pointer-events-none" // Disable hover on active
+                        ? "bg-[#3b82f6] text-white shadow-lg rounded-xl" // Keep active style, removed pointer-events-none
                         : "text-white hover:bg-[#3b82f6] hover:text-white rounded-xl",
                       !sidebarOpen && [
                         "justify-center px-0 h-12 w-12 mx-auto mb-1",
@@ -177,7 +178,7 @@ export const Sidebar = () => {
       {/* Flyout Label for Collapsed Sidebar */}
       {!sidebarOpen && hoveredItem && (
         <div 
-          className="fixed bg-[#3b82f6] text-white text-[14px] rounded-r-xl z-[9999] flex items-center px-4 font-semibold shadow-xl pointer-events-none animate-in fade-in slide-in-from-left-1 duration-200"
+          className="fixed bg-[#3b82f6] text-white text-[14px] rounded-r-xl z-[9999] flex items-center px-4 font-semibold shadow-xl pointer-events-none animate-flyout-in"
           style={{ 
             top: hoveredItem.top, 
             left: hoveredItem.left,
