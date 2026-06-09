@@ -78,7 +78,7 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
 
   const methods = useForm<QuotationFormValues>({
     resolver: zodResolver(quotationSchema),
-    defaultValues: initialData || defaultValues,
+    defaultValues: { ...defaultValues, ...initialData },
   })
 
   const { control, setValue, handleSubmit, register, watch, formState: { errors } } = methods
@@ -280,7 +280,7 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-6">
               <div className="space-y-2">
-                <label className="text-[13px] font-medium">Warehpuse <span className="text-rose-500">*</span></label>
+                <label className="text-[13px] font-medium">Warehouse <span className="text-rose-500">*</span></label>
                 <Controller
                   control={control}
                   name="warehouse_id"

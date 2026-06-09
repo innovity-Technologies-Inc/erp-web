@@ -122,7 +122,7 @@ export const ContactUsReplyPage = () => {
         <div className="flex items-center gap-4">
           <Link
             to="/inventory/sales/contact-us"
-            className="flex items-center gap-2 px-2 py-2 bg-white border border-primary/30 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
+            className="flex items-center gap-2 px-2 py-2 bg-white rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
@@ -166,7 +166,7 @@ export const ContactUsReplyPage = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
                 <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">Email Address</p>
                 <div className="flex items-center gap-2 text-[14px] font-semibold text-[#334155]">

@@ -62,12 +62,23 @@ export const NotificationModal = () => {
 
         {/* Text Content */}
         <h2 className={clsx("text-[20px] font-medium tracking-tight mb-3 font-poppins", current.titleColor)}>
-          {title}
+          {typeof title === 'string' ? title : JSON.stringify(title)}
         </h2>
         
-        <p className="text-[12px] font-medium text-[#64748b] leading-relaxed mb-10 max-w-[320px]">
-          {message}
-        </p>
+        <div className="text-[12px] font-medium text-[#64748b] leading-relaxed mb-10 max-w-[320px]">
+          {(() => {
+            if (typeof message === 'string') return message;
+            if (typeof message === 'object' && message !== null) {
+              const keys = Object.keys(message);
+              if (keys.length > 0) {
+                const firstVal = (message as any)[keys[0]];
+                return Array.isArray(firstVal) ? String(firstVal[0]) : String(firstVal);
+              }
+              return JSON.stringify(message);
+            }
+            return String(message);
+          })()}
+        </div>
 
         {/* Action Button */}
         <button

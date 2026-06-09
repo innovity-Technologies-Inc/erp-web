@@ -295,7 +295,6 @@ export const ProductListPage = () => {
         tabs={tabs}
         onCreate={handleAdd}
         createPermission="create_product"
-        addLabel="Create"
         searchValue={search}
         onSearchChange={(val) => { setSearch(val); setCurrentPage(1) }}
         isLoading={isLoading}

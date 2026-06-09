@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { 
   ArrowLeft, 
@@ -55,7 +55,13 @@ export const MerchantReturnCreatePage = () => {
   const [invoiceSearchTerm, setInvoiceSearchTerm] = useState('')
   const { data: invoiceOptions = [] } = useInvoiceSelect2(invoiceSearchTerm)
   
-  const { data: invoiceData, isLoading: isFetchingInvoice, isError } = useSaleDetails(selectedInvoiceId as number)
+  const { 
+    data: invoiceData, 
+    isLoading: isFetchingInvoice, 
+    isError, 
+    error: invoiceError, 
+    refetch: refetchInvoiceData 
+  } = useSaleDetails(selectedInvoiceId as number)
   const { mutate: storeReturn, isPending: isSaving } = useStoreInvoiceReturn()
 
   // Combined options ensures the selected invoice is always visible in the dropdown
@@ -89,6 +95,7 @@ export const MerchantReturnCreatePage = () => {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { isDirty },
   } = useForm({
     defaultValues: {
@@ -311,7 +318,28 @@ export const MerchantReturnCreatePage = () => {
       payment_type_id: data.sale_payment_type_id
     }
 
-    storeReturn(payload as any)
+    storeReturn(payload as any, {
+      onSuccess: () => {
+        // Reset everything to "empty" the selected data
+        setInvoiceId('')
+        setUsablity('1')
+        setReason('')
+        reset({
+          items: [],
+          sale_invoice_discount: 0,
+          shipping_cost: 0,
+          paid_amount: 0,
+          sale_payment_type_id: '',
+          sale_details: ''
+        })
+        
+        // Force refetch to ensure fresh data for next time same invoice is selected
+        refetchInvoiceData()
+
+        // Redirect to list page
+        navigate({ to: '/inventory/return/merchant' })
+      }
+    })
   }
 
   const handleDiscard = () => {
@@ -335,13 +363,14 @@ export const MerchantReturnCreatePage = () => {
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins text-[#475569]">
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            to="/inventory/return/merchant"
+          <button 
+            type="button"
+            onClick={handleDiscard}
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
-          </Link>
+          </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Return From Merchant</h1>
         </div>
       </div>
@@ -402,7 +431,25 @@ export const MerchantReturnCreatePage = () => {
         ) : isError ? (
           <div className="bg-white rounded-xl border border-primary/10 p-10 shadow-sm text-center flex flex-col items-center text-rose-500">
             <AlertCircle className="w-10 h-10 mb-2" />
-            <h2 className="text-[18px] font-medium">Error loading invoice. Please try again.</h2>
+            <h2 className="text-[18px] font-medium">
+              {(() => {
+                const data = (invoiceError as any)?.response?.data;
+                if (!data) return 'Error loading invoice. Please try again.';
+                
+                // Try to find a human-readable string in 'errors' or 'message'
+                const target = data.errors || data.message;
+                if (typeof target === 'string') return target;
+                if (typeof target === 'object' && target !== null) {
+                  const firstKey = Object.keys(target)[0];
+                  if (firstKey) {
+                    const firstVal = (target as any)[firstKey];
+                    return Array.isArray(firstVal) ? String(firstVal[0]) : String(firstVal);
+                  }
+                  return JSON.stringify(target);
+                }
+                return data.message || 'Error loading invoice.';
+              })()}
+            </h2>
           </div>
         ) : !invoiceData ? (
           <div className="bg-white rounded-xl border border-primary/10 p-10 shadow-sm text-center flex flex-col items-center">
@@ -746,7 +793,7 @@ export const MerchantReturnCreatePage = () => {
                     <button 
                       type="button" 
                       onClick={handleDiscard} 
-                      className="flex-1 h-[52px] bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[15px] shadow-sm active:scale-95"
+                      className="flex-1 h-[52px] bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[16px] shadow-sm active:scale-95"
                     >
                       Cancel
                     </button>
@@ -754,7 +801,7 @@ export const MerchantReturnCreatePage = () => {
                       type="submit" 
                       form="return-form"
                       disabled={isSaving} 
-                      className="flex-[2] h-[52px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-3 disabled:opacity-50 text-[15px] active:scale-95"
+                      className="flex-[2] h-[52px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-3 disabled:opacity-50 text-[16px] active:scale-95"
                     >
                       {isSaving ? (
                         <div className="h-5 w-5 border-4 border-white border-t-transparent rounded-full animate-spin" />

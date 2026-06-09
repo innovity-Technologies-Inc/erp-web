@@ -144,7 +144,6 @@ export const VendorReturnListPage = () => {
         title="Return To Vendor List"
         backTo="/"
         onCreate={handleCreate}
-        addLabel="Create Return"
         createPermission="vendor_return"
         showColumnFilter={true}
         columns={filterColumns}

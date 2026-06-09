@@ -178,7 +178,7 @@ export type PurchaseFormValues = z.infer<typeof purchaseSchema>
 export const productSchema = z.object({
   product_id: z.string().optional().nullable(),
   product_name: z.string().min(1, 'Product name is required'),
-  category_id: z.coerce.number().min(1, 'Category is required'),
+  category_id: z.coerce.number().optional().nullable(),
   supplier_id: z.coerce.number().min(1, 'Supplier is required'),
   unit_id: z.coerce.number().optional().nullable(),
   model: z.string().optional().nullable(),
@@ -191,7 +191,7 @@ export const productSchema = z.object({
   product_details: z.string().optional().nullable(),
   image: z.any().optional().nullable(),
   status: z.union([z.number(), z.boolean()]).default(1),
-  main_category_id: z.coerce.number().optional().nullable(),
+  main_category_id: z.coerce.number().min(1, 'Main Category is required'),
 })
 
 export type ProductFormValues = z.infer<typeof productSchema>

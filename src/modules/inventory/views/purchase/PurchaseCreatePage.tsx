@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { 
@@ -475,13 +475,14 @@ export const PurchaseCreatePage = () => {
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins text-[#475569]">
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            to="/inventory/purchase"
+          <button 
+            type="button"
+            onClick={handleDiscard}
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
-          </Link>
+          </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Add Purchase</h1>
         </div>
       </div>

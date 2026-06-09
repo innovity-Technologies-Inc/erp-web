@@ -34,6 +34,7 @@ export const useUpdateMerchant = () => {
     mutationFn: api.updateMerchant,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['merchants-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['merchant-details'] })
       showNotificationModal(
         'Merchant Updated!',
         res.message || 'Merchant details have been updated successfully.',

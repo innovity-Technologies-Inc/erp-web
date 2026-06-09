@@ -144,7 +144,6 @@ export const MerchantReturnListPage = () => {
         title="Return From Merchant List"
         backTo="/inventory/return/vendor"
         onCreate={handleCreate}
-        addLabel="Create Return"
         createPermission="sales_return"
         showColumnFilter={true}
         columns={filterColumns}

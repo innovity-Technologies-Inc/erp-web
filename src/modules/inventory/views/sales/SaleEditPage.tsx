@@ -452,7 +452,7 @@ export const SaleEditPage = () => {
                   discount_per: 0, discount: 0, vat_per: 0, vat_amnt: 0, total_price: 0,
                   avl_qty: 0, unit: '', description: ''
                 })}
-                className="bg-primary hover:bg-[#153a80] text-white px-4 py-2 rounded-lg flex items-center gap-2 h-9 text-[12px] font-medium transition-all shadow-sm"
+                className="bg-[#1E3A5F] hover:bg-[#153a80] text-white px-4 py-2 rounded-lg flex items-center gap-2 h-9 text-[12px] font-medium transition-all shadow-sm"
               >
                 <Plus className="h-4 w-4" />
                 Add Item
@@ -462,7 +462,7 @@ export const SaleEditPage = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[1200px]">
                 <thead>
-                  <tr className="bg-[#f8fafc] text-[#475569] text-[11px] font-medium uppercase tracking-wider">
+                  <tr className="bg-[#D0E1FB] text-[#475569] text-[11px] font-medium uppercase tracking-wider">
                     <th className="px-2 py-2 min-w-[250px] border-r border-primary/10">Item Information*</th>
                     <th className="px-2 py-2 min-w-[150px] border-r border-primary/10">Desc</th>
                     <th className="px-2 py-2 min-w-[180px] border-r border-primary/10">Batch No*</th>

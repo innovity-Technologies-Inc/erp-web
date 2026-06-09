@@ -111,11 +111,21 @@ writing any code. Never deviate from these conventions without explicit user app
    - **Error State**: `border-rose-500 focus:ring-rose-500/10`.
    - **Textarea**: Same as input, but use `p-3` or `p-4` and `min-h-[100px]`.
 
-4. **Notifications & Feedback**: 
-   - **Success Messages**: DO NOT use small toast notifications for success events (e.g., Save, Update, Delete). ALWAYS use the global `NotificationModal` (via `showNotificationModal` in `useUiStore`) for a premium, high-impact user experience.
-   - **Error Messages**: Use toast notifications for transient errors, but prefer the `NotificationModal` (variant="error") for critical submission failures.
+4. Notifications & Feedback: 
+  - **Success Messages**: DO NOT use small toast notifications for success events (e.g., Save, Update, Delete). ALWAYS use the global `NotificationModal` (via `showNotificationModal` in `useUiStore`) for a premium, high-impact user experience.
+  - **Error Messages**: Use toast notifications for transient errors, but prefer the `NotificationModal` (variant="error") for critical submission failures.
+
+5. **Form Discard Protection (Dirty Check)**: 
+  - **Requirement**: ALL Create forms MUST implement "Discard Protection" for ALL exit points (Back button, Cancel button, etc.). Edit pages are exempt from this requirement.
+  - **Logic**: Use the `isDirty` flag from `react-hook-form`'s `formState`.
+  - **Trigger**: When an exit action is triggered (e.g., clicking "Back" or "Cancel").
+  - **Action**: 
+    - If `isDirty` is **true**: Show the global `ConfirmationModal` (with `variant="danger"`, title="Discard Changes?", and message="You have unsaved changes...").
+    - If `isDirty` is **false**: Navigate back to the list page immediately without showing a modal.
+  - **Implementation**: The "Back" button in the header should be a `button` calling `handleDiscard`, NOT a direct `Link`.
 
 4. **Typography**: 
+
    - **Font Family**: Always use **Poppins**.
    - **Font Weight**: 
      - Use **font-medium** for labels, inputs, and general body text.

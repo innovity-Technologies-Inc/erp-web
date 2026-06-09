@@ -77,6 +77,11 @@ This document defines the **STRICT** visual and structural standards for all new
     - **Delete**: Rose (`text-[#ef4444]`), `hover:bg-rose-50`.
     - **Effect**: `rounded-xl transition-all border border-transparent hover:scale-110`.
 
+- **Form Discard Protection (Dirty Check)**: 
+    - **Standard**: ALL Create transaction forms MUST protect unsaved data. Edit pages are exempt.
+    - **Implementation**: Use `isDirty` from `useForm`. If true when clicking "Cancel" or "Back", show `ConfirmationModal` (variant="danger").
+    - **Modal Content**: Title: "Discard Changes?", Message: "You have unsaved changes. Are you sure you want to discard them?", Confirm Text: "Yes, Discard".
+
 ---
 
 ---

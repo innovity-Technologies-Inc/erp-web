@@ -3,13 +3,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useEffect, useMemo, useState } from 'react'
 import { Plus, ArrowLeft, Calendar as CalendarIcon, Info, Save, PenLine, FileText, X } from 'lucide-react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { Select2 } from '@/components/Select/Select2'
 import { RichEditor } from '@/components/RichEditor/RichEditor'
 import { useSettings } from '@/hooks/useSettings'
 import { useUiStore } from '@/store/useUiStore'
 import { formatCurrency } from '@/utils/formatters'
 import { clsx } from 'clsx'
+import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { 
   useCustomerSelect2, 
   useEmployeeSelect2, 
@@ -58,6 +59,7 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
   const { currency, currencyPosition } = useSettings()
   const { mutate: createInvoice, isPending: isCreating } = useCreateServiceInvoice()
   const { mutate: updateInvoice, isPending: isUpdating } = useUpdateServiceInvoice()
+  const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
 
   // Select2 Search Terms
   const [customerSearch, setCustomerSearch] = useState('')
@@ -70,15 +72,7 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
   const { data: paymentMethods } = usePaymentMethodsSelect2()
   const { data: services } = useServiceSelect2(serviceSearch)
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors }
-  } = useForm<InvoiceFormValues>({
+  const methods = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema) as any,
     shouldFocusError: false,
     defaultValues: initialData || {
@@ -94,6 +88,16 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
       payment_type_id: '',
     }
   })
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors, isDirty }
+  } = methods
 
   // Sync form with initialData if it arrives late or changes
   useEffect(() => {
@@ -224,11 +228,18 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
     
     try {
       const result = await getService(serviceId)
-      if (result.success) {
-        const service = result.data
-        setValue(`items.${index}.charge`, service.charge)
-        setValue(`items.${index}.vat`, service.service_vat || 0)
-        updateRowTotal(index)
+      // Robustly extract service data regardless of wrapper
+      const service = (result as any).data || result
+
+      if (service && (service.charge !== undefined || service.service_vat !== undefined)) {
+        // Set basic values
+        setValue(`items.${index}.charge`, Number(service.charge) || 0, { shouldDirty: true, shouldValidate: true })
+        setValue(`items.${index}.vat`, Number(service.service_vat) || 0, { shouldDirty: true, shouldValidate: true })
+        
+        // Use timeout to ensure setValue has processed before calculating derivatives
+        setTimeout(() => {
+          updateRowTotal(index)
+        }, 10)
       }
     } catch (error) {
       console.error('Failed to fetch service details', error)
@@ -236,7 +247,9 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
   }
 
   const updateRowTotal = (index: number) => {
-    const item = watchedItems[index]
+    const item = methods.getValues(`items.${index}`)
+    if (!item) return
+
     const qty = Number(item.qty || 0)
     const charge = Number(item.charge || 0)
     const discountPercent = Number(item.discount || 0)
@@ -247,9 +260,9 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
     const vatVal = subtotal * (vatPercent / 100)
     const total = subtotal - disVal
 
-    setValue(`items.${index}.discount_value`, disVal)
-    setValue(`items.${index}.vat_amnt`, vatVal)
-    setValue(`items.${index}.total`, total)
+    setValue(`items.${index}.discount_value`, disVal, { shouldDirty: true, shouldValidate: true })
+    setValue(`items.${index}.vat_amnt`, vatVal, { shouldDirty: true, shouldValidate: true })
+    setValue(`items.${index}.total`, total, { shouldDirty: true, shouldValidate: true })
   }
 
   const { notify } = useUiStore()
@@ -282,19 +295,28 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
     notify('Please check the form for errors', 'error')
   }
 
+  const handleDiscard = () => {
+    if (isDirty && !isEdit) {
+      setIsDiscardModalOpen(true)
+    } else {
+      navigate({ to: '/inventory/service-invoice' })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins">
       <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="max-w-[1600px] mx-auto animate-in fade-in duration-500">
         {/* Page Header */}
         <div className="max-w-[1600px] mx-auto pb-6">
           <div className="flex items-center gap-4">
-            <Link
-              to="/inventory/service-invoice"
+            <button
+              type="button"
+              onClick={handleDiscard}
               className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
             >
               <ArrowLeft className="h-4 w-4" strokeWidth={3} />
               <span>Back</span>
-            </Link>
+            </button>
             <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
               {isEdit ? 'Edit Service Invoice' : 'New Service Invoice'}
             </h1>
@@ -428,51 +450,75 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
                         />
                       </td>
                       <td className="px-2 py-2 border-r border-primary/10">
-                        <input
-                          type="number"
-                          {...register(`items.${index}.qty`)}
-                          onChange={(e) => {
-                             register(`items.${index}.qty`).onChange(e)
-                             updateRowTotal(index)
-                          }}
-                          className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                        <Controller
+                          control={control}
+                          name={`items.${index}.qty`}
+                          render={({ field }) => (
+                            <input
+                              type="number"
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e.target.value)
+                                updateRowTotal(index)
+                              }}
+                              className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                            />
+                          )}
                         />
                       </td>
                       <td className="px-2 py-2 border-r border-primary/10">
-                        <input
-                          type="number"
-                          step="0.01"
-                          {...register(`items.${index}.charge`)}
-                          onChange={(e) => {
-                             register(`items.${index}.charge`).onChange(e)
-                             updateRowTotal(index)
-                          }}
-                          className="w-full text-right bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                        <Controller
+                          control={control}
+                          name={`items.${index}.charge`}
+                          render={({ field }) => (
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e.target.value)
+                                updateRowTotal(index)
+                              }}
+                              className="w-full text-right bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                            />
+                          )}
                         />
                       </td>
                       <td className="px-2 py-2 border-r border-primary/10">
-                        <input
-                          type="number"
-                          {...register(`items.${index}.discount`)}
-                          onChange={(e) => {
-                             register(`items.${index}.discount`).onChange(e)
-                             updateRowTotal(index)
-                          }}
-                          className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                        <Controller
+                          control={control}
+                          name={`items.${index}.discount`}
+                          render={({ field }) => (
+                            <input
+                              type="number"
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e.target.value)
+                                updateRowTotal(index)
+                              }}
+                              className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                            />
+                          )}
                         />
                       </td>
                       <td className="px-2 py-2 text-right text-[13px] font-medium text-[#475569] bg-gray-50/30 border-r border-primary/10">
                         {formatCurrency(watch(`items.${index}.discount_value`), '', 'right')}
                       </td>
                       <td className="px-2 py-2 border-r border-primary/10">
-                        <input
-                          type="number"
-                          {...register(`items.${index}.vat`)}
-                          onChange={(e) => {
-                             register(`items.${index}.vat`).onChange(e)
-                             updateRowTotal(index)
-                          }}
-                          className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                        <Controller
+                          control={control}
+                          name={`items.${index}.vat`}
+                          render={({ field }) => (
+                            <input
+                              type="number"
+                              value={field.value}
+                              onChange={(e) => {
+                                field.onChange(e.target.value)
+                                updateRowTotal(index)
+                              }}
+                              className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]"
+                            />
+                          )}
                         />
                       </td>
                       <td className="px-2 py-2 text-right text-[13px] font-medium text-[#475569] bg-gray-50/30 border-r border-primary/10">
@@ -624,22 +670,22 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
               <div className="flex items-center justify-end gap-3 shrink-0">
                   <button
                     type="button"
-                    onClick={() => navigate({ to: '/inventory/service-invoice' })}
-                    className="px-6 h-10 bg-white border border-gray-200 text-[#64748b] font-medium rounded-lg hover:bg-gray-50 transition-all text-[13px] shadow-sm"
+                    onClick={handleDiscard}
+                    className="px-12 h-12 bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[16px] shadow-sm"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isCreating || isUpdating}
-                    className="px-8 h-10 bg-[#059669] hover:bg-[#047857] text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[13px]"
+                    className="px-16 h-12 bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2 disabled:opacity-50 text-[16px]"
                   >
                     {isCreating || isUpdating ? (
-                      <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <div className="h-5 w-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
-                        {isEdit ? <PenLine className="h-4 w-4" /> : <Save className="h-4 w-4" />}
-                        <span>{isEdit ? 'Update Invoice' : 'Save Invoice'}</span>
+                        {isEdit ? <PenLine className="h-5 w-5" /> : <Save className="h-5 w-5" />}
+                        <span>{isEdit ? 'Update' : 'Save'}</span>
                       </>
                     )}
                   </button>
@@ -648,6 +694,16 @@ export const ServiceInvoiceForm = ({ initialData, isEdit = false }: ServiceInvoi
           </div>
         </div>
       </form>
+      
+      <ConfirmationModal
+        isOpen={isDiscardModalOpen}
+        onClose={() => setIsDiscardModalOpen(false)}
+        onConfirm={() => navigate({ to: '/inventory/service-invoice' })}
+        title="Discard Changes?"
+        message="You have unsaved changes. Are you sure you want to discard this invoice?"
+        confirmText="Yes, Discard"
+        variant="danger"
+      />
     </div>
   )
 }

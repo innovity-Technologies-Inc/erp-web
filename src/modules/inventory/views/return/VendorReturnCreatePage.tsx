@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { ArrowLeft, Package, AlertCircle, FileText, Check, AlertTriangle } from 'lucide-react'
 import { Select2 } from '@/components/Select/Select2'
 import { RichEditor } from '@/components/RichEditor/RichEditor'
@@ -38,7 +38,13 @@ export const VendorReturnCreatePage = () => {
   const { data: purchaseOptions = [] } = usePurchaseSelect2(searchTerm)
   const { data: paymentMethods = [] } = usePaymentMethodsSelect2()
   
-  const { data: purchaseDataResponse, isLoading: isFetchingPurchase, isError } = usePurchaseData(selectedPurchaseId)
+  const { 
+    data: purchaseDataResponse, 
+    isLoading: isFetchingPurchase, 
+    isError, 
+    error: purchaseError,
+    refetch: refetchPurchaseData 
+  } = usePurchaseData(selectedPurchaseId)
   const { mutate: storeReturn, isPending: isSaving } = useStoreSupplierReturn()
 
   const [paymentTypeId, setPaymentTypeId] = useState<number | string>('')
@@ -59,7 +65,6 @@ export const VendorReturnCreatePage = () => {
   }, [purchaseId])
   
   useEffect(() => {
-
     if (purchaseDataResponse) {
       const purchase = purchaseDataResponse
       if (!purchase?.id) {
@@ -182,7 +187,21 @@ export const VendorReturnCreatePage = () => {
       }))
     }
 
-    storeReturn(payload)
+    storeReturn(payload, {
+      onSuccess: () => {
+        // Reset everything to "empty" the selected data
+        setPurchaseId('')
+        setPaymentTypeId('')
+        setPrimaryCategory('')
+        setDetailedDescription('')
+        
+        // Refetching is still good practice to ensure the cache is fresh 
+        refetchPurchaseData()
+
+        // Redirect to list page
+        navigate({ to: '/inventory/return/vendor' })
+      }
+    })
   }
 
   const handleDiscard = () => {
@@ -199,13 +218,14 @@ export const VendorReturnCreatePage = () => {
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins text-[#475569]">
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            to="/inventory/return/vendor"
+          <button 
+            type="button"
+            onClick={handleDiscard}
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
-          </Link>
+          </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">Return To Vendor</h1>
         </div>
       </div>
@@ -276,7 +296,31 @@ export const VendorReturnCreatePage = () => {
         ) : isError ? (
           <div className="bg-white rounded-xl border border-primary/10 p-10 shadow-sm text-center flex flex-col items-center">
             <AlertCircle className="w-10 h-10 text-rose-500 mb-2" />
-            <h2 className="text-[18px] font-medium text-rose-500">Error loading data.</h2>
+            <h2 className="text-[18px] font-medium text-rose-500">
+               {(() => {
+                 const errorData = (purchaseError as any)?.response?.data;
+                 const errors = errorData?.errors;
+                 if (typeof errors === 'string') return errors;
+                 if (typeof errors === 'object' && errors !== null) {
+                   const firstKey = Object.keys(errors)[0];
+                   if (firstKey) {
+                     const firstVal = errors[firstKey];
+                     return Array.isArray(firstVal) ? String(firstVal[0]) : String(firstVal);
+                   }
+                 }
+                 const msg = errorData?.message;
+                 if (typeof msg === 'string') return msg;
+                 if (typeof msg === 'object' && msg !== null) {
+                    const firstKey = Object.keys(msg)[0];
+                    if (firstKey) {
+                      const firstVal = msg[firstKey];
+                      return Array.isArray(firstVal) ? String(firstVal[0]) : String(firstVal);
+                    }
+                    return JSON.stringify(msg);
+                 }
+                 return 'Error loading data.';
+               })()}
+            </h2>
           </div>
         ) : !purchase ? (
           <div className="bg-white rounded-xl border border-primary/10 p-10 shadow-sm text-center flex flex-col items-center">

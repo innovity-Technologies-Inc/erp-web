@@ -381,13 +381,14 @@ export const StockMovementCreatePage = () => {
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link 
-              to="/inventory/warehouse"
+            <button 
+              type="button"
+              onClick={handleDiscard}
               className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
             >
               <ArrowLeft className="h-4 w-4" strokeWidth={3} />
               <span>Back</span>
-            </Link>
+            </button>
             <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
               New Stock Movement
             </h1>

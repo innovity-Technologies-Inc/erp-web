@@ -57,10 +57,6 @@ export const QuotationListPage = () => {
     navigate({ to: '/inventory/quotation/create' })
   }
 
-  const handleEdit = (id: number) => {
-    navigate({ to: '/inventory/quotation/edit/$id', params: { id: id.toString() } })
-  }
-
   const handleView = (id: number) => {
     navigate({ to: '/inventory/quotation/view/$id', params: { id: id.toString() } })
   }
@@ -208,13 +204,14 @@ export const QuotationListPage = () => {
           </PermissionGuard>
 
           <PermissionGuard permission="edit_quotation">
-            <button
-              onClick={() => handleEdit(params.data.id)}
+            <Link
+              to="/inventory/quotation/edit/$id"
+              params={{ id: params.data.id.toString() }}
               className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110 group/edit"
               title="Edit"
             >
               <Edit className="h-4 w-4" />
-            </button>
+            </Link>
           </PermissionGuard>
 
           <PermissionGuard permission="delete_quotation">
@@ -249,7 +246,6 @@ export const QuotationListPage = () => {
         title="Quotation List"
         backTo="/"
         onCreate={handleCreate}
-        addLabel="Create Quotation"
         createPermission="create_quotation"
         showColumnFilter={true}
         columns={filterColumns}

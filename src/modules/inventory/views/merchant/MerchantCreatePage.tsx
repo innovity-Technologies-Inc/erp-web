@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { 
@@ -95,13 +95,14 @@ export const MerchantCreatePage = () => {
       {/* Page Header */}
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            to="/inventory/merchant"
+          <button 
+            type="button"
+            onClick={handleDiscard}
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
-          </Link>
+          </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
             Add Merchant
           </h1>
@@ -423,19 +424,19 @@ export const MerchantCreatePage = () => {
             <button
               type="button"
               onClick={handleDiscard}
-              className="px-10 h-[42px] bg-white border border-gray-200 text-[#1e293b] font-bold rounded-lg hover:bg-gray-50 transition-all text-[14px] shadow-sm"
+              className="px-12 h-12 bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[16px] shadow-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="px-12 h-[42px] bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[14px]"
+              className="px-16 h-12 bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2 disabled:opacity-50 text-[16px]"
             >
               {isSaving ? (
-                <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="h-5 w-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <><Check className="h-4 w-4" strokeWidth={3} /> Save</>
+                <><Check className="h-5 w-5" strokeWidth={3} /> Save</>
               )}
             </button>
           </div>

@@ -250,7 +250,6 @@ export const UnitListPage = () => {
         tabs={tabs}
         onCreate={handleAdd}
         createPermission="create_unit"
-        addLabel="Add"
         searchValue={search}
         onSearchChange={(val) => { setSearch(val); setCurrentPage(1) }}
         isLoading={isLoading}

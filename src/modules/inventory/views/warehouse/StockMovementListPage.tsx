@@ -126,7 +126,6 @@ export const StockMovementListPage = () => {
       tabs={tabs}
       onCreate={handleCreate}
       createPermission="warehouse_stock_movement"
-      addLabel="Stock Movement"
       showColumnFilter={true}
       columns={filterColumns}
       onColumnToggle={toggleColumn}

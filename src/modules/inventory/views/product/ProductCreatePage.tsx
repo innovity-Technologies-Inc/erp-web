@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { 
@@ -22,6 +22,7 @@ import { useUnitSelect2 } from '../../hooks/useUnits'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { Select2 } from '@/components/Select/Select2'
+import { RichEditor } from '@/components/RichEditor/RichEditor'
 
 export const ProductCreatePage = () => {
   const navigate = useNavigate()
@@ -125,7 +126,8 @@ export const ProductCreatePage = () => {
     
     // Standard fields
     formData.append('product_name', data.product_name)
-    formData.append('category_id', String(data.category_id))
+    const finalCategoryId = data.category_id || data.main_category_id
+    formData.append('category_id', String(finalCategoryId))
     formData.append('supplier_id', String(data.supplier_id))
     formData.append('status', String(data.status ? 1 : 0))
     
@@ -163,13 +165,14 @@ export const ProductCreatePage = () => {
       {/* Page Header */}
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            to="/inventory/product"
+          <button 
+            type="button"
+            onClick={handleDiscard}
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
-          </Link>
+          </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
             Add New Product
           </h1>
@@ -253,7 +256,7 @@ export const ProductCreatePage = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[13px] font-semibold text-[#475569]">Product Sub-Category <span className="text-rose-500">*</span></label>
+                      <label className="text-[13px] font-semibold text-[#475569]">Product Sub-Category</label>
                       <Controller
                         control={control}
                         name="category_id"
@@ -357,12 +360,13 @@ export const ProductCreatePage = () => {
                   </div>
                   <h2 className="text-[16px] font-bold text-[#1e293b]">Product Details</h2>
                 </div>
-                <textarea
-                  {...register('product_details')}
-                  rows={6}
-                  placeholder="Select product category"
-                  className="w-full p-4 bg-white border border-gray-200 rounded-xl text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium resize-none"
-                />
+                <div className="flex-1 min-h-[200px]">
+                  <RichEditor
+                    value={watch('product_details') || ''}
+                    onChange={(val) => setValue('product_details', val, { shouldDirty: true })}
+                    placeholder="Enter detailed product description here..."
+                  />
+                </div>
               </div>
             </div>
 
@@ -480,23 +484,23 @@ export const ProductCreatePage = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-4 pt-4">
-                <button
-                  type="button"
-                  onClick={handleDiscard}
-                  className="flex-1 h-[44px] bg-white border border-gray-200 text-[#1e293b] font-bold rounded-lg hover:bg-gray-50 transition-all text-[14px] shadow-sm"
+              <div className="flex items-center gap-3 pt-4">
+                <button 
+                  type="button" 
+                  onClick={handleDiscard} 
+                  className="flex-1 h-12 bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[16px] shadow-sm"
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="flex-1 h-[44px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-lg transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 text-[14px]"
+                <button 
+                  type="submit" 
+                  disabled={isSaving} 
+                  className="flex-1 h-12 bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2 disabled:opacity-50 text-[16px]"
                 >
                   {isSaving ? (
-                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className="h-5 w-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <><Check className="h-4 w-4" strokeWidth={3} /> Save</>
+                    <><Check className="h-5 w-5" strokeWidth={3} /> Save</>
                   )}
                 </button>
               </div>

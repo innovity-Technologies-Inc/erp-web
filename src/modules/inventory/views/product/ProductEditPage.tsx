@@ -81,8 +81,12 @@ export const ProductEditPage = () => {
       // Logic: 
       // Main Category should always be the ROOT (parent_id is null)
       // Sub Category is the product's immediate category_id
-      const mainId = Number(product.root_category_id || product.category_id);
-      const subId = Number(product.category_id);
+      const rawMainId = Number(product.root_category_id || product.category_id);
+      const rawSubId = Number(product.category_id);
+      
+      const isMainOnly = rawMainId === rawSubId;
+      const mainId = rawMainId;
+      const subId = isMainOnly ? null : rawSubId;
       
       reset({
         product_id: product.product_id,
@@ -118,7 +122,7 @@ export const ProductEditPage = () => {
     if (isInitialized && currentRootId && !options.find(o => o.value === currentRootId)) {
       options.unshift({ 
         value: currentRootId, 
-        label: product?.root_category_name || 'Loading...' 
+        label: product?.root_category_name || product?.category?.category_name || 'Loading...' 
       })
     }
     
@@ -130,7 +134,9 @@ export const ProductEditPage = () => {
     
     // Ensure currently selected sub-category is visible immediately
     const currentSubId = Number(product?.category_id)
-    if (isInitialized && currentSubId && !options.find(o => o.value === currentSubId)) {
+    const isMainOnly = Number(product?.root_category_id || product?.category_id) === currentSubId
+    if (isInitialized && currentSubId && !isMainOnly && !options.find(o => o.value === currentSubId)) {
+      // Try to find the full path if possible, otherwise use the category name
       options.unshift({ 
         value: currentSubId, 
         label: product?.category?.category_name || 'Loading...' 
@@ -178,7 +184,8 @@ export const ProductEditPage = () => {
     
     formData.append('uuid', product?.uuid)
     formData.append('product_name', data.product_name)
-    formData.append('category_id', String(data.category_id))
+    const finalCategoryId = data.category_id || data.main_category_id
+    formData.append('category_id', String(finalCategoryId))
     formData.append('supplier_id', String(data.supplier_id))
     formData.append('status', String(data.status ? 1 : 0))
     

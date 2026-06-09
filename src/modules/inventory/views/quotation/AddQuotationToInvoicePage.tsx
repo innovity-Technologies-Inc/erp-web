@@ -21,10 +21,10 @@ export const AddQuotationToInvoicePage = () => {
     quotdate: quotation.quotdate,
     expire_date: quotation.expire_date,
     quot_description: quotation.quot_description || '',
-    item_total_amount: quotation.item_total_amount,
-    item_total_discount: quotation.item_total_discount,
-    item_total_vat: quotation.item_total_vat,
-    quot_dis_item: quotation.quot_dis_item,
+    item_total_amount: Number(quotation.item_total_amount) || 0,
+    item_total_discount: Number(quotation.item_total_discount) || 0,
+    item_total_vat: Number(quotation.item_total_vat) || 0,
+    quot_dis_item: Number(quotation.quot_dis_item) || 0,
     sale_items: quotation.quot_products_used?.map((item: any) => ({
       product_id: item.product_id,
       _product_fallback: item.product?.product_name,
@@ -39,9 +39,9 @@ export const AddQuotationToInvoicePage = () => {
       vat_amnt: Number(item.vat_amnt) || 0,
       total_price: Number(item.total_price) || 0,
       available_qty: 0, 
-      unit: item.product?.unit || ''
+      unit: item.product?.unit?.unit_name || ''
     })) || [],
-    selectService: quotation.quotation_service_used && quotation.quotation_service_used.length > 0,
+    selectService: !!(quotation.quotation_service_used && quotation.quotation_service_used.length > 0),
     service_items: quotation.quotation_service_used?.map((item: any) => ({
       service_id: item.service_id,
       _service_fallback: item.service?.service_name || item.service_name,
@@ -53,13 +53,13 @@ export const AddQuotationToInvoicePage = () => {
       vat_amnt: Number(item.vat_amnt) || 0,
       total: Number(item.total) || 0
     })) || [],
-    service_total_amount: quotation.service_total_amount,
-    service_total_discount: quotation.service_total_discount,
-    service_total_vat: quotation.service_total_vat,
-    quot_dis_service: quotation.quot_dis_service,
-    sale_payment_amount: quotation.item_total_amount,
+    service_total_amount: Number(quotation.service_total_amount) || 0,
+    service_total_discount: Number(quotation.service_total_discount) || 0,
+    service_total_vat: Number(quotation.service_total_vat) || 0,
+    quot_dis_service: Number(quotation.quot_dis_service) || 0,
+    sale_payment_amount: Number(quotation.item_total_amount) || 0,
     sale_payment_type_id: '',
-    service_payment_amount: quotation.service_total_amount,
+    service_payment_amount: Number(quotation.service_total_amount) || 0,
     service_payment_type_id: '',
   }
 

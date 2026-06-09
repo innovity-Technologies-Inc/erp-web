@@ -285,7 +285,6 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
         tabs={tabs}
         onCreate={handleAdd}
         createPermission="create_product_category"
-        addLabel={isSubCategory ? "Add" : "Add"}
         searchValue={search}
         onSearchChange={(val) => { setSearch(val); setCurrentPage(1) }}
         isLoading={isLoading}

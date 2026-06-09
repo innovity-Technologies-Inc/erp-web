@@ -130,6 +130,9 @@ export const useStoreStockMovement = () => {
     mutationFn: (data: StockMovementFormData) => storeStockMovement(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stock-movement'] })
+      queryClient.invalidateQueries({ queryKey: ['batches'] })
+      queryClient.invalidateQueries({ queryKey: ['batch-products'] })
+      queryClient.invalidateQueries({ queryKey: ['batch-product-qty'] })
       showNotificationModal(
         'Success!',
         'Stock movement recorded successfully.',

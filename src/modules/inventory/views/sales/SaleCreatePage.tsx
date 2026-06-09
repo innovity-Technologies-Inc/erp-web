@@ -10,7 +10,7 @@ import {
   ShoppingCart,
   FileText
 } from 'lucide-react'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { saleSchema, type SaleFormValues } from '../../hooks/validation'
 import { 
   useWarehouses, 
@@ -26,7 +26,6 @@ import { useSettings } from '@/hooks/useSettings'
 import { formatCurrency } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
-import { RichEditor } from '@/components/RichEditor/RichEditor'
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 
@@ -51,7 +50,7 @@ export const SaleCreatePage = () => {
     handleSubmit,
     setValue,
     getValues,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
     defaultValues: {
@@ -120,7 +119,7 @@ export const SaleCreatePage = () => {
         avl_qty: 0,
         unit: '',
         description: ''
-      }])
+      }], { shouldDirty: true })
     }
   }, [watchWarehouseId, setValue, getValues])
 
@@ -186,10 +185,10 @@ export const SaleCreatePage = () => {
 
   // Keep form values in sync with derived totals for submission
   useEffect(() => {
-    setValue('grand_total', totals.grandTotal)
-    setValue('due_amount', totals.dueAmount)
-    setValue('total_discount', totals.totalDiscount)
-    setValue('payment_amount', paid_amount)
+    setValue('grand_total', totals.grandTotal, { shouldDirty: true })
+    setValue('due_amount', totals.dueAmount, { shouldDirty: true })
+    setValue('total_discount', totals.totalDiscount, { shouldDirty: true })
+    setValue('payment_amount', paid_amount, { shouldDirty: true })
   }, [totals, paid_amount, setValue])
 
   const onSubmit = (data: SaleFormValues) => {
@@ -223,11 +222,7 @@ export const SaleCreatePage = () => {
   }
 
   const handleDiscard = () => {
-    if (isDirty) {
-      setIsDiscardModalOpen(true)
-    } else {
-      navigate({ to: '/inventory/sales' })
-    }
+    setIsDiscardModalOpen(true)
   }
 
   const warehouseOptions = useMemo(() => {
@@ -264,9 +259,9 @@ export const SaleCreatePage = () => {
     const vatAmnt = (subtotalAfterDiscount * vatPer) / 100
     const totalPrice = subtotalAfterDiscount
 
-    setValue(`items.${index}.discount`, discount)
-    setValue(`items.${index}.vat_amnt`, vatAmnt)
-    setValue(`items.${index}.total_price`, totalPrice)
+    setValue(`items.${index}.discount`, discount, { shouldDirty: true })
+    setValue(`items.${index}.vat_amnt`, vatAmnt, { shouldDirty: true })
+    setValue(`items.${index}.total_price`, totalPrice, { shouldDirty: true })
   }, [getValues, setValue])
 
   return (
@@ -274,13 +269,14 @@ export const SaleCreatePage = () => {
       {/* Page Header */}
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
-          <Link 
-            to="/inventory/sales"
+          <button 
+            type="button"
+            onClick={handleDiscard}
             className="flex items-center gap-2 px-2 py-2 bg-white border border-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors shadow-sm text-[10px] font-medium"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
-          </Link>
+          </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">New Sales Transaction</h1>
         </div>
       </div>
@@ -308,7 +304,9 @@ export const SaleCreatePage = () => {
                     <Select2
                       options={warehouseOptions}
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(val) => {
+                        field.onChange(val)
+                      }}
                       placeholder="Select warehouse"
                       error={errors.warehouse_id?.message}
                       menuPortalTarget={document.body}
@@ -327,7 +325,9 @@ export const SaleCreatePage = () => {
                     <Select2
                       options={merchantOptions}
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(val) => {
+                        field.onChange(val)
+                      }}
                       onInputChange={(val) => setMerchantSearch(val)}
                       placeholder="Enter merchant name"
                       error={errors.customer_id?.message}
@@ -376,7 +376,7 @@ export const SaleCreatePage = () => {
                   discount_per: 0, discount: 0, vat_per: 0, vat_amnt: 0, total_price: 0,
                   avl_qty: 0, unit: '', description: ''
                 })}
-                className="bg-primary hover:bg-[#153a80] text-white px-4 py-2 rounded-lg flex items-center gap-2 h-9 text-[12px] font-medium transition-all shadow-sm"
+                className="bg-[#1E3A5F] hover:bg-[#153a80] text-white px-4 py-2 rounded-lg flex items-center gap-2 h-9 text-[12px] font-medium transition-all shadow-sm"
               >
                 <Plus className="h-4 w-4" />
                 Add Item
@@ -386,7 +386,7 @@ export const SaleCreatePage = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[1200px]">
                 <thead>
-                  <tr className="bg-[#f8fafc] text-[#475569] text-[11px] font-medium uppercase tracking-wider">
+                  <tr className="bg-[#D0E1FB] text-[#475569] text-[11px] font-medium uppercase tracking-wider">
                     <th className="px-2 py-2 min-w-[250px] border-r border-primary/10">Item Information*</th>
                     <th className="px-2 py-2 min-w-[150px] border-r border-primary/10">Desc</th>
                     <th className="px-2 py-2 min-w-[180px] border-r border-primary/10">Batch No*</th>
@@ -433,7 +433,7 @@ export const SaleCreatePage = () => {
           {/* Row 3: Bottom Sections */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch pb-10">
             {/* Sale Details */}
-            <div className="lg:col-span-5 bg-white rounded-xl border border-primary/20 p-6 flex flex-col shadow-sm">
+            <div className="lg:col-span-5 bg-white rounded-xl border border-primary/20 p-6 flex flex-col shadow-sm">      
               <div className="flex items-center gap-3 mb-6 shrink-0">
                 <div className="p-2 bg-primary/5 rounded-lg text-primary">
                   <FileText className="h-5 w-5" />
@@ -447,7 +447,7 @@ export const SaleCreatePage = () => {
               />
             </div>
 
-            {/* Payment Summary - Using totals (Derived State) directly for synchronous updates */}
+            {/* Payment Summary */}
             <div className="lg:col-span-3 bg-[#1B4D90] rounded-xl p-6 text-white shadow-md flex flex-col justify-between">
               <div>
                 <h2 className="text-[14px] font-medium mb-6 opacity-90">Payment Summary</h2>
@@ -466,12 +466,12 @@ export const SaleCreatePage = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[13px] text-blue-50/80 font-medium">Tax (Vat 0%)</span>
-                    <span className="font-medium text-white text-[14px]">{formatValue(totals.totalVatAmount)}</span>
+                    <span className="font-medium text-white text-[14px]">{formatValue(totals.totalVatAmount)}</span>      
                   </div>
                 </div>
               </div>
               <div className="pt-4 flex flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-wider text-blue-200/70 font-medium">Grand Total</span>
+                  <span className="text-[10px] uppercase tracking-wider text-blue-200/70 font-medium">Grand Total</span>  
                   <div className="flex items-end justify-between">
                     <span className="text-[24px] font-medium tracking-tight leading-none text-white">{formatValue(totals.grandTotal)}</span>
                     <span className="px-2 py-0.5 bg-white/10 rounded-md text-[10px] font-medium backdrop-blur-sm border border-white/10 shadow-sm">Pending</span>
@@ -498,23 +498,49 @@ export const SaleCreatePage = () => {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[12px] font-medium text-gray-500">Payment Type</label>
-                  <Controller control={control} name="payment_type_id" render={({ field }) => ( <Select2 options={paymentTypeOptions} value={field.value} onChange={field.onChange} placeholder="Select payment type" menuPortalTarget={document.body} /> )} />
+                  <Controller control={control} name="payment_type_id" render={({ field }) => ( 
+                    <Select2 
+                      options={paymentTypeOptions} 
+                      value={field.value} 
+                      onChange={(val) => {
+                        field.onChange(val)
+                      }} 
+                      placeholder="Select payment type" 
+                      menuPortalTarget={document.body} 
+                    /> 
+                  )} />
                 </div>
                 <div className="pt-2">
-                  <div className="bg-[#fffcfb] p-3 rounded-lg border border-rose-100 flex items-center justify-between">
+                  <div className="bg-[#fffcfb] p-3 rounded-lg border border-rose-100 flex items-center justify-between">  
                     <span className="text-[11px] font-medium text-rose-500 uppercase tracking-tight">Remaining Balance</span>
                     <div className="text-[18px] font-medium text-rose-600 leading-none">{formatValue(totals.totalBalance)}</div>
                   </div>
                 </div>
               </div>
               <div className="flex items-center justify-end gap-3 shrink-0">
-                <button type="button" onClick={handleDiscard} className="px-6 h-10 bg-white border border-gray-200 text-[#64748b] font-medium rounded-lg hover:bg-gray-50 transition-all text-[13px] shadow-sm">Cancel</button>
-                <button type="submit" form="sale-form" disabled={isSaving} className="px-8 h-10 bg-[#059669] hover:bg-[#047857] text-white font-medium rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[13px]">
-                  {isSaving ? <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <><Check className="h-4 w-4" /> Save</>}
+                <button 
+                  type="button" 
+                  onClick={handleDiscard} 
+                  className="px-12 h-12 bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[16px] shadow-sm"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  form="sale-form" 
+                  disabled={isSaving} 
+                  className="px-16 h-12 bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2 disabled:opacity-50 text-[16px]"
+                >
+                  {isSaving ? (
+                    <div className="h-5 w-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <><Check className="h-5 w-5" strokeWidth={3} /> Save</>
+                  )}
                 </button>
               </div>
             </div>
           </div>
+
         </form>
       </div>
 
@@ -548,23 +574,25 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
     return Object.values(batches).map((b: any) => ({ value: b.id, label: b.text })) || []
   }, [batchDataResponse])
 
-  const onProductChange = (val: any) => {
-    setValue(`items.${index}.product_id`, val)
-    setValue(`items.${index}.batch_master_id`, 0)
-    setValue(`items.${index}.avl_qty`, 0)
-    setValue(`items.${index}.unit`, '')
-    setValue(`items.${index}.rate`, 0)
+  const onProductChange = (val: any, fieldOnChange?: (v: any) => void) => {
+    fieldOnChange?.(val)
+    setValue(`items.${index}.product_id`, val, { shouldDirty: true })
+    setValue(`items.${index}.batch_master_id`, 0, { shouldDirty: true })
+    setValue(`items.${index}.avl_qty`, 0, { shouldDirty: true })
+    setValue(`items.${index}.unit`, '', { shouldDirty: true })
+    setValue(`items.${index}.rate`, 0, { shouldDirty: true })
     updateCalculations()
   }
 
-  const onBatchChange = (val: any) => {
-    setValue(`items.${index}.batch_master_id`, val)
+  const onBatchChange = (val: any, fieldOnChange?: (v: any) => void) => {
+    fieldOnChange?.(val)
+    setValue(`items.${index}.batch_master_id`, val, { shouldDirty: true })
     const batches = batchDataResponse?.data?.batchData || {}
     const selectedBatch = batches[val]
     if (selectedBatch) {
-      setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
-      setValue(`items.${index}.unit`, selectedBatch.unit || '')
-      setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
+      setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0, { shouldDirty: true })
+      setValue(`items.${index}.unit`, selectedBatch.unit || '', { shouldDirty: true })
+      setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0, { shouldDirty: true })
     }
     updateCalculations()
   }
@@ -609,7 +637,7 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
   return (
     <tr className="bg-white hover:bg-gray-50/50 transition-colors">
       <td className="px-2 py-2 border-r border-primary/10">
-        <Controller control={control} name={`items.${index}.product_id`} render={({ field }) => ( <Select2 options={productOptions} value={field.value} onChange={onProductChange} onInputChange={(val) => setProductSearch(val)} placeholder="Select product" variant="ghost" className="font-medium text-[#1e293b]" isDisabled={!warehouseId} menuPortalTarget={document.body} /> )} />
+        <Controller control={control} name={`items.${index}.product_id`} render={({ field }) => ( <Select2 options={productOptions} value={field.value} onChange={(v) => onProductChange(v, field.onChange)} onInputChange={(val) => setProductSearch(val)} placeholder="Select product" variant="ghost" className="font-medium text-[#1e293b]" isDisabled={!warehouseId} menuPortalTarget={document.body} /> )} />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
         <input 
@@ -621,7 +649,7 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
         />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <Controller control={control} name={`items.${index}.batch_master_id`} render={({ field }) => ( <Select2 options={batchOptions} value={field.value} onChange={onBatchChange} placeholder="Select Batch" variant="ghost" isDisabled={!watchProductId || !warehouseId} menuPortalTarget={document.body} /> )} />
+        <Controller control={control} name={`items.${index}.batch_master_id`} render={({ field }) => ( <Select2 options={batchOptions} value={field.value} onChange={(v) => onBatchChange(v, field.onChange)} placeholder="Select Batch" variant="ghost" isDisabled={!watchProductId || !warehouseId} menuPortalTarget={document.body} /> )} />
       </td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{avlQty || '0.00'}</td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{unit || 'Unit'}</td>
