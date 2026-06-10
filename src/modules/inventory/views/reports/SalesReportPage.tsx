@@ -56,7 +56,7 @@ export const SalesReportPage = () => {
     end_date: toDate
   }), [searchTerm, merchantId, fromDate, toDate, currentPage, pageSize])
 
-  const { data: reportData, isLoading } = useTodaysSalesDatatable(params)
+  const { data: reportData, isFetching: isLoading } = useTodaysSalesDatatable(params)
   const { data: merchantsData } = useMerchants()
 
   const merchantOptions = useMemo(() => {

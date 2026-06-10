@@ -143,10 +143,14 @@ export const Sidebar = () => {
       )}>
         {filteredMenuItems.map((group, idx) => (
           <div key={idx} className="mb-6">
-            {sidebarOpen && (
+            {sidebarOpen ? (
               <h3 className="px-4 text-[11px] font-medium text-white/40 mb-3 tracking-[0.1em] uppercase font-poppins">
                 {group.group}
               </h3>
+            ) : (
+              <div className="flex justify-center mb-4 mt-2">
+                <span className="text-white/30 text-[24px] font-bold leading-[0] tracking-[0.15em] block h-[10px]">...</span>
+              </div>
             )}
             <div className="space-y-1">
               {group.items.map((item) => {
@@ -160,13 +164,18 @@ export const Sidebar = () => {
                     to={item.to as any}
                     onClick={() => setHoveredItem(null)}
                     className={clsx(
-                      "flex items-center px-4 py-3 transition-all duration-200 group relative font-medium text-[14px] font-poppins cursor-pointer",
+                      "flex items-center px-4 py-3 group relative font-medium text-[14px] font-poppins cursor-pointer",
                       isActive 
-                        ? "bg-[#3b82f6] text-white shadow-lg rounded-xl" // Keep active style, removed pointer-events-none
-                        : "text-white hover:bg-[#3b82f6] hover:text-white rounded-xl",
+                        ? "bg-[#3b82f6] text-white shadow-lg rounded-xl"
+                        : "text-white rounded-xl",
+                      // When open, use normal smooth CSS hover
+                      sidebarOpen && !isActive && "hover:bg-[#3b82f6] transition-all duration-200",
+                      // When closed, rely strictly on React state for hover styling to perfectly sync with flyout rendering
                       !sidebarOpen && [
                         "justify-center px-0 h-12 w-12 mx-auto mb-1",
-                        !isActive && "hover:rounded-r-none z-[100]"
+                        !isActive && hoveredItem?.name === item.name 
+                          ? "bg-[#3b82f6] rounded-r-none z-[100]" 
+                          : "transition-all duration-200"
                       ]
                     )}
                     onMouseEnter={(e) => {

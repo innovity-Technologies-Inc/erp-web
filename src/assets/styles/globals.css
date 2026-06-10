@@ -297,16 +297,14 @@
   /* Sidebar Flyout Animation */
   @keyframes flyout-slide-in {
     from {
-      opacity: 0;
-      transform: translateX(-20px);
+      clip-path: inset(0 100% 0 0);
     }
     to {
-      opacity: 1;
-      transform: translateX(0);
+      clip-path: inset(0 0 0 0);
     }
   }
 
   .animate-flyout-in {
-    animation: flyout-slide-in 0.50s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: flyout-slide-in 0.25s ease-out forwards;
   }
 }
