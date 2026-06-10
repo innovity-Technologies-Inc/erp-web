@@ -112,7 +112,11 @@ const menuItems: MenuGroup[] = [
         icon: FileText, 
         to: '/inventory/report/sales', 
         permission: 'todays_sales_report', // From Laravel route permission
-        activePaths: ['/inventory/report/sales']
+        activePaths: [
+          '/inventory/report/sales', 
+          '/inventory/report/merchant-wise-sales',
+          '/inventory/report/user-wise-sales'
+        ]
       },
     ]
   }

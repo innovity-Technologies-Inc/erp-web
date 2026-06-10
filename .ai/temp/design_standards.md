@@ -42,8 +42,14 @@ This document defines the **STRICT** visual and structural standards for all new
   - DateRangePicker is centrally aligned.
   - Export buttons (PDF/Excel) must use grayscale icons (`text-[#64748b]`) in reports to maintain a clean, professional aesthetic, overriding the default colorful branding.
 - **Summary Footers (Totals)**:
-  - NEVER use AG Grid's `pinnedBottomRowData` when `autoHeight` is enabled, as it causes layout collapse.
-  - ALWAYS use the `summaryFooter` prop in `ListPageLayout`. Calculate the total dynamically in the View component using `reportData?.data.reduce()`, and pass a customized Flexbox container to `summaryFooter` so it docks perfectly above the pagination bar with a matching background (`bg-[#f8fafc]`).
+  - **MANDATORY PATTERN**: Always use the **Appended In-Grid Summary Row** pattern. This ensures totals align perfectly with headers and move automatically when columns are resized or scrolled.
+  - **Implementation**:
+    1.  Append a synthetic row to your data array (e.g., `gridData`) marked with `isSummary: true`.
+    2.  Pass this `gridData` to the `rowData` prop of the table.
+    3.  Update `columnDefs` to handle this row (e.g., return empty string for SL, "Total:" label for the name column) using type casting: `(params.data as any)?.isSummary`.
+    4.  Apply custom styling (background, font-weight, top border) via `getRowStyle` in `gridOptions`.
+  - **Note**: In this pattern, the summary row appears immediately after the last data row, which maintains perfect column-to-column integrity.
+  - **Constraint**: NEVER use external Flexbox footers or the `summaryFooter` prop in `ListPageLayout` for table-aligned totals.
 
 ---
 

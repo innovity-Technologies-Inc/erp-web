@@ -1,6 +1,10 @@
 export const formatCurrency = (amount: number | string, currency = '৳', position = 'right') => {
-  const value = typeof amount === 'string' ? parseFloat(amount) : amount
-  if (isNaN(value)) return '0.00'
+  if (amount === null || amount === undefined || amount === '') return position === 'left' ? `${currency}0.00` : `0.00${currency}`
+  
+  const strAmount = String(amount).replace(/[^0-9.-]+/g, '')
+  const value = parseFloat(strAmount)
+  
+  if (isNaN(value)) return position === 'left' ? `${currency}0.00` : `0.00${currency}`
   
   const formatted = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,

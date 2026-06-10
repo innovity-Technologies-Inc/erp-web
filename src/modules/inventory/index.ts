@@ -195,3 +195,5 @@ export * from './hooks/useReturn'
 export * from './hooks/useReports'
 
 export { SalesReportPage } from './views/reports/SalesReportPage'
+export { MerchantWiseSalesReportPage } from './views/reports/MerchantWiseSalesReportPage'
+export { UserWiseSalesReportPage } from './views/reports/UserWiseSalesReportPage'

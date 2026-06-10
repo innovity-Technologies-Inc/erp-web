@@ -380,7 +380,7 @@ export const ListPageLayout = <T extends object>({
           
           {/* ── Custom Summary Footer ─────────────────────────────── */}
           {summaryFooter && (
-            <div className="bg-[#f8fafc] border-t border-gray-100 flex items-center min-h-[45px] px-[16px]">
+            <div className="bg-[#f8fafc] border-t border-gray-100 flex items-center min-h-[45px]">
               {summaryFooter}
             </div>
           )}
