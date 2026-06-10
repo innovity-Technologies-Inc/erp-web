@@ -53,7 +53,7 @@ export const DataTable = <T extends object>({
   onGridReady,
   autoHeight = false,
   className = '',
-  gridOptions = {}
+  gridOptions = {},
 }: DataTableProps<T>) => {
   const defaultColDef = useMemo<ColDef>(() => ({
     sortable: true,
@@ -76,22 +76,24 @@ export const DataTable = <T extends object>({
   }), [gridOptions, pagination, paginationPageSize, autoHeight, onGridReady])
 
   return (
-    <div className={`ag-theme-quartz erp-table-container relative w-full ${className}`} style={!autoHeight ? { height: '500px' } : {}}>
+    <div className={`ag-theme-quartz erp-table-container relative w-full flex flex-col ${className}`} style={!autoHeight ? { height: '500px' } : {}}>
       {isLoading && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-[1px] rounded-lg">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       )}
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        animateRows={true}
-        suppressCellFocus={true}
-        theme="legacy"
-        paginationPageSizeSelector={[10, 20, 50, 100]}
-        {...finalGridOptions}
-      />
+      <div className="flex-1 w-full">
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          animateRows={true}
+          suppressCellFocus={true}
+          theme="legacy"
+          paginationPageSizeSelector={[10, 20, 50, 100]}
+          {...finalGridOptions}
+        />
+      </div>
     </div>
   )
 }

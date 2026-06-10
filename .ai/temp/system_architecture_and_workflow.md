@@ -64,6 +64,8 @@ To maintain a premium look, we strictly adhere to:
 - **Rich Text**: **RichEditor** component for descriptions and notes.
 - **Standard Layouts**:
     - `ListPageLayout`: For index pages with tabs and filters.
+      - **Report Layouts**: Use `customHeaderRight`, `toolbarRightExtra`, and `summaryFooter` for highly specialized report views.
+      - **Total Summaries**: **NEVER** use AG Grid's native `pinnedBottomRowData` for `autoHeight` tables, as it causes layout collapse. Always calculate the total dynamically on the frontend and render it within `ListPageLayout`'s `summaryFooter` slot for perfect alignment with the pagination bar.
     - `grid-cols-12`: Standardized grid ratios for Create/Edit pages.
 
 ---

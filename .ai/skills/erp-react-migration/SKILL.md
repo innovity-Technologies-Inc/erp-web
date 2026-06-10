@@ -83,8 +83,11 @@ writing any code. Never deviate from these conventions without explicit user app
    - **State Synchronization**: ALWAYS use `fromDate` and `toDate` (ISO format string) local states.
    - **Props**: Pass these states and the `onDateRangeChange` handler to `ListPageLayout`.
    - **Backend Integration**: Date range parameters MUST be sent to the backend as `start_date` and `end_date`.
-   - **Backend Logic**: Ensure the corresponding Laravel Controller's `datatable` method explicitly handles these two parameters and applies `whereBetween` on the relevant date column.
-   - **Conditional Display**: The `DateRangePicker` in the layout should only be enabled/rendered if `onDateRangeChange` is provided to prevent non-functional UI elements.
+
+3. **Report Pages (Complex Lists)**:
+   - **Tab Navigation**: Do NOT use the default `tabs` array for grouped reports (like Sales or Purchases). Instead, use the `customHeaderRight` prop with the dedicated `TabDropdown` component to mimic Figma drop-down tabs.
+   - **Totals & Summaries**: NEVER use AG Grid's native `pinnedBottomRowData` (it causes layout collapse with `autoHeight`). ALWAYS calculate page totals dynamically in React (e.g., `reduce()`) and render a Flexbox row using the `summaryFooter` prop in `ListPageLayout`. This guarantees the footer stays fixed exactly above the pagination bar with matching `#f8fafc` background styling.
+   - **Export Buttons**: Use `toolbarRightExtra` to place custom PDF/Excel export buttons. These buttons must use grayscale (`#64748b`) icons, overriding the default project colors.
 
 ## 2.1 Engineering & Design Standards (STRICT)
 

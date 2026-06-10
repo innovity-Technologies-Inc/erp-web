@@ -70,6 +70,12 @@ export interface ListPageLayoutProps<T extends object> {
   /** Extra component to show in the toolbar */
   toolbarExtra?: ReactNode
 
+  /** Extra component to show in the right side of the toolbar */
+  toolbarRightExtra?: ReactNode
+
+  /** Custom component to show in the header right area (replaces tabs if provided) */
+  customHeaderRight?: ReactNode
+
   // ── Table ──
   rowData: T[] | undefined
   columnDefs: ColDef<T>[]
@@ -87,6 +93,12 @@ export interface ListPageLayoutProps<T extends object> {
   // ── Search ──
   searchValue?: string
   onSearchChange?: (value: string) => void
+  
+  /** Show the global search bar. Defaults to true */
+  showSearch?: boolean
+
+  /** Custom footer row (e.g. for totals) to render fixed above pagination */
+  summaryFooter?: ReactNode
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -110,6 +122,8 @@ export const ListPageLayout = <T extends object>({
   onExport,
   addLabel,
   toolbarExtra,
+  toolbarRightExtra,
+  customHeaderRight,
   rowData,
   columnDefs,
   isLoading = false,
@@ -122,6 +136,8 @@ export const ListPageLayout = <T extends object>({
   onPageSizeChange,
   searchValue = '',
   onSearchChange,
+  showSearch = true,
+  summaryFooter,
 }: ListPageLayoutProps<T>) => {
 
   const [colMenuOpen, setColMenuOpen] = useState(false)
@@ -177,20 +193,24 @@ export const ListPageLayout = <T extends object>({
 
         {/* Nav Tabs */}
         <div className="flex items-center gap-3">
-          {tabs?.map((tab) => (
-            <Link
-              key={tab.name}
-              to={tab.to}
-              className={clsx(
-                'px-2 py-2 text-[10px] font-medium rounded-lg transition-all duration-200',
-                tab.active
-                  ? 'bg-[#3b82f6] text-white shadow-lg shadow-blue-500/20'
-                  : 'bg-white text-gray-500 border border-gray-50 hover:bg-gray-50 shadow-sm'
-              )}
-            >
-              {tab.name}
-            </Link>
-          ))}
+          {customHeaderRight ? (
+            customHeaderRight
+          ) : (
+            tabs?.map((tab) => (
+              <Link
+                key={tab.name}
+                to={tab.to}
+                className={clsx(
+                  'px-2 py-2 text-[10px] font-medium rounded-lg transition-all duration-200',
+                  tab.active
+                    ? 'bg-[#3b82f6] text-white shadow-lg shadow-blue-500/20'
+                    : 'bg-white text-gray-500 border border-gray-50 hover:bg-gray-50 shadow-sm'
+                )}
+              >
+                {tab.name}
+              </Link>
+            ))
+          )}
         </div>
       </div>
 
@@ -224,18 +244,20 @@ export const ListPageLayout = <T extends object>({
               )
             )}
 
-            <div className="relative w-full max-w-70">
-              <input type="text"
-                placeholder="Search everything..."
-                className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-8 outline-none pr-12 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
-                value={searchValue}
-                onChange={(e) => onSearchChange?.(e.target.value)}
-              />
-              <Search
-                className="absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
-                strokeWidth={2}
-              />
-            </div>
+            {showSearch && (
+              <div className="relative w-full max-w-70">
+                <input type="text"
+                  placeholder="Search everything..."
+                  className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-8 outline-none pr-12 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
+                  value={searchValue}
+                  onChange={(e) => onSearchChange?.(e.target.value)}
+                />
+                <Search
+                  className="absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                  strokeWidth={2}
+                />
+              </div>
+            )}
 
             {toolbarExtra}
 
@@ -310,20 +332,26 @@ export const ListPageLayout = <T extends object>({
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => onExport?.()}
-              className="bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors group shrink-0"
-            >
-              <Download className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" strokeWidth={2.5} />
-              Export
-            </button>
+            {toolbarRightExtra ? (
+              toolbarRightExtra
+            ) : (
+              <>
+                <button 
+                  onClick={() => onExport?.()}
+                  className="bg-[#f8fafc] border border-gray-100 px-6 py-2 rounded-full text-[12px] font-medium text-[#64748b] h-8 flex items-center gap-2 hover:bg-[#f1f5f9] transition-colors group shrink-0"
+                >
+                  <Download className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" strokeWidth={2.5} />
+                  Export
+                </button>
 
-            {onDateRangeChange && (
-              <DateRangePicker 
-                from={fromDate}
-                to={toDate}
-                onChange={onDateRangeChange}
-              />
+                {onDateRangeChange && (
+                  <DateRangePicker 
+                    from={fromDate}
+                    to={toDate}
+                    onChange={onDateRangeChange}
+                  />
+                )}
+              </>
             )}
           </div>
         </div>
@@ -341,10 +369,22 @@ export const ListPageLayout = <T extends object>({
               rowHeight: 40,
               headerHeight: 38,
               suppressHorizontalScroll: true,
+              getRowClass: (params: any) => {
+                if (params.data?.isSummary) {
+                  return 'bg-[#f8fafc] border-t border-[#f0f3f8] !h-[45px]'
+                }
+              },
               ...gridOptions
             }}
           />
           
+          {/* ── Custom Summary Footer ─────────────────────────────── */}
+          {summaryFooter && (
+            <div className="bg-[#f8fafc] border-t border-gray-100 flex items-center min-h-[45px] px-[16px]">
+              {summaryFooter}
+            </div>
+          )}
+
           {/* ── Table Footer / Pagination ─────────────────────────── */}
           <div className="bg-[#f8fafc] border-t border-primary/20 px-6 py-2 flex items-center justify-between">
             <div className="flex items-center gap-8">

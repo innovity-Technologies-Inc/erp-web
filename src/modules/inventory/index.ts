@@ -116,6 +116,7 @@ export {
   getServiceSelect2 as getQuotationServiceSelect2
 } from './api/quotation.api'
 export * from './api/return.api'
+export * from './api/reports.api'
 
 export * from './hooks/useTerms'
 export {
@@ -191,3 +192,6 @@ export {
   useServiceSelect2 as useQuotationServiceSelect2
 } from './hooks/useQuotation'
 export * from './hooks/useReturn'
+export * from './hooks/useReports'
+
+export { SalesReportPage } from './views/reports/SalesReportPage'

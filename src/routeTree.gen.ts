@@ -31,6 +31,7 @@ import { Route as AuthenticatedInventoryServiceInvoiceCreateRouteImport } from '
 import { Route as AuthenticatedInventorySalesTermsRouteImport } from './routes/_authenticated/inventory/sales.terms'
 import { Route as AuthenticatedInventorySalesCreateRouteImport } from './routes/_authenticated/inventory/sales.create'
 import { Route as AuthenticatedInventorySalesContactUsRouteImport } from './routes/_authenticated/inventory/sales.contact-us'
+import { Route as AuthenticatedInventoryReportSalesRouteImport } from './routes/_authenticated/inventory/report.sales'
 import { Route as AuthenticatedInventoryQuotationCreateRouteImport } from './routes/_authenticated/inventory/quotation.create'
 import { Route as AuthenticatedInventoryPurchaseCreateRouteImport } from './routes/_authenticated/inventory/purchase.create'
 import { Route as AuthenticatedInventoryProductUnitRouteImport } from './routes/_authenticated/inventory/product.unit'
@@ -187,6 +188,12 @@ const AuthenticatedInventorySalesContactUsRoute =
   AuthenticatedInventorySalesContactUsRouteImport.update({
     id: '/inventory/sales/contact-us',
     path: '/inventory/sales/contact-us',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportSalesRoute =
+  AuthenticatedInventoryReportSalesRouteImport.update({
+    id: '/inventory/report/sales',
+    path: '/inventory/report/sales',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryQuotationCreateRoute =
@@ -400,6 +407,7 @@ export interface FileRoutesByFullPath {
   '/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
   '/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
   '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/inventory/sales/terms': typeof AuthenticatedInventorySalesTermsRoute
@@ -455,6 +463,7 @@ export interface FileRoutesByTo {
   '/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
   '/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
   '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/inventory/sales/terms': typeof AuthenticatedInventorySalesTermsRoute
@@ -513,6 +522,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/_authenticated/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/_authenticated/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/_authenticated/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
   '/_authenticated/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
   '/_authenticated/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/_authenticated/inventory/sales/terms': typeof AuthenticatedInventorySalesTermsRoute
@@ -570,6 +580,7 @@ export interface FileRouteTypes {
     | '/inventory/product/unit'
     | '/inventory/purchase/create'
     | '/inventory/quotation/create'
+    | '/inventory/report/sales'
     | '/inventory/sales/contact-us'
     | '/inventory/sales/create'
     | '/inventory/sales/terms'
@@ -625,6 +636,7 @@ export interface FileRouteTypes {
     | '/inventory/product/unit'
     | '/inventory/purchase/create'
     | '/inventory/quotation/create'
+    | '/inventory/report/sales'
     | '/inventory/sales/contact-us'
     | '/inventory/sales/create'
     | '/inventory/sales/terms'
@@ -682,6 +694,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/product/unit'
     | '/_authenticated/inventory/purchase/create'
     | '/_authenticated/inventory/quotation/create'
+    | '/_authenticated/inventory/report/sales'
     | '/_authenticated/inventory/sales/contact-us'
     | '/_authenticated/inventory/sales/create'
     | '/_authenticated/inventory/sales/terms'
@@ -885,6 +898,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory/sales/contact-us'
       fullPath: '/inventory/sales/contact-us'
       preLoaderRoute: typeof AuthenticatedInventorySalesContactUsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/sales': {
+      id: '/_authenticated/inventory/report/sales'
+      path: '/inventory/report/sales'
+      fullPath: '/inventory/report/sales'
+      preLoaderRoute: typeof AuthenticatedInventoryReportSalesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/quotation/create': {
@@ -1159,6 +1179,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryProductUnitRoute: typeof AuthenticatedInventoryProductUnitRoute
   AuthenticatedInventoryPurchaseCreateRoute: typeof AuthenticatedInventoryPurchaseCreateRoute
   AuthenticatedInventoryQuotationCreateRoute: typeof AuthenticatedInventoryQuotationCreateRoute
+  AuthenticatedInventoryReportSalesRoute: typeof AuthenticatedInventoryReportSalesRoute
   AuthenticatedInventorySalesContactUsRoute: typeof AuthenticatedInventorySalesContactUsRoute
   AuthenticatedInventorySalesCreateRoute: typeof AuthenticatedInventorySalesCreateRoute
   AuthenticatedInventorySalesTermsRoute: typeof AuthenticatedInventorySalesTermsRoute
@@ -1218,6 +1239,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryPurchaseCreateRoute,
   AuthenticatedInventoryQuotationCreateRoute:
     AuthenticatedInventoryQuotationCreateRoute,
+  AuthenticatedInventoryReportSalesRoute:
+    AuthenticatedInventoryReportSalesRoute,
   AuthenticatedInventorySalesContactUsRoute:
     AuthenticatedInventorySalesContactUsRoute,
   AuthenticatedInventorySalesCreateRoute:

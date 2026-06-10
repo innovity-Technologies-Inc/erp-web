@@ -34,6 +34,17 @@ This document defines the **STRICT** visual and structural standards for all new
     - **Center/Left**: Page title (e.g., "New Stock Movement").
 - **Spacing**: `pb-6` below the header before the form/content grid.
 
+### Type C: Report Pages (Complex Headers & Footers)
+- **Container**: `ListPageLayout` component.
+- **Custom Header Navigation (`customHeaderRight`)**: Instead of standard tabs, use a mix of standalone links and the `TabDropdown` component (for grouped reports like Sales/Purchases). 
+  - **TabDropdown**: Must use smooth `animate-slide-down`, match the trigger button width exactly, and include subtle separators (`border-b border-blue-50`) between items.
+- **Custom Toolbar (`toolbarRightExtra`)**: 
+  - DateRangePicker is centrally aligned.
+  - Export buttons (PDF/Excel) must use grayscale icons (`text-[#64748b]`) in reports to maintain a clean, professional aesthetic, overriding the default colorful branding.
+- **Summary Footers (Totals)**:
+  - NEVER use AG Grid's `pinnedBottomRowData` when `autoHeight` is enabled, as it causes layout collapse.
+  - ALWAYS use the `summaryFooter` prop in `ListPageLayout`. Calculate the total dynamically in the View component using `reportData?.data.reduce()`, and pass a customized Flexbox container to `summaryFooter` so it docks perfectly above the pagination bar with a matching background (`bg-[#f8fafc]`).
+
 ---
 
 ## 3. Structural Layout (Transactions)

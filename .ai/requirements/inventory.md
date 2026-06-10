@@ -148,6 +148,16 @@ This document outlines the requirements for the Inventory module in the `erp_fro
     *   **Custom UI Components**: Built specialized components for Invoice Upload (green rounded button), expandable Item Detail cards with blue sub-headers, and dashed-border "Add Item" containers.
     *   **Real-time Calculations**: Built a synchronous calculation engine for line-item totals, sub-totals, discounts, and due amounts with sophisticated visual feedback (red balance indicators).
     *   **Data Transformation**: Handled seamless flattening of nested frontend state into the structure required by the legacy Laravel API.
+
+## 13. Reports Module
+- [x] **Architecture**: Developed a highly scalable report rendering strategy using the core `ListPageLayout` combined with `customHeaderRight` and `toolbarRightExtra` props to accommodate complex reporting UIs without duplicating layout code.
+- [x] **Report Navigation**: Created a specialized `TabDropdown` component featuring a smooth slide-down animation and blue active states to manage navigation across large groups of related reports (e.g., Sales, Purchases) seamlessly from the header.
+- [x] **Today's Sales Report**:
+    *   **Backend Integration**: Updated Laravel `ReportApiController` to accept frontend `start_date` and `end_date` parameters, and dynamically calculate the `total_sum` across the entire filtered dataset.
+    *   **Summary Footers**: Devised a robust solution for rendering "Total" footers outside of the volatile AG Grid container by passing dynamically calculated frontend totals into a new `summaryFooter` slot in `ListPageLayout`. This guarantees perfect alignment directly above the pagination bar, colored to match perfectly.
+    *   **Secure Exports**: Reverted the unsafe React Blob logic back to the native Laravel export flow. The PDF and EXCEL export buttons now open a new tab targeting the secure Laravel web route (`/inventory/reports/todays_sales_export`), seamlessly passing authentication and filter parameters for a native browser download/print experience.
+    *   **Export UX**: Enhanced export buttons with dynamic loading states ("PROCESSING..."), loader icons, disabled states to prevent double-clicks, and theme-specific hover colors (danger for PDF, success for EXCEL).
+
     *   **Asynchronous Validation**: Integrated real-time debounced checks for Chalan and Batch number uniqueness.
     *   **Vendor Integration**: Implemented supplier-locked product selection with automatic rate and stock fetching.
     *   **High-Fidelity List View**: Built a professional list page with side-by-side Vendor/Status filters, standardized column formatting (plain text IDs, clean dates), and status badges.
