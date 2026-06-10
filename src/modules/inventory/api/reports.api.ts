@@ -28,6 +28,25 @@ export interface UserWiseSalesListItem {
   amount: string
 }
 
+export interface ProductWiseSalesListItem {
+  date: string
+  product_name: string
+  product_model: string
+  invoice: string
+  customer_name: string
+  rate: string
+  total_price: string
+}
+
+export interface CategoryWiseSalesListItem {
+  category_name: string
+  product_name: string
+  product_model: string
+  date: string
+  quantity: string
+  total_price: string
+}
+
 export const getTodaysSalesDatatable = async (params: any): Promise<DataTablesResponse<TodaySalesListItem>> => {
   const response = await apiClient.get<DataTablesResponse<TodaySalesListItem>>('/inventory/reports/todays-sales-datatable', { params })
   return response.data
@@ -40,5 +59,15 @@ export const getMerchantSalesDatatable = async (params: any): Promise<DataTables
 
 export const getUserWiseSalesDatatable = async (params: any): Promise<DataTablesResponse<UserWiseSalesListItem>> => {
   const response = await apiClient.get<DataTablesResponse<UserWiseSalesListItem>>('/inventory/reports/user-wise-sales-datatable', { params })
+  return response.data
+}
+
+export const getProductWiseSalesDatatable = async (params: any): Promise<DataTablesResponse<ProductWiseSalesListItem>> => {
+  const response = await apiClient.get<DataTablesResponse<ProductWiseSalesListItem>>('/inventory/reports/product-wise-sales-datatable', { params })
+  return response.data
+}
+
+export const getCategoryWiseSalesDatatable = async (params: any): Promise<DataTablesResponse<CategoryWiseSalesListItem>> => {
+  const response = await apiClient.get<DataTablesResponse<CategoryWiseSalesListItem>>('/inventory/reports/category-wise-sales-datatable', { params })
   return response.data
 }

@@ -115,7 +115,9 @@ const menuItems: MenuGroup[] = [
         activePaths: [
           '/inventory/report/sales', 
           '/inventory/report/merchant-wise-sales',
-          '/inventory/report/user-wise-sales'
+          '/inventory/report/user-wise-sales',
+          '/inventory/report/product-wise-sales',
+          '/inventory/report/category-wise-sales'
         ]
       },
     ]

@@ -199,6 +199,7 @@ export const UserWiseSalesReportPage = () => {
         const isSum = (params.data as any)?.isSummary
         return `flex items-center justify-end pr-4 ${isSum ? 'font-bold text-[#1e293b]' : 'font-medium text-[#475569]'}`
       },
+      cellDataType: false,
       // Ensure it renders as a plain number string even in summary row
       valueFormatter: (params) => {
         const val = String(params.value || '0').replace(/[^0-9.-]+/g, '')
@@ -213,7 +214,11 @@ export const UserWiseSalesReportPage = () => {
       hide: !visibleCols.amount,
       headerClass: 'text-right',
       cellStyle: { textAlign: 'right' },
-      cellClass: 'font-bold text-[#1e293b] flex items-center justify-end pr-4',
+      cellClass: (params) => {
+        const isSum = (params.data as any)?.isSummary
+        return `flex items-center justify-end pr-4 ${isSum ? 'font-bold text-[#1e293b]' : 'font-medium text-[#475569]'}`
+      },
+      cellDataType: false,
       valueFormatter: (params) => formatCurrency(params.value, currency, currencyPosition)
     },
   ], [visibleCols, currency, currencyPosition, currentPage, pageSize])

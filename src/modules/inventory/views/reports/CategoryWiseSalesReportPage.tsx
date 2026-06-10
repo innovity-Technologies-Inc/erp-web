@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import { FileDown, FileSpreadsheet, Loader2 } from 'lucide-react'
-import { useTodaysSalesDatatable } from '../../hooks/useReports'
-import { useMerchants } from '../../hooks/useSales'
+import { useCategoryWiseSalesDatatable } from '../../hooks/useReports'
+import { useCategorySelect2 } from '../../hooks/useSelect2'
 import type { ColDef } from 'ag-grid-community'
-import type { TodaySalesListItem } from '../../api/reports.api'
+import type { CategoryWiseSalesListItem } from '../../api/reports.api'
 import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { formatCurrency } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
@@ -12,7 +12,6 @@ import { TabDropdown } from './components/TabDropdown'
 import { Link } from '@tanstack/react-router'
 import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
 import { useUiStore } from '@/store/useUiStore'
-
 import { apiClient } from '@/api/client'
 
 const salesReportOptions = [
@@ -23,11 +22,21 @@ const salesReportOptions = [
   { name: 'Category wise Sales', to: '/inventory/report/category-wise-sales' as any },
 ]
 
-export const SalesReportPage = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [merchantId, setMerchantId] = useState('')
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
+export const CategoryWiseSalesReportPage = () => {
+  const [categoryId, setCategoryId] = useState('')
+  const [fromDate, setFromDate] = useState(() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    return `${year}-${month}-01`
+  })
+  const [toDate, setToDate] = useState(() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  })
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   
@@ -40,9 +49,11 @@ export const SalesReportPage = () => {
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
     sl: true,
+    category: true,
+    product: true,
+    model: true,
     date: true,
-    invoice: true,
-    merchant: true,
+    qty: true,
     total: true,
   })
 
@@ -50,21 +61,20 @@ export const SalesReportPage = () => {
     draw: 1,
     start: (currentPage - 1) * pageSize,
     length: pageSize,
-    search: { value: searchTerm, regex: false },
-    customer_id: merchantId,
-    start_date: fromDate,
-    end_date: toDate
-  }), [searchTerm, merchantId, fromDate, toDate, currentPage, pageSize])
+    category_id: categoryId,
+    fromDate: fromDate,
+    toDate: toDate
+  }), [categoryId, fromDate, toDate, currentPage, pageSize])
 
-  const { data: reportData, isFetching: isLoading } = useTodaysSalesDatatable(params)
-  const { data: merchantsData } = useMerchants()
+  const { data: reportData, isFetching: isLoading } = useCategoryWiseSalesDatatable(params)
+  const { data: categoriesData } = useCategorySelect2()
 
-  const merchantOptions = useMemo(() => {
-    return (merchantsData?.data || []).map((m: any) => ({
-      label: m.customer_name,
-      value: m.id.toString()
+  const categoryOptions = useMemo(() => {
+    return (categoriesData || []).map((c: any) => ({
+      label: c.text,
+      value: c.id.toString()
     }))
-  }, [merchantsData])
+  }, [categoriesData])
 
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
@@ -73,12 +83,12 @@ export const SalesReportPage = () => {
   const handleExcelExport = async () => {
     setIsExportingExcel(true)
     try {
-      const response = await apiClient.get('/inventory/reports/todays-sales-export', {
+      const response = await apiClient.get('/inventory/reports/category-wise-sales-export', {
         params: {
           report_type: 'excel',
-          customer_id: merchantId,
-          start_date: fromDate,
-          end_date: toDate
+          category_id: categoryId,
+          fromDate: fromDate,
+          toDate: toDate
         },
         responseType: 'blob'
       })
@@ -86,7 +96,7 @@ export const SalesReportPage = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', `todays_sales_report_${new Date().toISOString().split('T')[0]}.xlsx`)
+      link.setAttribute('download', `category_wise_sales_report_${new Date().toISOString().split('T')[0]}.xlsx`)
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -102,12 +112,12 @@ export const SalesReportPage = () => {
   const handlePdfExport = async () => {
     setIsExportingPdf(true)
     try {
-      const response = await apiClient.get('/inventory/reports/todays-sales-export', {
+      const response = await apiClient.get('/inventory/reports/category-wise-sales-export', {
         params: {
           report_type: 'pdf',
-          customer_id: merchantId,
-          start_date: fromDate,
-          end_date: toDate
+          category_id: categoryId,
+          fromDate: fromDate,
+          toDate: toDate
         },
         responseType: 'blob'
       })
@@ -127,13 +137,13 @@ export const SalesReportPage = () => {
     }
   }
 
-  // Calculate total from the current page data
-  const pageTotal = useMemo(() => {
+  // Calculate totals from the current page data
+  const totals = useMemo(() => {
     const pageData = reportData?.data || []
-    return pageData.reduce((sum, item) => {
-      const amountStr = String(item.total_amount || '0').replace(/[^0-9.-]+/g, '')
-      return sum + (parseFloat(amountStr) || 0)
-    }, 0)
+    return pageData.reduce((acc, item) => ({
+      qty: acc.qty + (parseInt(item.quantity?.toString() || '0') || 0),
+      amount: acc.amount + (parseFloat(item.total_price?.toString().replace(/,/g, '') || '0') || 0),
+    }), { qty: 0, amount: 0 })
   }, [reportData?.data])
 
   // Prepare data with in-grid summary row appended
@@ -143,14 +153,15 @@ export const SalesReportPage = () => {
 
     const summaryRow = {
       isSummary: true,
-      customer_name: 'Total:',
-      total_amount: pageTotal.toString(),
+      category_name: 'Total:',
+      quantity: totals.qty.toString(),
+      total_price: totals.amount.toString(),
     }
 
     return [...data, summaryRow]
-  }, [reportData?.data, pageTotal])
+  }, [reportData?.data, totals])
 
-  const columnDefs = useMemo<ColDef<TodaySalesListItem>[]>(() => [
+  const columnDefs = useMemo<ColDef<CategoryWiseSalesListItem>[]>(() => [
     {
       headerName: 'SL',
       valueGetter: (params) => {
@@ -164,61 +175,85 @@ export const SalesReportPage = () => {
       cellClass: 'text-gray-400 font-medium border-r border-primary/30 flex items-center justify-center',
     },
     {
-      headerName: 'SALES DATE',
+      headerName: 'CATEGORY NAME',
+      field: 'category_name',
+      flex: 1,
+      minWidth: 150,
+      hide: !visibleCols.category,
+      cellClass: (params) => {
+        const isSum = (params.data as any)?.isSummary
+        return `font-medium flex items-center ${isSum ? 'justify-end pr-6 text-[#1e293b] font-bold' : 'text-[#475569]'}`
+      },
+    },
+    {
+      headerName: 'PRODUCT NAME',
+      field: 'product_name',
+      flex: 2,
+      minWidth: 200,
+      hide: !visibleCols.product,
+      cellClass: 'font-medium flex items-center text-[#475569]',
+    },
+    {
+      headerName: 'MODEL',
+      field: 'product_model',
+      width: 130,
+      flex: 1,
+      hide: !visibleCols.model,
+      cellClass: 'text-[#475569] font-medium flex items-center',
+    },
+    {
+      headerName: 'DATE',
       field: 'date',
-      width: 150,
+      width: 120,
       flex: 1,
       hide: !visibleCols.date,
       cellClass: 'text-[#475569] font-medium flex items-center',
     },
     {
-      headerName: 'INVOICE NO',
-      field: 'invoice_id',
-      width: 150,
+      headerName: 'QTY',
+      field: 'quantity',
+      width: 100,
       flex: 1,
-      hide: !visibleCols.invoice,
-      cellClass: 'text-[#1e4ba1] font-bold flex items-center',
-      cellRenderer: (params: any) => (
-        (params.data as any)?.isSummary ? null : <span>#{params.value}</span>
-      )
-    },
-    {
-      headerName: 'MERCHANT NAME',
-      field: 'customer_name',
-      flex: 2,
-      hide: !visibleCols.merchant,
+      hide: !visibleCols.qty,
+      headerClass: 'text-right',
+      cellStyle: { textAlign: 'right' },
       cellClass: (params) => {
         const isSum = (params.data as any)?.isSummary
-        return `font-medium flex items-center ${isSum ? 'justify-end pr-4 text-[#1e293b] font-bold' : 'text-[#475569]'}`
+        return `flex items-center justify-end pr-4 ${isSum ? 'font-bold text-[#1e293b]' : 'font-medium text-[#475569]'}`
       },
+      valueFormatter: (params) => {
+        const val = String(params.value || '0').replace(/[^0-9.-]+/g, '')
+        return isNaN(parseInt(val)) ? '0' : parseInt(val).toString()
+      }
     },
     {
-      headerName: 'TOTAL AMOUNT',
-      field: 'total_amount',
-      width: 150,
+      headerName: 'AMOUNT',
+      field: 'total_price',
+      width: 140,
       flex: 1,
       hide: !visibleCols.total,
       headerClass: 'text-right',
       cellStyle: { textAlign: 'right' },
       cellClass: 'font-bold text-[#1e293b] flex items-center justify-end pr-4',
-      cellDataType: false,
       valueFormatter: (params) => formatCurrency(params.value, currency, currencyPosition)
     },
   ], [visibleCols, currency, currencyPosition, currentPage, pageSize])
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
-    { name: 'Sales Date', field: 'date', visible: visibleCols.date },
-    { name: 'Invoice No', field: 'invoice', visible: visibleCols.invoice },
-    { name: 'Merchant Name', field: 'merchant', visible: visibleCols.merchant },
-    { name: 'Total Amount', field: 'total', visible: visibleCols.total },
+    { name: 'Category Name', field: 'category', visible: visibleCols.category },
+    { name: 'Product Name', field: 'product', visible: visibleCols.product },
+    { name: 'Model', field: 'model', visible: visibleCols.model },
+    { name: 'Date', field: 'date', visible: visibleCols.date },
+    { name: 'Qty', field: 'qty', visible: visibleCols.qty },
+    { name: 'Amount', field: 'total', visible: visibleCols.total },
   ]
 
   const totalPages = Math.ceil((reportData?.recordsFiltered ?? 0) / pageSize)
 
   const headerRight = (
     <div className="flex items-center gap-3">
-      <TabDropdown label="Todays Sales" options={salesReportOptions} active={true} />
+      <TabDropdown label="Category wise Sales" options={salesReportOptions} active={true} />
       <Link
         to={"/inventory/report/due" as any}
         className="px-4 py-2 text-[12px] font-medium rounded-lg bg-white text-gray-500 border border-gray-100 hover:bg-gray-50 shadow-sm"
@@ -277,8 +312,8 @@ export const SalesReportPage = () => {
   )
 
   return (
-    <ListPageLayout<TodaySalesListItem>
-      title="Todays Sales Report"
+    <ListPageLayout<CategoryWiseSalesListItem>
+      title="Category Wise Sales Report"
       backTo="/"
       customHeaderRight={headerRight}
       showSearch={false}
@@ -295,8 +330,6 @@ export const SalesReportPage = () => {
       totalPages={totalPages}
       onPageChange={setCurrentPage}
       onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1) }}
-      searchValue={searchTerm}
-      onSearchChange={(val) => { setSearchTerm(val); setCurrentPage(1) }}
       gridOptions={{
         getRowStyle: (params: any) => {
           if (params.data?.isSummary) {
@@ -312,14 +345,14 @@ export const SalesReportPage = () => {
         <div className="flex-1 min-w-[300px]">
           <Select2
             options={[
-              { value: '', label: 'Select Merchant' },
-              ...merchantOptions
+              { value: '', label: 'Select Category' },
+              ...categoryOptions
             ]}
-            value={merchantId}
-            onChange={(val) => { setMerchantId(val as string); setCurrentPage(1) }}
+            value={categoryId}
+            onChange={(val) => { setCategoryId(val as string); setCurrentPage(1) }}
             rounded="full"
             variant="solid"
-            placeholder="Select Merchant"
+            placeholder="Select Category"
           />
         </div>
       }

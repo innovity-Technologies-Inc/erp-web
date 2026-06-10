@@ -33,7 +33,9 @@ import { Route as AuthenticatedInventorySalesCreateRouteImport } from './routes/
 import { Route as AuthenticatedInventorySalesContactUsRouteImport } from './routes/_authenticated/inventory/sales.contact-us'
 import { Route as AuthenticatedInventoryReportUserWiseSalesRouteImport } from './routes/_authenticated/inventory/report.user-wise-sales'
 import { Route as AuthenticatedInventoryReportSalesRouteImport } from './routes/_authenticated/inventory/report.sales'
+import { Route as AuthenticatedInventoryReportProductWiseSalesRouteImport } from './routes/_authenticated/inventory/report.product-wise-sales'
 import { Route as AuthenticatedInventoryReportMerchantWiseSalesRouteImport } from './routes/_authenticated/inventory/report.merchant-wise-sales'
+import { Route as AuthenticatedInventoryReportCategoryWiseSalesRouteImport } from './routes/_authenticated/inventory/report.category-wise-sales'
 import { Route as AuthenticatedInventoryQuotationCreateRouteImport } from './routes/_authenticated/inventory/quotation.create'
 import { Route as AuthenticatedInventoryPurchaseCreateRouteImport } from './routes/_authenticated/inventory/purchase.create'
 import { Route as AuthenticatedInventoryProductUnitRouteImport } from './routes/_authenticated/inventory/product.unit'
@@ -204,10 +206,22 @@ const AuthenticatedInventoryReportSalesRoute =
     path: '/inventory/report/sales',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryReportProductWiseSalesRoute =
+  AuthenticatedInventoryReportProductWiseSalesRouteImport.update({
+    id: '/inventory/report/product-wise-sales',
+    path: '/inventory/report/product-wise-sales',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryReportMerchantWiseSalesRoute =
   AuthenticatedInventoryReportMerchantWiseSalesRouteImport.update({
     id: '/inventory/report/merchant-wise-sales',
     path: '/inventory/report/merchant-wise-sales',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportCategoryWiseSalesRoute =
+  AuthenticatedInventoryReportCategoryWiseSalesRouteImport.update({
+    id: '/inventory/report/category-wise-sales',
+    path: '/inventory/report/category-wise-sales',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryQuotationCreateRoute =
@@ -421,7 +435,9 @@ export interface FileRoutesByFullPath {
   '/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/inventory/report/category-wise-sales': typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
   '/inventory/report/merchant-wise-sales': typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
+  '/inventory/report/product-wise-sales': typeof AuthenticatedInventoryReportProductWiseSalesRoute
   '/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
   '/inventory/report/user-wise-sales': typeof AuthenticatedInventoryReportUserWiseSalesRoute
   '/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
@@ -479,7 +495,9 @@ export interface FileRoutesByTo {
   '/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/inventory/report/category-wise-sales': typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
   '/inventory/report/merchant-wise-sales': typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
+  '/inventory/report/product-wise-sales': typeof AuthenticatedInventoryReportProductWiseSalesRoute
   '/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
   '/inventory/report/user-wise-sales': typeof AuthenticatedInventoryReportUserWiseSalesRoute
   '/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
@@ -540,7 +558,9 @@ export interface FileRoutesById {
   '/_authenticated/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/_authenticated/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/_authenticated/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/_authenticated/inventory/report/category-wise-sales': typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
   '/_authenticated/inventory/report/merchant-wise-sales': typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
+  '/_authenticated/inventory/report/product-wise-sales': typeof AuthenticatedInventoryReportProductWiseSalesRoute
   '/_authenticated/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
   '/_authenticated/inventory/report/user-wise-sales': typeof AuthenticatedInventoryReportUserWiseSalesRoute
   '/_authenticated/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
@@ -600,7 +620,9 @@ export interface FileRouteTypes {
     | '/inventory/product/unit'
     | '/inventory/purchase/create'
     | '/inventory/quotation/create'
+    | '/inventory/report/category-wise-sales'
     | '/inventory/report/merchant-wise-sales'
+    | '/inventory/report/product-wise-sales'
     | '/inventory/report/sales'
     | '/inventory/report/user-wise-sales'
     | '/inventory/sales/contact-us'
@@ -658,7 +680,9 @@ export interface FileRouteTypes {
     | '/inventory/product/unit'
     | '/inventory/purchase/create'
     | '/inventory/quotation/create'
+    | '/inventory/report/category-wise-sales'
     | '/inventory/report/merchant-wise-sales'
+    | '/inventory/report/product-wise-sales'
     | '/inventory/report/sales'
     | '/inventory/report/user-wise-sales'
     | '/inventory/sales/contact-us'
@@ -718,7 +742,9 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/product/unit'
     | '/_authenticated/inventory/purchase/create'
     | '/_authenticated/inventory/quotation/create'
+    | '/_authenticated/inventory/report/category-wise-sales'
     | '/_authenticated/inventory/report/merchant-wise-sales'
+    | '/_authenticated/inventory/report/product-wise-sales'
     | '/_authenticated/inventory/report/sales'
     | '/_authenticated/inventory/report/user-wise-sales'
     | '/_authenticated/inventory/sales/contact-us'
@@ -940,11 +966,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryReportSalesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/report/product-wise-sales': {
+      id: '/_authenticated/inventory/report/product-wise-sales'
+      path: '/inventory/report/product-wise-sales'
+      fullPath: '/inventory/report/product-wise-sales'
+      preLoaderRoute: typeof AuthenticatedInventoryReportProductWiseSalesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/report/merchant-wise-sales': {
       id: '/_authenticated/inventory/report/merchant-wise-sales'
       path: '/inventory/report/merchant-wise-sales'
       fullPath: '/inventory/report/merchant-wise-sales'
       preLoaderRoute: typeof AuthenticatedInventoryReportMerchantWiseSalesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/category-wise-sales': {
+      id: '/_authenticated/inventory/report/category-wise-sales'
+      path: '/inventory/report/category-wise-sales'
+      fullPath: '/inventory/report/category-wise-sales'
+      preLoaderRoute: typeof AuthenticatedInventoryReportCategoryWiseSalesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/quotation/create': {
@@ -1219,7 +1259,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryProductUnitRoute: typeof AuthenticatedInventoryProductUnitRoute
   AuthenticatedInventoryPurchaseCreateRoute: typeof AuthenticatedInventoryPurchaseCreateRoute
   AuthenticatedInventoryQuotationCreateRoute: typeof AuthenticatedInventoryQuotationCreateRoute
+  AuthenticatedInventoryReportCategoryWiseSalesRoute: typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
   AuthenticatedInventoryReportMerchantWiseSalesRoute: typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
+  AuthenticatedInventoryReportProductWiseSalesRoute: typeof AuthenticatedInventoryReportProductWiseSalesRoute
   AuthenticatedInventoryReportSalesRoute: typeof AuthenticatedInventoryReportSalesRoute
   AuthenticatedInventoryReportUserWiseSalesRoute: typeof AuthenticatedInventoryReportUserWiseSalesRoute
   AuthenticatedInventorySalesContactUsRoute: typeof AuthenticatedInventorySalesContactUsRoute
@@ -1281,8 +1323,12 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryPurchaseCreateRoute,
   AuthenticatedInventoryQuotationCreateRoute:
     AuthenticatedInventoryQuotationCreateRoute,
+  AuthenticatedInventoryReportCategoryWiseSalesRoute:
+    AuthenticatedInventoryReportCategoryWiseSalesRoute,
   AuthenticatedInventoryReportMerchantWiseSalesRoute:
     AuthenticatedInventoryReportMerchantWiseSalesRoute,
+  AuthenticatedInventoryReportProductWiseSalesRoute:
+    AuthenticatedInventoryReportProductWiseSalesRoute,
   AuthenticatedInventoryReportSalesRoute:
     AuthenticatedInventoryReportSalesRoute,
   AuthenticatedInventoryReportUserWiseSalesRoute:
