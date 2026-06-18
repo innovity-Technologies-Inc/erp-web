@@ -243,6 +243,17 @@
 - [x] **Task 26.4**: Configure module exports and TanStack Router routes for the Merchant Return submodule.
 - [x] **Task 26.5**: Perform project-wide TypeScript cleanup and ensure a zero-warning build for the entire Return module.
 
+## Task Group 27: Sales Reports Implementation
+- [x] **Task 27.1**: Consolidate and resolve build errors (`npm run build`) caused by missing interfaces and unused imports in `SalesReportPage`.
+- [x] **Task 27.2**: Implement `MerchantWiseSalesReportPage` with AG Grid, `Select2` filtering, and the Appended In-Grid Summary Row pattern for perfect column alignment.
+- [x] **Task 27.3**: Implement `UserWiseSalesReportPage` and sync the default date ranges to the current month to match backend API defaults.
+- [x] **Task 27.4**: Implement `ProductWiseSalesReportPage` and `CategoryWiseSalesReportPage` featuring robust numeric parsing (stripping commas/symbols) to prevent AG Grid "Invalid Number" errors.
+- [x] **Task 27.5**: Implement `InvoiceWiseDueReportPage` with specific fallback sorting fixes in the backend `ReportApiController` to prevent SQL crashes (`Unknown column i.id`).
+- [x] **Task 27.6**: Integrate secure **PDF and Excel Exports** for all reports using `apiClient.get` and `responseType: 'blob'`, resolving authorization errors.
+- [x] **Task 27.7**: Implement high-fidelity **Mail Preview Modal** with dark background, loaded dynamically via secure API blob endpoints.
+- [x] **Task 27.8**: Add a **Cancel Confirmation** to the Mail Preview modal to prevent accidental closure.
+- [x] **Task 27.9**: Standardize navigation: Incorporate all reports into the header `TabDropdown` and synchronize Sidebar active states.
+
 
 
 

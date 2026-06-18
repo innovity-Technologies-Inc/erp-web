@@ -117,7 +117,18 @@ const menuItems: MenuGroup[] = [
           '/inventory/report/merchant-wise-sales',
           '/inventory/report/user-wise-sales',
           '/inventory/report/product-wise-sales',
-          '/inventory/report/category-wise-sales'
+          '/inventory/report/category-wise-sales',
+          '/inventory/report/due',
+          '/inventory/report/shipping-cost',
+          '/inventory/report/sale-wise-profit',
+          '/inventory/report/cash-closing',
+          '/inventory/report/cash-closing-report',
+          '/inventory/report/stock',
+          '/inventory/report/stock-movement',
+          '/inventory/report/warehouse-wise-stock',
+          '/inventory/report/todays-purchase',
+          '/inventory/report/vendor-wise-purchase',
+          '/inventory/report/category-wise-purchase'
         ]
       },
     ]

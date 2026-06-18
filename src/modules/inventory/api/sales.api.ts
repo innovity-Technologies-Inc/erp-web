@@ -79,8 +79,12 @@ export const getProducts = async (search: string = ''): Promise<DataTablesRespon
   return response.data
 }
 
-export const getProductBatchInfo = async (productId: number, warehouseId: number): Promise<{ data: any }> => {
-  const response = await apiClient.get<{ data: any }>(`/inventory/products/get-invoice-info/${productId}`, { params: { warehouse_id: warehouseId } })
+export const getProductBatchInfo = async (productId: number, warehouseId: number, invoiceId?: number | null, withZeroQty: number = 0): Promise<{ data: any }> => {
+  const params: any = { warehouse_id: warehouseId }
+  if (invoiceId) params.invoice_id = invoiceId
+  if (withZeroQty) params.with_zero_qty = withZeroQty
+  
+  const response = await apiClient.get<{ data: any }>(`/inventory/products/get-invoice-info/${productId}`, { params })
   return response.data
 }
 

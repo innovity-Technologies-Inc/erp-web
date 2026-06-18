@@ -16,6 +16,7 @@ import {
   getPaymentMethods
 } from '../api/sales.api'
 import { useUiStore } from '@/store/useUiStore'
+import { getErrorMessage } from '@/utils/errorHandlers'
 
 export const useSalesDatatable = (params: any) => {
   return useQuery({
@@ -64,7 +65,7 @@ export const useUpdateConfirmStatus = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Update Failed',
-        error.response?.data?.message || 'Failed to update status. Please try again.',
+        getErrorMessage(error, 'Failed to update status. Please try again.'),
         'error'
       )
     }
@@ -79,6 +80,7 @@ export const useCreateSale = () => {
     mutationFn: (data: any) => createSale(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sales'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] }) // Invalidate all reports to ensure sync
       showNotificationModal(
         'Sale Created!',
         'The sales invoice has been created successfully.',
@@ -88,7 +90,7 @@ export const useCreateSale = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Creation Failed',
-        error.response?.data?.message || 'Failed to create sale. Please try again.',
+        getErrorMessage(error, 'Failed to create sale. Please try again.'),
         'error'
       )
     }
@@ -103,6 +105,7 @@ export const useUpdateSale = () => {
     mutationFn: ({ uuid, data }: { uuid: string, data: any }) => updateSale(uuid, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sales'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] }) // Invalidate all reports to ensure sync
       showNotificationModal(
         'Sale Updated!',
         'The sales invoice has been updated successfully.',
@@ -112,7 +115,7 @@ export const useUpdateSale = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Update Failed',
-        error.response?.data?.message || 'Failed to update sale. Please try again.',
+        getErrorMessage(error, 'Failed to update sale. Please try again.'),
         'error'
       )
     }
@@ -148,10 +151,10 @@ export const useProductsSearch = (search: string = '') => {
   })
 }
 
-export const useProductBatchInfo = (productId: number | null, warehouseId: number | null) => {
+export const useProductBatchInfo = (productId: number | null, warehouseId: number | null, invoiceId?: number | null, withZeroQty: number = 0) => {
   return useQuery({
-    queryKey: ['products', 'batch-info', productId, warehouseId],
-    queryFn: () => getProductBatchInfo(productId!, warehouseId!),
+    queryKey: ['products', 'batch-info', productId, warehouseId, invoiceId, withZeroQty],
+    queryFn: () => getProductBatchInfo(productId!, warehouseId!, invoiceId, withZeroQty),
     enabled: !!productId && !!warehouseId,
   })
 }
@@ -173,7 +176,7 @@ export const useDeleteSale = () => {
       queryClient.invalidateQueries({ queryKey: ['sales'] })
     },
     onError: (error: any) => {
-      notify(error.response?.data?.message || 'Failed to delete sale', 'error')
+      notify(getErrorMessage(error, 'Failed to delete sale'), 'error')
     }
   })
 }

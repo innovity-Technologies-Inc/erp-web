@@ -14,32 +14,35 @@ export const contactUsReplySchema = z.object({
 export type ContactUsReplyValues = z.infer<typeof contactUsReplySchema>
 
 export const saleSchema = z.object({
-  warehouse_id: z.coerce.number().min(1, 'Warehouse is required'),
-  customer_id: z.coerce.number().min(1, 'Customer is required'),
+  warehouse_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Warehouse is required' }),
+  customer_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Merchant is required' }),
   date: z.string().min(1, 'Date is required'),
   items: z.array(z.object({
-    product_id: z.number(),
-    batch_master_id: z.number(),
-    quantity: z.number().min(0.01, 'Qty must be > 0'),
-    rate: z.number().min(0, 'Rate must be >= 0'),
-    discount_per: z.number().default(0),
-    discount: z.number().default(0),
-    vat_amnt: z.number().default(0),
-    vat_per: z.number().default(0),
-    total_price: z.number().default(0),
+    product_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Required' }),
+    batch_master_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Required' }),
+    quantity: z.coerce.number().min(1, 'Min 1'),
+    rate: z.coerce.number().min(0.01, 'Required'),
+    discount_per: z.coerce.number().default(0),
+    discount: z.coerce.number().default(0),
+    vat_amnt: z.coerce.number().default(0),
+    vat_per: z.coerce.number().default(0),
+    total_price: z.coerce.number().default(0),
     description: z.string().optional(),
     unit: z.string().optional(),
-    avl_qty: z.number().optional(),
-  })).min(1, 'At least one item is required'),
-  payment_type_id: z.union([z.number(), z.string()]).optional(),
-  payment_amount: z.number().default(0),
-  paid_amount: z.number().default(0),
-  grand_total: z.number().default(0),
-  total_discount: z.number().default(0),
-  invoice_discount: z.number().default(0),
-  due_amount: z.number().default(0),
-  shipping_cost: z.number().default(0),
-  previous: z.number().default(0),
+    avl_qty: z.coerce.number().optional(),
+  })).min(1, 'At least one item is required')
+    .refine((items) => items.some(item => item.product_id && item.product_id !== 0 && item.product_id !== '0'), {
+      message: 'At least one item is required'
+    }),
+  payment_type_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 'undefined' && val !== 'null', { message: 'Payment Type is required' }),
+  payment_amount: z.coerce.number().default(0),
+  paid_amount: z.coerce.number().default(0),
+  grand_total: z.coerce.number().default(0),
+  total_discount: z.coerce.number().default(0),
+  invoice_discount: z.coerce.number().default(0),
+  due_amount: z.coerce.number().default(0),
+  shipping_cost: z.coerce.number().default(0),
+  previous: z.coerce.number().default(0),
   details: z.string().optional(),
   description: z.string().optional(),
 })
@@ -123,7 +126,7 @@ export const stockMovementSchema = z.object({
     batch_master_id: z.coerce.number().min(1, 'Batch is required'),
     items: z.array(z.object({
       product_id: z.coerce.number().min(1, 'Product is required'),
-      quantity: z.coerce.number().min(0.01, 'Qty must be > 0'),
+      quantity: z.coerce.number().min(1, 'Min 1'),
       avl_qty: z.coerce.number().optional(),
     })).min(1, 'At least one item per batch is required'),
   })).min(1, 'At least one batch is required'),
@@ -147,30 +150,30 @@ export const productCategorySchema = z.object({
 export type ProductCategoryFormValues = z.infer<typeof productCategorySchema>
 
 export const purchaseSchema = z.object({
-  supplier_id: z.coerce.number().min(1, 'Vendor is required'),
+  supplier_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Vendor is required' }),
   purchase_date: z.string().min(1, 'Purchase date is required'),
   chalan_no: z.string().min(1, 'Chalan number is required'),
   batch_no: z.string().min(1, 'Batch number is required'),
   invoice_file: z.any().optional(),
   
   items: z.array(z.object({
-    item_id: z.coerce.number().min(1, 'Item is required'),
+    item_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Item is required' }),
     expiry_date: z.string().optional(),
-    rate: z.coerce.number().min(0, 'Rate must be >= 0'),
+    rate: z.coerce.number().min(0.01, 'Rate is required'),
     discount_percent: z.coerce.number().min(0).max(100).default(0),
     discount_value: z.coerce.number().default(0),
     total: z.coerce.number().default(0),
     
     warehouses: z.array(z.object({
-      warehouse_id: z.coerce.number().min(1, 'Warehouse is required'),
-      quantity: z.coerce.number().min(1, 'Qty must be >= 1')
+      warehouse_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Warehouse is required' }),
+      quantity: z.coerce.number().min(1, 'Min 1')
     })).min(1, 'At least one warehouse is required'),
   })).min(1, 'At least one item is required'),
   
   details: z.string().optional(),
   purchase_discount: z.coerce.number().default(0),
   paid_amount: z.coerce.number().default(0),
-  payment_type_id: z.union([z.coerce.number(), z.string()]).optional(),
+  payment_type_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 'undefined' && val !== 'null', { message: 'Payment Type is required' }),
 })
 
 export type PurchaseFormValues = z.infer<typeof purchaseSchema>
@@ -178,9 +181,9 @@ export type PurchaseFormValues = z.infer<typeof purchaseSchema>
 export const productSchema = z.object({
   product_id: z.string().optional().nullable(),
   product_name: z.string().min(1, 'Product name is required'),
-  category_id: z.coerce.number().optional().nullable(),
-  supplier_id: z.coerce.number().min(1, 'Supplier is required'),
-  unit_id: z.coerce.number().optional().nullable(),
+  category_id: z.any().optional().nullable(),
+  supplier_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Vendor is required' }),
+  unit_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Unit is required' }),
   model: z.string().optional().nullable(),
   price: z.coerce.number().optional().nullable(),
   supplier_price: z.coerce.number().optional().nullable(),
@@ -191,46 +194,55 @@ export const productSchema = z.object({
   product_details: z.string().optional().nullable(),
   image: z.any().optional().nullable(),
   status: z.union([z.number(), z.boolean()]).default(1),
-  main_category_id: z.coerce.number().min(1, 'Main Category is required'),
+  main_category_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Category is required' }),
 })
 
 export type ProductFormValues = z.infer<typeof productSchema>
 
 export const vendorReturnSchema = z.object({
-  supplier_id: z.coerce.number().min(1, 'Vendor is required'),
-  purchase_id: z.coerce.number().min(1, 'Invoice is required'),
+  supplier_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Vendor is required' }),
+  purchase_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Invoice is required' }),
   return_date: z.string().min(1, 'Return date is required'),
-  payment_type_id: z.coerce.number().min(1, 'Payment Type is required'),
+  payment_type_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 'undefined' && val !== 'null', { message: 'Payment Type is required' }),
   items: z.array(z.object({
-    purchase_detail_id: z.number(),
-    item_id: z.number(),
+    purchase_detail_id: z.coerce.number(),
+    item_id: z.coerce.number(),
     product_name: z.string(),
     batch_no: z.string(),
-    quantity: z.number(),
-    available_quantity: z.number(),
-    return_quantity: z.number().min(0.01, 'Return qty must be > 0'),
-    rate: z.number(),
-    deduction_percent: z.number().min(0).max(100).default(0),
-    deduction_value: z.number().default(0),
-    total: z.number().default(0),
+    quantity: z.coerce.number(),
+    available_quantity: z.coerce.number(),
+    return_quantity: z.coerce.number(),
+    rate: z.coerce.number(),
+    deduction_percent: z.coerce.number().min(0).max(100).default(0),
+    deduction_value: z.coerce.number().default(0),
+    total: z.coerce.number().default(0),
     selected: z.boolean().default(false),
   })).superRefine((items, ctx) => {
     items.forEach((item, index) => {
-      if (item.selected && item.return_quantity > item.available_quantity) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: `Return quantity cannot exceed available quantity (${item.available_quantity})`,
-          path: [index, 'return_quantity']
-        })
+      if (item.selected) {
+        if (item.return_quantity < 1) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Min 1 required',
+            path: [index, 'return_quantity']
+          })
+        }
+        if (item.return_quantity > item.available_quantity) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Max ${item.available_quantity}`,
+            path: [index, 'return_quantity']
+          })
+        }
       }
     })
   }).refine(items => items.some(item => item.selected), {
-    message: 'Please select at least one item to return'
+    message: 'Please select at least one item'
   }),
   details: z.string().optional(),
   primary_category: z.string().optional(),
-  total_deduction: z.number().default(0),
-  grand_total: z.number().default(0),
+  total_deduction: z.coerce.number().default(0),
+  grand_total: z.coerce.number().default(0),
 })
 
 export type VendorReturnFormValues = z.infer<typeof vendorReturnSchema>

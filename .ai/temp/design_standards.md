@@ -70,6 +70,21 @@ This document defines the **STRICT** visual and structural standards for all new
 - **Error State**: `border-rose-500 focus:ring-rose-500/10`.
 - **Required Star**: `<span className="text-rose-500">*</span>`.
 
+### Form Validation UX (MANDATORY)
+1. **Smooth Scrolling**: ALL complex forms must implement an `onInvalid` callback attached to `handleSubmit` to automatically scroll the user to the first validation error.
+   ```typescript
+   const onInvalid = (errors: any) => {
+     setTimeout(() => {
+       const errorElement = document.querySelector('.text-rose-500, .border-rose-500');
+       if (errorElement) {
+         errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+       }
+     }, 100);
+   }
+   // Usage: onSubmit={handleSubmit(onSubmit, onInvalid)}
+   ```
+2. **Select2 Validation**: Always pass the `error` prop down to the `<Select2 />` component so it can render the red outline and error message correctly. (e.g., `error={errors.warehouse_id?.message}`).
+
 ---
 
 ## 5. Standardized Loading Indicators

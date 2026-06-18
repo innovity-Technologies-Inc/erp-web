@@ -22,6 +22,8 @@ import { Link } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import type { ColDef } from 'ag-grid-community'
 
+import { PageTitleDropdown } from '@/components/Dropdown/PageTitleDropdown'
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface NavTab {
@@ -33,6 +35,7 @@ export interface NavTab {
 export interface ListPageLayoutProps<T extends object> {
   // ── Header ──
   title: string
+  titleOptions?: { name: string; to: string }[]
   backTo: string
 
   // ── Nav tabs (top-right) ──
@@ -105,6 +108,7 @@ export interface ListPageLayoutProps<T extends object> {
 
 export const ListPageLayout = <T extends object>({
   title,
+  titleOptions,
   backTo,
   tabs,
   onCreate,
@@ -186,9 +190,14 @@ export const ListPageLayout = <T extends object>({
             <ArrowLeft className="h-4 w-4" strokeWidth={3} />
             <span>Back</span>
           </Link>
-          <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
-            {title}
-          </h1>
+          
+          {titleOptions ? (
+            <PageTitleDropdown title={title} options={titleOptions} />
+          ) : (
+            <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
+              {title}
+            </h1>
+          )}
         </div>
 
         {/* Nav Tabs */}
@@ -227,7 +236,7 @@ export const ListPageLayout = <T extends object>({
                 <PermissionGuard permission={createPermission}>
                   <button
                     onClick={onCreate}
-                    className="bg-[#0f172a] hover:bg-[#1e293b] text-white px-4 py-2 rounded-xl flex items-center gap-2 h-10 transition-all shadow-lg shadow-slate-200 shrink-0 group active:scale-95"
+                    className="bg-[#1E3A5F] hover:bg-[#153a80] text-white px-4 py-2 rounded-xl flex items-center gap-2 h-10 transition-all shadow-lg shadow-slate-200 shrink-0 group active:scale-95"
                   >
                     <Plus className="h-4 w-4 transition-transform group-hover:rotate-90" strokeWidth={3} />
                     <span className="font-bold text-[13px]">{addLabel || 'Create'}</span>

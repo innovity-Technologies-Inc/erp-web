@@ -28,6 +28,8 @@ import { formatCurrency } from '@/utils/formatters'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { LoadingState } from '@/components/Loading/LoadingState'
+import { RichEditor } from '@/components/RichEditor/RichEditor'
+import { useUiStore } from '@/store/useUiStore'
 
 // ─── Main Page Component ───────────────────────────────────────────────────────
 
@@ -36,6 +38,7 @@ export const SaleEditPage = () => {
   const { id } = useParams({ strict: false })
   const saleId = id ? parseInt(id as string, 10) : null
   const { currency, currencyPosition } = useSettings()
+  const showNotificationModal = useUiStore((state) => state.showNotificationModal)
   const [merchantSearch, setMerchantSearch] = useState('')
   const [productSearch, setProductSearch] = useState('')
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
@@ -60,6 +63,7 @@ export const SaleEditPage = () => {
     setValue,
     getValues,
     reset,
+    trigger,
     formState: { errors, isDirty },
   } = useForm<SaleFormValues>({
     resolver: zodResolver(saleSchema) as any,
@@ -128,7 +132,7 @@ export const SaleEditPage = () => {
         warehouse_id: itemsSource?.[0]?.warehouse_id,
         customer_id: data.customer_id,
         items: formattedItems?.length ? formattedItems : [],
-        payment_type_id: data.initial_payment_method_id || data.payment_type || undefined,
+        payment_type_id: data.initial_payment_method_id ?? data.payment_type ?? undefined,
         payment_amount: parseFloat(data.payment_amount) || parseFloat(data.paid_amount) || 0,
         paid_amount: parseFloat(data.paid_amount) || 0,
         invoice_discount: parseFloat(data.invoice_discount) || 0,
@@ -205,7 +209,7 @@ export const SaleEditPage = () => {
 
   // 3. Credit Sale Logic
   useEffect(() => {
-    if (payment_type_id === 0) {
+    if (payment_type_id === 0 || payment_type_id === '0') {
       setValue('paid_amount', 0)
     }
   }, [payment_type_id, setValue])
@@ -317,8 +321,13 @@ export const SaleEditPage = () => {
   const paymentTypeOptions = useMemo(() => {
     const rawData = paymentMethodsData as any
     const data = Array.isArray(rawData) ? rawData : rawData?.data || []
-    const options = data.map((p: any) => ({ value: p.id || p.head_code, label: p.text || p.head_name })) || []
-    return [{ value: 0, label: 'Credit Sale' }, ...options]
+    const options = data.map((p: any) => ({ value: p.id ?? p.head_code, label: p.text ?? p.head_name })) || []
+    
+    // Only add Credit Sale if id 0 doesn't already exist in the list
+    if (!options.some((opt: any) => opt.value === 0 || opt.value === '0')) {
+      return [{ value: 0, label: 'Credit Sale' }, ...options]
+    }
+    return options
   }, [paymentMethodsData])
 
   const updateItemCalculations = useCallback((index: number) => {
@@ -339,7 +348,20 @@ export const SaleEditPage = () => {
     setValue(`items.${index}.discount`, discount)
     setValue(`items.${index}.vat_amnt`, vatAmnt)
     setValue(`items.${index}.total_price`, totalPrice)
-  }, [getValues, setValue])
+    trigger('items')
+  }, [getValues, setValue, trigger])
+
+  const onInvalid = (errors: any) => {
+    console.error('Validation Errors:', errors);
+    setTimeout(() => {
+      const errorElement = document.querySelector('.text-rose-500, .border-rose-500, .text-rose-600');
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
+
+  const itemsErrorMessage = errors.items?.message || (errors.items as any)?.root?.message;
 
   if (isLoadingDetails) {
     return <LoadingState message="Loading sale details..." />
@@ -362,7 +384,7 @@ export const SaleEditPage = () => {
       </div>
 
       <div className="max-w-[1600px] mx-auto space-y-6">
-        <form id="sale-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form id="sale-form" onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
           
           {/* Row 1: Sales Header */}
           <div className="bg-white rounded-xl border border-primary/20 p-4 shadow-sm">
@@ -386,7 +408,7 @@ export const SaleEditPage = () => {
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Select warehouse"
-                      error={errors.warehouse_id?.message}
+                      error={errors.warehouse_id?.message as string}
                       menuPortalTarget={document.body}
                     />
                   )}
@@ -406,7 +428,7 @@ export const SaleEditPage = () => {
                       onChange={field.onChange}
                       onInputChange={(val) => setMerchantSearch(val)}
                       placeholder="Enter merchant name"
-                      error={errors.customer_id?.message}
+                      error={errors.customer_id?.message as string}
                       menuPortalTarget={document.body}
                     />
                   )}
@@ -493,15 +515,18 @@ export const SaleEditPage = () => {
                       updateCalculations={() => updateItemCalculations(index)}
                       currency={currency}
                       currencyPosition={currencyPosition}
+                      errors={errors}
+                      trigger={trigger}
+                      invoiceId={saleId}
                     />
                   ))}
                 </tbody>
               </table>
             </div>
-            {errors.items && !Array.isArray(errors.items) && (
+            {itemsErrorMessage && (
               <div className="p-4 bg-rose-50 text-rose-600 text-xs font-medium flex items-center gap-2">
                 <Info className="h-4 w-4" />
-                {errors.items.message}
+                {itemsErrorMessage}
               </div>
             )}
           </div>
@@ -516,10 +541,16 @@ export const SaleEditPage = () => {
                 </div>
                 <h2 className="text-[16px] font-medium text-[#1e293b]">Sale Details</h2>
               </div>
-              <textarea
-                {...register('details')}
-                placeholder="Enter special instructions or sale terms here..."
-                className="w-full flex-1 p-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all resize-none min-h-[300px]"
+              <Controller
+                control={control}
+                name="details"
+                render={({ field }) => (
+                  <RichEditor
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                    placeholder="Enter special instructions or sale terms here..."
+                  />
+                )}
               />
             </div>
 
@@ -570,11 +601,45 @@ export const SaleEditPage = () => {
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[12px] font-medium text-gray-500">Paid Amount ({currency})</label>
-                  <input type="number" {...register('paid_amount', { valueAsNumber: true })} disabled={payment_type_id === 0} className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-primary hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" placeholder="0.00" />
+                  <input 
+                    type="number" 
+                    {...register('paid_amount', { 
+                      valueAsNumber: true,
+                      onChange: (e: any) => {
+                        const val = parseFloat(e.target.value) || 0;
+                        const maxAllowed = totals.grandTotal;
+                        
+                        if (val > maxAllowed) {
+                          showNotificationModal(
+                            'Invalid Payment',
+                            `Paid amount (${formatValue(val)}) cannot exceed the invoice total (${formatValue(maxAllowed)}).`,
+                            'warning'
+                          );
+                          setValue('paid_amount', maxAllowed);
+                          trigger('paid_amount');
+                        }
+                      }
+                    })} 
+                    disabled={payment_type_id === 0 || payment_type_id === '0'} 
+                    className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-primary hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" 
+                    placeholder="0.00" 
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-[12px] font-medium text-gray-500">Payment Type</label>
-                  <Controller control={control} name="payment_type_id" render={({ field }) => ( <Select2 options={paymentTypeOptions} value={field.value} onChange={field.onChange} placeholder="Select payment type" menuPortalTarget={document.body} /> )} />
+                  <Controller control={control} name="payment_type_id" render={({ field }) => ( 
+                    <Select2 
+                      options={paymentTypeOptions} 
+                      value={field.value} 
+                      onChange={(val) => {
+                        field.onChange(val)
+                        trigger('payment_type_id')
+                      }} 
+                      placeholder="Select payment type" 
+                      error={errors.payment_type_id?.message as string}
+                      menuPortalTarget={document.body} 
+                    /> 
+                  )} />
                 </div>
                 <div className="pt-2">
                   <div className="bg-[#fffcfb] p-3 rounded-lg border border-rose-100 flex items-center justify-between">
@@ -599,8 +664,9 @@ export const SaleEditPage = () => {
   )
 }
 
-const ItemRow = ({ index, control, register, setValue, getValues, remove, canRemove, warehouseId, productSearch, setProductSearch, updateCalculations, currency, currencyPosition }: any) => {
+const ItemRow = ({ index, control, register, setValue, getValues, remove, canRemove, warehouseId, productSearch, setProductSearch, updateCalculations, currency, currencyPosition, errors, trigger, invoiceId }: any) => {
   const { data: productsData } = useProductsSearch(productSearch)
+  const showNotificationModal = useUiStore((state) => state.showNotificationModal)
   
   // Use useWatch for guaranteed reactivity of all row-level fields
   const watchProductId = useWatch({ control, name: `items.${index}.product_id` })
@@ -611,7 +677,7 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
   const avlQty = useWatch({ control, name: `items.${index}.avl_qty` })
   const unit = useWatch({ control, name: `items.${index}.unit` })
   
-  const { data: batchDataResponse } = useProductBatchInfo(watchProductId, warehouseId)
+  const { data: batchDataResponse } = useProductBatchInfo(watchProductId, warehouseId, invoiceId, 1)
 
   const productOptions = useMemo(() => {
     const rawData = productsData as any
@@ -624,33 +690,28 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
     return Object.values(batches).map((b: any) => ({ value: b.id, label: b.text })) || []
   }, [batchDataResponse])
 
-  const onProductChange = (val: any) => {
-    setValue(`items.${index}.product_id`, val)
-    setValue(`items.${index}.batch_master_id`, 0)
-    setValue(`items.${index}.avl_qty`, 0)
-    setValue(`items.${index}.unit`, '')
-    setValue(`items.${index}.rate`, 0)
+  const onProductChange = (val: any, fieldOnChange?: (v: any) => void) => {
+    fieldOnChange?.(val)
+    setValue(`items.${index}.product_id`, val, { shouldDirty: true })
+    setValue(`items.${index}.batch_master_id`, 0, { shouldDirty: true })
+    setValue(`items.${index}.avl_qty`, 0, { shouldDirty: true })
+    setValue(`items.${index}.unit`, '', { shouldDirty: true })
+    setValue(`items.${index}.rate`, 0, { shouldDirty: true })
     updateCalculations()
   }
 
-  const onBatchChange = (val: any) => {
-    setValue(`items.${index}.batch_master_id`, val)
+  const onBatchChange = (val: any, fieldOnChange?: (v: any) => void) => {
+    fieldOnChange?.(val)
+    setValue(`items.${index}.batch_master_id`, val, { shouldDirty: true })
     const batches = batchDataResponse?.data?.batchData || {}
     const selectedBatch = batches[val]
     if (selectedBatch) {
-      setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
-      setValue(`items.${index}.unit`, selectedBatch.unit || '')
-      setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
+      setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0, { shouldDirty: true })
+      setValue(`items.${index}.unit`, selectedBatch.unit || '', { shouldDirty: true })
+      setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0, { shouldDirty: true })
     }
     updateCalculations()
   }
-
-  const perPcsRate = useMemo(() => {
-    const r = Number(rate) || 0
-    const batches = batchDataResponse?.data?.batchData || {}
-    const noOfQty = Number(batches[batchId]?.no_of_qty) || 1
-    return r / noOfQty
-  }, [rate, batchId, batchDataResponse])
 
   // Automatically sync description, avl_qty and unit if they are missing but batch data is ready
   useEffect(() => {
@@ -664,16 +725,22 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
       }
 
       if (selectedBatch) {
-        if (!avlQty || !unit) {
-          setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
-          setValue(`items.${index}.unit`, selectedBatch.unit || '')
-        }
+        setValue(`items.${index}.avl_qty`, Number(selectedBatch.avl_qty) || 0)
+        setValue(`items.${index}.unit`, selectedBatch.unit || '')
         if (selectedBatch.price && !getValues(`items.${index}.rate`)) {
            setValue(`items.${index}.rate`, Number(selectedBatch.price) || 0)
+           trigger(`items.${index}.rate`)
         }
       }
     }
-  }, [batchDataResponse, batchId, avlQty, unit, index, setValue, getValues])
+  }, [batchDataResponse, batchId, index, setValue, getValues, trigger])
+
+  const perPcsRate = useMemo(() => {
+    const r = Number(rate) || 0
+    const batches = batchDataResponse?.data?.batchData || {}
+    const noOfQty = Number(batches[batchId]?.no_of_qty) || 1
+    return r / noOfQty
+  }, [rate, batchId, batchDataResponse])
 
   const rowTotalPrice = useMemo(() => {
     const q = Number(qty) || 0
@@ -684,10 +751,18 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
     return subtotal - discount
   }, [qty, rate, discPer])
 
+  const rowErrors = errors.items?.[index]
+
+  const handleQtyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['-', '.', 'e', 'E'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <tr className="bg-white hover:bg-gray-50/50 transition-colors">
       <td className="px-2 py-2 border-r border-primary/10">
-        <Controller control={control} name={`items.${index}.product_id`} render={({ field }) => ( <Select2 options={productOptions} value={field.value} onChange={onProductChange} onInputChange={(val) => setProductSearch(val)} placeholder="Select product" variant="ghost" className="font-medium text-[#1e293b]" isDisabled={!warehouseId} menuPortalTarget={document.body} /> )} />
+        <Controller control={control} name={`items.${index}.product_id`} render={({ field }) => ( <Select2 options={productOptions} value={field.value} onChange={(v) => onProductChange(v, field.onChange)} onInputChange={(val) => setProductSearch(val)} placeholder="Select product" variant="ghost" className="font-medium text-[#1e293b]" isDisabled={!warehouseId} error={rowErrors?.product_id?.message as string} menuPortalTarget={document.body} /> )} />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
         <input 
@@ -699,19 +774,61 @@ const ItemRow = ({ index, control, register, setValue, getValues, remove, canRem
         />
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <Controller control={control} name={`items.${index}.batch_master_id`} render={({ field }) => ( <Select2 options={batchOptions} value={field.value} onChange={onBatchChange} placeholder="Select Batch" variant="ghost" isDisabled={!watchProductId || !warehouseId} menuPortalTarget={document.body} /> )} />
+        <Controller control={control} name={`items.${index}.batch_master_id`} render={({ field }) => ( <Select2 options={batchOptions} value={field.value} onChange={(v) => onBatchChange(v, field.onChange)} placeholder="Select Batch" variant="ghost" isDisabled={!watchProductId || !warehouseId} error={rowErrors?.batch_master_id?.message as string} menuPortalTarget={document.body} /> )} />
       </td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{avlQty || '0.00'}</td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{unit || 'Unit'}</td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input type="number" {...register(`items.${index}.quantity`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]" />
+        <input 
+          type="number" 
+          min="1" 
+          step="1" 
+          onKeyDown={handleQtyKeyDown}
+          {...register(`items.${index}.quantity`, { 
+            valueAsNumber: true, 
+            onChange: (e: any) => {
+              const val = parseFloat(e.target.value) || 0;
+              const available = parseFloat(avlQty) || 0;
+              
+              if (val > available && available > 0) {
+                showNotificationModal(
+                  'Insufficient Stock',
+                  `The entered quantity (${val}) exceeds the available stock (${available}).`,
+                  'warning'
+                );
+                setValue(`items.${index}.quantity`, 1);
+                updateCalculations();
+                trigger(`items.${index}.quantity`);
+                return;
+              }
+
+              const cleanVal = Math.max(1, parseInt(e.target.value) || 1);
+              setValue(`items.${index}.quantity`, cleanVal);
+              updateCalculations(); 
+              trigger(`items.${index}.quantity`); 
+            } 
+          })} 
+          className={clsx("w-full text-center bg-white border rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]", rowErrors?.quantity ? "border-rose-500" : "border-gray-200")} 
+        />
+        {rowErrors?.quantity && <span className="text-[10px] text-rose-500 block text-center mt-0.5">{rowErrors.quantity.message as string}</span>}
       </td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input type="number" {...register(`items.${index}.rate`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]" />
+        <input 
+          type="number" 
+          {...register(`items.${index}.rate`, { 
+            valueAsNumber: true, 
+            onChange: () => {
+              updateCalculations();
+              trigger(`items.${index}.rate`);
+            } 
+          })} 
+          className={clsx("w-full text-center bg-white border rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]", rowErrors?.rate ? "border-rose-500" : "border-gray-200")} 
+        />
+        {rowErrors?.rate && <span className="text-[10px] text-rose-500 block text-center mt-0.5">{rowErrors.rate.message as string}</span>}
       </td>
       <td className="px-2 py-2 text-center text-[13px] text-[#94a3b8] font-medium bg-gray-50/30 border-r border-primary/10">{perPcsRate.toFixed(2)}</td>
       <td className="px-2 py-2 border-r border-primary/10">
-        <input type="number" {...register(`items.${index}.discount_per`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 outline-none text-[#1e293b]" />
+        <input type="number" {...register(`items.${index}.discount_per`, { valueAsNumber: true, onChange: () => updateCalculations() })} className="w-full text-center bg-white border border-gray-200 rounded-md py-1.5 text-[13px] font-medium focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all outline-none text-[#1e293b]" />
       </td>
       <td className="px-2 py-2 text-right text-[13px] font-medium text-[#475569] border-r border-primary/10">{formatCurrency(rowTotalPrice, currency, currencyPosition).replace(currency, '').trim()}</td>
       <td className="px-2 py-2 text-center">

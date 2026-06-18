@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as api from '../api/purchase.api'
 import { useUiStore } from '@/store/useUiStore'
+import { getErrorMessage } from '@/utils/errorHandlers'
 
 export const usePurchasesDatatable = (params: any) => {
   return useQuery({
@@ -17,12 +18,22 @@ export const useStorePurchase = () => {
     mutationFn: api.storePurchase,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['purchases-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['check-chalan-no'] })
+      queryClient.invalidateQueries({ queryKey: ['check-batch-no'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] }) // Invalidate all reports to ensure sync
       showNotificationModal(
         'Purchase Created!',
         res.message || 'New purchase has been recorded successfully.',
         'success'
       )
     },
+    onError: (error: any) => {
+      showNotificationModal(
+        'Submission Failed',
+        getErrorMessage(error, 'Failed to record purchase. Please try again.'),
+        'error'
+      )
+    }
   })
 }
 
@@ -35,12 +46,22 @@ export const useUpdatePurchase = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['purchases-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['purchase-details'] })
+      queryClient.invalidateQueries({ queryKey: ['check-chalan-no'] })
+      queryClient.invalidateQueries({ queryKey: ['check-batch-no'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] }) // Invalidate all reports to ensure sync
       showNotificationModal(
         'Purchase Updated!',
         res.message || 'Purchase details have been updated successfully.',
         'success'
       )
     },
+    onError: (error: any) => {
+      showNotificationModal(
+        'Update Failed',
+        getErrorMessage(error, 'Failed to update purchase. Please try again.'),
+        'error'
+      )
+    }
   })
 }
 
@@ -58,6 +79,13 @@ export const useDeletePurchase = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      showNotificationModal(
+        'Delete Failed',
+        getErrorMessage(error, 'Failed to delete purchase.'),
+        'error'
+      )
+    }
   })
 }
 
@@ -90,6 +118,8 @@ export const useCheckChalanNo = (chalanNo: string) => {
     queryKey: ['check-chalan-no', chalanNo],
     queryFn: () => api.checkChalanNo(chalanNo),
     enabled: !!chalanNo && chalanNo.length > 0,
+    staleTime: 0,
+    gcTime: 0,
   })
 }
 
@@ -98,6 +128,8 @@ export const useCheckBatchNo = (batchNo: string) => {
     queryKey: ['check-batch-no', batchNo],
     queryFn: () => api.checkBatchNo(batchNo),
     enabled: !!batchNo && batchNo.length > 0,
+    staleTime: 0,
+    gcTime: 0,
   })
 }
 
@@ -123,4 +155,3 @@ export const usePaymentMethodsSelect2 = () => {
     queryFn: () => api.getPaymentMethodsSelect2(),
   })
 }
-

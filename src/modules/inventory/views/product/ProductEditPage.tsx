@@ -23,6 +23,7 @@ import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { Select2 } from '@/components/Select/Select2'
 import { LoadingState } from '@/components/Loading/LoadingState'
+import { RichEditor } from '@/components/RichEditor/RichEditor'
 
 export const ProductEditPage = () => {
   const { id } = useParams({ from: '/_authenticated/inventory/product/edit/$id' })
@@ -209,6 +210,16 @@ export const ProductEditPage = () => {
     })
   }
 
+  const onInvalid = (errors: any) => {
+    console.error('Validation Errors:', errors);
+    setTimeout(() => {
+      const errorElement = document.querySelector('.text-rose-500, .border-rose-500, .text-rose-600');
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
+
   const handleDiscard = () => {
     if (isDirty) {
       setIsDiscardModalOpen(true)
@@ -234,13 +245,13 @@ export const ProductEditPage = () => {
             <span>Back</span>
           </Link>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
-            Edit Product: <span className="text-[#1e293b] font-bold">{product?.product_name}</span>
+            Edit Product: <span className="text-[#1e293b] font-medium">{product?.product_name}</span>
           </h1>
         </div>
       </div>
 
       <div className="max-w-[1600px] mx-auto">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column */}
             <div className="lg:col-span-8 space-y-6">
@@ -250,7 +261,7 @@ export const ProductEditPage = () => {
                   <div className="p-2 bg-primary/5 rounded-lg text-primary">
                     <Info className="h-5 w-5" />
                   </div>
-                  <h2 className="text-[16px] font-bold text-[#1e293b]">Basic Information</h2>
+                  <h2 className="text-[16px] font-medium text-[#1e293b]">Basic Information</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -270,7 +281,7 @@ export const ProductEditPage = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
-                      <label className="text-[13px] font-semibold text-[#475569]">Barcode/QR-code <span className="text-rose-500">*</span></label>
+                      <label className="text-[13px] font-semibold text-[#475569]">Barcode/QR-code</label>
                       <div className="relative">
                         <input
                           {...register('product_id')}
@@ -310,13 +321,14 @@ export const ProductEditPage = () => {
                               setValue('category_id', 0)
                             }}
                             placeholder="Select product category"
+                            error={errors.main_category_id?.message as string}
                           />
                         )}
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[13px] font-semibold text-[#475569]">Product Sub-Category <span className="text-rose-500">*</span></label>
+                      <label className="text-[13px] font-semibold text-[#475569]">Product Sub-Category</label>
                       <Controller
                         control={control}
                         name="category_id"
@@ -327,11 +339,10 @@ export const ProductEditPage = () => {
                             onChange={field.onChange}
                             placeholder="Select sub-category"
                             isDisabled={!mainCategoryId}
-                            className={errors.category_id ? "border-rose-500" : ""}
+                            error={errors.category_id?.message as string}
                           />
                         )}
                       />
-                      {errors.category_id && <span className="text-rose-500 text-[11px] font-medium">{errors.category_id.message}</span>}
                     </div>
 
                     <div className="space-y-1.5 md:col-span-2">
@@ -345,11 +356,10 @@ export const ProductEditPage = () => {
                             value={field.value}
                             onChange={field.onChange}
                             placeholder="Select Unit"
-                            className={errors.unit_id ? "border-rose-500" : ""}
+                            error={errors.unit_id?.message as string}
                           />
                         )}
                       />
-                      {errors.unit_id && <span className="text-rose-500 text-[11px] font-medium">{errors.unit_id.message}</span>}
                     </div>
                   </div>
                 </div>
@@ -361,7 +371,7 @@ export const ProductEditPage = () => {
                   <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                     <DollarSign className="h-5 w-5" />
                   </div>
-                  <h2 className="text-[16px] font-bold text-[#1e293b]">Pricing & Inventory</h2>
+                  <h2 className="text-[16px] font-medium text-[#1e293b]">Pricing & Inventory</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -395,7 +405,7 @@ export const ProductEditPage = () => {
                       step="0.01"
                       placeholder="0.00"
                       readOnly
-                      className="w-full h-[44px] px-4 bg-gray-50 border border-gray-200 rounded-lg text-[13px] outline-none font-bold text-right text-primary cursor-not-allowed"
+                      className="w-full h-[44px] px-4 bg-gray-50 border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-right text-primary cursor-not-allowed"
                     />
                   </div>
 
@@ -418,14 +428,15 @@ export const ProductEditPage = () => {
                   <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
                     <FileText className="h-5 w-5" />
                   </div>
-                  <h2 className="text-[16px] font-bold text-[#1e293b]">Product Details</h2>
+                  <h2 className="text-[16px] font-medium text-[#1e293b]">Product Details</h2>
                 </div>
-                <textarea
-                  {...register('product_details')}
-                  rows={6}
-                  placeholder="Select product category"
-                  className="w-full p-4 bg-white border border-gray-200 rounded-xl text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium resize-none"
-                />
+                <div className="flex-1 min-h-[200px]">
+                  <RichEditor
+                    value={watch('product_details') || ''}
+                    onChange={(val) => setValue('product_details', val, { shouldDirty: true })}
+                    placeholder="Enter detailed product description here..."
+                  />
+                </div>
               </div>
             </div>
 
@@ -437,7 +448,7 @@ export const ProductEditPage = () => {
                   <div className="p-2 bg-gray-50 rounded-lg text-gray-600">
                     <ImageIcon className="h-5 w-5" />
                   </div>
-                  <h2 className="text-[16px] font-bold text-[#1e293b]">Product Media</h2>
+                  <h2 className="text-[16px] font-medium text-[#1e293b]">Product Media</h2>
                 </div>
 
                 <div className="space-y-4">
@@ -458,7 +469,7 @@ export const ProductEditPage = () => {
                         <Upload className="h-6 w-6 text-gray-400 group-hover:text-primary transition-colors" />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[14px] font-bold text-[#1e293b]">Click or drag image to upload</p>
+                        <p className="text-[14px] font-medium text-[#1e293b]">Click or drag image to upload</p>
                         <p className="text-[12px] text-gray-400 font-medium">PNG, JPG or WEBP (Max. 2MB)</p>
                       </div>
                     </div>
@@ -474,7 +485,7 @@ export const ProductEditPage = () => {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[12px] font-bold text-[#1e293b] truncate">{fileName}</p>
+                        <p className="text-[12px] font-medium text-[#1e293b] truncate">{fileName}</p>
                         <div className="w-full h-1 bg-gray-200 rounded-full mt-1.5 overflow-hidden">
                           <div className="w-[100%] h-full bg-primary" />
                         </div>
@@ -496,7 +507,7 @@ export const ProductEditPage = () => {
                   <div className="p-2 bg-blue-50 rounded-lg text-[#1e293b]">
                     <Building2 className="h-5 w-5" />
                   </div>
-                  <h2 className="text-[16px] font-bold text-[#1e293b]">Vendor & Status</h2>
+                  <h2 className="text-[16px] font-medium text-[#1e293b]">Vendor & Status</h2>
                 </div>
 
                 <div className="space-y-6">
@@ -515,7 +526,7 @@ export const ProductEditPage = () => {
                         />
                       )}
                     />
-                    {errors.supplier_id && <span className="text-rose-500 text-[11px] font-medium">{errors.supplier_id.message}</span>}
+                    {errors.supplier_id && <span className="text-rose-500 text-[11px] font-medium">{errors.supplier_id.message as string}</span>}
                   </div>
 
                   <div className="space-y-3">
@@ -547,14 +558,14 @@ export const ProductEditPage = () => {
                 <button
                   type="button"
                   onClick={handleDiscard}
-                  className="flex-1 h-[44px] bg-white border border-gray-200 text-[#1e293b] font-bold rounded-lg hover:bg-gray-50 transition-all text-[14px] shadow-sm"
+                  className="flex-1 h-[44px] bg-white border border-gray-200 text-[#1e293b] font-medium rounded-lg hover:bg-gray-50 transition-all text-[14px] shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 h-[44px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-lg transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 text-[14px]"
+                  className="flex-1 h-[44px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-medium rounded-lg transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 text-[14px]"
                 >
                   {isSaving ? (
                     <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

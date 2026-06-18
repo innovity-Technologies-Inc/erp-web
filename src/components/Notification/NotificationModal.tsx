@@ -37,7 +37,7 @@ export const NotificationModal = () => {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-[#0f172a]/30 backdrop-blur-[4px] transition-opacity animate-in fade-in duration-300"
+        className="absolute inset-0 bg-[#1E3A5F]/30 backdrop-blur-[4px] transition-opacity animate-in fade-in duration-300"
         onClick={hideNotificationModal}
       />
       
@@ -65,7 +65,7 @@ export const NotificationModal = () => {
           {typeof title === 'string' ? title : JSON.stringify(title)}
         </h2>
         
-        <div className="text-[12px] font-medium text-[#64748b] leading-relaxed mb-10 max-w-[320px]">
+        <div className="text-[12px] font-medium text-[#64748b] leading-relaxed mb-10 max-w-[320px] whitespace-pre-line">
           {(() => {
             if (typeof message === 'string') return message;
             if (typeof message === 'object' && message !== null) {

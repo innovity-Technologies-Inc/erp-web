@@ -8,6 +8,7 @@ import {
   getVendorSelect2
 } from '../api/suppliers.api'
 import { useUiStore } from '@/store/useUiStore'
+import { getErrorMessage } from '@/utils/errorHandlers'
 
 export const useSuppliersDatatable = (params: any) => {
   return useQuery({
@@ -48,7 +49,7 @@ export const useCreateSupplier = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Creation Failed',
-        error.response?.data?.message || 'Failed to create vendor. Please try again.',
+        getErrorMessage(error, 'Failed to create vendor. Please try again.'),
         'error'
       )
     }
@@ -72,7 +73,7 @@ export const useUpdateSupplier = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Update Failed',
-        error.response?.data?.message || 'Failed to update vendor. Please try again.',
+        getErrorMessage(error, 'Failed to update vendor. Please try again.'),
         'error'
       )
     }
@@ -96,7 +97,7 @@ export const useDeleteSupplier = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Delete Failed',
-        error.response?.data?.message || 'Failed to delete vendor. Please try again.',
+        getErrorMessage(error, 'Failed to delete vendor. Please try again.'),
         'error'
       )
     }

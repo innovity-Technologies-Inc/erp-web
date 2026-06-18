@@ -30,6 +30,10 @@ export const useStoreUnit = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to add unit.'
+      showNotificationModal('Submission Failed', message, 'error')
+    }
   })
 }
 
@@ -48,6 +52,10 @@ export const useUpdateUnit = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to update unit.'
+      showNotificationModal('Update Failed', message, 'error')
+    }
   })
 }
 

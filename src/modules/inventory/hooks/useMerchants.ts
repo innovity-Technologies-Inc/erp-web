@@ -23,6 +23,10 @@ export const useStoreMerchant = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to add merchant.'
+      showNotificationModal('Submission Failed', message, 'error')
+    }
   })
 }
 
@@ -41,6 +45,10 @@ export const useUpdateMerchant = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to update merchant.'
+      showNotificationModal('Update Failed', message, 'error')
+    }
   })
 }
 

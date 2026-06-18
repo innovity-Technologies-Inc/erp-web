@@ -53,6 +53,10 @@ export const useStoreCategory = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to add category.'
+      showNotificationModal('Submission Failed', message, 'error')
+    }
   })
 }
 
@@ -71,6 +75,10 @@ export const useUpdateCategory = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to update category.'
+      showNotificationModal('Update Failed', message, 'error')
+    }
   })
 }
 

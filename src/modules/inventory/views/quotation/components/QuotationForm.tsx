@@ -221,7 +221,11 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
   }, [watchQuotDisService, updateServiceTotals])
 
   const handleDiscard = () => {
-    setIsDiscardModalOpen(true)
+    if (mode === 'create') {
+      setIsDiscardModalOpen(true)
+    } else {
+      navigate({ to: '/inventory/quotation' })
+    }
   }
 
   const toggleService = () => {
@@ -383,7 +387,7 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
                 onClick={() => {
                   saleFields.append({ product_id: '', batch_master_id: '', quantity: 1, rate: 0, discount_per: 0, discount: 0, vat_per: 0, vat_amnt: 0, total_price: 0, available_qty: 0, unit: '', description: '' })
                 }}
-                className="bg-[#0f2d5c] hover:bg-[#153a80] text-white px-5 py-2 rounded-lg flex items-center gap-2 h-10 text-[13px] font-medium transition-all shadow-sm"
+                className="bg-[#1B4D90] hover:bg-[#153a80] text-white px-5 py-2 rounded-lg flex items-center gap-2 h-10 text-[13px] font-medium transition-all shadow-sm"
               >
                 <Plus className="h-4 w-4" />
                 Add Row
@@ -507,7 +511,7 @@ export const QuotationForm = ({ initialData, onSubmit, isSubmitting, mode = 'cre
                           onClick={() => {
                               serviceFields.append({ service_id: '', qty: 1, charge: 0, discount: 0, discount_value: 0, vat: 0, vat_amnt: 0, total: 0 })
                           }}
-                          className="bg-[#0f2d5c] hover:bg-[#153a80] text-white px-5 py-2 rounded-lg flex items-center gap-2 h-10 text-[13px] font-medium transition-all shadow-sm"
+                          className="bg-[#1B4D90] hover:bg-[#153a80] text-white px-5 py-2 rounded-lg flex items-center gap-2 h-10 text-[13px] font-medium transition-all shadow-sm"
                       >
                           <Plus className="h-4 w-4" />
                           Add Row
@@ -799,7 +803,12 @@ const SaleItemRow = ({ index, control, register, setValue, getValues, remove, ap
         />
       </td>
       <td className="p-2 border-r border-primary/5">
-        <input {...register(`sale_items.${index}.description`)} className="w-full h-11 px-3 bg-white border border-gray-200 rounded-lg text-[13px] text-[#475569] outline-none font-medium placeholder:text-gray-300" placeholder="Desc" />
+        <input 
+          {...register(`sale_items.${index}.description`)} 
+          readOnly
+          className="w-full h-11 px-3 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-[#64748b] outline-none font-medium placeholder:text-gray-300 cursor-not-allowed" 
+          placeholder="Desc" 
+        />
       </td>
       <td className="p-2 border-r border-primary/5 min-w-[180px]">
         <Controller 

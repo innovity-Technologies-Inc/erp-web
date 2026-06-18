@@ -1,17 +1,18 @@
 import { useNavigate, useParams, Link } from '@tanstack/react-router'
+import { useMemo } from 'react'
 import { 
   ArrowLeft, 
   Printer, 
   Mail, 
   Phone, 
   MapPin, 
-  Globe,
-  Building2,
-  User,
-  ShieldCheck,
-  FileText,
-  Clock,
-  Calendar,
+  Globe, 
+  Building2, 
+  User, 
+  ShieldCheck, 
+  FileText, 
+  Clock, 
+  Calendar, 
   Hash
 } from 'lucide-react'
 import { usePurchaseData } from '../../hooks/usePurchases'
@@ -21,16 +22,32 @@ import { LoadingState } from '@/components/Loading/LoadingState'
 
 export const PurchaseViewPage = () => {
   const navigate = useNavigate()
-  // Use explicit from path to ensure ID is captured correctly
   const { id } = useParams({ from: '/_authenticated/inventory/purchase/view/$id' })
   const { currency, currencyPosition, companyInformation, webSetting } = useSettings()
 
   const purchaseId = id ? parseInt(id as string, 10) : null
   const { data: purchaseResponse, isLoading } = usePurchaseData(purchaseId)
   
-  const purchase = (purchaseResponse as any) || null
-  
-  // Helper for consistent formatting
+  const rawData = (purchaseResponse as any)?.data || purchaseResponse;
+  const purchase = rawData || null
+
+  const items = useMemo(() => {
+    if (!purchase) return [];
+    return Array.isArray(purchase.product_purchase_details || purchase.productPurchaseDetails || purchase.purchase_details || purchase.details) 
+      ? (purchase.product_purchase_details || purchase.productPurchaseDetails || purchase.purchase_details || purchase.details) 
+      : [];
+  }, [purchase]);
+
+  const { totalGross, totalDiscount, grandTotal, paidAmount, dueAmount } = useMemo(() => {
+    const gross = items.reduce((acc: number, item: any) => acc + (parseFloat(item.quantity || 0) * parseFloat(item.rate || 0)), 0);
+    const discount = parseFloat(String(purchase?.total_discount || purchase?.discount || 0));
+    const net = parseFloat(String(purchase?.grand_total || purchase?.total || purchase?.total_amount || (gross - discount)));
+    const paid = parseFloat(String(purchase?.paid_amount || purchase?.paid || 0));
+    const due = parseFloat(String(purchase?.due_amount || purchase?.due || (net - paid)));
+
+    return { totalGross: gross, totalDiscount: discount, grandTotal: net, paidAmount: paid, dueAmount: due };
+  }, [items, purchase]);
+
   const formatValue = (val: number | string) => formatCurrency(val, currency, currencyPosition)
 
   const handlePrint = () => {
@@ -41,7 +58,7 @@ export const PurchaseViewPage = () => {
     return <LoadingState message="Loading purchase details..." />
   }
 
-  if (!purchase) {
+  if (!purchase || (!purchase.id && !purchase.uuid)) {
     return (
       <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6 text-center">
         <div className="bg-white p-10 rounded-2xl border border-gray-200 shadow-sm max-w-md w-full">
@@ -61,14 +78,10 @@ export const PurchaseViewPage = () => {
     )
   }
 
-  const items = Array.isArray(purchase.product_purchase_details) ? purchase.product_purchase_details : [];
-
-  const paymentStatus = parseFloat(purchase.due_amount) <= 0 ? 'Paid' : 
-                       parseFloat(purchase.paid_amount) > 0 ? 'Partial' : 'Unpaid';
+  const paymentStatus = dueAmount <= 0 ? 'Paid' : paidAmount > 0 ? 'Partial' : 'Unpaid';
 
   return (
     <div className="min-h-screen font-poppins print:bg-white print:pb-0">
-      {/* Page Header - Standardized to match other pages */}
       <div className="flex items-center justify-between pb-6 print:hidden">
         <div className="flex items-center gap-4">
           <Link 
@@ -91,8 +104,6 @@ export const PurchaseViewPage = () => {
       </div>
 
       <div className="max-w-[1200px] mx-auto bg-white rounded-xl border border-gray-200 shadow-sm print:shadow-none print:border-none print:m-0 print:max-w-none mb-8">
-        
-        {/* Top Section: Logo & Meta */}
         <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 print:flex-row print:items-center print:p-4">
           <div>
             {webSetting?.logo_url || companyInformation?.logo_url ? (
@@ -122,9 +133,7 @@ export const PurchaseViewPage = () => {
           </div>
         </div>
 
-        {/* Billing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6 px-8 pb-6 print:px-4 print:pb-4 print:gap-4">
-          {/* Billing From (Vendor) */}
           <div className="relative p-4 bg-white rounded-xl border border-gray-200 print:break-inside-avoid print:p-3">
               <div className="flex justify-between items-start mb-4 print:mb-2">
                 <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 text-[10px] font-bold uppercase tracking-wider rounded-full">Supplier Details</span>
@@ -151,7 +160,6 @@ export const PurchaseViewPage = () => {
               </div>
           </div>
 
-          {/* Billing To (Company) */}
           <div className="relative p-4 bg-white rounded-xl border border-gray-200 print:break-inside-avoid print:p-3">
               <div className="flex justify-between items-start mb-4 print:mb-2">
                 <span className="inline-block px-3 py-1 bg-blue-100 text-[#1e4ba1] text-[10px] font-bold uppercase tracking-wider rounded-full">Purchased By</span>
@@ -179,7 +187,6 @@ export const PurchaseViewPage = () => {
           </div>
         </div>
 
-        {/* Ordered Products Section */}
         <div className="border-t border-gray-100 mx-8 py-4 print:mx-4 print:py-2">
             <div className="flex items-center justify-between mb-4 print:mb-2">
               <h3 className="text-[16px] font-semibold text-gray-900 print:text-[14px]">Purchased Items</h3>
@@ -227,13 +234,8 @@ export const PurchaseViewPage = () => {
             </div>
         </div>
 
-        {/* Bottom Section: Summary */}
         <div className="grid grid-cols-1 lg:grid-cols-12 print:grid-cols-12 gap-8 p-8 pt-2 print:gap-4 print:px-4 print:py-2 print:mt-2">
-          
-          {/* Left: Message & Status */}
           <div className="lg:col-span-8 print:col-span-7 space-y-6 print:space-y-3">
-              {/* Thank you message */}
-
               {purchase.purchase_details && (
                 <div className="p-5 bg-[#f8fafc] rounded-xl border border-gray-200 print:bg-[#f8fafc] print:p-3">
                     <div 
@@ -243,7 +245,6 @@ export const PurchaseViewPage = () => {
                 </div>
               )}
 
-              {/* Status Badges Row */}
               <div className="grid grid-cols-1 sm:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2">
                 <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
                   <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0 print:bg-blue-50 print:p-1.5">
@@ -271,13 +272,12 @@ export const PurchaseViewPage = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Batch No</span>
-                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">{purchase.product_purchase_details?.[0]?.batch_master?.batch_no || 'N/A'}</span>
+                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">{purchase.batch_no || items[0]?.batch_master?.batch_no || 'N/A'}</span>
                   </div>
                 </div>
               </div>
           </div>
 
-          {/* Right: Payment Summary */}
           <div className="lg:col-span-4 print:col-span-5 flex flex-col print:break-inside-avoid">
               <div className="bg-[#f8fafc] border border-gray-200 rounded-t-xl flex-grow print:bg-[#f8fafc]">
                 <h3 className="text-[16px] font-semibold text-[#1e4ba1] p-4 print:text-[14px] print:p-2">Payment Summary</h3>
@@ -285,35 +285,33 @@ export const PurchaseViewPage = () => {
                 <div className="space-y-3.5 bg-white text-[14px] p-4 print:text-[12px] print:p-2 print:space-y-1.5">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Total Gross:</span>
-                    <span className="text-gray-900 font-semibold">{formatValue(purchase.total_amount)}</span>
+                    <span className="text-gray-900 font-semibold">{formatValue(totalGross)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Total Discount:</span>
-                    <span className="text-rose-600 font-semibold">- {formatValue(purchase.total_discount)}</span>
+                    <span className="text-rose-600 font-semibold">- {formatValue(totalDiscount)}</span>
                   </div>
                   <div className="flex justify-between items-center pt-3 pb-3 border-t border-b border-gray-200 my-2 print:pt-1 print:pb-1 print:my-1">
                     <span className="text-gray-900 font-bold">Total Net Amount:</span>
-                    <span className="text-[16px] text-[#1e4ba1] font-bold print:text-[14px]">{formatValue(purchase.grand_total)}</span>
+                    <span className="text-[16px] text-[#1e4ba1] font-bold print:text-[14px]">{formatValue(grandTotal)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Paid Amount:</span>
-                    <span className="text-[#1e4ba1] font-semibold">{formatValue(purchase.paid_amount)}</span>
+                    <span className="text-[#1e4ba1] font-semibold">{formatValue(paidAmount)}</span>
                   </div>
                   
                   <div className="mt-4 p-4 bg-rose-50 rounded-lg border border-rose-100 flex items-center justify-between print:bg-rose-50 print:p-2 print:mt-1">
                     <span className="text-[14px] font-semibold text-rose-600 print:text-[12px]">Remaining Due:</span>
-                    <span className="text-[16px] font-bold text-rose-600 print:text-[14px]">{formatValue(purchase.due_amount)}</span>
+                    <span className="text-[16px] font-bold text-rose-600 print:text-[14px]">{formatValue(dueAmount)}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Net Balance Bottom Bar */}
               <div className="bg-[#0f2d5c] p-5 flex items-center justify-between text-white rounded-b-xl border border-[#0f2d5c] print:bg-[#0f2d5c] print:p-3">
                 <span className="text-[13px] font-bold tracking-wider print:text-[11px]">NET BALANCE</span>
-                <span className="text-[20px] font-bold print:text-[16px]">{formatValue(purchase.due_amount)}</span>
+                <span className="text-[20px] font-bold print:text-[16px]">{formatValue(dueAmount)}</span>
               </div>
           </div>
-          
         </div>
       </div>
 

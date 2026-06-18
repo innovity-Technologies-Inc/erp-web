@@ -169,7 +169,7 @@ const BatchCard = ({ index, control, register, removeBatch, fromWarehouseId, can
           <button
             type="button"
             onClick={appendBatch}
-            className="flex items-center gap-2 px-4 h-9 bg-[#1e293b] hover:bg-[#0f172a] text-white text-[13px] font-semibold rounded-lg transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 h-9 bg-[#1E3A5F] hover:bg-[#153a80] text-white text-[13px] font-semibold rounded-lg transition-all shadow-sm"
           >
             <Plus className="h-4 w-4" strokeWidth={3} />
             Add Batch

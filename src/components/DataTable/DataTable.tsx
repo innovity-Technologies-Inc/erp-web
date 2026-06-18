@@ -14,7 +14,8 @@ import {
   CustomEditorModule,
   ValidationModule,
   CellStyleModule,
-  CsvExportModule
+  CsvExportModule,
+  RowStyleModule
 } from 'ag-grid-community'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
@@ -29,7 +30,8 @@ ModuleRegistry.registerModules([
   CustomEditorModule,
   ValidationModule,
   CellStyleModule,
-  CsvExportModule
+  CsvExportModule,
+  RowStyleModule
 ])
 
 interface DataTableProps<T> {

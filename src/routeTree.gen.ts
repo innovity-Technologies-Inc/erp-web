@@ -31,11 +31,25 @@ import { Route as AuthenticatedInventoryServiceInvoiceCreateRouteImport } from '
 import { Route as AuthenticatedInventorySalesTermsRouteImport } from './routes/_authenticated/inventory/sales.terms'
 import { Route as AuthenticatedInventorySalesCreateRouteImport } from './routes/_authenticated/inventory/sales.create'
 import { Route as AuthenticatedInventorySalesContactUsRouteImport } from './routes/_authenticated/inventory/sales.contact-us'
+import { Route as AuthenticatedInventoryReportWarehouseWiseStockRouteImport } from './routes/_authenticated/inventory/report.warehouse-wise-stock'
+import { Route as AuthenticatedInventoryReportVendorWisePurchaseRouteImport } from './routes/_authenticated/inventory/report.vendor-wise-purchase'
+import { Route as AuthenticatedInventoryReportVendorReturnRouteImport } from './routes/_authenticated/inventory/report.vendor-return'
 import { Route as AuthenticatedInventoryReportUserWiseSalesRouteImport } from './routes/_authenticated/inventory/report.user-wise-sales'
+import { Route as AuthenticatedInventoryReportTodaysPurchaseRouteImport } from './routes/_authenticated/inventory/report.todays-purchase'
+import { Route as AuthenticatedInventoryReportTodaysMerchantReceiptRouteImport } from './routes/_authenticated/inventory/report.todays-merchant-receipt'
+import { Route as AuthenticatedInventoryReportStockMovementRouteImport } from './routes/_authenticated/inventory/report.stock-movement'
+import { Route as AuthenticatedInventoryReportStockRouteImport } from './routes/_authenticated/inventory/report.stock'
+import { Route as AuthenticatedInventoryReportShippingCostRouteImport } from './routes/_authenticated/inventory/report.shipping-cost'
+import { Route as AuthenticatedInventoryReportSalesReturnRouteImport } from './routes/_authenticated/inventory/report.sales-return'
 import { Route as AuthenticatedInventoryReportSalesRouteImport } from './routes/_authenticated/inventory/report.sales'
+import { Route as AuthenticatedInventoryReportSaleWiseProfitRouteImport } from './routes/_authenticated/inventory/report.sale-wise-profit'
 import { Route as AuthenticatedInventoryReportProductWiseSalesRouteImport } from './routes/_authenticated/inventory/report.product-wise-sales'
 import { Route as AuthenticatedInventoryReportMerchantWiseSalesRouteImport } from './routes/_authenticated/inventory/report.merchant-wise-sales'
+import { Route as AuthenticatedInventoryReportDueRouteImport } from './routes/_authenticated/inventory/report.due'
 import { Route as AuthenticatedInventoryReportCategoryWiseSalesRouteImport } from './routes/_authenticated/inventory/report.category-wise-sales'
+import { Route as AuthenticatedInventoryReportCategoryWisePurchaseRouteImport } from './routes/_authenticated/inventory/report.category-wise-purchase'
+import { Route as AuthenticatedInventoryReportCashClosingReportRouteImport } from './routes/_authenticated/inventory/report.cash-closing-report'
+import { Route as AuthenticatedInventoryReportCashClosingRouteImport } from './routes/_authenticated/inventory/report.cash-closing'
 import { Route as AuthenticatedInventoryQuotationCreateRouteImport } from './routes/_authenticated/inventory/quotation.create'
 import { Route as AuthenticatedInventoryPurchaseCreateRouteImport } from './routes/_authenticated/inventory/purchase.create'
 import { Route as AuthenticatedInventoryProductUnitRouteImport } from './routes/_authenticated/inventory/product.unit'
@@ -194,16 +208,76 @@ const AuthenticatedInventorySalesContactUsRoute =
     path: '/inventory/sales/contact-us',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryReportWarehouseWiseStockRoute =
+  AuthenticatedInventoryReportWarehouseWiseStockRouteImport.update({
+    id: '/inventory/report/warehouse-wise-stock',
+    path: '/inventory/report/warehouse-wise-stock',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportVendorWisePurchaseRoute =
+  AuthenticatedInventoryReportVendorWisePurchaseRouteImport.update({
+    id: '/inventory/report/vendor-wise-purchase',
+    path: '/inventory/report/vendor-wise-purchase',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportVendorReturnRoute =
+  AuthenticatedInventoryReportVendorReturnRouteImport.update({
+    id: '/inventory/report/vendor-return',
+    path: '/inventory/report/vendor-return',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryReportUserWiseSalesRoute =
   AuthenticatedInventoryReportUserWiseSalesRouteImport.update({
     id: '/inventory/report/user-wise-sales',
     path: '/inventory/report/user-wise-sales',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryReportTodaysPurchaseRoute =
+  AuthenticatedInventoryReportTodaysPurchaseRouteImport.update({
+    id: '/inventory/report/todays-purchase',
+    path: '/inventory/report/todays-purchase',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportTodaysMerchantReceiptRoute =
+  AuthenticatedInventoryReportTodaysMerchantReceiptRouteImport.update({
+    id: '/inventory/report/todays-merchant-receipt',
+    path: '/inventory/report/todays-merchant-receipt',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportStockMovementRoute =
+  AuthenticatedInventoryReportStockMovementRouteImport.update({
+    id: '/inventory/report/stock-movement',
+    path: '/inventory/report/stock-movement',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportStockRoute =
+  AuthenticatedInventoryReportStockRouteImport.update({
+    id: '/inventory/report/stock',
+    path: '/inventory/report/stock',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportShippingCostRoute =
+  AuthenticatedInventoryReportShippingCostRouteImport.update({
+    id: '/inventory/report/shipping-cost',
+    path: '/inventory/report/shipping-cost',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportSalesReturnRoute =
+  AuthenticatedInventoryReportSalesReturnRouteImport.update({
+    id: '/inventory/report/sales-return',
+    path: '/inventory/report/sales-return',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryReportSalesRoute =
   AuthenticatedInventoryReportSalesRouteImport.update({
     id: '/inventory/report/sales',
     path: '/inventory/report/sales',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportSaleWiseProfitRoute =
+  AuthenticatedInventoryReportSaleWiseProfitRouteImport.update({
+    id: '/inventory/report/sale-wise-profit',
+    path: '/inventory/report/sale-wise-profit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryReportProductWiseSalesRoute =
@@ -218,10 +292,34 @@ const AuthenticatedInventoryReportMerchantWiseSalesRoute =
     path: '/inventory/report/merchant-wise-sales',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryReportDueRoute =
+  AuthenticatedInventoryReportDueRouteImport.update({
+    id: '/inventory/report/due',
+    path: '/inventory/report/due',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryReportCategoryWiseSalesRoute =
   AuthenticatedInventoryReportCategoryWiseSalesRouteImport.update({
     id: '/inventory/report/category-wise-sales',
     path: '/inventory/report/category-wise-sales',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportCategoryWisePurchaseRoute =
+  AuthenticatedInventoryReportCategoryWisePurchaseRouteImport.update({
+    id: '/inventory/report/category-wise-purchase',
+    path: '/inventory/report/category-wise-purchase',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportCashClosingReportRoute =
+  AuthenticatedInventoryReportCashClosingReportRouteImport.update({
+    id: '/inventory/report/cash-closing-report',
+    path: '/inventory/report/cash-closing-report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedInventoryReportCashClosingRoute =
+  AuthenticatedInventoryReportCashClosingRouteImport.update({
+    id: '/inventory/report/cash-closing',
+    path: '/inventory/report/cash-closing',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryQuotationCreateRoute =
@@ -435,11 +533,25 @@ export interface FileRoutesByFullPath {
   '/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/inventory/report/cash-closing': typeof AuthenticatedInventoryReportCashClosingRoute
+  '/inventory/report/cash-closing-report': typeof AuthenticatedInventoryReportCashClosingReportRoute
+  '/inventory/report/category-wise-purchase': typeof AuthenticatedInventoryReportCategoryWisePurchaseRoute
   '/inventory/report/category-wise-sales': typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
+  '/inventory/report/due': typeof AuthenticatedInventoryReportDueRoute
   '/inventory/report/merchant-wise-sales': typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
   '/inventory/report/product-wise-sales': typeof AuthenticatedInventoryReportProductWiseSalesRoute
+  '/inventory/report/sale-wise-profit': typeof AuthenticatedInventoryReportSaleWiseProfitRoute
   '/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
+  '/inventory/report/sales-return': typeof AuthenticatedInventoryReportSalesReturnRoute
+  '/inventory/report/shipping-cost': typeof AuthenticatedInventoryReportShippingCostRoute
+  '/inventory/report/stock': typeof AuthenticatedInventoryReportStockRoute
+  '/inventory/report/stock-movement': typeof AuthenticatedInventoryReportStockMovementRoute
+  '/inventory/report/todays-merchant-receipt': typeof AuthenticatedInventoryReportTodaysMerchantReceiptRoute
+  '/inventory/report/todays-purchase': typeof AuthenticatedInventoryReportTodaysPurchaseRoute
   '/inventory/report/user-wise-sales': typeof AuthenticatedInventoryReportUserWiseSalesRoute
+  '/inventory/report/vendor-return': typeof AuthenticatedInventoryReportVendorReturnRoute
+  '/inventory/report/vendor-wise-purchase': typeof AuthenticatedInventoryReportVendorWisePurchaseRoute
+  '/inventory/report/warehouse-wise-stock': typeof AuthenticatedInventoryReportWarehouseWiseStockRoute
   '/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
   '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/inventory/sales/terms': typeof AuthenticatedInventorySalesTermsRoute
@@ -495,11 +607,25 @@ export interface FileRoutesByTo {
   '/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/inventory/report/cash-closing': typeof AuthenticatedInventoryReportCashClosingRoute
+  '/inventory/report/cash-closing-report': typeof AuthenticatedInventoryReportCashClosingReportRoute
+  '/inventory/report/category-wise-purchase': typeof AuthenticatedInventoryReportCategoryWisePurchaseRoute
   '/inventory/report/category-wise-sales': typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
+  '/inventory/report/due': typeof AuthenticatedInventoryReportDueRoute
   '/inventory/report/merchant-wise-sales': typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
   '/inventory/report/product-wise-sales': typeof AuthenticatedInventoryReportProductWiseSalesRoute
+  '/inventory/report/sale-wise-profit': typeof AuthenticatedInventoryReportSaleWiseProfitRoute
   '/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
+  '/inventory/report/sales-return': typeof AuthenticatedInventoryReportSalesReturnRoute
+  '/inventory/report/shipping-cost': typeof AuthenticatedInventoryReportShippingCostRoute
+  '/inventory/report/stock': typeof AuthenticatedInventoryReportStockRoute
+  '/inventory/report/stock-movement': typeof AuthenticatedInventoryReportStockMovementRoute
+  '/inventory/report/todays-merchant-receipt': typeof AuthenticatedInventoryReportTodaysMerchantReceiptRoute
+  '/inventory/report/todays-purchase': typeof AuthenticatedInventoryReportTodaysPurchaseRoute
   '/inventory/report/user-wise-sales': typeof AuthenticatedInventoryReportUserWiseSalesRoute
+  '/inventory/report/vendor-return': typeof AuthenticatedInventoryReportVendorReturnRoute
+  '/inventory/report/vendor-wise-purchase': typeof AuthenticatedInventoryReportVendorWisePurchaseRoute
+  '/inventory/report/warehouse-wise-stock': typeof AuthenticatedInventoryReportWarehouseWiseStockRoute
   '/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
   '/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/inventory/sales/terms': typeof AuthenticatedInventorySalesTermsRoute
@@ -558,11 +684,25 @@ export interface FileRoutesById {
   '/_authenticated/inventory/product/unit': typeof AuthenticatedInventoryProductUnitRoute
   '/_authenticated/inventory/purchase/create': typeof AuthenticatedInventoryPurchaseCreateRoute
   '/_authenticated/inventory/quotation/create': typeof AuthenticatedInventoryQuotationCreateRoute
+  '/_authenticated/inventory/report/cash-closing': typeof AuthenticatedInventoryReportCashClosingRoute
+  '/_authenticated/inventory/report/cash-closing-report': typeof AuthenticatedInventoryReportCashClosingReportRoute
+  '/_authenticated/inventory/report/category-wise-purchase': typeof AuthenticatedInventoryReportCategoryWisePurchaseRoute
   '/_authenticated/inventory/report/category-wise-sales': typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
+  '/_authenticated/inventory/report/due': typeof AuthenticatedInventoryReportDueRoute
   '/_authenticated/inventory/report/merchant-wise-sales': typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
   '/_authenticated/inventory/report/product-wise-sales': typeof AuthenticatedInventoryReportProductWiseSalesRoute
+  '/_authenticated/inventory/report/sale-wise-profit': typeof AuthenticatedInventoryReportSaleWiseProfitRoute
   '/_authenticated/inventory/report/sales': typeof AuthenticatedInventoryReportSalesRoute
+  '/_authenticated/inventory/report/sales-return': typeof AuthenticatedInventoryReportSalesReturnRoute
+  '/_authenticated/inventory/report/shipping-cost': typeof AuthenticatedInventoryReportShippingCostRoute
+  '/_authenticated/inventory/report/stock': typeof AuthenticatedInventoryReportStockRoute
+  '/_authenticated/inventory/report/stock-movement': typeof AuthenticatedInventoryReportStockMovementRoute
+  '/_authenticated/inventory/report/todays-merchant-receipt': typeof AuthenticatedInventoryReportTodaysMerchantReceiptRoute
+  '/_authenticated/inventory/report/todays-purchase': typeof AuthenticatedInventoryReportTodaysPurchaseRoute
   '/_authenticated/inventory/report/user-wise-sales': typeof AuthenticatedInventoryReportUserWiseSalesRoute
+  '/_authenticated/inventory/report/vendor-return': typeof AuthenticatedInventoryReportVendorReturnRoute
+  '/_authenticated/inventory/report/vendor-wise-purchase': typeof AuthenticatedInventoryReportVendorWisePurchaseRoute
+  '/_authenticated/inventory/report/warehouse-wise-stock': typeof AuthenticatedInventoryReportWarehouseWiseStockRoute
   '/_authenticated/inventory/sales/contact-us': typeof AuthenticatedInventorySalesContactUsRoute
   '/_authenticated/inventory/sales/create': typeof AuthenticatedInventorySalesCreateRoute
   '/_authenticated/inventory/sales/terms': typeof AuthenticatedInventorySalesTermsRoute
@@ -620,11 +760,25 @@ export interface FileRouteTypes {
     | '/inventory/product/unit'
     | '/inventory/purchase/create'
     | '/inventory/quotation/create'
+    | '/inventory/report/cash-closing'
+    | '/inventory/report/cash-closing-report'
+    | '/inventory/report/category-wise-purchase'
     | '/inventory/report/category-wise-sales'
+    | '/inventory/report/due'
     | '/inventory/report/merchant-wise-sales'
     | '/inventory/report/product-wise-sales'
+    | '/inventory/report/sale-wise-profit'
     | '/inventory/report/sales'
+    | '/inventory/report/sales-return'
+    | '/inventory/report/shipping-cost'
+    | '/inventory/report/stock'
+    | '/inventory/report/stock-movement'
+    | '/inventory/report/todays-merchant-receipt'
+    | '/inventory/report/todays-purchase'
     | '/inventory/report/user-wise-sales'
+    | '/inventory/report/vendor-return'
+    | '/inventory/report/vendor-wise-purchase'
+    | '/inventory/report/warehouse-wise-stock'
     | '/inventory/sales/contact-us'
     | '/inventory/sales/create'
     | '/inventory/sales/terms'
@@ -680,11 +834,25 @@ export interface FileRouteTypes {
     | '/inventory/product/unit'
     | '/inventory/purchase/create'
     | '/inventory/quotation/create'
+    | '/inventory/report/cash-closing'
+    | '/inventory/report/cash-closing-report'
+    | '/inventory/report/category-wise-purchase'
     | '/inventory/report/category-wise-sales'
+    | '/inventory/report/due'
     | '/inventory/report/merchant-wise-sales'
     | '/inventory/report/product-wise-sales'
+    | '/inventory/report/sale-wise-profit'
     | '/inventory/report/sales'
+    | '/inventory/report/sales-return'
+    | '/inventory/report/shipping-cost'
+    | '/inventory/report/stock'
+    | '/inventory/report/stock-movement'
+    | '/inventory/report/todays-merchant-receipt'
+    | '/inventory/report/todays-purchase'
     | '/inventory/report/user-wise-sales'
+    | '/inventory/report/vendor-return'
+    | '/inventory/report/vendor-wise-purchase'
+    | '/inventory/report/warehouse-wise-stock'
     | '/inventory/sales/contact-us'
     | '/inventory/sales/create'
     | '/inventory/sales/terms'
@@ -742,11 +910,25 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/product/unit'
     | '/_authenticated/inventory/purchase/create'
     | '/_authenticated/inventory/quotation/create'
+    | '/_authenticated/inventory/report/cash-closing'
+    | '/_authenticated/inventory/report/cash-closing-report'
+    | '/_authenticated/inventory/report/category-wise-purchase'
     | '/_authenticated/inventory/report/category-wise-sales'
+    | '/_authenticated/inventory/report/due'
     | '/_authenticated/inventory/report/merchant-wise-sales'
     | '/_authenticated/inventory/report/product-wise-sales'
+    | '/_authenticated/inventory/report/sale-wise-profit'
     | '/_authenticated/inventory/report/sales'
+    | '/_authenticated/inventory/report/sales-return'
+    | '/_authenticated/inventory/report/shipping-cost'
+    | '/_authenticated/inventory/report/stock'
+    | '/_authenticated/inventory/report/stock-movement'
+    | '/_authenticated/inventory/report/todays-merchant-receipt'
+    | '/_authenticated/inventory/report/todays-purchase'
     | '/_authenticated/inventory/report/user-wise-sales'
+    | '/_authenticated/inventory/report/vendor-return'
+    | '/_authenticated/inventory/report/vendor-wise-purchase'
+    | '/_authenticated/inventory/report/warehouse-wise-stock'
     | '/_authenticated/inventory/sales/contact-us'
     | '/_authenticated/inventory/sales/create'
     | '/_authenticated/inventory/sales/terms'
@@ -952,6 +1134,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventorySalesContactUsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/report/warehouse-wise-stock': {
+      id: '/_authenticated/inventory/report/warehouse-wise-stock'
+      path: '/inventory/report/warehouse-wise-stock'
+      fullPath: '/inventory/report/warehouse-wise-stock'
+      preLoaderRoute: typeof AuthenticatedInventoryReportWarehouseWiseStockRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/vendor-wise-purchase': {
+      id: '/_authenticated/inventory/report/vendor-wise-purchase'
+      path: '/inventory/report/vendor-wise-purchase'
+      fullPath: '/inventory/report/vendor-wise-purchase'
+      preLoaderRoute: typeof AuthenticatedInventoryReportVendorWisePurchaseRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/vendor-return': {
+      id: '/_authenticated/inventory/report/vendor-return'
+      path: '/inventory/report/vendor-return'
+      fullPath: '/inventory/report/vendor-return'
+      preLoaderRoute: typeof AuthenticatedInventoryReportVendorReturnRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/report/user-wise-sales': {
       id: '/_authenticated/inventory/report/user-wise-sales'
       path: '/inventory/report/user-wise-sales'
@@ -959,11 +1162,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryReportUserWiseSalesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/report/todays-purchase': {
+      id: '/_authenticated/inventory/report/todays-purchase'
+      path: '/inventory/report/todays-purchase'
+      fullPath: '/inventory/report/todays-purchase'
+      preLoaderRoute: typeof AuthenticatedInventoryReportTodaysPurchaseRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/todays-merchant-receipt': {
+      id: '/_authenticated/inventory/report/todays-merchant-receipt'
+      path: '/inventory/report/todays-merchant-receipt'
+      fullPath: '/inventory/report/todays-merchant-receipt'
+      preLoaderRoute: typeof AuthenticatedInventoryReportTodaysMerchantReceiptRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/stock-movement': {
+      id: '/_authenticated/inventory/report/stock-movement'
+      path: '/inventory/report/stock-movement'
+      fullPath: '/inventory/report/stock-movement'
+      preLoaderRoute: typeof AuthenticatedInventoryReportStockMovementRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/stock': {
+      id: '/_authenticated/inventory/report/stock'
+      path: '/inventory/report/stock'
+      fullPath: '/inventory/report/stock'
+      preLoaderRoute: typeof AuthenticatedInventoryReportStockRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/shipping-cost': {
+      id: '/_authenticated/inventory/report/shipping-cost'
+      path: '/inventory/report/shipping-cost'
+      fullPath: '/inventory/report/shipping-cost'
+      preLoaderRoute: typeof AuthenticatedInventoryReportShippingCostRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/sales-return': {
+      id: '/_authenticated/inventory/report/sales-return'
+      path: '/inventory/report/sales-return'
+      fullPath: '/inventory/report/sales-return'
+      preLoaderRoute: typeof AuthenticatedInventoryReportSalesReturnRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/report/sales': {
       id: '/_authenticated/inventory/report/sales'
       path: '/inventory/report/sales'
       fullPath: '/inventory/report/sales'
       preLoaderRoute: typeof AuthenticatedInventoryReportSalesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/sale-wise-profit': {
+      id: '/_authenticated/inventory/report/sale-wise-profit'
+      path: '/inventory/report/sale-wise-profit'
+      fullPath: '/inventory/report/sale-wise-profit'
+      preLoaderRoute: typeof AuthenticatedInventoryReportSaleWiseProfitRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/report/product-wise-sales': {
@@ -980,11 +1232,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryReportMerchantWiseSalesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/report/due': {
+      id: '/_authenticated/inventory/report/due'
+      path: '/inventory/report/due'
+      fullPath: '/inventory/report/due'
+      preLoaderRoute: typeof AuthenticatedInventoryReportDueRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/report/category-wise-sales': {
       id: '/_authenticated/inventory/report/category-wise-sales'
       path: '/inventory/report/category-wise-sales'
       fullPath: '/inventory/report/category-wise-sales'
       preLoaderRoute: typeof AuthenticatedInventoryReportCategoryWiseSalesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/category-wise-purchase': {
+      id: '/_authenticated/inventory/report/category-wise-purchase'
+      path: '/inventory/report/category-wise-purchase'
+      fullPath: '/inventory/report/category-wise-purchase'
+      preLoaderRoute: typeof AuthenticatedInventoryReportCategoryWisePurchaseRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/cash-closing-report': {
+      id: '/_authenticated/inventory/report/cash-closing-report'
+      path: '/inventory/report/cash-closing-report'
+      fullPath: '/inventory/report/cash-closing-report'
+      preLoaderRoute: typeof AuthenticatedInventoryReportCashClosingReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/inventory/report/cash-closing': {
+      id: '/_authenticated/inventory/report/cash-closing'
+      path: '/inventory/report/cash-closing'
+      fullPath: '/inventory/report/cash-closing'
+      preLoaderRoute: typeof AuthenticatedInventoryReportCashClosingRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/quotation/create': {
@@ -1259,11 +1539,25 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryProductUnitRoute: typeof AuthenticatedInventoryProductUnitRoute
   AuthenticatedInventoryPurchaseCreateRoute: typeof AuthenticatedInventoryPurchaseCreateRoute
   AuthenticatedInventoryQuotationCreateRoute: typeof AuthenticatedInventoryQuotationCreateRoute
+  AuthenticatedInventoryReportCashClosingRoute: typeof AuthenticatedInventoryReportCashClosingRoute
+  AuthenticatedInventoryReportCashClosingReportRoute: typeof AuthenticatedInventoryReportCashClosingReportRoute
+  AuthenticatedInventoryReportCategoryWisePurchaseRoute: typeof AuthenticatedInventoryReportCategoryWisePurchaseRoute
   AuthenticatedInventoryReportCategoryWiseSalesRoute: typeof AuthenticatedInventoryReportCategoryWiseSalesRoute
+  AuthenticatedInventoryReportDueRoute: typeof AuthenticatedInventoryReportDueRoute
   AuthenticatedInventoryReportMerchantWiseSalesRoute: typeof AuthenticatedInventoryReportMerchantWiseSalesRoute
   AuthenticatedInventoryReportProductWiseSalesRoute: typeof AuthenticatedInventoryReportProductWiseSalesRoute
+  AuthenticatedInventoryReportSaleWiseProfitRoute: typeof AuthenticatedInventoryReportSaleWiseProfitRoute
   AuthenticatedInventoryReportSalesRoute: typeof AuthenticatedInventoryReportSalesRoute
+  AuthenticatedInventoryReportSalesReturnRoute: typeof AuthenticatedInventoryReportSalesReturnRoute
+  AuthenticatedInventoryReportShippingCostRoute: typeof AuthenticatedInventoryReportShippingCostRoute
+  AuthenticatedInventoryReportStockRoute: typeof AuthenticatedInventoryReportStockRoute
+  AuthenticatedInventoryReportStockMovementRoute: typeof AuthenticatedInventoryReportStockMovementRoute
+  AuthenticatedInventoryReportTodaysMerchantReceiptRoute: typeof AuthenticatedInventoryReportTodaysMerchantReceiptRoute
+  AuthenticatedInventoryReportTodaysPurchaseRoute: typeof AuthenticatedInventoryReportTodaysPurchaseRoute
   AuthenticatedInventoryReportUserWiseSalesRoute: typeof AuthenticatedInventoryReportUserWiseSalesRoute
+  AuthenticatedInventoryReportVendorReturnRoute: typeof AuthenticatedInventoryReportVendorReturnRoute
+  AuthenticatedInventoryReportVendorWisePurchaseRoute: typeof AuthenticatedInventoryReportVendorWisePurchaseRoute
+  AuthenticatedInventoryReportWarehouseWiseStockRoute: typeof AuthenticatedInventoryReportWarehouseWiseStockRoute
   AuthenticatedInventorySalesContactUsRoute: typeof AuthenticatedInventorySalesContactUsRoute
   AuthenticatedInventorySalesCreateRoute: typeof AuthenticatedInventorySalesCreateRoute
   AuthenticatedInventorySalesTermsRoute: typeof AuthenticatedInventorySalesTermsRoute
@@ -1323,16 +1617,43 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryPurchaseCreateRoute,
   AuthenticatedInventoryQuotationCreateRoute:
     AuthenticatedInventoryQuotationCreateRoute,
+  AuthenticatedInventoryReportCashClosingRoute:
+    AuthenticatedInventoryReportCashClosingRoute,
+  AuthenticatedInventoryReportCashClosingReportRoute:
+    AuthenticatedInventoryReportCashClosingReportRoute,
+  AuthenticatedInventoryReportCategoryWisePurchaseRoute:
+    AuthenticatedInventoryReportCategoryWisePurchaseRoute,
   AuthenticatedInventoryReportCategoryWiseSalesRoute:
     AuthenticatedInventoryReportCategoryWiseSalesRoute,
+  AuthenticatedInventoryReportDueRoute: AuthenticatedInventoryReportDueRoute,
   AuthenticatedInventoryReportMerchantWiseSalesRoute:
     AuthenticatedInventoryReportMerchantWiseSalesRoute,
   AuthenticatedInventoryReportProductWiseSalesRoute:
     AuthenticatedInventoryReportProductWiseSalesRoute,
+  AuthenticatedInventoryReportSaleWiseProfitRoute:
+    AuthenticatedInventoryReportSaleWiseProfitRoute,
   AuthenticatedInventoryReportSalesRoute:
     AuthenticatedInventoryReportSalesRoute,
+  AuthenticatedInventoryReportSalesReturnRoute:
+    AuthenticatedInventoryReportSalesReturnRoute,
+  AuthenticatedInventoryReportShippingCostRoute:
+    AuthenticatedInventoryReportShippingCostRoute,
+  AuthenticatedInventoryReportStockRoute:
+    AuthenticatedInventoryReportStockRoute,
+  AuthenticatedInventoryReportStockMovementRoute:
+    AuthenticatedInventoryReportStockMovementRoute,
+  AuthenticatedInventoryReportTodaysMerchantReceiptRoute:
+    AuthenticatedInventoryReportTodaysMerchantReceiptRoute,
+  AuthenticatedInventoryReportTodaysPurchaseRoute:
+    AuthenticatedInventoryReportTodaysPurchaseRoute,
   AuthenticatedInventoryReportUserWiseSalesRoute:
     AuthenticatedInventoryReportUserWiseSalesRoute,
+  AuthenticatedInventoryReportVendorReturnRoute:
+    AuthenticatedInventoryReportVendorReturnRoute,
+  AuthenticatedInventoryReportVendorWisePurchaseRoute:
+    AuthenticatedInventoryReportVendorWisePurchaseRoute,
+  AuthenticatedInventoryReportWarehouseWiseStockRoute:
+    AuthenticatedInventoryReportWarehouseWiseStockRoute,
   AuthenticatedInventorySalesContactUsRoute:
     AuthenticatedInventorySalesContactUsRoute,
   AuthenticatedInventorySalesCreateRoute:

@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as api from '../api/products.api'
 import { useUiStore } from '@/store/useUiStore'
+import { apiClient } from '@/api/client'
+import type { ApiResponse } from '@/api/types'
 
 export const useProductsDatatable = (params: any) => {
   return useQuery({
@@ -23,6 +25,10 @@ export const useStoreProduct = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to add product.'
+      showNotificationModal('Submission Failed', message, 'error')
+    }
   })
 }
 
@@ -41,6 +47,10 @@ export const useUpdateProduct = () => {
         'success'
       )
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.message || error.message || 'Failed to update product.'
+      showNotificationModal('Update Failed', message, 'error')
+    }
   })
 }
 
@@ -67,6 +77,18 @@ export const useDeleteProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
     },
+  })
+}
+
+export const getProductsList = async (): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>('/inventory/products/list')
+  return response.data
+}
+
+export const useProductsList = () => {
+  return useQuery({
+    queryKey: ['products-list'],
+    queryFn: getProductsList,
   })
 }
 

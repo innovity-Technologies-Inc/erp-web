@@ -88,6 +88,7 @@ export const useStoreSupplierReturn = () => {
     onSuccess: (data, variables) => {
       showNotificationModal('Success', data.message || 'Vendor return successfully!', 'success')
       queryClient.invalidateQueries({ queryKey: ['supplier-returns'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] }) // Invalidate reports to ensure sync
       
       // Target specific purchase details for invalidation
       if (variables?.purchase_id) {
@@ -133,6 +134,7 @@ export const useStoreInvoiceReturn = () => {
     onSuccess: (data: ApiResponse<any>, variables) => {
       showNotificationModal('Success', data.message || 'Return/Exchange Successful!', 'success')
       queryClient.invalidateQueries({ queryKey: ['invoice-returns'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] }) // Invalidate reports to ensure sync
       
       // Target specific sale details for invalidation to update available quantities
       if (variables?.invoice_id) {

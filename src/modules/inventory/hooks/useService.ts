@@ -16,6 +16,7 @@ import {
   getServiceSelect2
 } from '../api/service.api'
 import { useUiStore } from '@/store/useUiStore'
+import { getErrorMessage } from '@/utils/errorHandlers'
 
 export {
   getService,
@@ -85,7 +86,7 @@ export const useCreateService = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Creation Failed',
-        error.response?.data?.message || 'Failed to add service. Please try again.',
+        getErrorMessage(error, 'Failed to add service. Please try again.'),
         'error'
       )
     }
@@ -109,7 +110,7 @@ export const useUpdateService = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Update Failed',
-        error.response?.data?.message || 'Failed to update service.',
+        getErrorMessage(error, 'Failed to update service.'),
         'error'
       )
     }
@@ -133,7 +134,7 @@ export const useDeleteService = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Delete Failed',
-        error.response?.data?.message || 'Failed to delete service. Please try again.',
+        getErrorMessage(error, 'Failed to delete service. Please try again.'),
         'error'
       )
     }
@@ -173,7 +174,7 @@ export const useCreateServiceInvoice = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Creation Failed',
-        error.response?.data?.message || 'Failed to create invoice.',
+        getErrorMessage(error, 'Failed to create invoice.'),
         'error'
       )
     }
@@ -197,7 +198,7 @@ export const useUpdateServiceInvoice = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Update Failed',
-        error.response?.data?.message || 'Failed to update invoice.',
+        getErrorMessage(error, 'Failed to update invoice.'),
         'error'
       )
     }
@@ -221,7 +222,7 @@ export const useDeleteServiceInvoice = () => {
     onError: (error: any) => {
       showNotificationModal(
         'Delete Failed',
-        error.response?.data?.message || 'Failed to delete invoice. Please try again.',
+        getErrorMessage(error, 'Failed to delete invoice. Please try again.'),
         'error'
       )
     }

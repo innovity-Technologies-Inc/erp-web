@@ -60,7 +60,10 @@ const WarehouseRow = ({
   removeWarehouse,
   appendWarehouse,
   isLast,
-  hasMultiple
+  hasMultiple,
+  errors,
+  trigger,
+  setValue
 }: {
   control: any;
   index: number;
@@ -73,6 +76,9 @@ const WarehouseRow = ({
   appendWarehouse: (data: any) => void;
   isLast: boolean;
   hasMultiple: boolean;
+  errors: any;
+  trigger: any;
+  setValue: any;
 }) => {
   const warehouseId = useWatch({
     control,
@@ -87,6 +93,14 @@ const WarehouseRow = ({
     );
   }, [warehouseOptions, allSelectedWarehouses, warehouseId]);
 
+  const rowErrors = errors?.items?.[index]?.warehouses?.[wIndex];
+
+  const handleQtyKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['-', '.', 'e', 'E'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="grid grid-cols-12 gap-4 items-center px-2">
       <div className="col-span-6">
@@ -97,9 +111,13 @@ const WarehouseRow = ({
             <Select2
               options={filteredOptions}
               value={field.value}
-              onChange={field.onChange}
+              onChange={(val) => {
+                field.onChange(val)
+                trigger(`items.${index}.warehouses.${wIndex}.warehouse_id`)
+              }}
               placeholder="Select warehouse"
               className="bg-white"
+              error={rowErrors?.warehouse_id?.message as string}
             />
           )}
         />
@@ -112,10 +130,23 @@ const WarehouseRow = ({
       <div className="col-span-2">
         <input 
           type="number" 
-          step="0.01" 
-          {...register(`items.${index}.warehouses.${wIndex}.quantity`)} 
-          className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] text-center font-bold outline-none focus:ring-1 focus:ring-primary/30" 
+          min="1"
+          step="1" 
+          onKeyDown={handleQtyKeyDown}
+          {...register(`items.${index}.warehouses.${wIndex}.quantity`, {
+            valueAsNumber: true,
+            onChange: (e: any) => {
+              const val = Math.max(1, parseInt(e.target.value) || 1);
+              setValue(`items.${index}.warehouses.${wIndex}.quantity`, val);
+              trigger(`items.${index}.warehouses.${wIndex}.quantity`);
+            }
+          })} 
+          className={clsx(
+            "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] text-center font-bold outline-none transition-all",
+            rowErrors?.quantity ? "border-rose-500 focus:ring-rose-500/10" : "border-gray-200 focus:ring-1 focus:ring-primary/30"
+          )}
         />
+        {rowErrors?.quantity && <span className="text-rose-500 text-[10px] font-medium block text-center mt-0.5">{rowErrors.quantity.message}</span>}
       </div>
       <div className="col-span-2 flex justify-center gap-2">
         {hasMultiple && (
@@ -143,8 +174,10 @@ const WarehouseRow = ({
 
 // --- Nested ItemRow Component ---
 const PurchaseItemRow = ({ 
-  control, register, index, remove, supplierId, setValue, errors, warehouses, allSelectedItems, purchaseId 
-}: any) => {
+  control, register, index, remove, supplierId, setValue, errors, warehouses, allSelectedItems, purchaseId, trigger
+}: { 
+  control: any, register: any, index: number, remove: () => void, supplierId: number, setValue: any, errors: any, warehouses: any[], allSelectedItems: number[], purchaseId?: number, trigger: any
+}) => {
   const [isExpanded, setIsExpanded] = useState(true)
   const { showNotificationModal } = useUiStore()
   const isInitialRef = useRef(true)
@@ -188,10 +221,11 @@ const PurchaseItemRow = ({
       // or if the user explicitly changed the itemId
       if (!isInitialRef.current) {
          setValue(`items.${index}.rate`, productData.supplier_price || 0)
+         trigger(`items.${index}.rate`)
       }
       isInitialRef.current = false;
     }
-  }, [productData, setValue, index])
+  }, [productData, setValue, index, trigger])
 
   const stock = productData?.total_product || 0;
 
@@ -221,8 +255,12 @@ const PurchaseItemRow = ({
       return;
     }
     setValue(`items.${index}.item_id`, val);
-    setValue(`items.${index}.rate`, 0); // Explicitly reset rate so we know it's a new item
+    setValue(`items.${index}.rate`, 0); 
+    trigger(`items.${index}.item_id`);
+    trigger('items');
   };
+
+  const rowErrors = errors?.items?.[index];
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
@@ -259,7 +297,7 @@ const PurchaseItemRow = ({
                   onChange={handleItemChange}
                   placeholder="Select"
                   isDisabled={!supplierId}
-                  className={errors?.items?.[index]?.item_id ? "border-rose-500" : ""}
+                  error={rowErrors?.item_id?.message as string}
                 />
               )}
             />
@@ -279,7 +317,21 @@ const PurchaseItemRow = ({
 
           <div className="space-y-1.5">
             <label className="text-[12px] font-bold text-[#475569] uppercase tracking-wider">Rate ($) <span className="text-rose-500">*</span></label>
-            <input type="number" step="0.01" {...register(`items.${index}.rate`)} className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 text-center font-medium" placeholder="0.00" />
+            <input 
+              type="number" 
+              step="0.01" 
+              {...register(`items.${index}.rate`, {
+                onChange: () => {
+                  trigger(`items.${index}.rate`)
+                }
+              })} 
+              className={clsx(
+                "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none transition-all text-center font-medium",
+                rowErrors?.rate ? "border-rose-500 focus:ring-rose-500/10" : "border-gray-200 focus:ring-1 focus:ring-primary/30"
+              )} 
+              placeholder="0.00" 
+            />
+            {rowErrors?.rate && <span className="text-rose-500 text-[10px] font-medium block text-center mt-0.5">{rowErrors.rate.message}</span>}
           </div>
 
           <div className="space-y-1.5">
@@ -326,6 +378,9 @@ const PurchaseItemRow = ({
                 appendWarehouse={appendWarehouse}
                 isLast={wIndex === warehouseFields.length - 1}
                 hasMultiple={warehouseFields.length > 1}
+                errors={errors}
+                trigger={trigger}
+                setValue={setValue}
               />
             ))}
           </div>
@@ -334,6 +389,7 @@ const PurchaseItemRow = ({
     </div>
   )
 }
+
 export const PurchaseEditPage = () => {
   const { id } = useParams({ from: '/_authenticated/inventory/purchase/edit/$id' })
   const navigate = useNavigate()
@@ -421,7 +477,7 @@ export const PurchaseEditPage = () => {
     }
   }, [purchase]);
 
-  const { register, control, handleSubmit, watch, setValue, getValues, formState: { errors, isDirty } } = useForm<PurchaseFormValues>({
+  const { register, control, handleSubmit, watch, setValue, trigger, formState: { errors, isDirty } } = useForm<PurchaseFormValues>({
     resolver: zodResolver(purchaseSchema) as any,
     values: formValues as any, // Reactive form values
     defaultValues: {
@@ -433,7 +489,7 @@ export const PurchaseEditPage = () => {
   const supplierId = watch('supplier_id')
   const purchaseDiscount = watch('purchase_discount') || 0
   const paidAmount = watch('paid_amount') || 0
-  const items = watch('items')
+  const items = useWatch({ control, name: 'items' })
   const chalanNo = watch('chalan_no')
   const batchNo = watch('batch_no')
   const invoiceFile = watch('invoice_file')
@@ -525,16 +581,26 @@ export const PurchaseEditPage = () => {
 
     let flatIndex = 0;
     data.items.forEach((item) => {
+      const itemRate = parseFloat(String(item.rate)) || 0;
+      const itemDiscountPercent = parseFloat(String(item.discount_percent)) || 0;
+
       item.warehouses.forEach((w) => {
+        const rowQty = Number(w.quantity) || 0;
+        
+        // Calculate proportionate values for this specific warehouse row
+        const rowSubtotal = rowQty * itemRate;
+        const rowDiscountValue = rowSubtotal * (itemDiscountPercent / 100);
+        const rowTotal = rowSubtotal - rowDiscountValue;
+
         formData.append(`items[${flatIndex}][item_id]`, String(item.item_id))
         formData.append(`items[${flatIndex}][warehouse_id]`, String(w.warehouse_id))
         formData.append(`items[${flatIndex}][batch_no]`, data.batch_no)
-        formData.append(`items[${flatIndex}][quantity]`, String(w.quantity))
-        formData.append(`items[${flatIndex}][rate]`, String(item.rate))
+        formData.append(`items[${flatIndex}][quantity]`, String(rowQty))
+        formData.append(`items[${flatIndex}][rate]`, String(itemRate))
         if (item.expiry_date) formData.append(`items[${flatIndex}][expiry_date]`, item.expiry_date)
-        formData.append(`items[${flatIndex}][discount_percent]`, String(item.discount_percent))
-        formData.append(`items[${flatIndex}][discount_value]`, String(item.discount_value))
-        formData.append(`items[${flatIndex}][total]`, String(item.total))
+        formData.append(`items[${flatIndex}][discount_percent]`, String(itemDiscountPercent))
+        formData.append(`items[${flatIndex}][discount_value]`, rowDiscountValue.toFixed(2))
+        formData.append(`items[${flatIndex}][total]`, rowTotal.toFixed(2))
         flatIndex++;
       })
     })
@@ -542,6 +608,16 @@ export const PurchaseEditPage = () => {
     updatePurchase({ id, data: formData }, {
       onSuccess: () => navigate({ to: '/inventory/purchase' })
     })
+  }
+
+  const onInvalid = (errors: any) => {
+    console.error('Validation Errors:', errors);
+    setTimeout(() => {
+      const errorElement = document.querySelector('.text-rose-500, .border-rose-500, .text-rose-600');
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   }
 
   const handleDiscard = () => {
@@ -573,7 +649,7 @@ export const PurchaseEditPage = () => {
       <div className="max-w-[1600px] mx-auto">
         <form 
           key={rawData?.id || 'loading'}
-          onSubmit={handleSubmit(onSubmit)} 
+          onSubmit={handleSubmit(onSubmit, onInvalid)} 
           className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
         >
           
@@ -590,13 +666,13 @@ export const PurchaseEditPage = () => {
                     <Select2 options={vendorOptions} value={field.value} onChange={(val) => {
                       field.onChange(val);
                       setValue('items', [{ item_id: undefined as any, rate: 0, discount_percent: 0, discount_value: 0, total: 0, warehouses: [{ warehouse_id: undefined as any, quantity: 1 }] }]);
-                    }} placeholder="Select vendor" className={errors.supplier_id ? "border-rose-500" : ""} />
+                    }} placeholder="Select vendor" error={errors.supplier_id?.message as string} />
                   )} />
-                  {errors.supplier_id && <span className="text-rose-500 text-[11px] font-medium">{errors.supplier_id.message}</span>}
                 </div>
                 <div className="md:col-span-6 space-y-1.5">
                   <label className="text-[13px] font-semibold text-[#475569]">Purchase Date <span className="text-rose-500">*</span></label>
-                  <input type="date" {...register('purchase_date')} className={clsx("w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none focus:border-primary", errors.purchase_date ? "border-rose-500" : "border-gray-200")} />
+                  <input type="date" {...register('purchase_date')} className={clsx("w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none focus:border-primary transition-all", errors.purchase_date ? "border-rose-500 focus:ring-rose-500/10" : "border-gray-200 focus:ring-1 focus:ring-primary/30")} />
+                  {errors.purchase_date && <span className="text-rose-500 text-[11px] font-medium">{errors.purchase_date.message}</span>}
                 </div>
 
                 <div className="md:col-span-4 space-y-1.5">
@@ -607,10 +683,11 @@ export const PurchaseEditPage = () => {
                       {...register('chalan_no')} 
                       placeholder="Enter chalan number" 
                       className={clsx(
-                        "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none focus:border-primary", 
-                        errors.chalan_no || (chalanNo !== rawData?.chalan_no && chalanCheck?.chalan_no) ? "border-rose-500" : "border-gray-200"
+                        "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none transition-all", 
+                        errors.chalan_no || (chalanNo !== rawData?.chalan_no && chalanCheck?.chalan_no) ? "border-rose-500 focus:ring-rose-500/10" : "border-gray-200 focus:ring-1 focus:ring-primary/30 focus:border-primary"
                       )} 
                     />
+                    {errors.chalan_no && <span className="text-rose-500 text-[11px] font-medium">{errors.chalan_no.message}</span>}
                     {chalanNo !== rawData?.chalan_no && chalanCheck?.chalan_no && (
                       <div className="absolute -bottom-5 left-0 text-[11px] text-rose-500 font-bold flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" /> Chalan No Already Exists!
@@ -626,10 +703,11 @@ export const PurchaseEditPage = () => {
                       {...register('batch_no')} 
                       placeholder="Enter batch number" 
                       className={clsx(
-                        "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none focus:border-primary",
-                        errors.batch_no || (batchNo !== currentBatchNo && batchCheck?.batch_no) ? "border-rose-500" : "border-gray-200"
+                        "w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] outline-none transition-all",
+                        errors.batch_no || (batchNo !== currentBatchNo && batchCheck?.batch_no) ? "border-rose-500 focus:ring-rose-500/10" : "border-gray-200 focus:ring-1 focus:ring-primary/30 focus:border-primary"
                       )} 
                     />
+                    {errors.batch_no && <span className="text-rose-500 text-[11px] font-medium">{errors.batch_no.message}</span>}
                     {batchNo !== currentBatchNo && batchCheck?.batch_no && (
                       <div className="absolute -bottom-5 left-0 text-[11px] text-rose-500 font-bold flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" /> Batch No Already Exists!
@@ -683,7 +761,7 @@ export const PurchaseEditPage = () => {
                   <h2 className="text-[16px] font-bold text-[#1e293b]">Item Details</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => appendItem({ item_id: undefined as any, rate: 0, discount_percent: 0, discount_value: 0, total: 0, warehouses: [{ warehouse_id: undefined as any, quantity: 1 }] })} className="px-4 py-2 bg-[#1e293b] text-white text-[13px] font-semibold rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2 shadow-sm">
+                  <button type="button" onClick={() => appendItem({ item_id: undefined as any, rate: 0, discount_percent: 0, discount_value: 0, total: 0, warehouses: [{ warehouse_id: undefined as any, quantity: 1 }] })} className="px-4 py-2 bg-[#1B4D90] text-white text-[13px] font-semibold rounded-lg hover:bg-[#153a80] transition-colors flex items-center gap-2 shadow-sm">
                     <Plus className="h-4 w-4" /> Add Item
                   </button>
                   <button type="button" onClick={() => setValue('items', [])} className="p-2 bg-rose-50 text-rose-500 rounded-lg border border-rose-100">
@@ -708,11 +786,11 @@ export const PurchaseEditPage = () => {
                        remove={() => removeItem(index)}
                        supplierId={supplierId}
                        setValue={setValue}
-                       getValues={getValues}
                        errors={errors}
                        warehouses={warehouses}
                        allSelectedItems={allSelectedItems}
                        purchaseId={(purchase as any)?.id ? Number((purchase as any).id) : undefined}
+                       trigger={trigger}
                     />
                  ))}
                  
@@ -747,7 +825,7 @@ export const PurchaseEditPage = () => {
           </div>
 
           <div className="lg:col-span-3 flex flex-col gap-6 sticky top-6">
-            <div className="bg-primary rounded-xl p-4 shadow-lg text-white">
+            <div className="bg-[#1B4D90] rounded-xl p-4 shadow-lg text-white">
                <h3 className="text-[16px] font-bold mb-6 opacity-90">Payment Summary</h3>
                <div className="space-y-4 mb-6 text-[14px]">
                  <div className="flex justify-between items-center text-[15px]">
@@ -781,13 +859,32 @@ export const PurchaseEditPage = () => {
                </div>
                <div className="space-y-1.5">
                   <label className="text-[13px] font-semibold text-[#475569]">Paid Amount ({currencyPosition === '0' ? currency : ''} {currencyPosition === '1' ? currency : ''})</label>
-                  <input type="number" step="0.01" {...register('paid_amount')} className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:border-primary text-right font-medium" />
+                  <input 
+                    type="number" 
+                    step="0.01" 
+                    {...register('paid_amount', {
+                      valueAsNumber: true,
+                      onChange: (e: any) => {
+                        const val = parseFloat(e.target.value) || 0;
+                        if (val > grandTotal) {
+                          showNotificationModal(
+                            'Invalid Payment',
+                            `Paid amount (${formatCurrency(val, currency, currencyPosition)}) cannot exceed the grand total (${formatCurrency(grandTotal, currency, currencyPosition)}).`,
+                            'warning'
+                          );
+                          setValue('paid_amount', grandTotal);
+                          trigger('paid_amount');
+                        }
+                      }
+                    })} 
+                    className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:border-primary text-right font-medium" 
+                  />
                </div>
                <div className="space-y-1.5">
                   <label className="text-[13px] font-semibold text-[#475569]">Payment Type</label>
-                  <span className="text-[11px] text-rose-500 font-medium">* Select Payment Method</span>
+                  <span className="text-[11px] text-rose-500 font-medium">*</span>
                   <Controller control={control} name="payment_type_id" render={({ field }) => (
-                    <Select2 options={paymentMethodOptions} value={field.value} onChange={field.onChange} placeholder="Select payment type" />
+                    <Select2 options={paymentMethodOptions} value={field.value} onChange={(val) => { field.onChange(val); trigger('payment_type_id'); }} placeholder="Select payment type" error={errors.payment_type_id?.message as string} />
                   )} />
                </div>
                <div className="pt-4 mt-2 border-t border-gray-100">
@@ -802,7 +899,7 @@ export const PurchaseEditPage = () => {
                <button type="button" onClick={handleDiscard} className="flex-1 h-[48px] bg-white border border-gray-200 text-[#1e293b] font-bold rounded-xl hover:bg-gray-50 transition-all text-[15px] shadow-sm">
                  Cancel
                </button>
-               <button type="button" onClick={handleSubmit(onSubmit)} disabled={isPending} className="flex-1 h-[48px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[15px]">
+               <button type="button" onClick={handleSubmit(onSubmit, onInvalid)} disabled={isPending} className="flex-1 h-[48px] bg-[#0d7a50] hover:bg-[#0a6642] text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50 text-[15px]">
                  {isPending ? (
                    <div className="h-5 w-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
                  ) : (

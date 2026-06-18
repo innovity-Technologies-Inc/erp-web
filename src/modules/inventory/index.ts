@@ -199,3 +199,6 @@ export { MerchantWiseSalesReportPage } from './views/reports/MerchantWiseSalesRe
 export { UserWiseSalesReportPage } from './views/reports/UserWiseSalesReportPage'
 export { ProductWiseSalesReportPage } from './views/reports/ProductWiseSalesReportPage'
 export { CategoryWiseSalesReportPage } from './views/reports/CategoryWiseSalesReportPage'
+export { InvoiceWiseDueReportPage } from './views/reports/InvoiceWiseDueReportPage'
+export { ShippingCostReportPage } from './views/reports/ShippingCostReportPage'
+export { SaleWiseProfitReportPage } from './views/reports/SaleWiseProfitReportPage'

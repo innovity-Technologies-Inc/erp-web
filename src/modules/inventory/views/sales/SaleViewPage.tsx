@@ -223,9 +223,9 @@ export const SaleViewPage = () => {
                             <span className="text-[11px] text-gray-400 font-medium print:text-[9px]">SKU: {item.product?.sku || 'BP-' + item.product_id}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-gray-700 font-medium print:px-2 print:py-2">{item.warehouse?.warehouse_name || 'MD/VA'}</td>
+                        <td className="px-4 py-4 text-gray-700 font-medium print:px-2 print:py-2">{item.warehouse?.warehouse_name || item.warehouse?.name || 'N/A'}</td>
                         <td className="px-4 py-4 print:px-2 print:py-2">
-                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-md print:bg-gray-100 print:text-[9px] print:px-1.5 print:py-0.5">{item.product?.unit?.unit_name || 'Pack'}</span>
+                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-md print:bg-gray-100 print:text-[9px] print:px-1.5 print:py-0.5">{item.product?.unit?.unit_name || 'Unit'}</span>
                         </td>
                         <td className="px-4 py-4 text-center font-semibold text-gray-900 print:px-2 print:py-2">{parseFloat(item.quantity).toFixed(2)}</td>
                         <td className="px-4 py-4 text-right text-gray-700 print:px-2 print:py-2">{formatValue(item.rate)}</td>

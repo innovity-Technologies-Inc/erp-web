@@ -8,19 +8,12 @@ import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { formatCurrency } from '@/utils/formatters'
 import { useSettings } from '@/hooks/useSettings'
 import { Select2 } from '@/components/Select/Select2'
-import { TabDropdown } from './components/TabDropdown'
-import { Link } from '@tanstack/react-router'
+
+
 import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
 import { useUiStore } from '@/store/useUiStore'
+import { salesReportOptions, reportCategoryTabs } from './constants'
 import { apiClient } from '@/api/client'
-
-const salesReportOptions = [
-  { name: 'Todays Sales', to: '/inventory/report/sales' as any },
-  { name: 'Merchant wise Sales', to: '/inventory/report/merchant-wise-sales' as any },
-  { name: 'User wise Sales', to: '/inventory/report/user-wise-sales' as any },
-  { name: 'Product wise Sales', to: '/inventory/report/product-wise-sales' as any },
-  { name: 'Category wise Sales', to: '/inventory/report/category-wise-sales' as any },
-]
 
 export const ProductWiseSalesReportPage = () => {
   const [productId, setProductId] = useState('')
@@ -259,29 +252,7 @@ export const ProductWiseSalesReportPage = () => {
 
   const totalPages = Math.ceil((reportData?.recordsFiltered ?? 0) / pageSize)
 
-  const headerRight = (
-    <div className="flex items-center gap-3">
-      <TabDropdown label="Product wise Sales" options={salesReportOptions} active={true} />
-      <Link
-        to={"/inventory/report/due" as any}
-        className="px-4 py-2 text-[12px] font-medium rounded-lg bg-white text-gray-500 border border-gray-100 hover:bg-gray-50 shadow-sm"
-      >
-        Due
-      </Link>
-      <Link
-        to={"/inventory/report/shipping-cost" as any}
-        className="px-4 py-2 text-[12px] font-medium rounded-lg bg-white text-gray-500 border border-gray-100 hover:bg-gray-50 shadow-sm"
-      >
-        Shipping Cost
-      </Link>
-      <Link
-        to={"/inventory/report/sale-wise-profit" as any}
-        className="px-4 py-2 text-[12px] font-medium rounded-lg bg-white text-gray-500 border border-gray-100 hover:bg-gray-50 shadow-sm"
-      >
-        Sale Wise Profit
-      </Link>
-    </div>
-  )
+  
 
   const toolbarRight = (
     <div className="flex items-center gap-3">
@@ -323,7 +294,8 @@ export const ProductWiseSalesReportPage = () => {
     <ListPageLayout<ProductWiseSalesListItem>
       title="Product Wise Sales Report"
       backTo="/"
-      customHeaderRight={headerRight}
+      titleOptions={salesReportOptions}
+      tabs={reportCategoryTabs}
       showSearch={false}
       showStatusFilter={false}
       showColumnFilter={true}
@@ -339,6 +311,14 @@ export const ProductWiseSalesReportPage = () => {
       onPageChange={setCurrentPage}
       onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1) }}
       gridOptions={{
+        postSortRows: (params: any) => {
+          const rowNodes = params.nodes;
+          const summaryIndex = rowNodes.findIndex((node: any) => node.data?.isSummary);
+          if (summaryIndex !== -1) {
+            const summaryNode = rowNodes.splice(summaryIndex, 1)[0];
+            rowNodes.push(summaryNode);
+          }
+        },
         getRowStyle: (params: any) => {
           if (params.data?.isSummary) {
             return { 

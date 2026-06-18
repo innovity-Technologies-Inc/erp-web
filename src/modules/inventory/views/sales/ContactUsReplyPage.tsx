@@ -245,7 +245,7 @@ export const ContactUsReplyPage = () => {
                 </div>
 
                 {/* Attachment & Templates Bar */}
-                <div className="bg-[#f3f4f6] rounded-lg p-1.5 flex items-center h-12">
+                <div className="hidden bg-[#f3f4f6] rounded-lg p-1.5 items-center h-12">
                   <button type="button" className="flex-1 flex items-center justify-center gap-2 text-[13px] font-medium text-[#4b5563] hover:text-primary transition-colors">
                     <Paperclip className="h-4 w-4" />
                     Attach

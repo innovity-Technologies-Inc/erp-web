@@ -20,3 +20,13 @@ export const useCategorySelect2 = () => {
     },
   })
 }
+
+export const useMerchantSelect2 = () => {
+  return useQuery({
+    queryKey: ['merchant-select2'],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>('/select2/get-customer-select2')
+      return response.data
+    },
+  })
+}

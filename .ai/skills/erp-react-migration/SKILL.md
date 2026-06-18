@@ -120,12 +120,15 @@ writing any code. Never deviate from these conventions without explicit user app
 
 5. **Form Discard Protection (Dirty Check)**: 
   - **Requirement**: ALL Create forms MUST implement "Discard Protection" for ALL exit points (Back button, Cancel button, etc.). Edit pages are exempt from this requirement.
-  - **Logic**: Use the `isDirty` flag from `react-hook-form`'s `formState`.
+  - **Logic**: For Create pages, trigger the confirmation modal unconditionally or if `isDirty` is true (depending on specific flow, but ensure accidental drops are caught). For Edit pages, skip the check unless explicitly requested.
   - **Trigger**: When an exit action is triggered (e.g., clicking "Back" or "Cancel").
   - **Action**: 
-    - If `isDirty` is **true**: Show the global `ConfirmationModal` (with `variant="danger"`, title="Discard Changes?", and message="You have unsaved changes...").
-    - If `isDirty` is **false**: Navigate back to the list page immediately without showing a modal.
+    - Show the global `ConfirmationModal` (with `variant="danger"`, title="Discard Changes?", and message="You have unsaved changes...").
   - **Implementation**: The "Back" button in the header should be a `button` calling `handleDiscard`, NOT a direct `Link`.
+
+6. **Form Validation UX (Zod + React Hook Form)**:
+  - **Select2 Validation**: NEVER use `z.coerce.number()` for Select2 IDs, as it coerces empty states to `NaN` and breaks error messaging. ALWAYS use `z.any().refine(...)` to properly catch empty strings, nulls, and zeros.
+  - **Smooth Scrolling**: ALL long forms must implement an `onInvalid` handler passed to `handleSubmit` that automatically scrolls the user to the first invalid field using `scrollIntoView({ behavior: 'smooth', block: 'center' })` on `.text-rose-500` or `.border-rose-500`.
 
 4. **Typography**: 
 
