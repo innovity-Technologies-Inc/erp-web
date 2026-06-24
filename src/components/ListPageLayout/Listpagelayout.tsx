@@ -102,6 +102,9 @@ export interface ListPageLayoutProps<T extends object> {
 
   /** Custom footer row (e.g. for totals) to render fixed above pagination */
   summaryFooter?: ReactNode
+
+  /** Custom content to render instead of the default DataTable */
+  children?: ReactNode
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -142,6 +145,7 @@ export const ListPageLayout = <T extends object>({
   onSearchChange,
   showSearch = true,
   summaryFooter,
+  children,
 }: ListPageLayoutProps<T>) => {
 
   const [colMenuOpen, setColMenuOpen] = useState(false)
@@ -365,7 +369,10 @@ export const ListPageLayout = <T extends object>({
           </div>
         </div>
 
-        {/* ── Table ──────────────────────────────────────────────── */}
+        {/* ── Table or Custom Children ──────────────────────────────────────────────── */}
+        {children ? (
+          children
+        ) : (
         <div className="rounded-xl border border-primary/20 overflow-hidden shadow-sm">
           <DataTable
             rowData={rowData}
@@ -460,6 +467,7 @@ export const ListPageLayout = <T extends object>({
             </div>
           </div>
         </div>
+        )}
       </div>
     </div>
   )

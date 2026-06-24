@@ -46,7 +46,7 @@ export const PageTitleDropdown = ({ title, options }: PageTitleDropdownProps) =>
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 mt-2 min-w-[220px] bg-white border border-blue-200 rounded-lg shadow-[0_15px_50px_rgba(0,0,0,0.1)] z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-0 mt-2 min-w-[220px] max-h-[400px] overflow-y-auto custom-scrollbar bg-white border border-blue-200 rounded-lg shadow-[0_15px_50px_rgba(0,0,0,0.1)] z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
           {options.map((option, index) => {
             const isActive = location.pathname === option.to
             return (

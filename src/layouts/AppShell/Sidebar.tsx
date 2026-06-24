@@ -10,7 +10,8 @@ import {
   Users, 
   RotateCcw, 
   Wrench, 
-  FileText
+  FileText,
+  BookOpen
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -130,6 +131,18 @@ const menuItems: MenuGroup[] = [
           '/inventory/report/vendor-wise-purchase',
           '/inventory/report/category-wise-purchase'
         ]
+      },
+    ]
+  },
+  {
+    group: 'ACCOUNT',
+    items: [
+      { 
+        name: 'Account', 
+        icon: BookOpen, 
+        to: '/account/chart-of-accounts', 
+        permission: 'chart_of_account',
+        activePaths: ['/account']
       },
     ]
   }

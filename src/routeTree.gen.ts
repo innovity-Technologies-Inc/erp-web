@@ -15,6 +15,9 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedAccountPredefinedAccountsRouteImport } from './routes/_authenticated/account.predefined-accounts'
+import { Route as AuthenticatedAccountFinancialYearRouteImport } from './routes/_authenticated/account.financial-year'
+import { Route as AuthenticatedAccountChartOfAccountsRouteImport } from './routes/_authenticated/account.chart-of-accounts'
 import { Route as AuthenticatedInventoryWarehouseIndexRouteImport } from './routes/_authenticated/inventory/warehouse.index'
 import { Route as AuthenticatedInventoryVendorsIndexRouteImport } from './routes/_authenticated/inventory/vendors.index'
 import { Route as AuthenticatedInventoryServiceIndexRouteImport } from './routes/_authenticated/inventory/service.index'
@@ -112,6 +115,24 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedAccountPredefinedAccountsRoute =
+  AuthenticatedAccountPredefinedAccountsRouteImport.update({
+    id: '/account/predefined-accounts',
+    path: '/account/predefined-accounts',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountFinancialYearRoute =
+  AuthenticatedAccountFinancialYearRouteImport.update({
+    id: '/account/financial-year',
+    path: '/account/financial-year',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountChartOfAccountsRoute =
+  AuthenticatedAccountChartOfAccountsRouteImport.update({
+    id: '/account/chart-of-accounts',
+    path: '/account/chart-of-accounts',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryWarehouseIndexRoute =
   AuthenticatedInventoryWarehouseIndexRouteImport.update({
     id: '/inventory/warehouse/',
@@ -526,6 +547,9 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
+  '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
+  '/account/predefined-accounts': typeof AuthenticatedAccountPredefinedAccountsRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -600,6 +624,9 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
+  '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
+  '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
+  '/account/predefined-accounts': typeof AuthenticatedAccountPredefinedAccountsRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -677,6 +704,9 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
+  '/_authenticated/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
+  '/_authenticated/account/predefined-accounts': typeof AuthenticatedAccountPredefinedAccountsRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/_authenticated/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/_authenticated/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -753,6 +783,9 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/reset-password'
+    | '/account/chart-of-accounts'
+    | '/account/financial-year'
+    | '/account/predefined-accounts'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -827,6 +860,9 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/reset-password'
+    | '/account/chart-of-accounts'
+    | '/account/financial-year'
+    | '/account/predefined-accounts'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -903,6 +939,9 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/reset-password'
     | '/_authenticated/'
+    | '/_authenticated/account/chart-of-accounts'
+    | '/_authenticated/account/financial-year'
+    | '/_authenticated/account/predefined-accounts'
     | '/_authenticated/inventory/merchant/create'
     | '/_authenticated/inventory/product/category'
     | '/_authenticated/inventory/product/create'
@@ -1021,6 +1060,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_authenticated/account/predefined-accounts': {
+      id: '/_authenticated/account/predefined-accounts'
+      path: '/account/predefined-accounts'
+      fullPath: '/account/predefined-accounts'
+      preLoaderRoute: typeof AuthenticatedAccountPredefinedAccountsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/financial-year': {
+      id: '/_authenticated/account/financial-year'
+      path: '/account/financial-year'
+      fullPath: '/account/financial-year'
+      preLoaderRoute: typeof AuthenticatedAccountFinancialYearRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/chart-of-accounts': {
+      id: '/_authenticated/account/chart-of-accounts'
+      path: '/account/chart-of-accounts'
+      fullPath: '/account/chart-of-accounts'
+      preLoaderRoute: typeof AuthenticatedAccountChartOfAccountsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/warehouse/': {
       id: '/_authenticated/inventory/warehouse/'
@@ -1532,6 +1592,9 @@ const AuthenticatedInventoryWarehouseStockMovementRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedAccountChartOfAccountsRoute: typeof AuthenticatedAccountChartOfAccountsRoute
+  AuthenticatedAccountFinancialYearRoute: typeof AuthenticatedAccountFinancialYearRoute
+  AuthenticatedAccountPredefinedAccountsRoute: typeof AuthenticatedAccountPredefinedAccountsRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
   AuthenticatedInventoryProductCategoryRoute: typeof AuthenticatedInventoryProductCategoryRoute
   AuthenticatedInventoryProductCreateRoute: typeof AuthenticatedInventoryProductCreateRoute
@@ -1603,6 +1666,12 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedAccountChartOfAccountsRoute:
+    AuthenticatedAccountChartOfAccountsRoute,
+  AuthenticatedAccountFinancialYearRoute:
+    AuthenticatedAccountFinancialYearRoute,
+  AuthenticatedAccountPredefinedAccountsRoute:
+    AuthenticatedAccountPredefinedAccountsRoute,
   AuthenticatedInventoryMerchantCreateRoute:
     AuthenticatedInventoryMerchantCreateRoute,
   AuthenticatedInventoryProductCategoryRoute:

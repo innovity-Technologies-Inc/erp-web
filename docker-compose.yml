@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: .
+      # target: development (Hot-reloading local dev server)
+      # target: production  (Production-grade Nginx serving compiled static bundle)
+      target: development
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000/api}
+        - VITE_STORAGE_URL=${VITE_STORAGE_URL:-http://localhost:5000/storage}
+        - VITE_APP_NAME=${VITE_APP_NAME:-Genitech ERP}
+    container_name: erp_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173" # Expose Vite dev server port
+      # - "8080:80"  # Uncomment if you switch 'target' to 'production'
+    volumes:
+      - .:/app
+      - /app/node_modules # Ensures container's node_modules are isolated from host node_modules
+    environment:
+      - NODE_ENV=development
