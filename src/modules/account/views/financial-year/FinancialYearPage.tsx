@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react'
-import { Edit, Trash2, Check } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import type { ColDef } from 'ag-grid-community'
 import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
-import { usePermissions } from '@/hooks/usePermissions'
 import { Select2 } from '@/components/Select/Select2'
 import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
-import { useUiStore } from '@/store/useUiStore'
 import { clsx } from 'clsx'
 import { 
   useFinancialYearsDatatable, 
@@ -18,9 +16,6 @@ import type { FinancialYearListItem } from '../../api/financial-year.api'
 import { FinancialYearModal } from '../../components/FinancialYearModal'
 
 export const FinancialYearPage = () => {
-  const { showNotificationModal } = useUiStore()
-  const { hasAnyPermission } = usePermissions()
-
   // Pagination & Search States
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
