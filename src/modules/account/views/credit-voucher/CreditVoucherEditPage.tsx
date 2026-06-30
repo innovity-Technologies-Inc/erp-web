@@ -7,10 +7,10 @@ import { useUiStore } from '@/store/useUiStore'
 import { 
   useCreditAccountHeadsSelect2, 
   useTransactionHeadsSelect2, 
-  useDebitVoucherDetails,
-  useUpdateDebitVoucher 
-} from '../../hooks/useDebitVoucher'
-import { debitVoucherApi } from '../../api/debit-voucher.api'
+  useCreditVoucherDetails,
+  useUpdateCreditVoucher 
+} from '../../hooks/useCreditVoucher'
+import { creditVoucherApi } from '../../api/credit-voucher.api'
 
 interface ActiveRow {
   key: string
@@ -36,16 +36,16 @@ const parseSubTypesHtml = (html: string) => {
     .filter(opt => opt.value !== '')
 }
 
-export const DebitVoucherEditPage = () => {
+export const CreditVoucherEditPage = () => {
   const navigate = useNavigate()
-  const { uuid } = useParams({ from: '/_authenticated/account/voucher/debit/edit/$uuid' })
+  const { uuid } = useParams({ from: '/_authenticated/account/voucher/credit/edit/$uuid' })
   const { showNotificationModal } = useUiStore()
 
   // Queries & Mutations
   const { data: creditAccountHeads = [], isLoading: isCreditLoading } = useCreditAccountHeadsSelect2()
   const { data: transactionAccountHeads = [], isLoading: isTransactionLoading } = useTransactionHeadsSelect2()
-  const { data: record, isLoading: isRecordLoading } = useDebitVoucherDetails(uuid)
-  const { mutate: updateDebitVoucher, isPending: isSaving } = useUpdateDebitVoucher()
+  const { data: record, isLoading: isRecordLoading } = useCreditVoucherDetails(uuid)
+  const { mutate: updateCreditVoucher, isPending: isSaving } = useUpdateCreditVoucher()
 
   // Form States
   const [creditAccountHead, setCreditAccountHead] = useState<string>('')
@@ -76,22 +76,22 @@ export const DebitVoucherEditPage = () => {
       setCheckDate(record.cheque_date || '')
       setIsHonours(record.is_honour === 1)
 
-      // Find credit head (credit > 0)
-      const creditItem = record.items?.find(item => parseFloat(item.credit) > 0)
-      if (creditItem) {
-        setCreditAccountHead(String(creditItem.coa_id))
+      // Find debit head (counter account has debit > 0 in a Credit Voucher)
+      const debitItem = record.items?.find(item => parseFloat(item.debit) > 0)
+      if (debitItem) {
+        setCreditAccountHead(String(debitItem.coa_id))
       }
 
-      // Find debit heads (debit > 0)
-      const debitItems = record.items?.filter(item => parseFloat(item.debit) > 0) || []
+      // Find credit heads (transactions have credit > 0 in a Credit Voucher)
+      const creditItems = record.items?.filter(item => parseFloat(item.credit) > 0) || []
       
-      const mappedRows = debitItems.map(item => ({
+      const mappedRows = creditItems.map(item => ({
         key: Math.random().toString(),
         account_id: String(item.coa_id),
         sub_type_id: item.sub_code ? String(item.sub_code) : '',
         is_sub_type: item.sub_type !== 1 ? item.sub_type : null,
         ledger_comment: item.ledger_comment || '',
-        amount: String(parseFloat(item.debit) || ''),
+        amount: String(parseFloat(item.credit) || ''),
         subTypeOptions: [],
         isSubTypeLoading: false
       }))
@@ -126,10 +126,10 @@ export const DebitVoucherEditPage = () => {
   // Load sub-types for initial rows
   const loadSubTypesForInitialRow = async (index: number, accountId: string, preselectedSubTypeId = '') => {
     try {
-      const flagRes = await debitVoucherApi.getSubTypeFlag(accountId)
+      const flagRes = await creditVoucherApi.getSubTypeFlag(accountId)
       const isSubTypeFlag = flagRes.subType 
 
-      const htmlRes = await debitVoucherApi.getSubTypesHtml(accountId)
+      const htmlRes = await creditVoucherApi.getSubTypesHtml(accountId)
       const options = parseSubTypesHtml(htmlRes)
 
       setActiveRows(prev => {
@@ -159,7 +159,7 @@ export const DebitVoucherEditPage = () => {
   }
 
   const handleBack = () => {
-    navigate({ to: '/account/voucher/debit' })
+    navigate({ to: '/account/voucher/credit' })
   }
 
   // Row Management
@@ -204,10 +204,10 @@ export const DebitVoucherEditPage = () => {
     setActiveRows(updatedRows)
 
     try {
-      const flagRes = await debitVoucherApi.getSubTypeFlag(accountId)
+      const flagRes = await creditVoucherApi.getSubTypeFlag(accountId)
       const isSubTypeFlag = flagRes.subType 
 
-      const htmlRes = await debitVoucherApi.getSubTypesHtml(accountId)
+      const htmlRes = await creditVoucherApi.getSubTypesHtml(accountId)
       const options = parseSubTypesHtml(htmlRes)
 
       setActiveRows(prev => {
@@ -248,7 +248,7 @@ export const DebitVoucherEditPage = () => {
   // Validation & Save
   const handleUpdate = () => {
     const newErrors: Record<string, string> = {}
-    if (!creditAccountHead) newErrors.creditAccountHead = 'Credit Account Head is required.'
+    if (!creditAccountHead) newErrors.creditAccountHead = 'Debit Account Head is required.'
     if (!date) newErrors.date = 'Date is required.'
     if (!remark) newErrors.remark = 'Remark is required.'
 
@@ -296,7 +296,7 @@ export const DebitVoucherEditPage = () => {
         amount: parseFloat(row.amount) || 0
       }))
 
-    updateDebitVoucher({
+    updateCreditVoucher({
       uuid,
       credit_account_head: creditAccountHead,
       date,
@@ -307,7 +307,7 @@ export const DebitVoucherEditPage = () => {
       items: itemsPayload
     }, {
       onSuccess: () => {
-        navigate({ to: '/account/voucher/debit' })
+        navigate({ to: '/account/voucher/credit' })
       }
     })
   }
@@ -330,13 +330,13 @@ export const DebitVoucherEditPage = () => {
             <span>Back</span>
           </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
-            Edit Debit Voucher
+            Edit Credit Voucher
           </h1>
         </div>
       </div>
 
       <div className="max-w-[1600px] mx-auto space-y-6">
-        {/* ── Debit Voucher Header Card ── */}
+        {/* ── Credit Voucher Header Card ── */}
         <div className="bg-white rounded-xl border border-primary/10 p-4 shadow-sm space-y-6">
           {/* ── Voucher Header Title ── */}
           <div className="border-l-[3.5px] border-[#0052cc] pl-3 py-0.5">
@@ -354,21 +354,21 @@ export const DebitVoucherEditPage = () => {
                 <input
                   type="text"
                   readOnly
-                  placeholder="Debit"
+                  placeholder="Credit"
                   className="w-full h-[38px] px-3 bg-gray-100 border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] font-poppins"
                 />
               </div>
 
-              {/* Credit Account Head */}
+              {/* Debit Account Head */}
               <div>
                 <label className="block text-[13px] font-semibold text-[#475569] mb-2 font-poppins">
-                  Credit Account Head <span className="text-rose-500">*</span>
+                  Debit Account Head <span className="text-rose-500">*</span>
                 </label>
                 <Select2
                   options={creditAccountHeads}
                   value={creditAccountHead}
                   onChange={handleCreditHeadChange}
-                  placeholder="Select Credit Account Head"
+                  placeholder="Select Debit Account Head"
                   error={errors.creditAccountHead}
                   isLoading={isCreditLoading}
                 />

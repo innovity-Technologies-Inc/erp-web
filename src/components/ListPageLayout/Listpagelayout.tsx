@@ -261,7 +261,7 @@ export const ListPageLayout = <T extends object>({
               <div className="relative w-full max-w-70">
                 <input type="text"
                   placeholder="Search everything..."
-                  className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-8 outline-none pr-12 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
+                  className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-10 outline-none pr-12 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"
                   value={searchValue}
                   onChange={(e) => onSearchChange?.(e.target.value)}
                 />

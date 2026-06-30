@@ -67,7 +67,10 @@ import { Route as AuthenticatedInventorySalesPaymentsIndexRouteImport } from './
 import { Route as AuthenticatedInventoryReturnWastageIndexRouteImport } from './routes/_authenticated/inventory/return.wastage.index'
 import { Route as AuthenticatedInventoryReturnVendorIndexRouteImport } from './routes/_authenticated/inventory/return.vendor.index'
 import { Route as AuthenticatedInventoryReturnMerchantIndexRouteImport } from './routes/_authenticated/inventory/return.merchant.index'
+import { Route as AuthenticatedAccountVoucherJournalIndexRouteImport } from './routes/_authenticated/account.voucher.journal.index'
 import { Route as AuthenticatedAccountVoucherDebitIndexRouteImport } from './routes/_authenticated/account.voucher.debit.index'
+import { Route as AuthenticatedAccountVoucherCreditIndexRouteImport } from './routes/_authenticated/account.voucher.credit.index'
+import { Route as AuthenticatedAccountVoucherContraIndexRouteImport } from './routes/_authenticated/account.voucher.contra.index'
 import { Route as AuthenticatedInventoryWarehouseStockMovementCreateRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement.create'
 import { Route as AuthenticatedInventoryWarehouseEditIdRouteImport } from './routes/_authenticated/inventory/warehouse.edit.$id'
 import { Route as AuthenticatedInventoryVendorsEditIdRouteImport } from './routes/_authenticated/inventory/vendors.edit.$id'
@@ -87,12 +90,18 @@ import { Route as AuthenticatedInventoryPurchaseEditIdRouteImport } from './rout
 import { Route as AuthenticatedInventoryProductEditIdRouteImport } from './routes/_authenticated/inventory/product.edit.$id'
 import { Route as AuthenticatedInventoryMerchantEditIdRouteImport } from './routes/_authenticated/inventory/merchant.edit.$id'
 import { Route as AuthenticatedInventoryContactUsReplyIdRouteImport } from './routes/_authenticated/inventory/contact-us.reply.$id'
+import { Route as AuthenticatedAccountVoucherJournalCreateRouteImport } from './routes/_authenticated/account.voucher.journal.create'
 import { Route as AuthenticatedAccountVoucherDebitCreateRouteImport } from './routes/_authenticated/account.voucher.debit.create'
+import { Route as AuthenticatedAccountVoucherCreditCreateRouteImport } from './routes/_authenticated/account.voucher.credit.create'
+import { Route as AuthenticatedAccountVoucherContraCreateRouteImport } from './routes/_authenticated/account.voucher.contra.create'
 import { Route as AuthenticatedAccountOpeningBalanceEditUuidRouteImport } from './routes/_authenticated/account.opening-balance.edit.$uuid'
 import { Route as AuthenticatedInventoryReturnWastageDetailsIdRouteImport } from './routes/_authenticated/inventory/return.wastage.details.$id'
 import { Route as AuthenticatedInventoryReturnVendorDetailsIdRouteImport } from './routes/_authenticated/inventory/return.vendor.details.$id'
 import { Route as AuthenticatedInventoryReturnMerchantDetailsIdRouteImport } from './routes/_authenticated/inventory/return.merchant.details.$id'
+import { Route as AuthenticatedAccountVoucherJournalEditUuidRouteImport } from './routes/_authenticated/account.voucher.journal.edit.$uuid'
 import { Route as AuthenticatedAccountVoucherDebitEditUuidRouteImport } from './routes/_authenticated/account.voucher.debit.edit.$uuid'
+import { Route as AuthenticatedAccountVoucherCreditEditUuidRouteImport } from './routes/_authenticated/account.voucher.credit.edit.$uuid'
+import { Route as AuthenticatedAccountVoucherContraEditUuidRouteImport } from './routes/_authenticated/account.voucher.contra.edit.$uuid'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -434,10 +443,28 @@ const AuthenticatedInventoryReturnMerchantIndexRoute =
     path: '/inventory/return/merchant/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountVoucherJournalIndexRoute =
+  AuthenticatedAccountVoucherJournalIndexRouteImport.update({
+    id: '/account/voucher/journal/',
+    path: '/account/voucher/journal/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountVoucherDebitIndexRoute =
   AuthenticatedAccountVoucherDebitIndexRouteImport.update({
     id: '/account/voucher/debit/',
     path: '/account/voucher/debit/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountVoucherCreditIndexRoute =
+  AuthenticatedAccountVoucherCreditIndexRouteImport.update({
+    id: '/account/voucher/credit/',
+    path: '/account/voucher/credit/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountVoucherContraIndexRoute =
+  AuthenticatedAccountVoucherContraIndexRouteImport.update({
+    id: '/account/voucher/contra/',
+    path: '/account/voucher/contra/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryWarehouseStockMovementCreateRoute =
@@ -554,10 +581,28 @@ const AuthenticatedInventoryContactUsReplyIdRoute =
     path: '/inventory/contact-us/reply/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountVoucherJournalCreateRoute =
+  AuthenticatedAccountVoucherJournalCreateRouteImport.update({
+    id: '/account/voucher/journal/create',
+    path: '/account/voucher/journal/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountVoucherDebitCreateRoute =
   AuthenticatedAccountVoucherDebitCreateRouteImport.update({
     id: '/account/voucher/debit/create',
     path: '/account/voucher/debit/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountVoucherCreditCreateRoute =
+  AuthenticatedAccountVoucherCreditCreateRouteImport.update({
+    id: '/account/voucher/credit/create',
+    path: '/account/voucher/credit/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountVoucherContraCreateRoute =
+  AuthenticatedAccountVoucherContraCreateRouteImport.update({
+    id: '/account/voucher/contra/create',
+    path: '/account/voucher/contra/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountOpeningBalanceEditUuidRoute =
@@ -584,10 +629,28 @@ const AuthenticatedInventoryReturnMerchantDetailsIdRoute =
     path: '/inventory/return/merchant/details/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountVoucherJournalEditUuidRoute =
+  AuthenticatedAccountVoucherJournalEditUuidRouteImport.update({
+    id: '/account/voucher/journal/edit/$uuid',
+    path: '/account/voucher/journal/edit/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountVoucherDebitEditUuidRoute =
   AuthenticatedAccountVoucherDebitEditUuidRouteImport.update({
     id: '/account/voucher/debit/edit/$uuid',
     path: '/account/voucher/debit/edit/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountVoucherCreditEditUuidRoute =
+  AuthenticatedAccountVoucherCreditEditUuidRouteImport.update({
+    id: '/account/voucher/credit/edit/$uuid',
+    path: '/account/voucher/credit/edit/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountVoucherContraEditUuidRoute =
+  AuthenticatedAccountVoucherContraEditUuidRouteImport.update({
+    id: '/account/voucher/contra/edit/$uuid',
+    path: '/account/voucher/contra/edit/$uuid',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -645,7 +708,10 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
+  '/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
+  '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
   '/account/voucher/debit/create': typeof AuthenticatedAccountVoucherDebitCreateRoute
+  '/account/voucher/journal/create': typeof AuthenticatedAccountVoucherJournalCreateRoute
   '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
   '/inventory/merchant/edit/$id': typeof AuthenticatedInventoryMerchantEditIdRoute
   '/inventory/product/edit/$id': typeof AuthenticatedInventoryProductEditIdRoute
@@ -665,12 +731,18 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/account/voucher/contra/': typeof AuthenticatedAccountVoucherContraIndexRoute
+  '/account/voucher/credit/': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/account/voucher/debit/': typeof AuthenticatedAccountVoucherDebitIndexRoute
+  '/account/voucher/journal/': typeof AuthenticatedAccountVoucherJournalIndexRoute
   '/inventory/return/merchant/': typeof AuthenticatedInventoryReturnMerchantIndexRoute
   '/inventory/return/vendor/': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/inventory/return/wastage/': typeof AuthenticatedInventoryReturnWastageIndexRoute
   '/inventory/sales/payments/': typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  '/account/voucher/contra/edit/$uuid': typeof AuthenticatedAccountVoucherContraEditUuidRoute
+  '/account/voucher/credit/edit/$uuid': typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   '/account/voucher/debit/edit/$uuid': typeof AuthenticatedAccountVoucherDebitEditUuidRoute
+  '/account/voucher/journal/edit/$uuid': typeof AuthenticatedAccountVoucherJournalEditUuidRoute
   '/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   '/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
@@ -729,7 +801,10 @@ export interface FileRoutesByTo {
   '/inventory/vendors': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
+  '/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
+  '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
   '/account/voucher/debit/create': typeof AuthenticatedAccountVoucherDebitCreateRoute
+  '/account/voucher/journal/create': typeof AuthenticatedAccountVoucherJournalCreateRoute
   '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
   '/inventory/merchant/edit/$id': typeof AuthenticatedInventoryMerchantEditIdRoute
   '/inventory/product/edit/$id': typeof AuthenticatedInventoryProductEditIdRoute
@@ -749,12 +824,18 @@ export interface FileRoutesByTo {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/account/voucher/contra': typeof AuthenticatedAccountVoucherContraIndexRoute
+  '/account/voucher/credit': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/account/voucher/debit': typeof AuthenticatedAccountVoucherDebitIndexRoute
+  '/account/voucher/journal': typeof AuthenticatedAccountVoucherJournalIndexRoute
   '/inventory/return/merchant': typeof AuthenticatedInventoryReturnMerchantIndexRoute
   '/inventory/return/vendor': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/inventory/return/wastage': typeof AuthenticatedInventoryReturnWastageIndexRoute
   '/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  '/account/voucher/contra/edit/$uuid': typeof AuthenticatedAccountVoucherContraEditUuidRoute
+  '/account/voucher/credit/edit/$uuid': typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   '/account/voucher/debit/edit/$uuid': typeof AuthenticatedAccountVoucherDebitEditUuidRoute
+  '/account/voucher/journal/edit/$uuid': typeof AuthenticatedAccountVoucherJournalEditUuidRoute
   '/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   '/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
@@ -816,7 +897,10 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/_authenticated/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/_authenticated/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
+  '/_authenticated/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
+  '/_authenticated/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
   '/_authenticated/account/voucher/debit/create': typeof AuthenticatedAccountVoucherDebitCreateRoute
+  '/_authenticated/account/voucher/journal/create': typeof AuthenticatedAccountVoucherJournalCreateRoute
   '/_authenticated/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
   '/_authenticated/inventory/merchant/edit/$id': typeof AuthenticatedInventoryMerchantEditIdRoute
   '/_authenticated/inventory/product/edit/$id': typeof AuthenticatedInventoryProductEditIdRoute
@@ -836,12 +920,18 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/_authenticated/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/_authenticated/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/_authenticated/account/voucher/contra/': typeof AuthenticatedAccountVoucherContraIndexRoute
+  '/_authenticated/account/voucher/credit/': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/_authenticated/account/voucher/debit/': typeof AuthenticatedAccountVoucherDebitIndexRoute
+  '/_authenticated/account/voucher/journal/': typeof AuthenticatedAccountVoucherJournalIndexRoute
   '/_authenticated/inventory/return/merchant/': typeof AuthenticatedInventoryReturnMerchantIndexRoute
   '/_authenticated/inventory/return/vendor/': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/_authenticated/inventory/return/wastage/': typeof AuthenticatedInventoryReturnWastageIndexRoute
   '/_authenticated/inventory/sales/payments/': typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  '/_authenticated/account/voucher/contra/edit/$uuid': typeof AuthenticatedAccountVoucherContraEditUuidRoute
+  '/_authenticated/account/voucher/credit/edit/$uuid': typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   '/_authenticated/account/voucher/debit/edit/$uuid': typeof AuthenticatedAccountVoucherDebitEditUuidRoute
+  '/_authenticated/account/voucher/journal/edit/$uuid': typeof AuthenticatedAccountVoucherJournalEditUuidRoute
   '/_authenticated/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/_authenticated/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   '/_authenticated/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
@@ -902,7 +992,10 @@ export interface FileRouteTypes {
     | '/inventory/vendors/'
     | '/inventory/warehouse/'
     | '/account/opening-balance/edit/$uuid'
+    | '/account/voucher/contra/create'
+    | '/account/voucher/credit/create'
     | '/account/voucher/debit/create'
+    | '/account/voucher/journal/create'
     | '/inventory/contact-us/reply/$id'
     | '/inventory/merchant/edit/$id'
     | '/inventory/product/edit/$id'
@@ -922,12 +1015,18 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/account/voucher/contra/'
+    | '/account/voucher/credit/'
     | '/account/voucher/debit/'
+    | '/account/voucher/journal/'
     | '/inventory/return/merchant/'
     | '/inventory/return/vendor/'
     | '/inventory/return/wastage/'
     | '/inventory/sales/payments/'
+    | '/account/voucher/contra/edit/$uuid'
+    | '/account/voucher/credit/edit/$uuid'
     | '/account/voucher/debit/edit/$uuid'
+    | '/account/voucher/journal/edit/$uuid'
     | '/inventory/return/merchant/details/$id'
     | '/inventory/return/vendor/details/$id'
     | '/inventory/return/wastage/details/$id'
@@ -986,7 +1085,10 @@ export interface FileRouteTypes {
     | '/inventory/vendors'
     | '/inventory/warehouse'
     | '/account/opening-balance/edit/$uuid'
+    | '/account/voucher/contra/create'
+    | '/account/voucher/credit/create'
     | '/account/voucher/debit/create'
+    | '/account/voucher/journal/create'
     | '/inventory/contact-us/reply/$id'
     | '/inventory/merchant/edit/$id'
     | '/inventory/product/edit/$id'
@@ -1006,12 +1108,18 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/account/voucher/contra'
+    | '/account/voucher/credit'
     | '/account/voucher/debit'
+    | '/account/voucher/journal'
     | '/inventory/return/merchant'
     | '/inventory/return/vendor'
     | '/inventory/return/wastage'
     | '/inventory/sales/payments'
+    | '/account/voucher/contra/edit/$uuid'
+    | '/account/voucher/credit/edit/$uuid'
     | '/account/voucher/debit/edit/$uuid'
+    | '/account/voucher/journal/edit/$uuid'
     | '/inventory/return/merchant/details/$id'
     | '/inventory/return/vendor/details/$id'
     | '/inventory/return/wastage/details/$id'
@@ -1072,7 +1180,10 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/'
     | '/_authenticated/inventory/warehouse/'
     | '/_authenticated/account/opening-balance/edit/$uuid'
+    | '/_authenticated/account/voucher/contra/create'
+    | '/_authenticated/account/voucher/credit/create'
     | '/_authenticated/account/voucher/debit/create'
+    | '/_authenticated/account/voucher/journal/create'
     | '/_authenticated/inventory/contact-us/reply/$id'
     | '/_authenticated/inventory/merchant/edit/$id'
     | '/_authenticated/inventory/product/edit/$id'
@@ -1092,12 +1203,18 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/edit/$id'
     | '/_authenticated/inventory/warehouse/edit/$id'
     | '/_authenticated/inventory/warehouse/stock-movement/create'
+    | '/_authenticated/account/voucher/contra/'
+    | '/_authenticated/account/voucher/credit/'
     | '/_authenticated/account/voucher/debit/'
+    | '/_authenticated/account/voucher/journal/'
     | '/_authenticated/inventory/return/merchant/'
     | '/_authenticated/inventory/return/vendor/'
     | '/_authenticated/inventory/return/wastage/'
     | '/_authenticated/inventory/sales/payments/'
+    | '/_authenticated/account/voucher/contra/edit/$uuid'
+    | '/_authenticated/account/voucher/credit/edit/$uuid'
     | '/_authenticated/account/voucher/debit/edit/$uuid'
+    | '/_authenticated/account/voucher/journal/edit/$uuid'
     | '/_authenticated/inventory/return/merchant/details/$id'
     | '/_authenticated/inventory/return/vendor/details/$id'
     | '/_authenticated/inventory/return/wastage/details/$id'
@@ -1516,11 +1633,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryReturnMerchantIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/voucher/journal/': {
+      id: '/_authenticated/account/voucher/journal/'
+      path: '/account/voucher/journal'
+      fullPath: '/account/voucher/journal/'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherJournalIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/voucher/debit/': {
       id: '/_authenticated/account/voucher/debit/'
       path: '/account/voucher/debit'
       fullPath: '/account/voucher/debit/'
       preLoaderRoute: typeof AuthenticatedAccountVoucherDebitIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/voucher/credit/': {
+      id: '/_authenticated/account/voucher/credit/'
+      path: '/account/voucher/credit'
+      fullPath: '/account/voucher/credit/'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherCreditIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/voucher/contra/': {
+      id: '/_authenticated/account/voucher/contra/'
+      path: '/account/voucher/contra'
+      fullPath: '/account/voucher/contra/'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherContraIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/warehouse/stock-movement/create': {
@@ -1656,11 +1794,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryContactUsReplyIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/voucher/journal/create': {
+      id: '/_authenticated/account/voucher/journal/create'
+      path: '/account/voucher/journal/create'
+      fullPath: '/account/voucher/journal/create'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherJournalCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/voucher/debit/create': {
       id: '/_authenticated/account/voucher/debit/create'
       path: '/account/voucher/debit/create'
       fullPath: '/account/voucher/debit/create'
       preLoaderRoute: typeof AuthenticatedAccountVoucherDebitCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/voucher/credit/create': {
+      id: '/_authenticated/account/voucher/credit/create'
+      path: '/account/voucher/credit/create'
+      fullPath: '/account/voucher/credit/create'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherCreditCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/voucher/contra/create': {
+      id: '/_authenticated/account/voucher/contra/create'
+      path: '/account/voucher/contra/create'
+      fullPath: '/account/voucher/contra/create'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherContraCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/opening-balance/edit/$uuid': {
@@ -1691,11 +1850,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryReturnMerchantDetailsIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/voucher/journal/edit/$uuid': {
+      id: '/_authenticated/account/voucher/journal/edit/$uuid'
+      path: '/account/voucher/journal/edit/$uuid'
+      fullPath: '/account/voucher/journal/edit/$uuid'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherJournalEditUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/voucher/debit/edit/$uuid': {
       id: '/_authenticated/account/voucher/debit/edit/$uuid'
       path: '/account/voucher/debit/edit/$uuid'
       fullPath: '/account/voucher/debit/edit/$uuid'
       preLoaderRoute: typeof AuthenticatedAccountVoucherDebitEditUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/voucher/credit/edit/$uuid': {
+      id: '/_authenticated/account/voucher/credit/edit/$uuid'
+      path: '/account/voucher/credit/edit/$uuid'
+      fullPath: '/account/voucher/credit/edit/$uuid'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherCreditEditUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/voucher/contra/edit/$uuid': {
+      id: '/_authenticated/account/voucher/contra/edit/$uuid'
+      path: '/account/voucher/contra/edit/$uuid'
+      fullPath: '/account/voucher/contra/edit/$uuid'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherContraEditUuidRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -1781,7 +1961,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryVendorsIndexRoute: typeof AuthenticatedInventoryVendorsIndexRoute
   AuthenticatedInventoryWarehouseIndexRoute: typeof AuthenticatedInventoryWarehouseIndexRoute
   AuthenticatedAccountOpeningBalanceEditUuidRoute: typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
+  AuthenticatedAccountVoucherContraCreateRoute: typeof AuthenticatedAccountVoucherContraCreateRoute
+  AuthenticatedAccountVoucherCreditCreateRoute: typeof AuthenticatedAccountVoucherCreditCreateRoute
   AuthenticatedAccountVoucherDebitCreateRoute: typeof AuthenticatedAccountVoucherDebitCreateRoute
+  AuthenticatedAccountVoucherJournalCreateRoute: typeof AuthenticatedAccountVoucherJournalCreateRoute
   AuthenticatedInventoryContactUsReplyIdRoute: typeof AuthenticatedInventoryContactUsReplyIdRoute
   AuthenticatedInventoryMerchantEditIdRoute: typeof AuthenticatedInventoryMerchantEditIdRoute
   AuthenticatedInventoryProductEditIdRoute: typeof AuthenticatedInventoryProductEditIdRoute
@@ -1800,12 +1983,18 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryServiceInvoiceViewIdRoute: typeof AuthenticatedInventoryServiceInvoiceViewIdRoute
   AuthenticatedInventoryVendorsEditIdRoute: typeof AuthenticatedInventoryVendorsEditIdRoute
   AuthenticatedInventoryWarehouseEditIdRoute: typeof AuthenticatedInventoryWarehouseEditIdRoute
+  AuthenticatedAccountVoucherContraIndexRoute: typeof AuthenticatedAccountVoucherContraIndexRoute
+  AuthenticatedAccountVoucherCreditIndexRoute: typeof AuthenticatedAccountVoucherCreditIndexRoute
   AuthenticatedAccountVoucherDebitIndexRoute: typeof AuthenticatedAccountVoucherDebitIndexRoute
+  AuthenticatedAccountVoucherJournalIndexRoute: typeof AuthenticatedAccountVoucherJournalIndexRoute
   AuthenticatedInventoryReturnMerchantIndexRoute: typeof AuthenticatedInventoryReturnMerchantIndexRoute
   AuthenticatedInventoryReturnVendorIndexRoute: typeof AuthenticatedInventoryReturnVendorIndexRoute
   AuthenticatedInventoryReturnWastageIndexRoute: typeof AuthenticatedInventoryReturnWastageIndexRoute
   AuthenticatedInventorySalesPaymentsIndexRoute: typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  AuthenticatedAccountVoucherContraEditUuidRoute: typeof AuthenticatedAccountVoucherContraEditUuidRoute
+  AuthenticatedAccountVoucherCreditEditUuidRoute: typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   AuthenticatedAccountVoucherDebitEditUuidRoute: typeof AuthenticatedAccountVoucherDebitEditUuidRoute
+  AuthenticatedAccountVoucherJournalEditUuidRoute: typeof AuthenticatedAccountVoucherJournalEditUuidRoute
   AuthenticatedInventoryReturnMerchantDetailsIdRoute: typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   AuthenticatedInventoryReturnVendorDetailsIdRoute: typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   AuthenticatedInventoryReturnWastageDetailsIdRoute: typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
@@ -1907,8 +2096,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseIndexRoute,
   AuthenticatedAccountOpeningBalanceEditUuidRoute:
     AuthenticatedAccountOpeningBalanceEditUuidRoute,
+  AuthenticatedAccountVoucherContraCreateRoute:
+    AuthenticatedAccountVoucherContraCreateRoute,
+  AuthenticatedAccountVoucherCreditCreateRoute:
+    AuthenticatedAccountVoucherCreditCreateRoute,
   AuthenticatedAccountVoucherDebitCreateRoute:
     AuthenticatedAccountVoucherDebitCreateRoute,
+  AuthenticatedAccountVoucherJournalCreateRoute:
+    AuthenticatedAccountVoucherJournalCreateRoute,
   AuthenticatedInventoryContactUsReplyIdRoute:
     AuthenticatedInventoryContactUsReplyIdRoute,
   AuthenticatedInventoryMerchantEditIdRoute:
@@ -1945,8 +2140,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryVendorsEditIdRoute,
   AuthenticatedInventoryWarehouseEditIdRoute:
     AuthenticatedInventoryWarehouseEditIdRoute,
+  AuthenticatedAccountVoucherContraIndexRoute:
+    AuthenticatedAccountVoucherContraIndexRoute,
+  AuthenticatedAccountVoucherCreditIndexRoute:
+    AuthenticatedAccountVoucherCreditIndexRoute,
   AuthenticatedAccountVoucherDebitIndexRoute:
     AuthenticatedAccountVoucherDebitIndexRoute,
+  AuthenticatedAccountVoucherJournalIndexRoute:
+    AuthenticatedAccountVoucherJournalIndexRoute,
   AuthenticatedInventoryReturnMerchantIndexRoute:
     AuthenticatedInventoryReturnMerchantIndexRoute,
   AuthenticatedInventoryReturnVendorIndexRoute:
@@ -1955,8 +2156,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryReturnWastageIndexRoute,
   AuthenticatedInventorySalesPaymentsIndexRoute:
     AuthenticatedInventorySalesPaymentsIndexRoute,
+  AuthenticatedAccountVoucherContraEditUuidRoute:
+    AuthenticatedAccountVoucherContraEditUuidRoute,
+  AuthenticatedAccountVoucherCreditEditUuidRoute:
+    AuthenticatedAccountVoucherCreditEditUuidRoute,
   AuthenticatedAccountVoucherDebitEditUuidRoute:
     AuthenticatedAccountVoucherDebitEditUuidRoute,
+  AuthenticatedAccountVoucherJournalEditUuidRoute:
+    AuthenticatedAccountVoucherJournalEditUuidRoute,
   AuthenticatedInventoryReturnMerchantDetailsIdRoute:
     AuthenticatedInventoryReturnMerchantDetailsIdRoute,
   AuthenticatedInventoryReturnVendorDetailsIdRoute:

@@ -5,123 +5,75 @@ import { Select2 } from '@/components/Select/Select2'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'
 import { 
-  useCreditAccountHeadsSelect2, 
-  useTransactionHeadsSelect2, 
-  useStoreDebitVoucher 
-} from '../../hooks/useDebitVoucher'
-import { debitVoucherApi } from '../../api/debit-voucher.api'
+  useReverseAccountHeadsSelect2, 
+  useStoreContraVoucher 
+} from '../../hooks/useContraVoucher'
 
 interface ActiveRow {
   key: string
   account_id: string
-  sub_type_id: string
-  is_sub_type: number | null
   ledger_comment: string
-  amount: string
-  subTypeOptions: { value: string | number; label: string }[]
-  isSubTypeLoading: boolean
+  debit: string
+  credit: string
 }
 
-const parseSubTypesHtml = (html: string) => {
-  if (!html) return []
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(html, 'text/html')
-  const options = doc.querySelectorAll('option')
-  return Array.from(options)
-    .map(opt => ({
-      value: opt.getAttribute('value') || '',
-      label: opt.textContent || ''
-    }))
-    .filter(opt => opt.value !== '')
-}
-
-export const DebitVoucherCreatePage = () => {
+export const ContraVoucherCreatePage = () => {
   const navigate = useNavigate()
   const { showNotificationModal } = useUiStore()
 
   // Queries & Mutations
-  const { data: creditAccountHeads = [], isLoading: isCreditLoading } = useCreditAccountHeadsSelect2()
-  const { data: transactionAccountHeads = [], isLoading: isTransactionLoading } = useTransactionHeadsSelect2()
-  const { mutate: storeDebitVoucher, isPending: isSaving } = useStoreDebitVoucher()
+  const { data: reverseAccountHeads = [], isLoading: isReverseLoading } = useReverseAccountHeadsSelect2()
+  const { mutate: storeContraVoucher, isPending: isSaving } = useStoreContraVoucher()
 
   // Form States
-  const [creditAccountHead, setCreditAccountHead] = useState<string>('')
+  const [contraAccountHead, setContraAccountHead] = useState<string>('')
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0])
   const [remark, setRemark] = useState<string>('')
-  const [checkNo, setCheckNo] = useState<string>('')
-  const [checkDate, setCheckDate] = useState<string>('')
-  const [isHonours, setIsHonours] = useState<boolean>(false)
 
   const [activeRows, setActiveRows] = useState<ActiveRow[]>([
     {
       key: Math.random().toString(),
       account_id: '',
-      sub_type_id: '',
-      is_sub_type: null,
       ledger_comment: '',
-      amount: '',
-      subTypeOptions: [],
-      isSubTypeLoading: false
+      debit: '',
+      credit: ''
     }
   ])
 
-  // Validation & Discard Protect States
+  // Validation & Discard States
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isDiscardConfirmOpen, setIsDiscardConfirmOpen] = useState(false)
 
-  // Determine if the selected credit head is a bank nature
-  const showBankFields = useMemo(() => {
-    const selected = creditAccountHeads.find(h => String(h.value) === creditAccountHead)
-    return selected?.is_bank_nature === 1
-  }, [creditAccountHead, creditAccountHeads])
-
-  // Clean bank fields if they get hidden
-  const handleCreditHeadChange = (value: string) => {
-    setCreditAccountHead(value)
-    setErrors(prev => ({ ...prev, creditAccountHead: '' }))
-    
-    const selected = creditAccountHeads.find(h => String(h.value) === value)
-    if (selected?.is_bank_nature !== 1) {
-      setCheckNo('')
-      setCheckDate('')
-      setIsHonours(false)
-    }
-  }
-
-  // Dirty Check (Discard Protection)
+  // Discard check
   const isDirty = useMemo(() => {
-    if (creditAccountHead) return true
+    if (contraAccountHead) return true
     if (remark) return true
-    if (checkNo || checkDate || isHonours) return true
     if (date !== new Date().toISOString().split('T')[0]) return true
     if (activeRows.length > 1) return true
     
     const firstRow = activeRows[0]
-    if (firstRow.account_id || firstRow.sub_type_id || firstRow.ledger_comment || firstRow.amount) return true
+    if (firstRow.account_id || firstRow.ledger_comment || firstRow.debit || firstRow.credit) return true
     return false
-  }, [creditAccountHead, date, remark, checkNo, checkDate, isHonours, activeRows])
+  }, [contraAccountHead, date, remark, activeRows])
 
   const handleBack = () => {
     if (isDirty) {
       setIsDiscardConfirmOpen(true)
     } else {
-      navigate({ to: '/account/voucher/debit' })
+      navigate({ to: '/account/voucher/contra' })
     }
   }
 
-  // Row Management
+  // Row operations
   const handleAddRow = () => {
     setActiveRows(prev => [
       ...prev,
       {
         key: Math.random().toString(),
         account_id: '',
-        sub_type_id: '',
-        is_sub_type: null,
         ledger_comment: '',
-        amount: '',
-        subTypeOptions: [],
-        isSubTypeLoading: false
+        debit: '',
+        credit: ''
       }
     ])
   }
@@ -134,133 +86,85 @@ export const DebitVoucherCreatePage = () => {
     }
   }
 
-  // Fetch sub-types on account change
-  const handleAccountChange = async (index: number, accountId: string) => {
-    const updatedRows = [...activeRows]
-    const row = updatedRows[index]
-    row.account_id = accountId
-    row.sub_type_id = ''
-    row.subTypeOptions = []
-    
-    if (!accountId) {
-      setActiveRows(updatedRows)
-      return
-    }
-
-    row.isSubTypeLoading = true
-    setActiveRows(updatedRows)
-
-    try {
-      const flagRes = await debitVoucherApi.getSubTypeFlag(accountId)
-      const isSubTypeFlag = flagRes.subType 
-
-      const htmlRes = await debitVoucherApi.getSubTypesHtml(accountId)
-      const options = parseSubTypesHtml(htmlRes)
-
-      setActiveRows(prev => {
-        const next = [...prev]
-        if (next[index]) {
-          next[index].is_sub_type = isSubTypeFlag !== 1 ? isSubTypeFlag : null
-          next[index].subTypeOptions = options
-          next[index].isSubTypeLoading = false
-        }
-        return next
-      })
-    } catch (error) {
-      console.error('Failed to load sub-types:', error)
-      setActiveRows(prev => {
-        const next = [...prev]
-        if (next[index]) {
-          next[index].isSubTypeLoading = false
-        }
-        return next
-      })
-    }
-  }
-
-  const handleRowValueChange = (index: number, field: 'sub_type_id' | 'ledger_comment' | 'amount', value: string) => {
+  const handleRowValueChange = (index: number, field: 'account_id' | 'ledger_comment' | 'debit' | 'credit', value: string) => {
     setActiveRows(prev => {
       const next = [...prev]
       if (next[index]) {
+        // Clear counterpart if entering value to keep row clean (optional, but typical to enter either debit or credit)
+        if (field === 'debit' && value !== '') {
+          next[index].credit = ''
+        } else if (field === 'credit' && value !== '') {
+          next[index].debit = ''
+        }
         next[index][field] = value
       }
       return next
     })
   }
 
-  const grandTotal = useMemo(() => {
-    return activeRows.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0).toFixed(2)
+  // Running totals
+  const totalDebit = useMemo(() => {
+    return activeRows.reduce((sum, r) => sum + (parseFloat(r.debit) || 0), 0).toFixed(2)
   }, [activeRows])
 
-  // Validation & Save
+  const totalCredit = useMemo(() => {
+    return activeRows.reduce((sum, r) => sum + (parseFloat(r.credit) || 0), 0).toFixed(2)
+  }, [activeRows])
+
   const handleSave = () => {
     const newErrors: Record<string, string> = {}
-    if (!creditAccountHead) newErrors.creditAccountHead = 'Credit Account Head is required.'
+    if (!contraAccountHead) newErrors.contraAccountHead = 'Reverse Account Head is required.'
     if (!date) newErrors.date = 'Date is required.'
     if (!remark) newErrors.remark = 'Remark is required.'
 
     let hasValidItems = false
     activeRows.forEach((row, idx) => {
       if (row.account_id) {
-        const amount = parseFloat(row.amount) || 0
-        if (amount <= 0) {
-          newErrors[`row_${idx}_amount`] = 'Amount must be greater than 0.'
+        const dr = parseFloat(row.debit) || 0
+        const cr = parseFloat(row.credit) || 0
+        if (dr <= 0 && cr <= 0) {
+          newErrors[`row_${idx}_amount`] = 'Please enter either a Debit or Credit amount.'
         } else {
           hasValidItems = true
         }
-
-        if (row.subTypeOptions.length > 0 && !row.sub_type_id) {
-          newErrors[`row_${idx}_sub_type`] = 'Sub Type is required.'
-        }
-      } else if (row.amount || row.ledger_comment) {
+      } else if (row.debit || row.credit || row.ledger_comment) {
         newErrors[`row_${idx}_account`] = 'Account Name is required.'
       }
     })
 
     if (!hasValidItems && !newErrors.items) {
-      newErrors.items = 'Please add at least one complete item with account and amount.'
+      newErrors.items = 'Please add at least one complete entry with account and debit/credit.'
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
-      setTimeout(() => {
-        const errorEl = document.querySelector('.text-rose-500, .border-rose-500')
-        if (errorEl) {
-          errorEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
-      }, 100)
       return
     }
 
-    // Build payload
     const itemsPayload = activeRows
-      .filter(row => row.account_id && (parseFloat(row.amount) || 0) > 0)
+      .filter(row => row.account_id && ((parseFloat(row.debit) || 0) > 0 || (parseFloat(row.credit) || 0) > 0))
       .map(row => ({
         account_id: row.account_id,
-        is_sub_type: row.is_sub_type,
-        sub_type_id: row.sub_type_id || null,
         ledger_comment: row.ledger_comment || null,
-        amount: parseFloat(row.amount) || 0
+        debit: parseFloat(row.debit) || 0,
+        credit: parseFloat(row.credit) || 0
       }))
 
-    storeDebitVoucher({
-      credit_account_head: creditAccountHead,
+    storeContraVoucher({
+      contra_account_head: contraAccountHead,
       date,
       remark,
-      check_no: showBankFields ? checkNo : null,
-      check_date: showBankFields ? checkDate : null,
-      is_honours: showBankFields ? (isHonours ? 1 : 0) : undefined,
       items: itemsPayload
     }, {
       onSuccess: () => {
-        navigate({ to: '/account/voucher/debit' })
+        navigate({ to: '/account/voucher/contra' })
       }
     })
   }
 
   return (
     <div className="min-h-screen bg-[#f1f0f5] pb-10 font-poppins text-[#475569]">
-      {/* ── Page Header ── */}
+      {/* Header */}
       <div className="max-w-[1600px] mx-auto pb-6">
         <div className="flex items-center gap-4">
           <button
@@ -272,13 +176,13 @@ export const DebitVoucherCreatePage = () => {
             <span>Back</span>
           </button>
           <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
-            Create Debit Voucher
+            Create Contra Voucher
           </h1>
         </div>
       </div>
 
       <div className="max-w-[1600px] mx-auto space-y-6">
-        {/* ── Debit Voucher Header Card ── */}
+        {/* ── Contra Voucher Header Card ── */}
         <div className="bg-white rounded-xl border border-primary/10 p-4 shadow-sm space-y-6">
           {/* ── Voucher Header Title ── */}
           <div className="border-l-[3.5px] border-[#0052cc] pl-3 py-0.5">
@@ -296,23 +200,26 @@ export const DebitVoucherCreatePage = () => {
                 <input
                   type="text"
                   readOnly
-                  placeholder="Debit"
+                  placeholder="Contra"
                   className="w-full h-[38px] px-3 bg-gray-100 border border-gray-200 rounded-lg text-[13px] outline-none font-medium text-[#475569] font-poppins"
                 />
               </div>
 
-              {/* Credit Account Head */}
+              {/* Reverse Account Head */}
               <div>
                 <label className="block text-[13px] font-semibold text-[#475569] mb-2 font-poppins">
-                  Credit Account Head <span className="text-rose-500">*</span>
+                  Reverse Account Head <span className="text-rose-500">*</span>
                 </label>
                 <Select2
-                  options={creditAccountHeads}
-                  value={creditAccountHead}
-                  onChange={handleCreditHeadChange}
-                  placeholder="Select Credit Account Head"
-                  error={errors.creditAccountHead}
-                  isLoading={isCreditLoading}
+                  options={reverseAccountHeads}
+                  value={contraAccountHead}
+                  onChange={(val) => {
+                    setContraAccountHead(val)
+                    setErrors(prev => ({ ...prev, contraAccountHead: '' }))
+                  }}
+                  placeholder="Select Reverse Account Head"
+                  error={errors.contraAccountHead}
+                  isLoading={isReverseLoading}
                 />
               </div>
 
@@ -336,51 +243,6 @@ export const DebitVoucherCreatePage = () => {
               </div>
             </div>
 
-            {/* Conditionally Render Bank Nature Fields */}
-            {showBankFields && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 bg-blue-50/30 border border-blue-100/50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-200">
-                {/* Cheque No */}
-                <div>
-                  <label className="block text-[13px] font-semibold text-[#475569] mb-2 font-poppins">
-                    Check No
-                  </label>
-                  <input
-                    type="text"
-                    value={checkNo}
-                    onChange={(e) => setCheckNo(e.target.value)}
-                    placeholder="Enter Check No"
-                    className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-[#475569] font-poppins"
-                  />
-                </div>
-
-                {/* Cheque Date */}
-                <div>
-                  <label className="block text-[13px] font-semibold text-[#475569] mb-2 font-poppins">
-                    Check Date
-                  </label>
-                  <input
-                    type="date"
-                    value={checkDate}
-                    onChange={(e) => setCheckDate(e.target.value)}
-                    className="w-full h-[38px] px-3 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-[#475569] font-poppins"
-                  />
-                </div>
-
-                {/* Is Honours */}
-                <div className="flex items-center pt-8">
-                  <label className="flex items-center gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={isHonours}
-                      onChange={(e) => setIsHonours(e.target.checked)}
-                      className="h-4 w-4 text-[#0d7a50] focus:ring-[#0d7a50] border-gray-300 rounded"
-                    />
-                    <span className="text-[13px] font-semibold text-[#475569] font-poppins">Is Honours</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
             {/* Remark */}
             <div>
               <label className="block text-[13px] font-semibold text-[#475569] mb-2 font-poppins">
@@ -401,7 +263,7 @@ export const DebitVoucherCreatePage = () => {
             </div>
         </div>
 
-        {/* ── Table Grid Card ── */}
+        {/* Grid table */}
         <div className="bg-white rounded-xl border border-primary/10 overflow-hidden shadow-sm p-4 space-y-6">
           {/* ── Transaction Entries Title ── */}
           <div className="border-l-[3.5px] border-[#0052cc] pl-3 py-0.5">
@@ -413,19 +275,19 @@ export const DebitVoucherCreatePage = () => {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-[#dae8ff]">
-                  <th className="px-4 py-3 text-left text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[30%] font-poppins">
+                  <th className="px-4 py-3 text-left text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[35%] font-poppins">
                     Account Name <span className="text-rose-500">*</span>
                   </th>
-                  <th className="px-4 py-3 text-left text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[25%] font-poppins">
-                    Sub Type <span className="text-rose-500">*</span>
-                  </th>
-                  <th className="px-4 py-3 text-left text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[25%] font-poppins">
+                  <th className="px-4 py-3 text-left text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[35%] font-poppins">
                     Ledger Comment
                   </th>
-                  <th className="px-4 py-3 text-right text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[15%] font-poppins">
-                    Amount <span className="text-rose-500">*</span>
+                  <th className="px-4 py-3 text-right text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[12%] font-poppins">
+                    Debit <span className="text-rose-500">*</span>
                   </th>
-                  <th className="px-4 py-3 text-center text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[5%] font-poppins">
+                  <th className="px-4 py-3 text-right text-[12px] font-bold text-[#003671] uppercase tracking-wider w-[12%] font-poppins">
+                    Credit <span className="text-rose-500">*</span>
+                  </th>
+                  <th className="px-4 py-3 text-center text-[6%] font-bold text-[#003671] uppercase tracking-wider w-[6%] font-poppins">
                     Action
                   </th>
                 </tr>
@@ -436,38 +298,16 @@ export const DebitVoucherCreatePage = () => {
                     {/* Account Name Dropdown */}
                     <td className="p-3">
                       <Select2
-                        options={transactionAccountHeads}
+                        options={reverseAccountHeads}
                         value={row.account_id}
                         onChange={(val) => {
-                          handleAccountChange(index, val || '')
+                          handleRowValueChange(index, 'account_id', val || '')
                           setErrors(prev => ({ ...prev, items: '', [`row_${index}_account`]: '' }))
                         }}
                         placeholder="Select Account"
-                        isLoading={isTransactionLoading}
+                        isLoading={isReverseLoading}
                         error={errors[`row_${index}_account`]}
                       />
-                    </td>
-
-                    {/* Sub Type Dropdown */}
-                    <td className="p-3">
-                      <div className="relative">
-                        <Select2
-                          options={row.subTypeOptions}
-                          value={row.sub_type_id}
-                          onChange={(val) => {
-                            handleRowValueChange(index, 'sub_type_id', val || '')
-                            setErrors(prev => ({ ...prev, [`row_${index}_sub_type`]: '' }))
-                          }}
-                          placeholder="Select Sub Type"
-                          isDisabled={row.subTypeOptions.length === 0 || row.isSubTypeLoading}
-                          error={errors[`row_${index}_sub_type`]}
-                        />
-                        {row.isSubTypeLoading && (
-                          <div className="absolute right-8 top-2.5">
-                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                          </div>
-                        )}
-                      </div>
                     </td>
 
                     {/* Ledger Comment */}
@@ -481,13 +321,30 @@ export const DebitVoucherCreatePage = () => {
                       />
                     </td>
 
-                    {/* Amount Input */}
+                    {/* Debit */}
                     <td className="p-3">
                       <input
                         type="number"
-                        value={row.amount}
+                        value={row.debit}
                         onChange={(e) => {
-                          handleRowValueChange(index, 'amount', e.target.value)
+                          handleRowValueChange(index, 'debit', e.target.value)
+                          setErrors(prev => ({ ...prev, [`row_${index}_amount`]: '' }))
+                        }}
+                        placeholder="0.00"
+                        step="any"
+                        className={`w-full h-[38px] px-3 bg-white border rounded-lg text-[13px] text-right outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-[#475569] font-poppins ${
+                          errors[`row_${index}_amount`] ? 'border-rose-500 focus:ring-rose-500/10' : 'border-gray-200'
+                        }`}
+                      />
+                    </td>
+
+                    {/* Credit */}
+                    <td className="p-3">
+                      <input
+                        type="number"
+                        value={row.credit}
+                        onChange={(e) => {
+                          handleRowValueChange(index, 'credit', e.target.value)
                           setErrors(prev => ({ ...prev, [`row_${index}_amount`]: '' }))
                         }}
                         placeholder="0.00"
@@ -512,7 +369,7 @@ export const DebitVoucherCreatePage = () => {
                   </tr>
                 ))}
 
-                {/* Dummy row with Add icon */}
+                {/* Dummy Row with Add Button */}
                 <tr>
                   <td className="p-3 opacity-40">
                     <div className="h-[38px] px-3 bg-white text-[13px] flex items-center text-[#475569] font-medium select-none font-poppins">
@@ -521,12 +378,12 @@ export const DebitVoucherCreatePage = () => {
                   </td>
                   <td className="p-3 opacity-40">
                     <div className="h-[38px] px-3 bg-white text-[13px] flex items-center text-[#475569] font-medium select-none font-poppins">
-                      Select
+                      Comment
                     </div>
                   </td>
                   <td className="p-3 opacity-40">
-                    <div className="h-[38px] px-3 bg-white text-[13px] flex items-center text-[#475569] font-medium select-none font-poppins">
-                      Comment
+                    <div className="h-[38px] px-3 bg-white text-[13px] flex items-center justify-end text-[#475569] font-medium select-none font-poppins">
+                      0.00
                     </div>
                   </td>
                   <td className="p-3 opacity-40">
@@ -554,21 +411,31 @@ export const DebitVoucherCreatePage = () => {
             </div>
           )}
 
-          {/* Totals Row */}
-          <div className="flex justify-end items-center gap-4 p-4 border-t border-gray-100 bg-gray-50/30">
-            <span className="text-[13px] font-bold text-[#1e293b] font-poppins">Total:</span>
-            <div className="w-[15%] mr-[5%]">
+          {/* Totals Footer Row */}
+          <div className="flex justify-end items-center gap-6 p-4 border-t border-gray-100 bg-gray-50/30">
+            <span className="text-[13px] font-bold text-[#1e293b] font-poppins">Totals:</span>
+            
+            <div className="w-[12%]">
               <input
                 type="text"
                 readOnly
-                value={grandTotal}
+                value={totalDebit}
+                className="w-full h-[38px] px-3 bg-gray-100 border border-gray-200 rounded-lg text-[13px] text-right font-bold text-[#1e293b] outline-none font-poppins"
+              />
+            </div>
+
+            <div className="w-[12%] mr-[6%]">
+              <input
+                type="text"
+                readOnly
+                value={totalCredit}
                 className="w-full h-[38px] px-3 bg-gray-100 border border-gray-200 rounded-lg text-[13px] text-right font-bold text-[#1e293b] outline-none font-poppins"
               />
             </div>
           </div>
         </div>
 
-        {/* ── Action Row ── */}
+        {/* Action button row */}
         <div className="flex items-center justify-end gap-3 border-t border-gray-100">
           <button
             type="button"
@@ -604,7 +471,7 @@ export const DebitVoucherCreatePage = () => {
         onClose={() => setIsDiscardConfirmOpen(false)}
         onConfirm={() => {
           setIsDiscardConfirmOpen(false)
-          navigate({ to: '/account/voucher/debit' })
+          navigate({ to: '/account/voucher/contra' })
         }}
         title="Discard Changes?"
         message="You have unsaved changes. Are you sure you want to discard them? Any unsaved data will be lost."

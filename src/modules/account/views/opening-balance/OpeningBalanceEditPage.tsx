@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { ArrowLeft, Info, Check, Loader2 } from 'lucide-react'
+import { ArrowLeft, Check, Loader2 } from 'lucide-react'
 import { Select2 } from '@/components/Select/Select2'
 import { LoadingState } from '@/components/Loading/LoadingState'
 import { 
@@ -184,13 +184,14 @@ export const OpeningBalanceEditPage = () => {
 
       <div className="max-w-[1600px] mx-auto space-y-6">
         {/* ── Opening Balance Header Card ── */}
-        <div className="bg-white rounded-xl border border-primary/10 p-4 shadow-sm">
-          <h2 className="text-[16px] font-bold text-[#1e293b] mb-6 flex items-center gap-2 font-poppins">
-            <div className="p-1.5 bg-blue-50 rounded-lg text-blue-600">
-              <Info className="h-4 w-4" />
-            </div>
-            Opening Balance Header
-          </h2>
+        <div className="bg-white rounded-xl border border-primary/10 p-4 shadow-sm space-y-6">
+          {/* ── Voucher Header Title ── */}
+          <div className="border-l-[3.5px] border-[#0052cc] pl-3 py-0.5">
+            <h2 className="text-[16px] font-bold text-[#1e293b] font-poppins">
+              Header
+            </h2>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-[13px] font-semibold text-[#475569] mb-2 font-poppins">
@@ -229,7 +230,13 @@ export const OpeningBalanceEditPage = () => {
         </div>
 
         {/* ── Items Grid Table (Locked to Single Row) ── */}
-        <div className="bg-white rounded-xl border border-primary/10 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-xl border border-primary/10 overflow-hidden shadow-sm p-4 space-y-6">
+          {/* ── Transaction Entries Title ── */}
+          <div className="border-l-[3.5px] border-[#0052cc] pl-3 py-0.5">
+            <h2 className="text-[16px] font-bold text-[#1e293b] font-poppins">
+              Transaction Entries
+            </h2>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>

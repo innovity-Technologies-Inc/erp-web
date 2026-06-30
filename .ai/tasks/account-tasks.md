@@ -38,4 +38,31 @@
 - [x] Create read-only listing page `SubTypeListPage.tsx` utilizing `ListPageLayout` and AG Grid.
 - [x] Register route `account.sub-type.tsx` in TanStack Router.
 
+## Credit Voucher Migration
+- [x] Create `credit-voucher.api.ts` defining datatable, CRUD, and select2 endpoints.
+- [x] Create query hooks in `useCreditVoucher.ts` for datatable, details, and CRUD mutations.
+- [x] Create `CreditVoucherListPage.tsx` utilizing `ListPageLayout` and AG Grid with show details print modal and status filter.
+- [x] Create `CreditVoucherCreatePage.tsx` with dynamic validations, bank nature check inputs, and discard protection.
+- [x] Create `CreditVoucherEditPage.tsx` fetching details by UUID and isolating debit/credit entry sides.
+- [x] Register routes `/account/voucher/credit` in TanStack Router.
+
+## Contra Voucher Migration
+- [x] Create `contra-voucher.api.ts` defining datatable, CRUD, and select2 endpoints.
+- [x] Create query hooks in `useContraVoucher.ts` for datatable, details, and CRUD mutations.
+- [x] Create `ContraVoucherListPage.tsx` utilizing `ListPageLayout` and AG Grid with show details print modal and status filter.
+- [x] Create `ContraVoucherCreatePage.tsx` with dynamic validations, debit/credit entry inputs, and discard protection.
+- [x] Create `ContraVoucherEditPage.tsx` fetching details by UUID and isolating double entry sides.
+- [x] Register routes `/account/voucher/contra` in TanStack Router.
+
+## Journal Voucher Migration
+- [x] Create `journal-voucher.api.ts` defining datatable, CRUD, and level-four select2 endpoints.
+- [x] Create query hooks in `useJournalVoucher.ts` for datatable, details, and CRUD mutations.
+- [x] Create `JournalVoucherListPage.tsx` utilizing `ListPageLayout` and AG Grid with show details print modal and status filter.
+- [x] Create `JournalVoucherCreatePage.tsx` with dynamic validations, debit/credit entry inputs, sub-type loading, and discard protection.
+- [x] Create `JournalVoucherEditPage.tsx` fetching details by UUID and restoring items 1:1.
+- [x] Register routes `/account/voucher/journal` in TanStack Router.
+
+
+
+
 
