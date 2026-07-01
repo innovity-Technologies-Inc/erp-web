@@ -5,11 +5,12 @@ import { createPortal } from 'react-dom'
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
-  title: string
+  title?: string
   children: ReactNode
   footer?: ReactNode
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   showCloseButton?: boolean
+  showHeader?: boolean
 }
 
 const sizeClasses = {
@@ -23,11 +24,12 @@ const sizeClasses = {
 export const Modal = ({
   isOpen,
   onClose,
-  title,
+  title = '',
   children,
   footer,
   size = 'md',
   showCloseButton = true,
+  showHeader = true,
 }: ModalProps) => {
   useEffect(() => {
     if (isOpen) {
@@ -53,17 +55,19 @@ export const Modal = ({
       {/* Modal Content */}
       <div className={`relative w-full ${sizeClasses[size]} bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden transition-all transform scale-100 animate-in fade-in zoom-in duration-200`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-primary/30">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          {showCloseButton && (
-            <button
-              onClick={onClose}
-              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          )}
-        </div>
+        {showHeader && (
+          <div className="flex items-center justify-between px-6 py-4 border-b border-primary/30">
+            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            {showCloseButton && (
+              <button
+                onClick={onClose}
+                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">

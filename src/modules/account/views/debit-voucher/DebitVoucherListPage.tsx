@@ -247,24 +247,6 @@ export const DebitVoucherListPage = () => {
     { name: 'Voucher Approval', to: '/account/voucher-approval' },
   ]
 
-  const detailsModalFooter = (
-    <div className="flex justify-end gap-3 print:hidden">
-      <button
-        onClick={() => setIsDetailsOpen(false)}
-        className="px-5 py-2 border border-gray-200 text-gray-500 rounded-lg hover:bg-gray-50 transition-all font-poppins text-sm font-medium"
-      >
-        Close
-      </button>
-      <button
-        onClick={handlePrint}
-        className="px-5 py-2 bg-[#0d7a50] hover:bg-[#0a6642] text-white rounded-lg transition-all flex items-center gap-2 font-poppins text-sm font-medium shadow-md shadow-emerald-500/10"
-      >
-        <Printer className="h-4 w-4" />
-        Print
-      </button>
-    </div>
-  )
-
   const calculatedTotals = useMemo(() => {
     if (!voucherDetails?.items) return { debit: 0, credit: 0 }
     let drSum = 0
@@ -327,9 +309,8 @@ export const DebitVoucherListPage = () => {
       <Modal
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
-        title="Voucher Detail"
-        size="lg"
-        footer={detailsModalFooter}
+        size="xl"
+        showHeader={false}
       >
         {isDetailsLoading ? (
           <div className="py-12 flex flex-col items-center justify-center gap-3">
@@ -338,108 +319,149 @@ export const DebitVoucherListPage = () => {
           </div>
         ) : voucherDetails ? (
           <div className="p-2 print:p-0 font-poppins" id="print-area">
-            {/* Header section */}
-            <div className="flex justify-between items-start mb-6 border-b border-gray-100 pb-6 print:border-b-0 print:pb-0">
-              <div className="w-[30%]">
-                {webSetting?.logo_url || companyInformation?.logo_url ? (
-                  <img 
-                    src={webSetting?.logo_url || companyInformation?.logo_url || undefined} 
-                    alt="Logo" 
-                    className="max-h-[60px] object-contain print:max-h-[50px]" 
-                  />
-                ) : (
-                  <div className="h-10 w-28 bg-gray-100 rounded flex items-center justify-center text-xs font-bold text-gray-400">LOGO</div>
-                )}
+            {/* Modal Header inside Body */}
+            <div className="flex justify-between items-center pb-4 border-b border-gray-100 mb-6 print:hidden">
+              <h2 className="text-lg font-bold text-[#1e293b] font-poppins">Voucher Details</h2>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="px-4 py-2 bg-[#003671] hover:bg-[#002b5a] text-white rounded-lg transition-all flex items-center gap-2 font-poppins text-sm font-semibold shadow-sm"
+                >
+                  <Printer className="h-4 w-4" />
+                  Print Voucher
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsDetailsOpen(false)}
+                  className="px-4 py-2 border border-gray-200 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-all font-poppins text-sm font-semibold"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            {/* Voucher Card Container */}
+            <div className="border border-gray-200 rounded-2xl p-6 bg-white shadow-sm space-y-6">
+              
+              {/* Header Section */}
+              <div className="flex justify-between items-center pb-6 border-b border-gray-100 mb-6">
+                {/* Logo and Type */}
+                <div className="flex items-center gap-4">
+                  {webSetting?.logo_url || companyInformation?.logo_url ? (
+                    <img 
+                      src={webSetting?.logo_url || companyInformation?.logo_url || undefined} 
+                      alt="Logo" 
+                      className="h-10 w-auto object-contain max-w-[150px]" 
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold text-lg shadow-md font-poppins shadow-blue-500/20">
+                      G
+                    </div>
+                  )}
+                  <div className="border-l border-gray-200 pl-4">
+                    <h3 className="text-lg font-extrabold text-[#003671] tracking-wide leading-none uppercase">
+                      {webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH'}
+                    </h3>
+                    <span className="text-xs font-bold text-gray-400 tracking-wider mt-1.5 block uppercase">
+                      Debit Voucher
+                    </span>
+                  </div>
+                </div>
+
+                {/* Voucher Meta Info */}
+                <div className="text-right font-poppins text-[13px] text-gray-500">
+                  <div className="grid grid-cols-[100px_10px_auto] text-left gap-y-1">
+                    <span className="font-semibold text-gray-500">Voucher No</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="text-[#1e293b] font-bold">{voucherDetails.v_no}</span>
+
+                    <span className="font-semibold text-gray-500">Date</span>
+                    <span className="text-gray-400">:</span>
+                    <span className="text-[#1e293b] font-bold">{voucherDetails.v_date}</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="w-[40%] text-center">
-                <h2 className="text-[18px] font-bold text-[#1e293b] print:text-[16px]">{companyInformation?.company_name}</h2>
-                <span className="inline-block mt-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold border border-blue-100 uppercase tracking-wide print:bg-transparent print:border-0 print:text-black print:text-[14px]">
-                  Debit Voucher
-                </span>
-              </div>
-
-              <div className="w-[30%] text-right text-sm">
-                <table className="ml-auto text-xs text-gray-500 print:text-black">
-                  <tbody>
-                    <tr>
-                      <td className="font-bold text-[#475569] text-left pr-2">Voucher No</td>
-                      <td className="pr-1">:</td>
-                      <td className="text-right text-[#1e293b] font-semibold">{voucherDetails.v_no}</td>
+              {/* Items Table */}
+              <div className="border border-gray-150 rounded-xl overflow-hidden">
+                <table className="w-full border-collapse text-sm">
+                  <thead>
+                    <tr className="bg-[#f8fafc] border-b border-gray-150">
+                      <th className="px-5 py-3 text-left font-bold text-gray-500 text-xs tracking-wider uppercase">Particulars</th>
+                      <th className="px-5 py-3 text-right font-bold text-gray-500 text-xs tracking-wider uppercase w-[20%]">Debit ({currency || 'BDT'})</th>
+                      <th className="px-5 py-3 text-right font-bold text-gray-500 text-xs tracking-wider uppercase w-[20%]">Credit ({currency || 'BDT'})</th>
                     </tr>
-                    <tr>
-                      <td className="font-bold text-[#475569] text-left pr-2">Date</td>
-                      <td className="pr-1">:</td>
-                      <td className="text-right text-[#1e293b] font-semibold">{voucherDetails.v_date}</td>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {voucherDetails.items?.map((item) => {
+                      const dbVal = parseFloat(item.debit) || 0
+                      const crVal = parseFloat(item.credit) || 0
+                      return (
+                        <tr key={item.id} className="hover:bg-gray-50/30 transition-colors">
+                          <td className="px-5 py-4">
+                            <div className="font-bold text-gray-800 text-[13px]">
+                              {item.acc_coa?.head_name ?? 'N/A'}
+                              {item.sub_type !== 1 && item.acc_sub_code?.name && ` (${item.acc_sub_code.name})`}
+                            </div>
+                            {item.ledger_comment && (
+                              <div className="text-[11px] text-gray-400 mt-1 font-medium italic">
+                                "{item.ledger_comment}"
+                              </div>
+                            )}
+                          </td>
+                          <td className={`px-5 py-4 text-right font-semibold text-[13px] ${dbVal > 0 ? 'text-gray-900 font-bold' : 'text-gray-400/60 font-normal'}`}>
+                            {dbVal.toFixed(2)}
+                          </td>
+                          <td className={`px-5 py-4 text-right font-semibold text-[13px] ${crVal > 0 ? 'text-gray-900 font-bold' : 'text-gray-400/60 font-normal'}`}>
+                            {crVal.toFixed(2)}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                    {/* Grand Total */}
+                    <tr className="bg-[#f8fafc]/50 font-bold border-t border-gray-150">
+                      <td className="px-5 py-3.5 text-center text-xs font-extrabold text-[#003671] tracking-wider uppercase">Grand Total</td>
+                      <td className="px-5 py-3.5 text-right text-[13px] font-extrabold text-[#003671]">
+                        {calculatedTotals.debit.toFixed(2)}
+                      </td>
+                      <td className="px-5 py-3.5 text-right text-[13px] font-extrabold text-[#003671]">
+                        {calculatedTotals.credit.toFixed(2)}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-            </div>
 
-            {/* Table */}
-            <div className="border border-gray-200 rounded-xl overflow-hidden mb-6 print:border-black print:rounded-none">
-              <table className="w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-[#f8fafc] border-b border-gray-200 print:bg-transparent print:border-black">
-                    <th className="px-4 py-3 text-left font-bold text-gray-700 print:text-black">Particulars</th>
-                    <th className="px-4 py-3 text-right font-bold text-gray-700 print:text-black w-[20%]">Debit</th>
-                    <th className="px-4 py-3 text-right font-bold text-gray-700 print:text-black w-[20%]">Credit</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 print:divide-black">
-                  {voucherDetails.items?.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50/50 print:hover:bg-transparent">
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-gray-900 print:text-black">
-                          {item.acc_coa?.head_name ?? 'N/A'}
-                          {item.sub_type !== 1 && item.acc_sub_code?.name && ` (${item.acc_sub_code.name})`}
-                        </div>
-                        {item.ledger_comment && (
-                          <div className="text-xs text-gray-400 mt-0.5 print:text-black">{item.ledger_comment}</div>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-gray-900 print:text-black">
-                        {parseFloat(item.debit) > 0 ? formatCurrency(item.debit, currency, currencyPosition) : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-gray-900 print:text-black">
-                        {parseFloat(item.credit) > 0 ? formatCurrency(item.credit, currency, currencyPosition) : '-'}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr className="bg-[#f8fafc]/50 font-bold border-t border-gray-200 print:bg-transparent print:border-black">
-                    <td className="px-4 py-3 text-right text-gray-700 print:text-black">Total:</td>
-                    <td className="px-4 py-3 text-right text-gray-900 print:text-black">
-                      {formatCurrency(calculatedTotals.debit, currency, currencyPosition)}
-                    </td>
-                    <td className="px-4 py-3 text-right text-gray-900 print:text-black">
-                      {formatCurrency(calculatedTotals.credit, currency, currencyPosition)}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+              {/* Remarks Section */}
+              <div className="space-y-2">
+                <div className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Remarks</div>
+                <div className="p-4 bg-gray-50/50 border border-gray-100 rounded-xl text-[12px] text-gray-700 font-medium italic">
+                  "{voucherDetails.narration || 'No narration provided'}"
+                </div>
+              </div>
 
-            {/* Remark */}
-            <div className="mb-8 p-3 bg-gray-50 rounded-lg border border-gray-100 text-xs text-gray-600 print:bg-transparent print:border-0 print:p-0 print:text-black">
-              <span className="font-bold text-[#475569] mr-2 print:text-black">Remark:</span>
-              {voucherDetails.narration}
-            </div>
+              {/* Verification Trail */}
+              <div className="p-3 bg-gray-50/50 border border-gray-100 rounded-xl text-[12px] font-bold text-gray-700 uppercase tracking-wider">
+                Verification Trail
+              </div>
 
-            {/* Signature section */}
-            <div className="grid grid-cols-4 gap-4 mt-16 pt-6 border-t border-gray-100 text-center text-xs text-gray-500 print:border-black print:text-black">
-              <div>
-                <div className="border-t border-gray-200 pt-1.5 print:border-black">Prepared By</div>
+              {/* Signature Section */}
+              <div className="grid grid-cols-4 gap-8 mt-12 pt-6 text-center text-[10px] font-bold text-gray-400 tracking-wider">
+                <div>
+                  <div className="border-t border-gray-200/80 pt-2 uppercase">Prepared By</div>
+                </div>
+                <div>
+                  <div className="border-t border-gray-200/80 pt-2 uppercase">Checked By</div>
+                </div>
+                <div>
+                  <div className="border-t border-gray-200/80 pt-2 uppercase">Authorised By</div>
+                </div>
+                <div>
+                  <div className="border-t border-gray-200/80 pt-2 uppercase">Pay By</div>
+                </div>
               </div>
-              <div>
-                <div className="border-t border-gray-200 pt-1.5 print:border-black">Checked By</div>
-              </div>
-              <div>
-                <div className="border-t border-gray-200 pt-1.5 print:border-black">Authorized By</div>
-              </div>
-              <div>
-                <div className="border-t border-gray-200 pt-1.5 print:border-black">Pay By</div>
-              </div>
+
             </div>
           </div>
         ) : (
@@ -450,20 +472,59 @@ export const DebitVoucherListPage = () => {
       {/* CSS print overrides */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
+          /* Hide all page and layout elements by default */
           body * {
-            visibility: hidden;
+            visibility: hidden !important;
           }
+          
+          /* Only make print-area card and its child text/images visible */
           #print-area, #print-area * {
-            visibility: visible;
+            visibility: visible !important;
           }
+          
+          /* Position print-area at absolute top-left of Page 1 */
           #print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
           }
+          
+          /* Collapse the height and layout space of all wrapper containers in the document flow */
+          #root, .fixed.inset-0.z-50, .relative.w-full.bg-white.rounded-2xl, .flex-1.overflow-y-auto.px-6.py-4 {
+            height: 0 !important;
+            min-height: 0 !important;
+            max-height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+          }
+          
+          /* Ensure child nodes inside print-area render with their natural height */
+          #print-area, #print-area div, #print-area table, #print-area tr, #print-area td, #print-area span, #print-area img {
+            height: auto !important;
+            max-height: none !important;
+            min-height: 0 !important;
+          }
+          
+          /* Hide print-hidden classes completely */
           .print\\:hidden {
             display: none !important;
+            visibility: hidden !important;
+          }
+          
+          /* Force colors and background colors to print */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
         }
       `}} />

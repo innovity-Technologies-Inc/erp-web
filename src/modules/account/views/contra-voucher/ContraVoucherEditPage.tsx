@@ -114,18 +114,10 @@ export const ContraVoucherEditPage = () => {
   }
 
   const handleRowValueChange = (index: number, field: 'account_id' | 'ledger_comment' | 'debit' | 'credit', value: string) => {
-    setActiveRows(prev => {
-      const next = [...prev]
-      if (next[index]) {
-        if (field === 'debit' && value !== '') {
-          next[index].credit = ''
-        } else if (field === 'credit' && value !== '') {
-          next[index].debit = ''
-        }
-        next[index][field] = value
-      }
-      return next
-    })
+    setActiveRows(prev => prev.map((row, idx) => {
+      if (idx !== index) return row
+      return { ...row, [field]: value }
+    }))
   }
 
   // Running totals
