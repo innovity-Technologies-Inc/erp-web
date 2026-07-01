@@ -8,8 +8,7 @@ import { usePermissions } from '@/hooks/usePermissions'
 import { useUiStore } from '@/store/useUiStore'
 import { 
   usePaymentMethodsDatatable, 
-  useDeletePaymentMethod, 
-  usePaymentMethodData 
+  useDeletePaymentMethod
 } from '../../hooks/usePaymentMethod'
 import type { PaymentMethodListItem } from '../../api/payment-method.api'
 import { PaymentMethodModal } from '../../components/PaymentMethodModal'
@@ -49,8 +48,6 @@ export const PaymentMethodListPage = () => {
   const { data: datatableResponse, isLoading } = usePaymentMethodsDatatable(params)
   const { mutate: deletePaymentMethod, isPending: isDeleting } = useDeletePaymentMethod()
 
-  // Fetch details only if editing
-  const { data: editData } = usePaymentMethodData(selectedEditId)
 
   // Event Handlers
   const handleAdd = () => {

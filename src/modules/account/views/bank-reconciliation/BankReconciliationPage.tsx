@@ -31,7 +31,6 @@ export const BankReconciliationPage = () => {
   const [fromDate, setFromDate] = useState(getFirstDayOfMonth())
   const [toDate, setToDate] = useState(getToday())
   const [bankCode, setBankCode] = useState('')
-  const [status] = useState(0) // 0: all, 1: reconciled, 2: unreconciled
 
   // Query parameters state
   const [queryParams, setQueryParams] = useState({
