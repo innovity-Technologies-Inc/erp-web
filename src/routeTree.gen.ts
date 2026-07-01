@@ -17,8 +17,10 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthenticatedAccountVendorPaymentRouteImport } from './routes/_authenticated/account.vendor-payment'
 import { Route as AuthenticatedAccountSubTypeRouteImport } from './routes/_authenticated/account.sub-type'
+import { Route as AuthenticatedAccountServicePaymentRouteImport } from './routes/_authenticated/account.service-payment'
 import { Route as AuthenticatedAccountPredefinedAccountsRouteImport } from './routes/_authenticated/account.predefined-accounts'
 import { Route as AuthenticatedAccountPaymentMethodRouteImport } from './routes/_authenticated/account.payment-method'
+import { Route as AuthenticatedAccountMerchantReceiveRouteImport } from './routes/_authenticated/account.merchant-receive'
 import { Route as AuthenticatedAccountFinancialYearRouteImport } from './routes/_authenticated/account.financial-year'
 import { Route as AuthenticatedAccountChartOfAccountsRouteImport } from './routes/_authenticated/account.chart-of-accounts'
 import { Route as AuthenticatedAccountBankReconciliationRouteImport } from './routes/_authenticated/account.bank-reconciliation'
@@ -146,6 +148,12 @@ const AuthenticatedAccountSubTypeRoute =
     path: '/account/sub-type',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountServicePaymentRoute =
+  AuthenticatedAccountServicePaymentRouteImport.update({
+    id: '/account/service-payment',
+    path: '/account/service-payment',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountPredefinedAccountsRoute =
   AuthenticatedAccountPredefinedAccountsRouteImport.update({
     id: '/account/predefined-accounts',
@@ -156,6 +164,12 @@ const AuthenticatedAccountPaymentMethodRoute =
   AuthenticatedAccountPaymentMethodRouteImport.update({
     id: '/account/payment-method',
     path: '/account/payment-method',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountMerchantReceiveRoute =
+  AuthenticatedAccountMerchantReceiveRouteImport.update({
+    id: '/account/merchant-receive',
+    path: '/account/merchant-receive',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountFinancialYearRoute =
@@ -683,8 +697,10 @@ export interface FileRoutesByFullPath {
   '/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
   '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
   '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
+  '/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
   '/account/payment-method': typeof AuthenticatedAccountPaymentMethodRoute
   '/account/predefined-accounts': typeof AuthenticatedAccountPredefinedAccountsRoute
+  '/account/service-payment': typeof AuthenticatedAccountServicePaymentRoute
   '/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -779,8 +795,10 @@ export interface FileRoutesByTo {
   '/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
   '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
   '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
+  '/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
   '/account/payment-method': typeof AuthenticatedAccountPaymentMethodRoute
   '/account/predefined-accounts': typeof AuthenticatedAccountPredefinedAccountsRoute
+  '/account/service-payment': typeof AuthenticatedAccountServicePaymentRoute
   '/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -878,8 +896,10 @@ export interface FileRoutesById {
   '/_authenticated/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
   '/_authenticated/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
   '/_authenticated/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
+  '/_authenticated/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
   '/_authenticated/account/payment-method': typeof AuthenticatedAccountPaymentMethodRoute
   '/_authenticated/account/predefined-accounts': typeof AuthenticatedAccountPredefinedAccountsRoute
+  '/_authenticated/account/service-payment': typeof AuthenticatedAccountServicePaymentRoute
   '/_authenticated/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/_authenticated/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -976,8 +996,10 @@ export interface FileRouteTypes {
     | '/account/bank-reconciliation'
     | '/account/chart-of-accounts'
     | '/account/financial-year'
+    | '/account/merchant-receive'
     | '/account/payment-method'
     | '/account/predefined-accounts'
+    | '/account/service-payment'
     | '/account/sub-type'
     | '/account/vendor-payment'
     | '/account/opening-balance/create'
@@ -1072,8 +1094,10 @@ export interface FileRouteTypes {
     | '/account/bank-reconciliation'
     | '/account/chart-of-accounts'
     | '/account/financial-year'
+    | '/account/merchant-receive'
     | '/account/payment-method'
     | '/account/predefined-accounts'
+    | '/account/service-payment'
     | '/account/sub-type'
     | '/account/vendor-payment'
     | '/account/opening-balance/create'
@@ -1170,8 +1194,10 @@ export interface FileRouteTypes {
     | '/_authenticated/account/bank-reconciliation'
     | '/_authenticated/account/chart-of-accounts'
     | '/_authenticated/account/financial-year'
+    | '/_authenticated/account/merchant-receive'
     | '/_authenticated/account/payment-method'
     | '/_authenticated/account/predefined-accounts'
+    | '/_authenticated/account/service-payment'
     | '/_authenticated/account/sub-type'
     | '/_authenticated/account/vendor-payment'
     | '/_authenticated/account/opening-balance/create'
@@ -1322,6 +1348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountSubTypeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/service-payment': {
+      id: '/_authenticated/account/service-payment'
+      path: '/account/service-payment'
+      fullPath: '/account/service-payment'
+      preLoaderRoute: typeof AuthenticatedAccountServicePaymentRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/predefined-accounts': {
       id: '/_authenticated/account/predefined-accounts'
       path: '/account/predefined-accounts'
@@ -1334,6 +1367,13 @@ declare module '@tanstack/react-router' {
       path: '/account/payment-method'
       fullPath: '/account/payment-method'
       preLoaderRoute: typeof AuthenticatedAccountPaymentMethodRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/merchant-receive': {
+      id: '/_authenticated/account/merchant-receive'
+      path: '/account/merchant-receive'
+      fullPath: '/account/merchant-receive'
+      preLoaderRoute: typeof AuthenticatedAccountMerchantReceiveRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/financial-year': {
@@ -1975,8 +2015,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountBankReconciliationRoute: typeof AuthenticatedAccountBankReconciliationRoute
   AuthenticatedAccountChartOfAccountsRoute: typeof AuthenticatedAccountChartOfAccountsRoute
   AuthenticatedAccountFinancialYearRoute: typeof AuthenticatedAccountFinancialYearRoute
+  AuthenticatedAccountMerchantReceiveRoute: typeof AuthenticatedAccountMerchantReceiveRoute
   AuthenticatedAccountPaymentMethodRoute: typeof AuthenticatedAccountPaymentMethodRoute
   AuthenticatedAccountPredefinedAccountsRoute: typeof AuthenticatedAccountPredefinedAccountsRoute
+  AuthenticatedAccountServicePaymentRoute: typeof AuthenticatedAccountServicePaymentRoute
   AuthenticatedAccountSubTypeRoute: typeof AuthenticatedAccountSubTypeRoute
   AuthenticatedAccountVendorPaymentRoute: typeof AuthenticatedAccountVendorPaymentRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -2071,10 +2113,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountChartOfAccountsRoute,
   AuthenticatedAccountFinancialYearRoute:
     AuthenticatedAccountFinancialYearRoute,
+  AuthenticatedAccountMerchantReceiveRoute:
+    AuthenticatedAccountMerchantReceiveRoute,
   AuthenticatedAccountPaymentMethodRoute:
     AuthenticatedAccountPaymentMethodRoute,
   AuthenticatedAccountPredefinedAccountsRoute:
     AuthenticatedAccountPredefinedAccountsRoute,
+  AuthenticatedAccountServicePaymentRoute:
+    AuthenticatedAccountServicePaymentRoute,
   AuthenticatedAccountSubTypeRoute: AuthenticatedAccountSubTypeRoute,
   AuthenticatedAccountVendorPaymentRoute:
     AuthenticatedAccountVendorPaymentRoute,
