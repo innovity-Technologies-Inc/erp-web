@@ -1,18 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { getGlobalSettings } from '@/api/settings.api'
 import { useSettingsStore } from '@/store/useSettingsStore'
+import { useAuthStore } from '@/store/useAuthStore'
 import { useEffect, useCallback } from 'react'
 
 export const useSettings = () => {
   const { setSettings, webSetting, companyInformation } = useSettingsStore()
+  const token = useAuthStore((state) => state.token)
 
   // We rely on the persisted Zustand store as the primary source.
-  // The query is only "enabled" (auto-runs) if we don't have any data yet.
+  // We automatically re-fetch the settings whenever the auth token changes.
   const query = useQuery({
-    queryKey: ['global-settings'],
+    queryKey: ['global-settings', token],
     queryFn: getGlobalSettings,
     staleTime: Infinity, // Keep data fresh within the session
-    enabled: !webSetting, // Only auto-fetch if store is empty (e.g., first load or cleared)
   })
 
   const injectThemeColors = useCallback((settings: any) => {

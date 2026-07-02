@@ -15,6 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedAccountVoucherApprovalRouteImport } from './routes/_authenticated/account.voucher-approval'
 import { Route as AuthenticatedAccountVendorPaymentRouteImport } from './routes/_authenticated/account.vendor-payment'
 import { Route as AuthenticatedAccountSubTypeRouteImport } from './routes/_authenticated/account.sub-type'
 import { Route as AuthenticatedAccountServicePaymentRouteImport } from './routes/_authenticated/account.service-payment'
@@ -23,6 +24,7 @@ import { Route as AuthenticatedAccountPaymentMethodRouteImport } from './routes/
 import { Route as AuthenticatedAccountMerchantReceiveRouteImport } from './routes/_authenticated/account.merchant-receive'
 import { Route as AuthenticatedAccountFinancialYearRouteImport } from './routes/_authenticated/account.financial-year'
 import { Route as AuthenticatedAccountChartOfAccountsRouteImport } from './routes/_authenticated/account.chart-of-accounts'
+import { Route as AuthenticatedAccountCashAdjustmentRouteImport } from './routes/_authenticated/account.cash-adjustment'
 import { Route as AuthenticatedAccountBankReconciliationRouteImport } from './routes/_authenticated/account.bank-reconciliation'
 import { Route as AuthenticatedInventoryWarehouseIndexRouteImport } from './routes/_authenticated/inventory/warehouse.index'
 import { Route as AuthenticatedInventoryVendorsIndexRouteImport } from './routes/_authenticated/inventory/vendors.index'
@@ -136,6 +138,12 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedAccountVoucherApprovalRoute =
+  AuthenticatedAccountVoucherApprovalRouteImport.update({
+    id: '/account/voucher-approval',
+    path: '/account/voucher-approval',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountVendorPaymentRoute =
   AuthenticatedAccountVendorPaymentRouteImport.update({
     id: '/account/vendor-payment',
@@ -182,6 +190,12 @@ const AuthenticatedAccountChartOfAccountsRoute =
   AuthenticatedAccountChartOfAccountsRouteImport.update({
     id: '/account/chart-of-accounts',
     path: '/account/chart-of-accounts',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountCashAdjustmentRoute =
+  AuthenticatedAccountCashAdjustmentRouteImport.update({
+    id: '/account/cash-adjustment',
+    path: '/account/cash-adjustment',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountBankReconciliationRoute =
@@ -695,6 +709,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
+  '/account/cash-adjustment': typeof AuthenticatedAccountCashAdjustmentRoute
   '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
   '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
   '/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
@@ -703,6 +718,7 @@ export interface FileRoutesByFullPath {
   '/account/service-payment': typeof AuthenticatedAccountServicePaymentRoute
   '/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
+  '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
@@ -793,6 +809,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
+  '/account/cash-adjustment': typeof AuthenticatedAccountCashAdjustmentRoute
   '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
   '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
   '/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
@@ -801,6 +818,7 @@ export interface FileRoutesByTo {
   '/account/service-payment': typeof AuthenticatedAccountServicePaymentRoute
   '/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
+  '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
@@ -894,6 +912,7 @@ export interface FileRoutesById {
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
+  '/_authenticated/account/cash-adjustment': typeof AuthenticatedAccountCashAdjustmentRoute
   '/_authenticated/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
   '/_authenticated/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
   '/_authenticated/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
@@ -902,6 +921,7 @@ export interface FileRoutesById {
   '/_authenticated/account/service-payment': typeof AuthenticatedAccountServicePaymentRoute
   '/_authenticated/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/_authenticated/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
+  '/_authenticated/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/_authenticated/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
@@ -994,6 +1014,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/account/bank-reconciliation'
+    | '/account/cash-adjustment'
     | '/account/chart-of-accounts'
     | '/account/financial-year'
     | '/account/merchant-receive'
@@ -1002,6 +1023,7 @@ export interface FileRouteTypes {
     | '/account/service-payment'
     | '/account/sub-type'
     | '/account/vendor-payment'
+    | '/account/voucher-approval'
     | '/account/opening-balance/create'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
@@ -1092,6 +1114,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/account/bank-reconciliation'
+    | '/account/cash-adjustment'
     | '/account/chart-of-accounts'
     | '/account/financial-year'
     | '/account/merchant-receive'
@@ -1100,6 +1123,7 @@ export interface FileRouteTypes {
     | '/account/service-payment'
     | '/account/sub-type'
     | '/account/vendor-payment'
+    | '/account/voucher-approval'
     | '/account/opening-balance/create'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
@@ -1192,6 +1216,7 @@ export interface FileRouteTypes {
     | '/_auth/reset-password'
     | '/_authenticated/'
     | '/_authenticated/account/bank-reconciliation'
+    | '/_authenticated/account/cash-adjustment'
     | '/_authenticated/account/chart-of-accounts'
     | '/_authenticated/account/financial-year'
     | '/_authenticated/account/merchant-receive'
@@ -1200,6 +1225,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/service-payment'
     | '/_authenticated/account/sub-type'
     | '/_authenticated/account/vendor-payment'
+    | '/_authenticated/account/voucher-approval'
     | '/_authenticated/account/opening-balance/create'
     | '/_authenticated/inventory/merchant/create'
     | '/_authenticated/inventory/product/category'
@@ -1334,6 +1360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_authenticated/account/voucher-approval': {
+      id: '/_authenticated/account/voucher-approval'
+      path: '/account/voucher-approval'
+      fullPath: '/account/voucher-approval'
+      preLoaderRoute: typeof AuthenticatedAccountVoucherApprovalRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/vendor-payment': {
       id: '/_authenticated/account/vendor-payment'
       path: '/account/vendor-payment'
@@ -1388,6 +1421,13 @@ declare module '@tanstack/react-router' {
       path: '/account/chart-of-accounts'
       fullPath: '/account/chart-of-accounts'
       preLoaderRoute: typeof AuthenticatedAccountChartOfAccountsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/cash-adjustment': {
+      id: '/_authenticated/account/cash-adjustment'
+      path: '/account/cash-adjustment'
+      fullPath: '/account/cash-adjustment'
+      preLoaderRoute: typeof AuthenticatedAccountCashAdjustmentRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/bank-reconciliation': {
@@ -2013,6 +2053,7 @@ const AuthenticatedInventoryWarehouseStockMovementRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAccountBankReconciliationRoute: typeof AuthenticatedAccountBankReconciliationRoute
+  AuthenticatedAccountCashAdjustmentRoute: typeof AuthenticatedAccountCashAdjustmentRoute
   AuthenticatedAccountChartOfAccountsRoute: typeof AuthenticatedAccountChartOfAccountsRoute
   AuthenticatedAccountFinancialYearRoute: typeof AuthenticatedAccountFinancialYearRoute
   AuthenticatedAccountMerchantReceiveRoute: typeof AuthenticatedAccountMerchantReceiveRoute
@@ -2021,6 +2062,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountServicePaymentRoute: typeof AuthenticatedAccountServicePaymentRoute
   AuthenticatedAccountSubTypeRoute: typeof AuthenticatedAccountSubTypeRoute
   AuthenticatedAccountVendorPaymentRoute: typeof AuthenticatedAccountVendorPaymentRoute
+  AuthenticatedAccountVoucherApprovalRoute: typeof AuthenticatedAccountVoucherApprovalRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
   AuthenticatedInventoryProductCategoryRoute: typeof AuthenticatedInventoryProductCategoryRoute
@@ -2109,6 +2151,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAccountBankReconciliationRoute:
     AuthenticatedAccountBankReconciliationRoute,
+  AuthenticatedAccountCashAdjustmentRoute:
+    AuthenticatedAccountCashAdjustmentRoute,
   AuthenticatedAccountChartOfAccountsRoute:
     AuthenticatedAccountChartOfAccountsRoute,
   AuthenticatedAccountFinancialYearRoute:
@@ -2124,6 +2168,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountSubTypeRoute: AuthenticatedAccountSubTypeRoute,
   AuthenticatedAccountVendorPaymentRoute:
     AuthenticatedAccountVendorPaymentRoute,
+  AuthenticatedAccountVoucherApprovalRoute:
+    AuthenticatedAccountVoucherApprovalRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
     AuthenticatedAccountOpeningBalanceCreateRoute,
   AuthenticatedInventoryMerchantCreateRoute:

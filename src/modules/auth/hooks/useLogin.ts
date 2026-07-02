@@ -22,7 +22,7 @@ export const useLogin = () => {
         // Force refresh global settings after login to ensure fresh branding/config
         try {
           await queryClient.fetchQuery({
-            queryKey: ['global-settings'],
+            queryKey: ['global-settings', token],
             queryFn: getGlobalSettings,
           })
         } catch (err) {
