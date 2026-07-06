@@ -24,9 +24,10 @@ interface DateRangePickerProps {
   from?: string
   to?: string
   onChange?: (from: string, to: string) => void
+  align?: 'left' | 'right'
 }
 
-export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) => {
+export const DateRangePicker = ({ from, to, onChange, align = 'right' }: DateRangePickerProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [viewDate, setViewDate] = useState(new Date())
   const containerRef = useRef<HTMLDivElement>(null)
@@ -183,7 +184,10 @@ export const DateRangePicker = ({ from, to, onChange }: DateRangePickerProps) =>
       </div>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 z-[110] bg-white border border-gray-100 rounded-3xl shadow-[0_30px_80px_rgba(0,0,0,0.12)] p-6 animate-in fade-in slide-in-from-top-4 duration-300 min-w-max">
+        <div className={clsx(
+          "absolute top-full mt-2 z-[110] bg-white border border-gray-100 rounded-3xl shadow-[0_30px_80px_rgba(0,0,0,0.12)] p-6 animate-in fade-in slide-in-from-top-4 duration-300 min-w-max",
+          align === 'left' ? 'left-0' : 'right-0'
+        )}>
           <div className="flex items-start gap-8">
              <button 
                onClick={() => setViewDate(subMonths(viewDate, 1))}

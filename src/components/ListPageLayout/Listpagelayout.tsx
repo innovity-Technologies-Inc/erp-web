@@ -100,6 +100,9 @@ export interface ListPageLayoutProps<T extends object> {
   /** Show the global search bar. Defaults to true */
   showSearch?: boolean
 
+  /** Custom width class for the search bar wrapper */
+  searchWidth?: string
+
   /** Custom footer row (e.g. for totals) to render fixed above pagination */
   summaryFooter?: ReactNode
 
@@ -144,6 +147,7 @@ export const ListPageLayout = <T extends object>({
   searchValue = '',
   onSearchChange,
   showSearch = true,
+  searchWidth,
   summaryFooter,
   children,
 }: ListPageLayoutProps<T>) => {
@@ -258,7 +262,7 @@ export const ListPageLayout = <T extends object>({
             )}
 
             {showSearch && (
-              <div className="relative w-full max-w-70">
+              <div className={clsx("relative w-full shrink-0", searchWidth || "max-w-[320px]")}>
                 <input type="text"
                   placeholder="Search everything..."
                   className="w-full bg-[#f8fafc] border border-gray-100 rounded-full px-6 py-2.5 text-[12px] h-10 outline-none pr-12 hover:border-gray-300 focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all"

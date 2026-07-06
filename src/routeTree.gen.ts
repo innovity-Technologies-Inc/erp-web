@@ -35,6 +35,7 @@ import { Route as AuthenticatedInventoryQuotationIndexRouteImport } from './rout
 import { Route as AuthenticatedInventoryPurchaseIndexRouteImport } from './routes/_authenticated/inventory/purchase.index'
 import { Route as AuthenticatedInventoryProductIndexRouteImport } from './routes/_authenticated/inventory/product.index'
 import { Route as AuthenticatedInventoryMerchantIndexRouteImport } from './routes/_authenticated/inventory/merchant.index'
+import { Route as AuthenticatedAccountReportsIndexRouteImport } from './routes/_authenticated/account.reports.index'
 import { Route as AuthenticatedAccountOpeningBalanceIndexRouteImport } from './routes/_authenticated/account.opening-balance.index'
 import { Route as AuthenticatedInventoryWarehouseStockMovementRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement'
 import { Route as AuthenticatedInventoryWarehouseCreateRouteImport } from './routes/_authenticated/inventory/warehouse.create'
@@ -69,6 +70,13 @@ import { Route as AuthenticatedInventoryProductSubCategoryRouteImport } from './
 import { Route as AuthenticatedInventoryProductCreateRouteImport } from './routes/_authenticated/inventory/product.create'
 import { Route as AuthenticatedInventoryProductCategoryRouteImport } from './routes/_authenticated/inventory/product.category'
 import { Route as AuthenticatedInventoryMerchantCreateRouteImport } from './routes/_authenticated/inventory/merchant.create'
+import { Route as AuthenticatedAccountReportsTrialBalanceRouteImport } from './routes/_authenticated/account.reports.trial-balance'
+import { Route as AuthenticatedAccountReportsSubLedgerRouteImport } from './routes/_authenticated/account.reports.sub-ledger'
+import { Route as AuthenticatedAccountReportsIncomeStatementRouteImport } from './routes/_authenticated/account.reports.income-statement'
+import { Route as AuthenticatedAccountReportsGeneralLedgerRouteImport } from './routes/_authenticated/account.reports.general-ledger'
+import { Route as AuthenticatedAccountReportsExpenditureStatementRouteImport } from './routes/_authenticated/account.reports.expenditure-statement'
+import { Route as AuthenticatedAccountReportsDayBookRouteImport } from './routes/_authenticated/account.reports.day-book'
+import { Route as AuthenticatedAccountReportsBankBookRouteImport } from './routes/_authenticated/account.reports.bank-book'
 import { Route as AuthenticatedAccountOpeningBalanceCreateRouteImport } from './routes/_authenticated/account.opening-balance.create'
 import { Route as AuthenticatedInventorySalesPaymentsIndexRouteImport } from './routes/_authenticated/inventory/sales.payments.index'
 import { Route as AuthenticatedInventoryReturnWastageIndexRouteImport } from './routes/_authenticated/inventory/return.wastage.index'
@@ -256,6 +264,12 @@ const AuthenticatedInventoryMerchantIndexRoute =
   AuthenticatedInventoryMerchantIndexRouteImport.update({
     id: '/inventory/merchant/',
     path: '/inventory/merchant/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsIndexRoute =
+  AuthenticatedAccountReportsIndexRouteImport.update({
+    id: '/account/reports/',
+    path: '/account/reports/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountOpeningBalanceIndexRoute =
@@ -460,6 +474,48 @@ const AuthenticatedInventoryMerchantCreateRoute =
   AuthenticatedInventoryMerchantCreateRouteImport.update({
     id: '/inventory/merchant/create',
     path: '/inventory/merchant/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsTrialBalanceRoute =
+  AuthenticatedAccountReportsTrialBalanceRouteImport.update({
+    id: '/account/reports/trial-balance',
+    path: '/account/reports/trial-balance',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsSubLedgerRoute =
+  AuthenticatedAccountReportsSubLedgerRouteImport.update({
+    id: '/account/reports/sub-ledger',
+    path: '/account/reports/sub-ledger',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsIncomeStatementRoute =
+  AuthenticatedAccountReportsIncomeStatementRouteImport.update({
+    id: '/account/reports/income-statement',
+    path: '/account/reports/income-statement',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsGeneralLedgerRoute =
+  AuthenticatedAccountReportsGeneralLedgerRouteImport.update({
+    id: '/account/reports/general-ledger',
+    path: '/account/reports/general-ledger',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsExpenditureStatementRoute =
+  AuthenticatedAccountReportsExpenditureStatementRouteImport.update({
+    id: '/account/reports/expenditure-statement',
+    path: '/account/reports/expenditure-statement',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsDayBookRoute =
+  AuthenticatedAccountReportsDayBookRouteImport.update({
+    id: '/account/reports/day-book',
+    path: '/account/reports/day-book',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsBankBookRoute =
+  AuthenticatedAccountReportsBankBookRouteImport.update({
+    id: '/account/reports/bank-book',
+    path: '/account/reports/bank-book',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountOpeningBalanceCreateRoute =
@@ -720,6 +776,13 @@ export interface FileRoutesByFullPath {
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
+  '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
+  '/account/reports/day-book': typeof AuthenticatedAccountReportsDayBookRoute
+  '/account/reports/expenditure-statement': typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  '/account/reports/general-ledger': typeof AuthenticatedAccountReportsGeneralLedgerRoute
+  '/account/reports/income-statement': typeof AuthenticatedAccountReportsIncomeStatementRoute
+  '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
+  '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -754,6 +817,7 @@ export interface FileRoutesByFullPath {
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
+  '/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
   '/inventory/merchant/': typeof AuthenticatedInventoryMerchantIndexRoute
   '/inventory/product/': typeof AuthenticatedInventoryProductIndexRoute
   '/inventory/purchase/': typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -820,6 +884,13 @@ export interface FileRoutesByTo {
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
+  '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
+  '/account/reports/day-book': typeof AuthenticatedAccountReportsDayBookRoute
+  '/account/reports/expenditure-statement': typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  '/account/reports/general-ledger': typeof AuthenticatedAccountReportsGeneralLedgerRoute
+  '/account/reports/income-statement': typeof AuthenticatedAccountReportsIncomeStatementRoute
+  '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
+  '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -854,6 +925,7 @@ export interface FileRoutesByTo {
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/account/opening-balance': typeof AuthenticatedAccountOpeningBalanceIndexRoute
+  '/account/reports': typeof AuthenticatedAccountReportsIndexRoute
   '/inventory/merchant': typeof AuthenticatedInventoryMerchantIndexRoute
   '/inventory/product': typeof AuthenticatedInventoryProductIndexRoute
   '/inventory/purchase': typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -923,6 +995,13 @@ export interface FileRoutesById {
   '/_authenticated/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/_authenticated/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
+  '/_authenticated/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
+  '/_authenticated/account/reports/day-book': typeof AuthenticatedAccountReportsDayBookRoute
+  '/_authenticated/account/reports/expenditure-statement': typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  '/_authenticated/account/reports/general-ledger': typeof AuthenticatedAccountReportsGeneralLedgerRoute
+  '/_authenticated/account/reports/income-statement': typeof AuthenticatedAccountReportsIncomeStatementRoute
+  '/_authenticated/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
+  '/_authenticated/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/_authenticated/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/_authenticated/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -957,6 +1036,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/_authenticated/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/_authenticated/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
+  '/_authenticated/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
   '/_authenticated/inventory/merchant/': typeof AuthenticatedInventoryMerchantIndexRoute
   '/_authenticated/inventory/product/': typeof AuthenticatedInventoryProductIndexRoute
   '/_authenticated/inventory/purchase/': typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -1025,6 +1105,13 @@ export interface FileRouteTypes {
     | '/account/vendor-payment'
     | '/account/voucher-approval'
     | '/account/opening-balance/create'
+    | '/account/reports/bank-book'
+    | '/account/reports/day-book'
+    | '/account/reports/expenditure-statement'
+    | '/account/reports/general-ledger'
+    | '/account/reports/income-statement'
+    | '/account/reports/sub-ledger'
+    | '/account/reports/trial-balance'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1059,6 +1146,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/stock-movement'
     | '/account/opening-balance/'
+    | '/account/reports/'
     | '/inventory/merchant/'
     | '/inventory/product/'
     | '/inventory/purchase/'
@@ -1125,6 +1213,13 @@ export interface FileRouteTypes {
     | '/account/vendor-payment'
     | '/account/voucher-approval'
     | '/account/opening-balance/create'
+    | '/account/reports/bank-book'
+    | '/account/reports/day-book'
+    | '/account/reports/expenditure-statement'
+    | '/account/reports/general-ledger'
+    | '/account/reports/income-statement'
+    | '/account/reports/sub-ledger'
+    | '/account/reports/trial-balance'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1159,6 +1254,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/stock-movement'
     | '/account/opening-balance'
+    | '/account/reports'
     | '/inventory/merchant'
     | '/inventory/product'
     | '/inventory/purchase'
@@ -1227,6 +1323,13 @@ export interface FileRouteTypes {
     | '/_authenticated/account/vendor-payment'
     | '/_authenticated/account/voucher-approval'
     | '/_authenticated/account/opening-balance/create'
+    | '/_authenticated/account/reports/bank-book'
+    | '/_authenticated/account/reports/day-book'
+    | '/_authenticated/account/reports/expenditure-statement'
+    | '/_authenticated/account/reports/general-ledger'
+    | '/_authenticated/account/reports/income-statement'
+    | '/_authenticated/account/reports/sub-ledger'
+    | '/_authenticated/account/reports/trial-balance'
     | '/_authenticated/inventory/merchant/create'
     | '/_authenticated/inventory/product/category'
     | '/_authenticated/inventory/product/create'
@@ -1261,6 +1364,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/warehouse/create'
     | '/_authenticated/inventory/warehouse/stock-movement'
     | '/_authenticated/account/opening-balance/'
+    | '/_authenticated/account/reports/'
     | '/_authenticated/inventory/merchant/'
     | '/_authenticated/inventory/product/'
     | '/_authenticated/inventory/purchase/'
@@ -1500,6 +1604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryMerchantIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/reports/': {
+      id: '/_authenticated/account/reports/'
+      path: '/account/reports'
+      fullPath: '/account/reports/'
+      preLoaderRoute: typeof AuthenticatedAccountReportsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/opening-balance/': {
       id: '/_authenticated/account/opening-balance/'
       path: '/account/opening-balance'
@@ -1736,6 +1847,55 @@ declare module '@tanstack/react-router' {
       path: '/inventory/merchant/create'
       fullPath: '/inventory/merchant/create'
       preLoaderRoute: typeof AuthenticatedInventoryMerchantCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/trial-balance': {
+      id: '/_authenticated/account/reports/trial-balance'
+      path: '/account/reports/trial-balance'
+      fullPath: '/account/reports/trial-balance'
+      preLoaderRoute: typeof AuthenticatedAccountReportsTrialBalanceRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/sub-ledger': {
+      id: '/_authenticated/account/reports/sub-ledger'
+      path: '/account/reports/sub-ledger'
+      fullPath: '/account/reports/sub-ledger'
+      preLoaderRoute: typeof AuthenticatedAccountReportsSubLedgerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/income-statement': {
+      id: '/_authenticated/account/reports/income-statement'
+      path: '/account/reports/income-statement'
+      fullPath: '/account/reports/income-statement'
+      preLoaderRoute: typeof AuthenticatedAccountReportsIncomeStatementRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/general-ledger': {
+      id: '/_authenticated/account/reports/general-ledger'
+      path: '/account/reports/general-ledger'
+      fullPath: '/account/reports/general-ledger'
+      preLoaderRoute: typeof AuthenticatedAccountReportsGeneralLedgerRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/expenditure-statement': {
+      id: '/_authenticated/account/reports/expenditure-statement'
+      path: '/account/reports/expenditure-statement'
+      fullPath: '/account/reports/expenditure-statement'
+      preLoaderRoute: typeof AuthenticatedAccountReportsExpenditureStatementRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/day-book': {
+      id: '/_authenticated/account/reports/day-book'
+      path: '/account/reports/day-book'
+      fullPath: '/account/reports/day-book'
+      preLoaderRoute: typeof AuthenticatedAccountReportsDayBookRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/bank-book': {
+      id: '/_authenticated/account/reports/bank-book'
+      path: '/account/reports/bank-book'
+      fullPath: '/account/reports/bank-book'
+      preLoaderRoute: typeof AuthenticatedAccountReportsBankBookRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/opening-balance/create': {
@@ -2064,6 +2224,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountVendorPaymentRoute: typeof AuthenticatedAccountVendorPaymentRoute
   AuthenticatedAccountVoucherApprovalRoute: typeof AuthenticatedAccountVoucherApprovalRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
+  AuthenticatedAccountReportsBankBookRoute: typeof AuthenticatedAccountReportsBankBookRoute
+  AuthenticatedAccountReportsDayBookRoute: typeof AuthenticatedAccountReportsDayBookRoute
+  AuthenticatedAccountReportsExpenditureStatementRoute: typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  AuthenticatedAccountReportsGeneralLedgerRoute: typeof AuthenticatedAccountReportsGeneralLedgerRoute
+  AuthenticatedAccountReportsIncomeStatementRoute: typeof AuthenticatedAccountReportsIncomeStatementRoute
+  AuthenticatedAccountReportsSubLedgerRoute: typeof AuthenticatedAccountReportsSubLedgerRoute
+  AuthenticatedAccountReportsTrialBalanceRoute: typeof AuthenticatedAccountReportsTrialBalanceRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
   AuthenticatedInventoryProductCategoryRoute: typeof AuthenticatedInventoryProductCategoryRoute
   AuthenticatedInventoryProductCreateRoute: typeof AuthenticatedInventoryProductCreateRoute
@@ -2098,6 +2265,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryWarehouseCreateRoute: typeof AuthenticatedInventoryWarehouseCreateRoute
   AuthenticatedInventoryWarehouseStockMovementRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   AuthenticatedAccountOpeningBalanceIndexRoute: typeof AuthenticatedAccountOpeningBalanceIndexRoute
+  AuthenticatedAccountReportsIndexRoute: typeof AuthenticatedAccountReportsIndexRoute
   AuthenticatedInventoryMerchantIndexRoute: typeof AuthenticatedInventoryMerchantIndexRoute
   AuthenticatedInventoryProductIndexRoute: typeof AuthenticatedInventoryProductIndexRoute
   AuthenticatedInventoryPurchaseIndexRoute: typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -2172,6 +2340,20 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountVoucherApprovalRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
     AuthenticatedAccountOpeningBalanceCreateRoute,
+  AuthenticatedAccountReportsBankBookRoute:
+    AuthenticatedAccountReportsBankBookRoute,
+  AuthenticatedAccountReportsDayBookRoute:
+    AuthenticatedAccountReportsDayBookRoute,
+  AuthenticatedAccountReportsExpenditureStatementRoute:
+    AuthenticatedAccountReportsExpenditureStatementRoute,
+  AuthenticatedAccountReportsGeneralLedgerRoute:
+    AuthenticatedAccountReportsGeneralLedgerRoute,
+  AuthenticatedAccountReportsIncomeStatementRoute:
+    AuthenticatedAccountReportsIncomeStatementRoute,
+  AuthenticatedAccountReportsSubLedgerRoute:
+    AuthenticatedAccountReportsSubLedgerRoute,
+  AuthenticatedAccountReportsTrialBalanceRoute:
+    AuthenticatedAccountReportsTrialBalanceRoute,
   AuthenticatedInventoryMerchantCreateRoute:
     AuthenticatedInventoryMerchantCreateRoute,
   AuthenticatedInventoryProductCategoryRoute:
@@ -2238,6 +2420,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseStockMovementRouteWithChildren,
   AuthenticatedAccountOpeningBalanceIndexRoute:
     AuthenticatedAccountOpeningBalanceIndexRoute,
+  AuthenticatedAccountReportsIndexRoute: AuthenticatedAccountReportsIndexRoute,
   AuthenticatedInventoryMerchantIndexRoute:
     AuthenticatedInventoryMerchantIndexRoute,
   AuthenticatedInventoryProductIndexRoute:
