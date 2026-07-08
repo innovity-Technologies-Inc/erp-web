@@ -13,6 +13,8 @@ import {
   getFinancialYears,
   getIncomeStatementReport,
   getExpenditureStatementReport,
+  getProfitLossReport,
+  getBalanceSheetReport,
 } from '../api/reports.api'
 
 export const useCashBookReportDatatable = (params: {
@@ -145,5 +147,25 @@ export const useExpenditureStatementReport = (params: {
   return useQuery({
     queryKey: ['account', 'reports', 'expenditure-statement', params],
     queryFn: () => getExpenditureStatementReport(params),
+  })
+}
+
+export const useProfitLossReport = (params: {
+  fromDate?: string
+  toDate?: string
+}) => {
+  return useQuery({
+    queryKey: ['account', 'reports', 'profit-loss', params],
+    queryFn: () => getProfitLossReport(params),
+  })
+}
+
+export const useBalanceSheetReport = (params: {
+  fromDate?: string
+  toDate?: string
+}) => {
+  return useQuery({
+    queryKey: ['account', 'reports', 'balance-sheet', params],
+    queryFn: () => getBalanceSheetReport(params),
   })
 }

@@ -7,6 +7,8 @@ export const cashReportOptions = [
   { name: 'Trial Balance Report', to: '/account/reports/trial-balance' as any },
   { name: 'Income Statement Report', to: '/account/reports/income-statement' as any },
   { name: 'Expenditure Statement Report', to: '/account/reports/expenditure-statement' as any },
+  { name: 'Profit Loss Report', to: '/account/reports/profit-loss' as any },
+  { name: 'Balance Sheet Report', to: '/account/reports/balance-sheet' as any },
 ]
 
 export const reportCategoryTabs = [

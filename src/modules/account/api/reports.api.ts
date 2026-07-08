@@ -171,3 +171,48 @@ export const getExpenditureStatementReport = async (params: {
   })
   return response.data
 }
+
+export interface ProfitLossResponse {
+  incomes: any[]
+  expenses: any[]
+  fromDate: string
+  toDate: string
+  setting: any
+  company_info: any
+}
+
+export const getProfitLossReport = async (params: {
+  fromDate?: string
+  toDate?: string
+}): Promise<ProfitLossResponse> => {
+  const response = await apiClient.get<ProfitLossResponse>('/account/report/profit-loss', {
+    params,
+  })
+  return response.data
+}
+
+export interface BalanceSheetResponse {
+  assets: any[]
+  liabilities: any[]
+  equitys: any[]
+  financialyears: string[]
+  fromDate: string
+  toDate: string
+  setting: any
+  company_info: any
+  running_f_year: {
+    id: number
+    year: string
+    [key: string]: any
+  }
+}
+
+export const getBalanceSheetReport = async (params: {
+  fromDate?: string
+  toDate?: string
+}): Promise<BalanceSheetResponse> => {
+  const response = await apiClient.get<BalanceSheetResponse>('/account/report/balance-sheet', {
+    params,
+  })
+  return response.data
+}
