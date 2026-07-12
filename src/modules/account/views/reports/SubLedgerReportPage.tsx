@@ -302,7 +302,7 @@ export const SubLedgerReportPage = () => {
           variant="solid"
           placeholder="Account Head"
           isLoading={isAccHeadsLoading}
-          disabled={!subTypeId}
+          isDisabled={!subTypeId}
         />
       </div>
       <div className="w-[220px]">
@@ -314,7 +314,7 @@ export const SubLedgerReportPage = () => {
           variant="solid"
           placeholder="Transaction Head"
           isLoading={isTranHeadsLoading}
-          disabled={!subTypeId}
+          isDisabled={!subTypeId}
         />
       </div>
     </div>

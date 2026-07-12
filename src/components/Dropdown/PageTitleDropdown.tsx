@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { Link, useLocation } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 
 interface PageTitleDropdownOption {
@@ -16,7 +16,6 @@ interface PageTitleDropdownProps {
 export const PageTitleDropdown = ({ title, options }: PageTitleDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const location = useLocation()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,7 +47,10 @@ export const PageTitleDropdown = ({ title, options }: PageTitleDropdownProps) =>
       {isOpen && (
         <div className="absolute left-0 mt-2 min-w-[220px] max-h-[400px] overflow-y-auto custom-scrollbar bg-white border border-blue-200 rounded-lg shadow-[0_15px_50px_rgba(0,0,0,0.1)] z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
           {options.map((option, index) => {
-            const isActive = location.pathname === option.to
+            const toStr = typeof option.to === 'string' ? option.to : ''
+            const isActive = toStr.includes('?')
+              ? (window.location.pathname + window.location.search) === toStr
+              : window.location.pathname === toStr
             return (
               <Link
                 key={option.to}

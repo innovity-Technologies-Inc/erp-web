@@ -23,6 +23,9 @@ import { Route as AuthenticatedAccountPredefinedAccountsRouteImport } from './ro
 import { Route as AuthenticatedAccountPaymentMethodRouteImport } from './routes/_authenticated/account.payment-method'
 import { Route as AuthenticatedAccountMerchantReceiveRouteImport } from './routes/_authenticated/account.merchant-receive'
 import { Route as AuthenticatedAccountFinancialYearRouteImport } from './routes/_authenticated/account.financial-year'
+import { Route as AuthenticatedAccountEinSettingRouteImport } from './routes/_authenticated/account.ein-setting'
+import { Route as AuthenticatedAccountEinNumberSettingsRouteImport } from './routes/_authenticated/account.ein-number-settings'
+import { Route as AuthenticatedAccountEinRouteImport } from './routes/_authenticated/account.ein'
 import { Route as AuthenticatedAccountChartOfAccountsRouteImport } from './routes/_authenticated/account.chart-of-accounts'
 import { Route as AuthenticatedAccountCashAdjustmentRouteImport } from './routes/_authenticated/account.cash-adjustment'
 import { Route as AuthenticatedAccountBankReconciliationRouteImport } from './routes/_authenticated/account.bank-reconciliation'
@@ -72,11 +75,15 @@ import { Route as AuthenticatedInventoryProductCategoryRouteImport } from './rou
 import { Route as AuthenticatedInventoryMerchantCreateRouteImport } from './routes/_authenticated/inventory/merchant.create'
 import { Route as AuthenticatedAccountReportsTrialBalanceRouteImport } from './routes/_authenticated/account.reports.trial-balance'
 import { Route as AuthenticatedAccountReportsSubLedgerRouteImport } from './routes/_authenticated/account.reports.sub-ledger'
+import { Route as AuthenticatedAccountReportsReceiptPaymentRouteImport } from './routes/_authenticated/account.reports.receipt-payment'
 import { Route as AuthenticatedAccountReportsProfitLossRouteImport } from './routes/_authenticated/account.reports.profit-loss'
 import { Route as AuthenticatedAccountReportsIncomeStatementRouteImport } from './routes/_authenticated/account.reports.income-statement'
 import { Route as AuthenticatedAccountReportsGeneralLedgerRouteImport } from './routes/_authenticated/account.reports.general-ledger'
+import { Route as AuthenticatedAccountReportsFixedAssetsRouteImport } from './routes/_authenticated/account.reports.fixed-assets'
 import { Route as AuthenticatedAccountReportsExpenditureStatementRouteImport } from './routes/_authenticated/account.reports.expenditure-statement'
 import { Route as AuthenticatedAccountReportsDayBookRouteImport } from './routes/_authenticated/account.reports.day-book'
+import { Route as AuthenticatedAccountReportsCoaPrintRouteImport } from './routes/_authenticated/account.reports.coa-print'
+import { Route as AuthenticatedAccountReportsBankReconciliationRouteImport } from './routes/_authenticated/account.reports.bank-reconciliation'
 import { Route as AuthenticatedAccountReportsBankBookRouteImport } from './routes/_authenticated/account.reports.bank-book'
 import { Route as AuthenticatedAccountReportsBalanceSheetRouteImport } from './routes/_authenticated/account.reports.balance-sheet'
 import { Route as AuthenticatedAccountOpeningBalanceCreateRouteImport } from './routes/_authenticated/account.opening-balance.create'
@@ -196,6 +203,23 @@ const AuthenticatedAccountFinancialYearRoute =
     path: '/account/financial-year',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountEinSettingRoute =
+  AuthenticatedAccountEinSettingRouteImport.update({
+    id: '/account/ein-setting',
+    path: '/account/ein-setting',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountEinNumberSettingsRoute =
+  AuthenticatedAccountEinNumberSettingsRouteImport.update({
+    id: '/account/ein-number-settings',
+    path: '/account/ein-number-settings',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountEinRoute = AuthenticatedAccountEinRouteImport.update({
+  id: '/account/ein',
+  path: '/account/ein',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAccountChartOfAccountsRoute =
   AuthenticatedAccountChartOfAccountsRouteImport.update({
     id: '/account/chart-of-accounts',
@@ -490,6 +514,12 @@ const AuthenticatedAccountReportsSubLedgerRoute =
     path: '/account/reports/sub-ledger',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountReportsReceiptPaymentRoute =
+  AuthenticatedAccountReportsReceiptPaymentRouteImport.update({
+    id: '/account/reports/receipt-payment',
+    path: '/account/reports/receipt-payment',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountReportsProfitLossRoute =
   AuthenticatedAccountReportsProfitLossRouteImport.update({
     id: '/account/reports/profit-loss',
@@ -508,6 +538,12 @@ const AuthenticatedAccountReportsGeneralLedgerRoute =
     path: '/account/reports/general-ledger',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAccountReportsFixedAssetsRoute =
+  AuthenticatedAccountReportsFixedAssetsRouteImport.update({
+    id: '/account/reports/fixed-assets',
+    path: '/account/reports/fixed-assets',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountReportsExpenditureStatementRoute =
   AuthenticatedAccountReportsExpenditureStatementRouteImport.update({
     id: '/account/reports/expenditure-statement',
@@ -518,6 +554,18 @@ const AuthenticatedAccountReportsDayBookRoute =
   AuthenticatedAccountReportsDayBookRouteImport.update({
     id: '/account/reports/day-book',
     path: '/account/reports/day-book',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsCoaPrintRoute =
+  AuthenticatedAccountReportsCoaPrintRouteImport.update({
+    id: '/account/reports/coa-print',
+    path: '/account/reports/coa-print',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccountReportsBankReconciliationRoute =
+  AuthenticatedAccountReportsBankReconciliationRouteImport.update({
+    id: '/account/reports/bank-reconciliation',
+    path: '/account/reports/bank-reconciliation',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountReportsBankBookRoute =
@@ -781,6 +829,9 @@ export interface FileRoutesByFullPath {
   '/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
   '/account/cash-adjustment': typeof AuthenticatedAccountCashAdjustmentRoute
   '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
+  '/account/ein': typeof AuthenticatedAccountEinRoute
+  '/account/ein-number-settings': typeof AuthenticatedAccountEinNumberSettingsRoute
+  '/account/ein-setting': typeof AuthenticatedAccountEinSettingRoute
   '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
   '/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
   '/account/payment-method': typeof AuthenticatedAccountPaymentMethodRoute
@@ -792,11 +843,15 @@ export interface FileRoutesByFullPath {
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
+  '/account/reports/bank-reconciliation': typeof AuthenticatedAccountReportsBankReconciliationRoute
+  '/account/reports/coa-print': typeof AuthenticatedAccountReportsCoaPrintRoute
   '/account/reports/day-book': typeof AuthenticatedAccountReportsDayBookRoute
   '/account/reports/expenditure-statement': typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  '/account/reports/fixed-assets': typeof AuthenticatedAccountReportsFixedAssetsRoute
   '/account/reports/general-ledger': typeof AuthenticatedAccountReportsGeneralLedgerRoute
   '/account/reports/income-statement': typeof AuthenticatedAccountReportsIncomeStatementRoute
   '/account/reports/profit-loss': typeof AuthenticatedAccountReportsProfitLossRoute
+  '/account/reports/receipt-payment': typeof AuthenticatedAccountReportsReceiptPaymentRoute
   '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
@@ -891,6 +946,9 @@ export interface FileRoutesByTo {
   '/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
   '/account/cash-adjustment': typeof AuthenticatedAccountCashAdjustmentRoute
   '/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
+  '/account/ein': typeof AuthenticatedAccountEinRoute
+  '/account/ein-number-settings': typeof AuthenticatedAccountEinNumberSettingsRoute
+  '/account/ein-setting': typeof AuthenticatedAccountEinSettingRoute
   '/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
   '/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
   '/account/payment-method': typeof AuthenticatedAccountPaymentMethodRoute
@@ -902,11 +960,15 @@ export interface FileRoutesByTo {
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
+  '/account/reports/bank-reconciliation': typeof AuthenticatedAccountReportsBankReconciliationRoute
+  '/account/reports/coa-print': typeof AuthenticatedAccountReportsCoaPrintRoute
   '/account/reports/day-book': typeof AuthenticatedAccountReportsDayBookRoute
   '/account/reports/expenditure-statement': typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  '/account/reports/fixed-assets': typeof AuthenticatedAccountReportsFixedAssetsRoute
   '/account/reports/general-ledger': typeof AuthenticatedAccountReportsGeneralLedgerRoute
   '/account/reports/income-statement': typeof AuthenticatedAccountReportsIncomeStatementRoute
   '/account/reports/profit-loss': typeof AuthenticatedAccountReportsProfitLossRoute
+  '/account/reports/receipt-payment': typeof AuthenticatedAccountReportsReceiptPaymentRoute
   '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
@@ -1004,6 +1066,9 @@ export interface FileRoutesById {
   '/_authenticated/account/bank-reconciliation': typeof AuthenticatedAccountBankReconciliationRoute
   '/_authenticated/account/cash-adjustment': typeof AuthenticatedAccountCashAdjustmentRoute
   '/_authenticated/account/chart-of-accounts': typeof AuthenticatedAccountChartOfAccountsRoute
+  '/_authenticated/account/ein': typeof AuthenticatedAccountEinRoute
+  '/_authenticated/account/ein-number-settings': typeof AuthenticatedAccountEinNumberSettingsRoute
+  '/_authenticated/account/ein-setting': typeof AuthenticatedAccountEinSettingRoute
   '/_authenticated/account/financial-year': typeof AuthenticatedAccountFinancialYearRoute
   '/_authenticated/account/merchant-receive': typeof AuthenticatedAccountMerchantReceiveRoute
   '/_authenticated/account/payment-method': typeof AuthenticatedAccountPaymentMethodRoute
@@ -1015,11 +1080,15 @@ export interface FileRoutesById {
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/_authenticated/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/_authenticated/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
+  '/_authenticated/account/reports/bank-reconciliation': typeof AuthenticatedAccountReportsBankReconciliationRoute
+  '/_authenticated/account/reports/coa-print': typeof AuthenticatedAccountReportsCoaPrintRoute
   '/_authenticated/account/reports/day-book': typeof AuthenticatedAccountReportsDayBookRoute
   '/_authenticated/account/reports/expenditure-statement': typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  '/_authenticated/account/reports/fixed-assets': typeof AuthenticatedAccountReportsFixedAssetsRoute
   '/_authenticated/account/reports/general-ledger': typeof AuthenticatedAccountReportsGeneralLedgerRoute
   '/_authenticated/account/reports/income-statement': typeof AuthenticatedAccountReportsIncomeStatementRoute
   '/_authenticated/account/reports/profit-loss': typeof AuthenticatedAccountReportsProfitLossRoute
+  '/_authenticated/account/reports/receipt-payment': typeof AuthenticatedAccountReportsReceiptPaymentRoute
   '/_authenticated/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/_authenticated/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
@@ -1116,6 +1185,9 @@ export interface FileRouteTypes {
     | '/account/bank-reconciliation'
     | '/account/cash-adjustment'
     | '/account/chart-of-accounts'
+    | '/account/ein'
+    | '/account/ein-number-settings'
+    | '/account/ein-setting'
     | '/account/financial-year'
     | '/account/merchant-receive'
     | '/account/payment-method'
@@ -1127,11 +1199,15 @@ export interface FileRouteTypes {
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
+    | '/account/reports/bank-reconciliation'
+    | '/account/reports/coa-print'
     | '/account/reports/day-book'
     | '/account/reports/expenditure-statement'
+    | '/account/reports/fixed-assets'
     | '/account/reports/general-ledger'
     | '/account/reports/income-statement'
     | '/account/reports/profit-loss'
+    | '/account/reports/receipt-payment'
     | '/account/reports/sub-ledger'
     | '/account/reports/trial-balance'
     | '/inventory/merchant/create'
@@ -1226,6 +1302,9 @@ export interface FileRouteTypes {
     | '/account/bank-reconciliation'
     | '/account/cash-adjustment'
     | '/account/chart-of-accounts'
+    | '/account/ein'
+    | '/account/ein-number-settings'
+    | '/account/ein-setting'
     | '/account/financial-year'
     | '/account/merchant-receive'
     | '/account/payment-method'
@@ -1237,11 +1316,15 @@ export interface FileRouteTypes {
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
+    | '/account/reports/bank-reconciliation'
+    | '/account/reports/coa-print'
     | '/account/reports/day-book'
     | '/account/reports/expenditure-statement'
+    | '/account/reports/fixed-assets'
     | '/account/reports/general-ledger'
     | '/account/reports/income-statement'
     | '/account/reports/profit-loss'
+    | '/account/reports/receipt-payment'
     | '/account/reports/sub-ledger'
     | '/account/reports/trial-balance'
     | '/inventory/merchant/create'
@@ -1338,6 +1421,9 @@ export interface FileRouteTypes {
     | '/_authenticated/account/bank-reconciliation'
     | '/_authenticated/account/cash-adjustment'
     | '/_authenticated/account/chart-of-accounts'
+    | '/_authenticated/account/ein'
+    | '/_authenticated/account/ein-number-settings'
+    | '/_authenticated/account/ein-setting'
     | '/_authenticated/account/financial-year'
     | '/_authenticated/account/merchant-receive'
     | '/_authenticated/account/payment-method'
@@ -1349,11 +1435,15 @@ export interface FileRouteTypes {
     | '/_authenticated/account/opening-balance/create'
     | '/_authenticated/account/reports/balance-sheet'
     | '/_authenticated/account/reports/bank-book'
+    | '/_authenticated/account/reports/bank-reconciliation'
+    | '/_authenticated/account/reports/coa-print'
     | '/_authenticated/account/reports/day-book'
     | '/_authenticated/account/reports/expenditure-statement'
+    | '/_authenticated/account/reports/fixed-assets'
     | '/_authenticated/account/reports/general-ledger'
     | '/_authenticated/account/reports/income-statement'
     | '/_authenticated/account/reports/profit-loss'
+    | '/_authenticated/account/reports/receipt-payment'
     | '/_authenticated/account/reports/sub-ledger'
     | '/_authenticated/account/reports/trial-balance'
     | '/_authenticated/inventory/merchant/create'
@@ -1544,6 +1634,27 @@ declare module '@tanstack/react-router' {
       path: '/account/financial-year'
       fullPath: '/account/financial-year'
       preLoaderRoute: typeof AuthenticatedAccountFinancialYearRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/ein-setting': {
+      id: '/_authenticated/account/ein-setting'
+      path: '/account/ein-setting'
+      fullPath: '/account/ein-setting'
+      preLoaderRoute: typeof AuthenticatedAccountEinSettingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/ein-number-settings': {
+      id: '/_authenticated/account/ein-number-settings'
+      path: '/account/ein-number-settings'
+      fullPath: '/account/ein-number-settings'
+      preLoaderRoute: typeof AuthenticatedAccountEinNumberSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/ein': {
+      id: '/_authenticated/account/ein'
+      path: '/account/ein'
+      fullPath: '/account/ein'
+      preLoaderRoute: typeof AuthenticatedAccountEinRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/chart-of-accounts': {
@@ -1889,6 +2000,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountReportsSubLedgerRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/reports/receipt-payment': {
+      id: '/_authenticated/account/reports/receipt-payment'
+      path: '/account/reports/receipt-payment'
+      fullPath: '/account/reports/receipt-payment'
+      preLoaderRoute: typeof AuthenticatedAccountReportsReceiptPaymentRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/reports/profit-loss': {
       id: '/_authenticated/account/reports/profit-loss'
       path: '/account/reports/profit-loss'
@@ -1910,6 +2028,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountReportsGeneralLedgerRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/account/reports/fixed-assets': {
+      id: '/_authenticated/account/reports/fixed-assets'
+      path: '/account/reports/fixed-assets'
+      fullPath: '/account/reports/fixed-assets'
+      preLoaderRoute: typeof AuthenticatedAccountReportsFixedAssetsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/reports/expenditure-statement': {
       id: '/_authenticated/account/reports/expenditure-statement'
       path: '/account/reports/expenditure-statement'
@@ -1922,6 +2047,20 @@ declare module '@tanstack/react-router' {
       path: '/account/reports/day-book'
       fullPath: '/account/reports/day-book'
       preLoaderRoute: typeof AuthenticatedAccountReportsDayBookRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/coa-print': {
+      id: '/_authenticated/account/reports/coa-print'
+      path: '/account/reports/coa-print'
+      fullPath: '/account/reports/coa-print'
+      preLoaderRoute: typeof AuthenticatedAccountReportsCoaPrintRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/account/reports/bank-reconciliation': {
+      id: '/_authenticated/account/reports/bank-reconciliation'
+      path: '/account/reports/bank-reconciliation'
+      fullPath: '/account/reports/bank-reconciliation'
+      preLoaderRoute: typeof AuthenticatedAccountReportsBankReconciliationRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/reports/bank-book': {
@@ -2255,6 +2394,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountBankReconciliationRoute: typeof AuthenticatedAccountBankReconciliationRoute
   AuthenticatedAccountCashAdjustmentRoute: typeof AuthenticatedAccountCashAdjustmentRoute
   AuthenticatedAccountChartOfAccountsRoute: typeof AuthenticatedAccountChartOfAccountsRoute
+  AuthenticatedAccountEinRoute: typeof AuthenticatedAccountEinRoute
+  AuthenticatedAccountEinNumberSettingsRoute: typeof AuthenticatedAccountEinNumberSettingsRoute
+  AuthenticatedAccountEinSettingRoute: typeof AuthenticatedAccountEinSettingRoute
   AuthenticatedAccountFinancialYearRoute: typeof AuthenticatedAccountFinancialYearRoute
   AuthenticatedAccountMerchantReceiveRoute: typeof AuthenticatedAccountMerchantReceiveRoute
   AuthenticatedAccountPaymentMethodRoute: typeof AuthenticatedAccountPaymentMethodRoute
@@ -2266,11 +2408,15 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
   AuthenticatedAccountReportsBalanceSheetRoute: typeof AuthenticatedAccountReportsBalanceSheetRoute
   AuthenticatedAccountReportsBankBookRoute: typeof AuthenticatedAccountReportsBankBookRoute
+  AuthenticatedAccountReportsBankReconciliationRoute: typeof AuthenticatedAccountReportsBankReconciliationRoute
+  AuthenticatedAccountReportsCoaPrintRoute: typeof AuthenticatedAccountReportsCoaPrintRoute
   AuthenticatedAccountReportsDayBookRoute: typeof AuthenticatedAccountReportsDayBookRoute
   AuthenticatedAccountReportsExpenditureStatementRoute: typeof AuthenticatedAccountReportsExpenditureStatementRoute
+  AuthenticatedAccountReportsFixedAssetsRoute: typeof AuthenticatedAccountReportsFixedAssetsRoute
   AuthenticatedAccountReportsGeneralLedgerRoute: typeof AuthenticatedAccountReportsGeneralLedgerRoute
   AuthenticatedAccountReportsIncomeStatementRoute: typeof AuthenticatedAccountReportsIncomeStatementRoute
   AuthenticatedAccountReportsProfitLossRoute: typeof AuthenticatedAccountReportsProfitLossRoute
+  AuthenticatedAccountReportsReceiptPaymentRoute: typeof AuthenticatedAccountReportsReceiptPaymentRoute
   AuthenticatedAccountReportsSubLedgerRoute: typeof AuthenticatedAccountReportsSubLedgerRoute
   AuthenticatedAccountReportsTrialBalanceRoute: typeof AuthenticatedAccountReportsTrialBalanceRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
@@ -2365,6 +2511,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountCashAdjustmentRoute,
   AuthenticatedAccountChartOfAccountsRoute:
     AuthenticatedAccountChartOfAccountsRoute,
+  AuthenticatedAccountEinRoute: AuthenticatedAccountEinRoute,
+  AuthenticatedAccountEinNumberSettingsRoute:
+    AuthenticatedAccountEinNumberSettingsRoute,
+  AuthenticatedAccountEinSettingRoute: AuthenticatedAccountEinSettingRoute,
   AuthenticatedAccountFinancialYearRoute:
     AuthenticatedAccountFinancialYearRoute,
   AuthenticatedAccountMerchantReceiveRoute:
@@ -2386,16 +2536,24 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountReportsBalanceSheetRoute,
   AuthenticatedAccountReportsBankBookRoute:
     AuthenticatedAccountReportsBankBookRoute,
+  AuthenticatedAccountReportsBankReconciliationRoute:
+    AuthenticatedAccountReportsBankReconciliationRoute,
+  AuthenticatedAccountReportsCoaPrintRoute:
+    AuthenticatedAccountReportsCoaPrintRoute,
   AuthenticatedAccountReportsDayBookRoute:
     AuthenticatedAccountReportsDayBookRoute,
   AuthenticatedAccountReportsExpenditureStatementRoute:
     AuthenticatedAccountReportsExpenditureStatementRoute,
+  AuthenticatedAccountReportsFixedAssetsRoute:
+    AuthenticatedAccountReportsFixedAssetsRoute,
   AuthenticatedAccountReportsGeneralLedgerRoute:
     AuthenticatedAccountReportsGeneralLedgerRoute,
   AuthenticatedAccountReportsIncomeStatementRoute:
     AuthenticatedAccountReportsIncomeStatementRoute,
   AuthenticatedAccountReportsProfitLossRoute:
     AuthenticatedAccountReportsProfitLossRoute,
+  AuthenticatedAccountReportsReceiptPaymentRoute:
+    AuthenticatedAccountReportsReceiptPaymentRoute,
   AuthenticatedAccountReportsSubLedgerRoute:
     AuthenticatedAccountReportsSubLedgerRoute,
   AuthenticatedAccountReportsTrialBalanceRoute:

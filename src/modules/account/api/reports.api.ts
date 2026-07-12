@@ -216,3 +216,131 @@ export const getBalanceSheetReport = async (params: {
   })
   return response.data
 }
+
+export interface FixedAssetResponse {
+  fyear: number | string | null
+  fixedAssets: any[]
+  fyears: {
+    id: number
+    year: string
+    [key: string]: any
+  }[]
+  curentYear: {
+    id: number
+    year: string
+    [key: string]: any
+  } | null
+  setting: any
+  company_info: any
+}
+
+export const getFixedAssetReport = async (params: {
+  f_year?: string | number | null
+}): Promise<FixedAssetResponse> => {
+  const response = await apiClient.get<FixedAssetResponse>('/account/report/fixed-assets', {
+    params,
+  })
+  return response.data
+}
+
+export interface ReceiptPaymentInnerHead {
+  code: string
+  headName: string
+  debit: number
+  credit: number
+}
+
+export interface ReceiptPaymentItem {
+  hcode: string
+  headName: string
+  innerHead: ReceiptPaymentInnerHead[]
+  subtotal: number
+}
+
+export interface ReceiptPaymentResponse {
+  dtpFromDate: string
+  dtpToDate: string
+  reportType: 'Accrual Basis' | 'Cash Basis'
+  cashOpening: number
+  bankOpening: number
+  advOpening: number
+  cashClosing: number
+  bankClosing: number
+  advClosing: number
+  receiptitems: ReceiptPaymentItem[]
+  paymentitems: ReceiptPaymentItem[]
+  setting: any
+  company_info: any
+}
+
+export const getReceiptPaymentReport = async (params: {
+  fromDate?: string
+  toDate?: string
+  reportType?: string
+}): Promise<ReceiptPaymentResponse> => {
+  const response = await apiClient.get<ReceiptPaymentResponse>('/account/report/receipt-payment', {
+    params,
+  })
+  return response.data
+}
+
+export interface BankReconciliationVoucher {
+  id: number
+  v_no: string
+  v_No: string
+  v_date: string
+  cheque_no: string
+  cheque_date: string
+  debit: number
+  credit: number
+  is_honour: number
+  is_approved: number
+  accountName: string
+  Bankname: string
+  [key: string]: any
+}
+
+export interface BankReconciliationResponse {
+  dtpFromDate: string
+  dtpToDate: string
+  bankCode: string
+  bank: Array<{ head_code: string; head_name: string }>
+  vauchers: BankReconciliationVoucher[]
+  setting: any
+  company_info: any
+}
+
+export const getBankReconciliationReport = async (params: {
+  fromDate?: string
+  toDate?: string
+  bankCode?: string
+}): Promise<BankReconciliationResponse> => {
+  const response = await apiClient.get<BankReconciliationResponse>('/account/report/bank-reconciliation', {
+    params,
+  })
+  return response.data
+}
+
+export interface CoaPrintItem {
+  id: number
+  head_code: string
+  head_name: string
+  head_level: number
+  p_head_code: string
+  is_active: number
+  [key: string]: any
+}
+
+export interface CoaPrintResponse {
+  acc_coas: CoaPrintItem[]
+  maxLevel: number
+  setting: any
+  company_info: any
+}
+
+export const getCoaPrintReport = async (): Promise<CoaPrintResponse> => {
+  const response = await apiClient.get<CoaPrintResponse>('/account/report/coa-print')
+  return response.data
+}
+
+

@@ -15,6 +15,10 @@ import {
   getExpenditureStatementReport,
   getProfitLossReport,
   getBalanceSheetReport,
+  getFixedAssetReport,
+  getReceiptPaymentReport,
+  getBankReconciliationReport,
+  getCoaPrintReport,
 } from '../api/reports.api'
 
 export const useCashBookReportDatatable = (params: {
@@ -167,5 +171,43 @@ export const useBalanceSheetReport = (params: {
   return useQuery({
     queryKey: ['account', 'reports', 'balance-sheet', params],
     queryFn: () => getBalanceSheetReport(params),
+  })
+}
+
+export const useFixedAssetReport = (params: {
+  f_year?: string | number | null
+}) => {
+  return useQuery({
+    queryKey: ['account', 'reports', 'fixed-assets', params],
+    queryFn: () => getFixedAssetReport(params),
+  })
+}
+
+export const useReceiptPaymentReport = (params: {
+  fromDate?: string
+  toDate?: string
+  reportType?: string
+}) => {
+  return useQuery({
+    queryKey: ['account', 'reports', 'receipt-payment', params],
+    queryFn: () => getReceiptPaymentReport(params),
+  })
+}
+
+export const useBankReconciliationReport = (params: {
+  fromDate?: string
+  toDate?: string
+  bankCode?: string
+}) => {
+  return useQuery({
+    queryKey: ['account', 'reports', 'bank-reconciliation', params],
+    queryFn: () => getBankReconciliationReport(params),
+  })
+}
+
+export const useCoaPrintReport = () => {
+  return useQuery({
+    queryKey: ['account', 'reports', 'coa-print'],
+    queryFn: () => getCoaPrintReport(),
   })
 }

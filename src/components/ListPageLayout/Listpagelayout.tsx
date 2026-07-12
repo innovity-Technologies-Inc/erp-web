@@ -108,6 +108,12 @@ export interface ListPageLayoutProps<T extends object> {
 
   /** Custom content to render instead of the default DataTable */
   children?: ReactNode
+
+  /** Hide the entire filter & action row toolbar */
+  hideFilterRow?: boolean
+
+  /** Disable wrapping children in the main card container */
+  disableCard?: boolean
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -150,6 +156,8 @@ export const ListPageLayout = <T extends object>({
   searchWidth,
   summaryFooter,
   children,
+  hideFilterRow = false,
+  disableCard = false,
 }: ListPageLayoutProps<T>) => {
 
   const [colMenuOpen, setColMenuOpen] = useState(false)
@@ -232,9 +240,13 @@ export const ListPageLayout = <T extends object>({
       </div>
 
       {/* ── 2. Main Card ────────────────────────────────────────── */}
+      {disableCard ? (
+        children
+      ) : (
       <div className="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-50 p-7 space-y-7">
 
         {/* Filter & Action Row */}
+        {!hideFilterRow && (
         <div className="flex items-center justify-between gap-4">
 
           {/* Left side */}
@@ -372,6 +384,7 @@ export const ListPageLayout = <T extends object>({
             )}
           </div>
         </div>
+        )}
 
         {/* ── Table or Custom Children ──────────────────────────────────────────────── */}
         {children ? (
@@ -473,6 +486,7 @@ export const ListPageLayout = <T extends object>({
         </div>
         )}
       </div>
+      )}
     </div>
   )
 }
