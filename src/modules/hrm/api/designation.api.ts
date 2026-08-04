@@ -33,3 +33,8 @@ export const toggleDesignationStatus = async ({ id, designation, status }: { id:
   const response = await apiClient.put<ApiResponse<Designation>>(`/hrm/designation/${id}`, { designation, status })
   return response.data
 }
+
+export const getDesignationSelect2 = async (): Promise<any[]> => {
+  const response = await apiClient.get<any[]>('/select2/get-designation-select2')
+  return response.data
+}

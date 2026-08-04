@@ -6,6 +6,7 @@ import {
   updateDesignation,
   deleteDesignation,
   toggleDesignationStatus,
+  getDesignationSelect2,
 } from '../api/designation.api'
 import { designationKeys } from '../api/designation.keys'
 import type { DesignationFilters, CreateDesignationDto, UpdateDesignationDto } from '../api/types'
@@ -63,5 +64,13 @@ export const useToggleDesignationStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: designationKeys.all() })
     },
+  })
+}
+
+export const useDesignationSelect2 = () => {
+  return useQuery({
+    queryKey: ['designation-select2'],
+    queryFn: () => getDesignationSelect2(),
+    staleTime: 60_000,
   })
 }

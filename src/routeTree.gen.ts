@@ -16,7 +16,6 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthenticatedHrmPayrollRouteImport } from './routes/_authenticated/hrm.payroll'
-import { Route as AuthenticatedHrmEmployeeRouteImport } from './routes/_authenticated/hrm.employee'
 import { Route as AuthenticatedHrmDesignationRouteImport } from './routes/_authenticated/hrm.designation'
 import { Route as AuthenticatedHrmAttendanceRouteImport } from './routes/_authenticated/hrm.attendance'
 import { Route as AuthenticatedAccountVoucherApprovalRouteImport } from './routes/_authenticated/account.voucher-approval'
@@ -42,6 +41,7 @@ import { Route as AuthenticatedInventoryQuotationIndexRouteImport } from './rout
 import { Route as AuthenticatedInventoryPurchaseIndexRouteImport } from './routes/_authenticated/inventory/purchase.index'
 import { Route as AuthenticatedInventoryProductIndexRouteImport } from './routes/_authenticated/inventory/product.index'
 import { Route as AuthenticatedInventoryMerchantIndexRouteImport } from './routes/_authenticated/inventory/merchant.index'
+import { Route as AuthenticatedHrmEmployeeIndexRouteImport } from './routes/_authenticated/hrm.employee.index'
 import { Route as AuthenticatedAccountReportsIndexRouteImport } from './routes/_authenticated/account.reports.index'
 import { Route as AuthenticatedAccountOpeningBalanceIndexRouteImport } from './routes/_authenticated/account.opening-balance.index'
 import { Route as AuthenticatedInventoryWarehouseStockMovementRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement'
@@ -77,6 +77,7 @@ import { Route as AuthenticatedInventoryProductSubCategoryRouteImport } from './
 import { Route as AuthenticatedInventoryProductCreateRouteImport } from './routes/_authenticated/inventory/product.create'
 import { Route as AuthenticatedInventoryProductCategoryRouteImport } from './routes/_authenticated/inventory/product.category'
 import { Route as AuthenticatedInventoryMerchantCreateRouteImport } from './routes/_authenticated/inventory/merchant.create'
+import { Route as AuthenticatedHrmEmployeeCreateRouteImport } from './routes/_authenticated/hrm.employee.create'
 import { Route as AuthenticatedAccountReportsTrialBalanceRouteImport } from './routes/_authenticated/account.reports.trial-balance'
 import { Route as AuthenticatedAccountReportsSubLedgerRouteImport } from './routes/_authenticated/account.reports.sub-ledger'
 import { Route as AuthenticatedAccountReportsReceiptPaymentRouteImport } from './routes/_authenticated/account.reports.receipt-payment'
@@ -118,6 +119,8 @@ import { Route as AuthenticatedInventoryPurchaseEditIdRouteImport } from './rout
 import { Route as AuthenticatedInventoryProductEditIdRouteImport } from './routes/_authenticated/inventory/product.edit.$id'
 import { Route as AuthenticatedInventoryMerchantEditIdRouteImport } from './routes/_authenticated/inventory/merchant.edit.$id'
 import { Route as AuthenticatedInventoryContactUsReplyIdRouteImport } from './routes/_authenticated/inventory/contact-us.reply.$id'
+import { Route as AuthenticatedHrmEmployeeShowUuidRouteImport } from './routes/_authenticated/hrm.employee.show.$uuid'
+import { Route as AuthenticatedHrmEmployeeEditUuidRouteImport } from './routes/_authenticated/hrm.employee.edit.$uuid'
 import { Route as AuthenticatedAccountVoucherJournalCreateRouteImport } from './routes/_authenticated/account.voucher.journal.create'
 import { Route as AuthenticatedAccountVoucherDebitCreateRouteImport } from './routes/_authenticated/account.voucher.debit.create'
 import { Route as AuthenticatedAccountVoucherCreditCreateRouteImport } from './routes/_authenticated/account.voucher.credit.create'
@@ -164,12 +167,6 @@ const AuthenticatedHrmPayrollRoute = AuthenticatedHrmPayrollRouteImport.update({
   path: '/hrm/payroll',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedHrmEmployeeRoute =
-  AuthenticatedHrmEmployeeRouteImport.update({
-    id: '/hrm/employee',
-    path: '/hrm/employee',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedHrmDesignationRoute =
   AuthenticatedHrmDesignationRouteImport.update({
     id: '/hrm/designation',
@@ -317,6 +314,12 @@ const AuthenticatedInventoryMerchantIndexRoute =
   AuthenticatedInventoryMerchantIndexRouteImport.update({
     id: '/inventory/merchant/',
     path: '/inventory/merchant/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmEmployeeIndexRoute =
+  AuthenticatedHrmEmployeeIndexRouteImport.update({
+    id: '/hrm/employee/',
+    path: '/hrm/employee/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountReportsIndexRoute =
@@ -527,6 +530,12 @@ const AuthenticatedInventoryMerchantCreateRoute =
   AuthenticatedInventoryMerchantCreateRouteImport.update({
     id: '/inventory/merchant/create',
     path: '/inventory/merchant/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmEmployeeCreateRoute =
+  AuthenticatedHrmEmployeeCreateRouteImport.update({
+    id: '/hrm/employee/create',
+    path: '/hrm/employee/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAccountReportsTrialBalanceRoute =
@@ -775,6 +784,18 @@ const AuthenticatedInventoryContactUsReplyIdRoute =
     path: '/inventory/contact-us/reply/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedHrmEmployeeShowUuidRoute =
+  AuthenticatedHrmEmployeeShowUuidRouteImport.update({
+    id: '/hrm/employee/show/$uuid',
+    path: '/hrm/employee/show/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmEmployeeEditUuidRoute =
+  AuthenticatedHrmEmployeeEditUuidRouteImport.update({
+    id: '/hrm/employee/edit/$uuid',
+    path: '/hrm/employee/edit/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountVoucherJournalCreateRoute =
   AuthenticatedAccountVoucherJournalCreateRouteImport.update({
     id: '/account/voucher/journal/create',
@@ -869,7 +890,6 @@ export interface FileRoutesByFullPath {
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
   '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
-  '/hrm/employee': typeof AuthenticatedHrmEmployeeRoute
   '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
@@ -885,6 +905,7 @@ export interface FileRoutesByFullPath {
   '/account/reports/receipt-payment': typeof AuthenticatedAccountReportsReceiptPaymentRoute
   '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
+  '/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -920,6 +941,7 @@ export interface FileRoutesByFullPath {
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
+  '/hrm/employee/': typeof AuthenticatedHrmEmployeeIndexRoute
   '/inventory/merchant/': typeof AuthenticatedInventoryMerchantIndexRoute
   '/inventory/product/': typeof AuthenticatedInventoryProductIndexRoute
   '/inventory/purchase/': typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -934,6 +956,8 @@ export interface FileRoutesByFullPath {
   '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
   '/account/voucher/debit/create': typeof AuthenticatedAccountVoucherDebitCreateRoute
   '/account/voucher/journal/create': typeof AuthenticatedAccountVoucherJournalCreateRoute
+  '/hrm/employee/edit/$uuid': typeof AuthenticatedHrmEmployeeEditUuidRoute
+  '/hrm/employee/show/$uuid': typeof AuthenticatedHrmEmployeeShowUuidRoute
   '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
   '/inventory/merchant/edit/$id': typeof AuthenticatedInventoryMerchantEditIdRoute
   '/inventory/product/edit/$id': typeof AuthenticatedInventoryProductEditIdRoute
@@ -990,7 +1014,6 @@ export interface FileRoutesByTo {
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
   '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
-  '/hrm/employee': typeof AuthenticatedHrmEmployeeRoute
   '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
@@ -1006,6 +1029,7 @@ export interface FileRoutesByTo {
   '/account/reports/receipt-payment': typeof AuthenticatedAccountReportsReceiptPaymentRoute
   '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
+  '/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1041,6 +1065,7 @@ export interface FileRoutesByTo {
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/account/opening-balance': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/account/reports': typeof AuthenticatedAccountReportsIndexRoute
+  '/hrm/employee': typeof AuthenticatedHrmEmployeeIndexRoute
   '/inventory/merchant': typeof AuthenticatedInventoryMerchantIndexRoute
   '/inventory/product': typeof AuthenticatedInventoryProductIndexRoute
   '/inventory/purchase': typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -1055,6 +1080,8 @@ export interface FileRoutesByTo {
   '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
   '/account/voucher/debit/create': typeof AuthenticatedAccountVoucherDebitCreateRoute
   '/account/voucher/journal/create': typeof AuthenticatedAccountVoucherJournalCreateRoute
+  '/hrm/employee/edit/$uuid': typeof AuthenticatedHrmEmployeeEditUuidRoute
+  '/hrm/employee/show/$uuid': typeof AuthenticatedHrmEmployeeShowUuidRoute
   '/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
   '/inventory/merchant/edit/$id': typeof AuthenticatedInventoryMerchantEditIdRoute
   '/inventory/product/edit/$id': typeof AuthenticatedInventoryProductEditIdRoute
@@ -1114,7 +1141,6 @@ export interface FileRoutesById {
   '/_authenticated/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/_authenticated/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
   '/_authenticated/hrm/designation': typeof AuthenticatedHrmDesignationRoute
-  '/_authenticated/hrm/employee': typeof AuthenticatedHrmEmployeeRoute
   '/_authenticated/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/_authenticated/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
@@ -1130,6 +1156,7 @@ export interface FileRoutesById {
   '/_authenticated/account/reports/receipt-payment': typeof AuthenticatedAccountReportsReceiptPaymentRoute
   '/_authenticated/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/_authenticated/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
+  '/_authenticated/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/_authenticated/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/_authenticated/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1165,6 +1192,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/_authenticated/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/_authenticated/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
+  '/_authenticated/hrm/employee/': typeof AuthenticatedHrmEmployeeIndexRoute
   '/_authenticated/inventory/merchant/': typeof AuthenticatedInventoryMerchantIndexRoute
   '/_authenticated/inventory/product/': typeof AuthenticatedInventoryProductIndexRoute
   '/_authenticated/inventory/purchase/': typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -1179,6 +1207,8 @@ export interface FileRoutesById {
   '/_authenticated/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
   '/_authenticated/account/voucher/debit/create': typeof AuthenticatedAccountVoucherDebitCreateRoute
   '/_authenticated/account/voucher/journal/create': typeof AuthenticatedAccountVoucherJournalCreateRoute
+  '/_authenticated/hrm/employee/edit/$uuid': typeof AuthenticatedHrmEmployeeEditUuidRoute
+  '/_authenticated/hrm/employee/show/$uuid': typeof AuthenticatedHrmEmployeeShowUuidRoute
   '/_authenticated/inventory/contact-us/reply/$id': typeof AuthenticatedInventoryContactUsReplyIdRoute
   '/_authenticated/inventory/merchant/edit/$id': typeof AuthenticatedInventoryMerchantEditIdRoute
   '/_authenticated/inventory/product/edit/$id': typeof AuthenticatedInventoryProductEditIdRoute
@@ -1237,7 +1267,6 @@ export interface FileRouteTypes {
     | '/account/voucher-approval'
     | '/hrm/attendance'
     | '/hrm/designation'
-    | '/hrm/employee'
     | '/hrm/payroll'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
@@ -1253,6 +1282,7 @@ export interface FileRouteTypes {
     | '/account/reports/receipt-payment'
     | '/account/reports/sub-ledger'
     | '/account/reports/trial-balance'
+    | '/hrm/employee/create'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1288,6 +1318,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/stock-movement'
     | '/account/opening-balance/'
     | '/account/reports/'
+    | '/hrm/employee/'
     | '/inventory/merchant/'
     | '/inventory/product/'
     | '/inventory/purchase/'
@@ -1302,6 +1333,8 @@ export interface FileRouteTypes {
     | '/account/voucher/credit/create'
     | '/account/voucher/debit/create'
     | '/account/voucher/journal/create'
+    | '/hrm/employee/edit/$uuid'
+    | '/hrm/employee/show/$uuid'
     | '/inventory/contact-us/reply/$id'
     | '/inventory/merchant/edit/$id'
     | '/inventory/product/edit/$id'
@@ -1358,7 +1391,6 @@ export interface FileRouteTypes {
     | '/account/voucher-approval'
     | '/hrm/attendance'
     | '/hrm/designation'
-    | '/hrm/employee'
     | '/hrm/payroll'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
@@ -1374,6 +1406,7 @@ export interface FileRouteTypes {
     | '/account/reports/receipt-payment'
     | '/account/reports/sub-ledger'
     | '/account/reports/trial-balance'
+    | '/hrm/employee/create'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1409,6 +1442,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/stock-movement'
     | '/account/opening-balance'
     | '/account/reports'
+    | '/hrm/employee'
     | '/inventory/merchant'
     | '/inventory/product'
     | '/inventory/purchase'
@@ -1423,6 +1457,8 @@ export interface FileRouteTypes {
     | '/account/voucher/credit/create'
     | '/account/voucher/debit/create'
     | '/account/voucher/journal/create'
+    | '/hrm/employee/edit/$uuid'
+    | '/hrm/employee/show/$uuid'
     | '/inventory/contact-us/reply/$id'
     | '/inventory/merchant/edit/$id'
     | '/inventory/product/edit/$id'
@@ -1481,7 +1517,6 @@ export interface FileRouteTypes {
     | '/_authenticated/account/voucher-approval'
     | '/_authenticated/hrm/attendance'
     | '/_authenticated/hrm/designation'
-    | '/_authenticated/hrm/employee'
     | '/_authenticated/hrm/payroll'
     | '/_authenticated/account/opening-balance/create'
     | '/_authenticated/account/reports/balance-sheet'
@@ -1497,6 +1532,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/reports/receipt-payment'
     | '/_authenticated/account/reports/sub-ledger'
     | '/_authenticated/account/reports/trial-balance'
+    | '/_authenticated/hrm/employee/create'
     | '/_authenticated/inventory/merchant/create'
     | '/_authenticated/inventory/product/category'
     | '/_authenticated/inventory/product/create'
@@ -1532,6 +1568,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/warehouse/stock-movement'
     | '/_authenticated/account/opening-balance/'
     | '/_authenticated/account/reports/'
+    | '/_authenticated/hrm/employee/'
     | '/_authenticated/inventory/merchant/'
     | '/_authenticated/inventory/product/'
     | '/_authenticated/inventory/purchase/'
@@ -1546,6 +1583,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account/voucher/credit/create'
     | '/_authenticated/account/voucher/debit/create'
     | '/_authenticated/account/voucher/journal/create'
+    | '/_authenticated/hrm/employee/edit/$uuid'
+    | '/_authenticated/hrm/employee/show/$uuid'
     | '/_authenticated/inventory/contact-us/reply/$id'
     | '/_authenticated/inventory/merchant/edit/$id'
     | '/_authenticated/inventory/product/edit/$id'
@@ -1636,13 +1675,6 @@ declare module '@tanstack/react-router' {
       path: '/hrm/payroll'
       fullPath: '/hrm/payroll'
       preLoaderRoute: typeof AuthenticatedHrmPayrollRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/hrm/employee': {
-      id: '/_authenticated/hrm/employee'
-      path: '/hrm/employee'
-      fullPath: '/hrm/employee'
-      preLoaderRoute: typeof AuthenticatedHrmEmployeeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/hrm/designation': {
@@ -1818,6 +1850,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory/merchant'
       fullPath: '/inventory/merchant/'
       preLoaderRoute: typeof AuthenticatedInventoryMerchantIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/employee/': {
+      id: '/_authenticated/hrm/employee/'
+      path: '/hrm/employee'
+      fullPath: '/hrm/employee/'
+      preLoaderRoute: typeof AuthenticatedHrmEmployeeIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/reports/': {
@@ -2063,6 +2102,13 @@ declare module '@tanstack/react-router' {
       path: '/inventory/merchant/create'
       fullPath: '/inventory/merchant/create'
       preLoaderRoute: typeof AuthenticatedInventoryMerchantCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/employee/create': {
+      id: '/_authenticated/hrm/employee/create'
+      path: '/hrm/employee/create'
+      fullPath: '/hrm/employee/create'
+      preLoaderRoute: typeof AuthenticatedHrmEmployeeCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/reports/trial-balance': {
@@ -2352,6 +2398,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryContactUsReplyIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/hrm/employee/show/$uuid': {
+      id: '/_authenticated/hrm/employee/show/$uuid'
+      path: '/hrm/employee/show/$uuid'
+      fullPath: '/hrm/employee/show/$uuid'
+      preLoaderRoute: typeof AuthenticatedHrmEmployeeShowUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/employee/edit/$uuid': {
+      id: '/_authenticated/hrm/employee/edit/$uuid'
+      path: '/hrm/employee/edit/$uuid'
+      fullPath: '/hrm/employee/edit/$uuid'
+      preLoaderRoute: typeof AuthenticatedHrmEmployeeEditUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/account/voucher/journal/create': {
       id: '/_authenticated/account/voucher/journal/create'
       path: '/account/voucher/journal/create'
@@ -2486,7 +2546,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountVoucherApprovalRoute: typeof AuthenticatedAccountVoucherApprovalRoute
   AuthenticatedHrmAttendanceRoute: typeof AuthenticatedHrmAttendanceRoute
   AuthenticatedHrmDesignationRoute: typeof AuthenticatedHrmDesignationRoute
-  AuthenticatedHrmEmployeeRoute: typeof AuthenticatedHrmEmployeeRoute
   AuthenticatedHrmPayrollRoute: typeof AuthenticatedHrmPayrollRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
   AuthenticatedAccountReportsBalanceSheetRoute: typeof AuthenticatedAccountReportsBalanceSheetRoute
@@ -2502,6 +2561,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountReportsReceiptPaymentRoute: typeof AuthenticatedAccountReportsReceiptPaymentRoute
   AuthenticatedAccountReportsSubLedgerRoute: typeof AuthenticatedAccountReportsSubLedgerRoute
   AuthenticatedAccountReportsTrialBalanceRoute: typeof AuthenticatedAccountReportsTrialBalanceRoute
+  AuthenticatedHrmEmployeeCreateRoute: typeof AuthenticatedHrmEmployeeCreateRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
   AuthenticatedInventoryProductCategoryRoute: typeof AuthenticatedInventoryProductCategoryRoute
   AuthenticatedInventoryProductCreateRoute: typeof AuthenticatedInventoryProductCreateRoute
@@ -2537,6 +2597,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryWarehouseStockMovementRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   AuthenticatedAccountOpeningBalanceIndexRoute: typeof AuthenticatedAccountOpeningBalanceIndexRoute
   AuthenticatedAccountReportsIndexRoute: typeof AuthenticatedAccountReportsIndexRoute
+  AuthenticatedHrmEmployeeIndexRoute: typeof AuthenticatedHrmEmployeeIndexRoute
   AuthenticatedInventoryMerchantIndexRoute: typeof AuthenticatedInventoryMerchantIndexRoute
   AuthenticatedInventoryProductIndexRoute: typeof AuthenticatedInventoryProductIndexRoute
   AuthenticatedInventoryPurchaseIndexRoute: typeof AuthenticatedInventoryPurchaseIndexRoute
@@ -2551,6 +2612,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountVoucherCreditCreateRoute: typeof AuthenticatedAccountVoucherCreditCreateRoute
   AuthenticatedAccountVoucherDebitCreateRoute: typeof AuthenticatedAccountVoucherDebitCreateRoute
   AuthenticatedAccountVoucherJournalCreateRoute: typeof AuthenticatedAccountVoucherJournalCreateRoute
+  AuthenticatedHrmEmployeeEditUuidRoute: typeof AuthenticatedHrmEmployeeEditUuidRoute
+  AuthenticatedHrmEmployeeShowUuidRoute: typeof AuthenticatedHrmEmployeeShowUuidRoute
   AuthenticatedInventoryContactUsReplyIdRoute: typeof AuthenticatedInventoryContactUsReplyIdRoute
   AuthenticatedInventoryMerchantEditIdRoute: typeof AuthenticatedInventoryMerchantEditIdRoute
   AuthenticatedInventoryProductEditIdRoute: typeof AuthenticatedInventoryProductEditIdRoute
@@ -2615,7 +2678,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountVoucherApprovalRoute,
   AuthenticatedHrmAttendanceRoute: AuthenticatedHrmAttendanceRoute,
   AuthenticatedHrmDesignationRoute: AuthenticatedHrmDesignationRoute,
-  AuthenticatedHrmEmployeeRoute: AuthenticatedHrmEmployeeRoute,
   AuthenticatedHrmPayrollRoute: AuthenticatedHrmPayrollRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
     AuthenticatedAccountOpeningBalanceCreateRoute,
@@ -2645,6 +2707,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountReportsSubLedgerRoute,
   AuthenticatedAccountReportsTrialBalanceRoute:
     AuthenticatedAccountReportsTrialBalanceRoute,
+  AuthenticatedHrmEmployeeCreateRoute: AuthenticatedHrmEmployeeCreateRoute,
   AuthenticatedInventoryMerchantCreateRoute:
     AuthenticatedInventoryMerchantCreateRoute,
   AuthenticatedInventoryProductCategoryRoute:
@@ -2712,6 +2775,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountOpeningBalanceIndexRoute:
     AuthenticatedAccountOpeningBalanceIndexRoute,
   AuthenticatedAccountReportsIndexRoute: AuthenticatedAccountReportsIndexRoute,
+  AuthenticatedHrmEmployeeIndexRoute: AuthenticatedHrmEmployeeIndexRoute,
   AuthenticatedInventoryMerchantIndexRoute:
     AuthenticatedInventoryMerchantIndexRoute,
   AuthenticatedInventoryProductIndexRoute:
@@ -2739,6 +2803,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountVoucherDebitCreateRoute,
   AuthenticatedAccountVoucherJournalCreateRoute:
     AuthenticatedAccountVoucherJournalCreateRoute,
+  AuthenticatedHrmEmployeeEditUuidRoute: AuthenticatedHrmEmployeeEditUuidRoute,
+  AuthenticatedHrmEmployeeShowUuidRoute: AuthenticatedHrmEmployeeShowUuidRoute,
   AuthenticatedInventoryContactUsReplyIdRoute:
     AuthenticatedInventoryContactUsReplyIdRoute,
   AuthenticatedInventoryMerchantEditIdRoute:

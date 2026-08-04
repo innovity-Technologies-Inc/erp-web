@@ -30,3 +30,23 @@ export interface UpdateDesignationDto {
   details?: string | null
   status?: number
 }
+
+export interface Employee {
+  id: number
+  uuid: string
+  name: string
+  designation: string
+  phone: string
+  email: string
+  image: string
+  created_at: string
+}
+
+export interface EmployeeFilters {
+  draw?: number
+  start?: number
+  length?: number
+  search?: { value: string }
+  start_date?: string
+  end_date?: string
+}
