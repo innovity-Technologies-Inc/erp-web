@@ -4,9 +4,9 @@ import { useNavigate } from '@tanstack/react-router'
 import {
   useEmployeesDatatable,
   useDeleteEmployee,
-} from '../hooks/useEmployees'
+} from '../../hooks/useEmployees'
 import type { ColDef } from 'ag-grid-community'
-import type { Employee } from '../api/types'
+import type { Employee } from '../../api/types'
 import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'

@@ -4,7 +4,7 @@ import {
   DollarSign, Award, Droplets, Clock, User, Briefcase, Info 
 } from 'lucide-react'
 import { useMemo } from 'react'
-import { useEmployee } from '../hooks/useEmployees'
+import { useEmployee } from '../../hooks/useEmployees'
 
 export const EmployeeShowPage = () => {
   const { uuid } = useParams({ from: '/_authenticated/hrm/employee/show/$uuid' })

@@ -5,16 +5,16 @@ import {
   useDeleteDesignation,
   useDesignationData,
   useToggleDesignationStatus,
-} from '../hooks/useDesignations'
+} from '../../hooks/useDesignations'
 import type { ColDef } from 'ag-grid-community'
-import type { Designation } from '../api/types'
+import type { Designation } from '../../api/types'
 import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
-import { DesignationModal } from '../components/DesignationModal'
+import { DesignationModal } from '../../components/DesignationModal'
 import { formatDate } from '@/utils/formatters'
 
 export const DesignationListPage = () => {
