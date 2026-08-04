@@ -26,3 +26,6 @@ dist-ssr
 #env files
 .env
 .env.*.local
+
+# AI Mockup Designs
+.ai/sample_design/

@@ -145,6 +145,18 @@ const menuItems: MenuGroup[] = [
         activePaths: ['/account']
       },
     ]
+  },
+  {
+    group: 'HRM',
+    items: [
+      { 
+        name: 'HRM', 
+        icon: Users, 
+        to: '/hrm/designation', 
+        permission: 'view_designation',
+        activePaths: ['/hrm']
+      },
+    ]
   }
 ]
 

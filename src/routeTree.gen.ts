@@ -15,6 +15,10 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedHrmPayrollRouteImport } from './routes/_authenticated/hrm.payroll'
+import { Route as AuthenticatedHrmEmployeeRouteImport } from './routes/_authenticated/hrm.employee'
+import { Route as AuthenticatedHrmDesignationRouteImport } from './routes/_authenticated/hrm.designation'
+import { Route as AuthenticatedHrmAttendanceRouteImport } from './routes/_authenticated/hrm.attendance'
 import { Route as AuthenticatedAccountVoucherApprovalRouteImport } from './routes/_authenticated/account.voucher-approval'
 import { Route as AuthenticatedAccountVendorPaymentRouteImport } from './routes/_authenticated/account.vendor-payment'
 import { Route as AuthenticatedAccountSubTypeRouteImport } from './routes/_authenticated/account.sub-type'
@@ -155,6 +159,29 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedHrmPayrollRoute = AuthenticatedHrmPayrollRouteImport.update({
+  id: '/hrm/payroll',
+  path: '/hrm/payroll',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedHrmEmployeeRoute =
+  AuthenticatedHrmEmployeeRouteImport.update({
+    id: '/hrm/employee',
+    path: '/hrm/employee',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmDesignationRoute =
+  AuthenticatedHrmDesignationRouteImport.update({
+    id: '/hrm/designation',
+    path: '/hrm/designation',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmAttendanceRoute =
+  AuthenticatedHrmAttendanceRouteImport.update({
+    id: '/hrm/attendance',
+    path: '/hrm/attendance',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAccountVoucherApprovalRoute =
   AuthenticatedAccountVoucherApprovalRouteImport.update({
     id: '/account/voucher-approval',
@@ -840,6 +867,10 @@ export interface FileRoutesByFullPath {
   '/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
+  '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
+  '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
+  '/hrm/employee': typeof AuthenticatedHrmEmployeeRoute
+  '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -957,6 +988,10 @@ export interface FileRoutesByTo {
   '/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
+  '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
+  '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
+  '/hrm/employee': typeof AuthenticatedHrmEmployeeRoute
+  '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1077,6 +1112,10 @@ export interface FileRoutesById {
   '/_authenticated/account/sub-type': typeof AuthenticatedAccountSubTypeRoute
   '/_authenticated/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/_authenticated/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
+  '/_authenticated/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
+  '/_authenticated/hrm/designation': typeof AuthenticatedHrmDesignationRoute
+  '/_authenticated/hrm/employee': typeof AuthenticatedHrmEmployeeRoute
+  '/_authenticated/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/_authenticated/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/_authenticated/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1196,6 +1235,10 @@ export interface FileRouteTypes {
     | '/account/sub-type'
     | '/account/vendor-payment'
     | '/account/voucher-approval'
+    | '/hrm/attendance'
+    | '/hrm/designation'
+    | '/hrm/employee'
+    | '/hrm/payroll'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
@@ -1313,6 +1356,10 @@ export interface FileRouteTypes {
     | '/account/sub-type'
     | '/account/vendor-payment'
     | '/account/voucher-approval'
+    | '/hrm/attendance'
+    | '/hrm/designation'
+    | '/hrm/employee'
+    | '/hrm/payroll'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
@@ -1432,6 +1479,10 @@ export interface FileRouteTypes {
     | '/_authenticated/account/sub-type'
     | '/_authenticated/account/vendor-payment'
     | '/_authenticated/account/voucher-approval'
+    | '/_authenticated/hrm/attendance'
+    | '/_authenticated/hrm/designation'
+    | '/_authenticated/hrm/employee'
+    | '/_authenticated/hrm/payroll'
     | '/_authenticated/account/opening-balance/create'
     | '/_authenticated/account/reports/balance-sheet'
     | '/_authenticated/account/reports/bank-book'
@@ -1579,6 +1630,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_authenticated/hrm/payroll': {
+      id: '/_authenticated/hrm/payroll'
+      path: '/hrm/payroll'
+      fullPath: '/hrm/payroll'
+      preLoaderRoute: typeof AuthenticatedHrmPayrollRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/employee': {
+      id: '/_authenticated/hrm/employee'
+      path: '/hrm/employee'
+      fullPath: '/hrm/employee'
+      preLoaderRoute: typeof AuthenticatedHrmEmployeeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/designation': {
+      id: '/_authenticated/hrm/designation'
+      path: '/hrm/designation'
+      fullPath: '/hrm/designation'
+      preLoaderRoute: typeof AuthenticatedHrmDesignationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/attendance': {
+      id: '/_authenticated/hrm/attendance'
+      path: '/hrm/attendance'
+      fullPath: '/hrm/attendance'
+      preLoaderRoute: typeof AuthenticatedHrmAttendanceRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/account/voucher-approval': {
       id: '/_authenticated/account/voucher-approval'
@@ -2405,6 +2484,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountSubTypeRoute: typeof AuthenticatedAccountSubTypeRoute
   AuthenticatedAccountVendorPaymentRoute: typeof AuthenticatedAccountVendorPaymentRoute
   AuthenticatedAccountVoucherApprovalRoute: typeof AuthenticatedAccountVoucherApprovalRoute
+  AuthenticatedHrmAttendanceRoute: typeof AuthenticatedHrmAttendanceRoute
+  AuthenticatedHrmDesignationRoute: typeof AuthenticatedHrmDesignationRoute
+  AuthenticatedHrmEmployeeRoute: typeof AuthenticatedHrmEmployeeRoute
+  AuthenticatedHrmPayrollRoute: typeof AuthenticatedHrmPayrollRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
   AuthenticatedAccountReportsBalanceSheetRoute: typeof AuthenticatedAccountReportsBalanceSheetRoute
   AuthenticatedAccountReportsBankBookRoute: typeof AuthenticatedAccountReportsBankBookRoute
@@ -2530,6 +2613,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountVendorPaymentRoute,
   AuthenticatedAccountVoucherApprovalRoute:
     AuthenticatedAccountVoucherApprovalRoute,
+  AuthenticatedHrmAttendanceRoute: AuthenticatedHrmAttendanceRoute,
+  AuthenticatedHrmDesignationRoute: AuthenticatedHrmDesignationRoute,
+  AuthenticatedHrmEmployeeRoute: AuthenticatedHrmEmployeeRoute,
+  AuthenticatedHrmPayrollRoute: AuthenticatedHrmPayrollRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
     AuthenticatedAccountOpeningBalanceCreateRoute,
   AuthenticatedAccountReportsBalanceSheetRoute:
