@@ -15,8 +15,11 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedHrmPayrollManageSalaryRouteImport } from './routes/_authenticated/hrm.payroll-manage-salary'
+import { Route as AuthenticatedHrmPayrollGenerateRouteImport } from './routes/_authenticated/hrm.payroll-generate'
 import { Route as AuthenticatedHrmPayrollRouteImport } from './routes/_authenticated/hrm.payroll'
 import { Route as AuthenticatedHrmDesignationRouteImport } from './routes/_authenticated/hrm.designation'
+import { Route as AuthenticatedHrmAttendanceReportRouteImport } from './routes/_authenticated/hrm.attendance-report'
 import { Route as AuthenticatedHrmAttendanceRouteImport } from './routes/_authenticated/hrm.attendance'
 import { Route as AuthenticatedAccountVoucherApprovalRouteImport } from './routes/_authenticated/account.voucher-approval'
 import { Route as AuthenticatedAccountVendorPaymentRouteImport } from './routes/_authenticated/account.vendor-payment'
@@ -77,6 +80,8 @@ import { Route as AuthenticatedInventoryProductSubCategoryRouteImport } from './
 import { Route as AuthenticatedInventoryProductCreateRouteImport } from './routes/_authenticated/inventory/product.create'
 import { Route as AuthenticatedInventoryProductCategoryRouteImport } from './routes/_authenticated/inventory/product.category'
 import { Route as AuthenticatedInventoryMerchantCreateRouteImport } from './routes/_authenticated/inventory/merchant.create'
+import { Route as AuthenticatedHrmPayrollChartIdRouteImport } from './routes/_authenticated/hrm.payroll-chart.$id'
+import { Route as AuthenticatedHrmPayrollApprovalIdRouteImport } from './routes/_authenticated/hrm.payroll-approval.$id'
 import { Route as AuthenticatedHrmEmployeeCreateRouteImport } from './routes/_authenticated/hrm.employee.create'
 import { Route as AuthenticatedAccountReportsTrialBalanceRouteImport } from './routes/_authenticated/account.reports.trial-balance'
 import { Route as AuthenticatedAccountReportsSubLedgerRouteImport } from './routes/_authenticated/account.reports.sub-ledger'
@@ -162,6 +167,18 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedHrmPayrollManageSalaryRoute =
+  AuthenticatedHrmPayrollManageSalaryRouteImport.update({
+    id: '/hrm/payroll-manage-salary',
+    path: '/hrm/payroll-manage-salary',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmPayrollGenerateRoute =
+  AuthenticatedHrmPayrollGenerateRouteImport.update({
+    id: '/hrm/payroll-generate',
+    path: '/hrm/payroll-generate',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedHrmPayrollRoute = AuthenticatedHrmPayrollRouteImport.update({
   id: '/hrm/payroll',
   path: '/hrm/payroll',
@@ -171,6 +188,12 @@ const AuthenticatedHrmDesignationRoute =
   AuthenticatedHrmDesignationRouteImport.update({
     id: '/hrm/designation',
     path: '/hrm/designation',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmAttendanceReportRoute =
+  AuthenticatedHrmAttendanceReportRouteImport.update({
+    id: '/hrm/attendance-report',
+    path: '/hrm/attendance-report',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedHrmAttendanceRoute =
@@ -532,6 +555,18 @@ const AuthenticatedInventoryMerchantCreateRoute =
     path: '/inventory/merchant/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedHrmPayrollChartIdRoute =
+  AuthenticatedHrmPayrollChartIdRouteImport.update({
+    id: '/hrm/payroll-chart/$id',
+    path: '/hrm/payroll-chart/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmPayrollApprovalIdRoute =
+  AuthenticatedHrmPayrollApprovalIdRouteImport.update({
+    id: '/hrm/payroll-approval/$id',
+    path: '/hrm/payroll-approval/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedHrmEmployeeCreateRoute =
   AuthenticatedHrmEmployeeCreateRouteImport.update({
     id: '/hrm/employee/create',
@@ -889,8 +924,11 @@ export interface FileRoutesByFullPath {
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
+  '/hrm/attendance-report': typeof AuthenticatedHrmAttendanceReportRoute
   '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
   '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
+  '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
+  '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -906,6 +944,8 @@ export interface FileRoutesByFullPath {
   '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
+  '/hrm/payroll-approval/$id': typeof AuthenticatedHrmPayrollApprovalIdRoute
+  '/hrm/payroll-chart/$id': typeof AuthenticatedHrmPayrollChartIdRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1013,8 +1053,11 @@ export interface FileRoutesByTo {
   '/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
+  '/hrm/attendance-report': typeof AuthenticatedHrmAttendanceReportRoute
   '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
   '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
+  '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
+  '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1030,6 +1073,8 @@ export interface FileRoutesByTo {
   '/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
+  '/hrm/payroll-approval/$id': typeof AuthenticatedHrmPayrollApprovalIdRoute
+  '/hrm/payroll-chart/$id': typeof AuthenticatedHrmPayrollChartIdRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1140,8 +1185,11 @@ export interface FileRoutesById {
   '/_authenticated/account/vendor-payment': typeof AuthenticatedAccountVendorPaymentRoute
   '/_authenticated/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/_authenticated/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
+  '/_authenticated/hrm/attendance-report': typeof AuthenticatedHrmAttendanceReportRoute
   '/_authenticated/hrm/designation': typeof AuthenticatedHrmDesignationRoute
   '/_authenticated/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
+  '/_authenticated/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
+  '/_authenticated/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/_authenticated/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/_authenticated/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1157,6 +1205,8 @@ export interface FileRoutesById {
   '/_authenticated/account/reports/sub-ledger': typeof AuthenticatedAccountReportsSubLedgerRoute
   '/_authenticated/account/reports/trial-balance': typeof AuthenticatedAccountReportsTrialBalanceRoute
   '/_authenticated/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
+  '/_authenticated/hrm/payroll-approval/$id': typeof AuthenticatedHrmPayrollApprovalIdRoute
+  '/_authenticated/hrm/payroll-chart/$id': typeof AuthenticatedHrmPayrollChartIdRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/_authenticated/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/_authenticated/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1266,8 +1316,11 @@ export interface FileRouteTypes {
     | '/account/vendor-payment'
     | '/account/voucher-approval'
     | '/hrm/attendance'
+    | '/hrm/attendance-report'
     | '/hrm/designation'
     | '/hrm/payroll'
+    | '/hrm/payroll-generate'
+    | '/hrm/payroll-manage-salary'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
@@ -1283,6 +1336,8 @@ export interface FileRouteTypes {
     | '/account/reports/sub-ledger'
     | '/account/reports/trial-balance'
     | '/hrm/employee/create'
+    | '/hrm/payroll-approval/$id'
+    | '/hrm/payroll-chart/$id'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1390,8 +1445,11 @@ export interface FileRouteTypes {
     | '/account/vendor-payment'
     | '/account/voucher-approval'
     | '/hrm/attendance'
+    | '/hrm/attendance-report'
     | '/hrm/designation'
     | '/hrm/payroll'
+    | '/hrm/payroll-generate'
+    | '/hrm/payroll-manage-salary'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
@@ -1407,6 +1465,8 @@ export interface FileRouteTypes {
     | '/account/reports/sub-ledger'
     | '/account/reports/trial-balance'
     | '/hrm/employee/create'
+    | '/hrm/payroll-approval/$id'
+    | '/hrm/payroll-chart/$id'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1516,8 +1576,11 @@ export interface FileRouteTypes {
     | '/_authenticated/account/vendor-payment'
     | '/_authenticated/account/voucher-approval'
     | '/_authenticated/hrm/attendance'
+    | '/_authenticated/hrm/attendance-report'
     | '/_authenticated/hrm/designation'
     | '/_authenticated/hrm/payroll'
+    | '/_authenticated/hrm/payroll-generate'
+    | '/_authenticated/hrm/payroll-manage-salary'
     | '/_authenticated/account/opening-balance/create'
     | '/_authenticated/account/reports/balance-sheet'
     | '/_authenticated/account/reports/bank-book'
@@ -1533,6 +1596,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account/reports/sub-ledger'
     | '/_authenticated/account/reports/trial-balance'
     | '/_authenticated/hrm/employee/create'
+    | '/_authenticated/hrm/payroll-approval/$id'
+    | '/_authenticated/hrm/payroll-chart/$id'
     | '/_authenticated/inventory/merchant/create'
     | '/_authenticated/inventory/product/category'
     | '/_authenticated/inventory/product/create'
@@ -1670,6 +1735,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_authenticated/hrm/payroll-manage-salary': {
+      id: '/_authenticated/hrm/payroll-manage-salary'
+      path: '/hrm/payroll-manage-salary'
+      fullPath: '/hrm/payroll-manage-salary'
+      preLoaderRoute: typeof AuthenticatedHrmPayrollManageSalaryRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/payroll-generate': {
+      id: '/_authenticated/hrm/payroll-generate'
+      path: '/hrm/payroll-generate'
+      fullPath: '/hrm/payroll-generate'
+      preLoaderRoute: typeof AuthenticatedHrmPayrollGenerateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/hrm/payroll': {
       id: '/_authenticated/hrm/payroll'
       path: '/hrm/payroll'
@@ -1682,6 +1761,13 @@ declare module '@tanstack/react-router' {
       path: '/hrm/designation'
       fullPath: '/hrm/designation'
       preLoaderRoute: typeof AuthenticatedHrmDesignationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/attendance-report': {
+      id: '/_authenticated/hrm/attendance-report'
+      path: '/hrm/attendance-report'
+      fullPath: '/hrm/attendance-report'
+      preLoaderRoute: typeof AuthenticatedHrmAttendanceReportRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/hrm/attendance': {
@@ -2102,6 +2188,20 @@ declare module '@tanstack/react-router' {
       path: '/inventory/merchant/create'
       fullPath: '/inventory/merchant/create'
       preLoaderRoute: typeof AuthenticatedInventoryMerchantCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/payroll-chart/$id': {
+      id: '/_authenticated/hrm/payroll-chart/$id'
+      path: '/hrm/payroll-chart/$id'
+      fullPath: '/hrm/payroll-chart/$id'
+      preLoaderRoute: typeof AuthenticatedHrmPayrollChartIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/payroll-approval/$id': {
+      id: '/_authenticated/hrm/payroll-approval/$id'
+      path: '/hrm/payroll-approval/$id'
+      fullPath: '/hrm/payroll-approval/$id'
+      preLoaderRoute: typeof AuthenticatedHrmPayrollApprovalIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/hrm/employee/create': {
@@ -2545,8 +2645,11 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountVendorPaymentRoute: typeof AuthenticatedAccountVendorPaymentRoute
   AuthenticatedAccountVoucherApprovalRoute: typeof AuthenticatedAccountVoucherApprovalRoute
   AuthenticatedHrmAttendanceRoute: typeof AuthenticatedHrmAttendanceRoute
+  AuthenticatedHrmAttendanceReportRoute: typeof AuthenticatedHrmAttendanceReportRoute
   AuthenticatedHrmDesignationRoute: typeof AuthenticatedHrmDesignationRoute
   AuthenticatedHrmPayrollRoute: typeof AuthenticatedHrmPayrollRoute
+  AuthenticatedHrmPayrollGenerateRoute: typeof AuthenticatedHrmPayrollGenerateRoute
+  AuthenticatedHrmPayrollManageSalaryRoute: typeof AuthenticatedHrmPayrollManageSalaryRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
   AuthenticatedAccountReportsBalanceSheetRoute: typeof AuthenticatedAccountReportsBalanceSheetRoute
   AuthenticatedAccountReportsBankBookRoute: typeof AuthenticatedAccountReportsBankBookRoute
@@ -2562,6 +2665,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountReportsSubLedgerRoute: typeof AuthenticatedAccountReportsSubLedgerRoute
   AuthenticatedAccountReportsTrialBalanceRoute: typeof AuthenticatedAccountReportsTrialBalanceRoute
   AuthenticatedHrmEmployeeCreateRoute: typeof AuthenticatedHrmEmployeeCreateRoute
+  AuthenticatedHrmPayrollApprovalIdRoute: typeof AuthenticatedHrmPayrollApprovalIdRoute
+  AuthenticatedHrmPayrollChartIdRoute: typeof AuthenticatedHrmPayrollChartIdRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
   AuthenticatedInventoryProductCategoryRoute: typeof AuthenticatedInventoryProductCategoryRoute
   AuthenticatedInventoryProductCreateRoute: typeof AuthenticatedInventoryProductCreateRoute
@@ -2677,8 +2782,12 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountVoucherApprovalRoute:
     AuthenticatedAccountVoucherApprovalRoute,
   AuthenticatedHrmAttendanceRoute: AuthenticatedHrmAttendanceRoute,
+  AuthenticatedHrmAttendanceReportRoute: AuthenticatedHrmAttendanceReportRoute,
   AuthenticatedHrmDesignationRoute: AuthenticatedHrmDesignationRoute,
   AuthenticatedHrmPayrollRoute: AuthenticatedHrmPayrollRoute,
+  AuthenticatedHrmPayrollGenerateRoute: AuthenticatedHrmPayrollGenerateRoute,
+  AuthenticatedHrmPayrollManageSalaryRoute:
+    AuthenticatedHrmPayrollManageSalaryRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
     AuthenticatedAccountOpeningBalanceCreateRoute,
   AuthenticatedAccountReportsBalanceSheetRoute:
@@ -2708,6 +2817,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountReportsTrialBalanceRoute:
     AuthenticatedAccountReportsTrialBalanceRoute,
   AuthenticatedHrmEmployeeCreateRoute: AuthenticatedHrmEmployeeCreateRoute,
+  AuthenticatedHrmPayrollApprovalIdRoute:
+    AuthenticatedHrmPayrollApprovalIdRoute,
+  AuthenticatedHrmPayrollChartIdRoute: AuthenticatedHrmPayrollChartIdRoute,
   AuthenticatedInventoryMerchantCreateRoute:
     AuthenticatedInventoryMerchantCreateRoute,
   AuthenticatedInventoryProductCategoryRoute:

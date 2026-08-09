@@ -8,6 +8,7 @@ import { useSettings } from '@/hooks/useSettings'
 
 import { useDashboardStore } from '@/store/useDashboardStore'
 import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
+import { useSelfStatus, useSelfCheckIn } from '@/modules/hrm'
 
 export const Topbar = () => {
   const user = useAuthStore((state) => state.user)
@@ -30,6 +31,24 @@ export const Topbar = () => {
   }
 
   const userFullName = user ? `${user.first_name} ${user.last_name}` : 'Kazi Sakib'
+
+  // Self Attendance Logic
+  const { data: selfStatus, isLoading: isStatusLoading } = useSelfStatus()
+  const { mutate: performSelfCheckIn, isPending: isCheckInPending } = useSelfCheckIn()
+  const { showNotificationModal } = useUiStore()
+
+  const handleSelfCheckIn = () => {
+    performSelfCheckIn(undefined, {
+      onSuccess: (res: any) => {
+        const msg = res?.message || (selfStatus?.is_checked_in ? 'Checked out successfully!' : 'Checked in successfully!')
+        notify(msg, 'success')
+      },
+      onError: (err: any) => {
+        const msg = err.response?.data?.message || err.message || 'Failed to toggle check-in status.'
+        showNotificationModal('Error', msg, 'error')
+      }
+    })
+  }
 
   return (
     <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.5)] px-0 print:hidden">
@@ -153,6 +172,39 @@ export const Topbar = () => {
               <RotateCcw className="w-4 h-4" strokeWidth={2.5} />
               Reset
             </button>
+          </div>
+        )}
+
+        {/* Self Attendance Check In / Out Widget */}
+        {selfStatus?.is_employee && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSelfCheckIn}
+              disabled={isCheckInPending || isStatusLoading}
+              className={clsx(
+                "h-8 px-4 rounded-full text-[12px] font-semibold flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none shadow-sm",
+                selfStatus?.is_checked_in
+                  ? "bg-amber-500 hover:bg-amber-600 text-white"
+                  : "bg-emerald-500 hover:bg-emerald-600 text-white"
+              )}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className={clsx(
+                  "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+                  selfStatus?.is_checked_in ? "bg-amber-200" : "bg-emerald-200"
+                )}></span>
+                <span className={clsx(
+                  "relative inline-flex rounded-full h-2 w-2 bg-white"
+                )}></span>
+              </span>
+              {selfStatus?.is_checked_in ? 'Clock Out' : 'Clock In'}
+            </button>
+
+            {selfStatus?.is_checked_in && selfStatus?.last_sign_in_time && (
+              <span className="text-[11px] font-medium text-[#64748b] bg-[#f8fafc] border border-gray-100 rounded-full px-3 py-1 font-poppins hidden sm:inline-block shadow-inner">
+                In: {selfStatus.last_sign_in_time}
+              </span>
+            )}
           </div>
         )}
 

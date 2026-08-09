@@ -58,9 +58,9 @@ export const MonthPicker = ({ from, onChange, disabled, className, variant = 'de
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
-          "flex items-center gap-2 px-3 py-1 bg-main-bg rounded-full text-[10px] font-bold text-gray-500 transition-all border border-transparent",
-          disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-gray-200 hover:border-primary/20",
-          isOpen && "border-primary/30 ring-4 ring-primary/5 bg-white"
+          "bg-[#f8fafc] border border-gray-100 px-4 rounded-full h-8 flex items-center gap-2 text-[12px] font-medium text-[#64748b] hover:bg-[#f1f5f9] hover:border-gray-200 transition-all shadow-inner",
+          disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+          isOpen && "border-primary/20 bg-white ring-4 ring-primary/5 text-primary"
         )}
       >
         <CalendarIcon className="w-3 h-3 text-primary opacity-60" />

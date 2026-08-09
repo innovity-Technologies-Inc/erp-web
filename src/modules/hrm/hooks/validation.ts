@@ -56,3 +56,41 @@ export const employeeSchema = z.object({
 })
 
 export type EmployeeFormValues = z.infer<typeof employeeSchema>
+
+export const attendanceSchema = z.object({
+  employee_id: z
+    .union([z.number(), z.string()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val > 0, 'Employee is required'),
+  date: z.string().min(1, 'Date is required'),
+  sign_in: z.string().min(1, 'Sign in time is required'),
+  sign_out: z.string().optional().nullable(),
+}).refine((data) => {
+  if (data.sign_out && data.sign_in) {
+    const start = new Date(data.sign_in).getTime()
+    const end = new Date(data.sign_out).getTime()
+    return end > start
+  }
+  return true;
+}, {
+  message: "Sign Out time must be greater than Sign In time",
+  path: ["sign_out"],
+})
+
+export type AttendanceFormValues = z.infer<typeof attendanceSchema>
+
+export const salaryAdvanceSchema = z.object({
+  employee_id: z
+    .union([z.number(), z.string()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val > 0, 'Employee is required'),
+  amount: z
+    .union([z.number(), z.string()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val) && val > 0, 'Amount must be a positive number'),
+  salary_month: z.string().optional(),
+  salary_month_name: z.string().min(1, 'Month is required'),
+  salary_month_year: z.string().min(1, 'Year is required'),
+})
+
+export type SalaryAdvanceFormValues = z.infer<typeof salaryAdvanceSchema>
