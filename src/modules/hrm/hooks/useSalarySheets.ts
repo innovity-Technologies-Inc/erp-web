@@ -6,9 +6,11 @@ import {
   getSalarySheetChart,
   getSalarySheetApprovalInfo,
   approveSalarySheet,
+  getEmployeeSalariesDatatable,
+  getSalaryPaySlipInfo,
 } from '../api/salary-sheet.api'
 import { salarySheetKeys } from '../api/salary-sheet.keys'
-import type { SalarySheetFilters, GenerateSalarySheetDto, ApproveSalaryDto } from '../api/types'
+import type { SalarySheetFilters, GenerateSalarySheetDto, ApproveSalaryDto, EmployeeSalaryFilters } from '../api/types'
 
 export const useSalarySheetsDatatable = (filters: SalarySheetFilters) => {
   return useQuery({
@@ -60,5 +62,20 @@ export const useApproveSalarySheet = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: salarySheetKeys.all() })
     },
+  })
+}
+
+export const useEmployeeSalariesDatatable = (filters: EmployeeSalaryFilters) => {
+  return useQuery({
+    queryKey: ['employee-salaries', filters],
+    queryFn: () => getEmployeeSalariesDatatable(filters),
+  })
+}
+
+export const useSalaryPaySlipInfo = (uuid: string) => {
+  return useQuery({
+    queryKey: ['salary-payslip', uuid],
+    queryFn: () => getSalaryPaySlipInfo(uuid),
+    enabled: !!uuid,
   })
 }

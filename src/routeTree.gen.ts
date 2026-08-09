@@ -80,6 +80,7 @@ import { Route as AuthenticatedInventoryProductSubCategoryRouteImport } from './
 import { Route as AuthenticatedInventoryProductCreateRouteImport } from './routes/_authenticated/inventory/product.create'
 import { Route as AuthenticatedInventoryProductCategoryRouteImport } from './routes/_authenticated/inventory/product.category'
 import { Route as AuthenticatedInventoryMerchantCreateRouteImport } from './routes/_authenticated/inventory/merchant.create'
+import { Route as AuthenticatedHrmPayrollPayslipUuidRouteImport } from './routes/_authenticated/hrm.payroll-payslip.$uuid'
 import { Route as AuthenticatedHrmPayrollChartIdRouteImport } from './routes/_authenticated/hrm.payroll-chart.$id'
 import { Route as AuthenticatedHrmPayrollApprovalIdRouteImport } from './routes/_authenticated/hrm.payroll-approval.$id'
 import { Route as AuthenticatedHrmEmployeeCreateRouteImport } from './routes/_authenticated/hrm.employee.create'
@@ -555,6 +556,12 @@ const AuthenticatedInventoryMerchantCreateRoute =
     path: '/inventory/merchant/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedHrmPayrollPayslipUuidRoute =
+  AuthenticatedHrmPayrollPayslipUuidRouteImport.update({
+    id: '/hrm/payroll-payslip/$uuid',
+    path: '/hrm/payroll-payslip/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedHrmPayrollChartIdRoute =
   AuthenticatedHrmPayrollChartIdRouteImport.update({
     id: '/hrm/payroll-chart/$id',
@@ -946,6 +953,7 @@ export interface FileRoutesByFullPath {
   '/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
   '/hrm/payroll-approval/$id': typeof AuthenticatedHrmPayrollApprovalIdRoute
   '/hrm/payroll-chart/$id': typeof AuthenticatedHrmPayrollChartIdRoute
+  '/hrm/payroll-payslip/$uuid': typeof AuthenticatedHrmPayrollPayslipUuidRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1075,6 +1083,7 @@ export interface FileRoutesByTo {
   '/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
   '/hrm/payroll-approval/$id': typeof AuthenticatedHrmPayrollApprovalIdRoute
   '/hrm/payroll-chart/$id': typeof AuthenticatedHrmPayrollChartIdRoute
+  '/hrm/payroll-payslip/$uuid': typeof AuthenticatedHrmPayrollPayslipUuidRoute
   '/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1207,6 +1216,7 @@ export interface FileRoutesById {
   '/_authenticated/hrm/employee/create': typeof AuthenticatedHrmEmployeeCreateRoute
   '/_authenticated/hrm/payroll-approval/$id': typeof AuthenticatedHrmPayrollApprovalIdRoute
   '/_authenticated/hrm/payroll-chart/$id': typeof AuthenticatedHrmPayrollChartIdRoute
+  '/_authenticated/hrm/payroll-payslip/$uuid': typeof AuthenticatedHrmPayrollPayslipUuidRoute
   '/_authenticated/inventory/merchant/create': typeof AuthenticatedInventoryMerchantCreateRoute
   '/_authenticated/inventory/product/category': typeof AuthenticatedInventoryProductCategoryRoute
   '/_authenticated/inventory/product/create': typeof AuthenticatedInventoryProductCreateRoute
@@ -1338,6 +1348,7 @@ export interface FileRouteTypes {
     | '/hrm/employee/create'
     | '/hrm/payroll-approval/$id'
     | '/hrm/payroll-chart/$id'
+    | '/hrm/payroll-payslip/$uuid'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1467,6 +1478,7 @@ export interface FileRouteTypes {
     | '/hrm/employee/create'
     | '/hrm/payroll-approval/$id'
     | '/hrm/payroll-chart/$id'
+    | '/hrm/payroll-payslip/$uuid'
     | '/inventory/merchant/create'
     | '/inventory/product/category'
     | '/inventory/product/create'
@@ -1598,6 +1610,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hrm/employee/create'
     | '/_authenticated/hrm/payroll-approval/$id'
     | '/_authenticated/hrm/payroll-chart/$id'
+    | '/_authenticated/hrm/payroll-payslip/$uuid'
     | '/_authenticated/inventory/merchant/create'
     | '/_authenticated/inventory/product/category'
     | '/_authenticated/inventory/product/create'
@@ -2190,6 +2203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryMerchantCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/hrm/payroll-payslip/$uuid': {
+      id: '/_authenticated/hrm/payroll-payslip/$uuid'
+      path: '/hrm/payroll-payslip/$uuid'
+      fullPath: '/hrm/payroll-payslip/$uuid'
+      preLoaderRoute: typeof AuthenticatedHrmPayrollPayslipUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/hrm/payroll-chart/$id': {
       id: '/_authenticated/hrm/payroll-chart/$id'
       path: '/hrm/payroll-chart/$id'
@@ -2667,6 +2687,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHrmEmployeeCreateRoute: typeof AuthenticatedHrmEmployeeCreateRoute
   AuthenticatedHrmPayrollApprovalIdRoute: typeof AuthenticatedHrmPayrollApprovalIdRoute
   AuthenticatedHrmPayrollChartIdRoute: typeof AuthenticatedHrmPayrollChartIdRoute
+  AuthenticatedHrmPayrollPayslipUuidRoute: typeof AuthenticatedHrmPayrollPayslipUuidRoute
   AuthenticatedInventoryMerchantCreateRoute: typeof AuthenticatedInventoryMerchantCreateRoute
   AuthenticatedInventoryProductCategoryRoute: typeof AuthenticatedInventoryProductCategoryRoute
   AuthenticatedInventoryProductCreateRoute: typeof AuthenticatedInventoryProductCreateRoute
@@ -2820,6 +2841,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHrmPayrollApprovalIdRoute:
     AuthenticatedHrmPayrollApprovalIdRoute,
   AuthenticatedHrmPayrollChartIdRoute: AuthenticatedHrmPayrollChartIdRoute,
+  AuthenticatedHrmPayrollPayslipUuidRoute:
+    AuthenticatedHrmPayrollPayslipUuidRoute,
   AuthenticatedInventoryMerchantCreateRoute:
     AuthenticatedInventoryMerchantCreateRoute,
   AuthenticatedInventoryProductCategoryRoute:

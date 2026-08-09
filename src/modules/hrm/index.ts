@@ -19,5 +19,9 @@ export * from './hooks/useSalaryAdvances'
 export { SalaryGenerateListPage } from './views/payroll/SalaryGenerateListPage'
 export { SalaryChartPage } from './views/payroll/SalaryChartPage'
 export { SalaryApprovalPage } from './views/payroll/SalaryApprovalPage'
+export { SalaryManageListPage } from './views/payroll/SalaryManageListPage'
+export { SalaryPaySlipPage } from './views/payroll/SalaryPaySlipPage'
 export * from './api/salary-sheet.api'
 export * from './hooks/useSalarySheets'
+
+// Trigger HMR update

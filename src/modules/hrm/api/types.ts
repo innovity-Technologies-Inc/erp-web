@@ -235,3 +235,70 @@ export interface ApproveSalaryDto {
   state_income_tax: number
   month_year: string
 }
+
+export interface EmployeeSalary {
+  id: number
+  uuid: string
+  employee_name: string
+  sal_month_year: string
+  net_salary: number
+}
+
+export interface EmployeeSalaryFilters {
+  start?: number
+  length?: number
+  draw?: number
+  'search[value]'?: string
+  month?: string
+  start_date?: string
+  end_date?: string
+}
+
+export interface SalaryPaySlipResponse {
+  salary_info: {
+    first_name: string
+    last_name: string
+    sal_month_year: string
+    basic: number
+    basic_salary_pro_rated: number
+    transport: number
+    transport_allowance_pro_rated: number
+    medical_benefit: number
+    family_benefit: number
+    transportation_benefit: number
+    other_benefit: number
+    gross_salary: number
+    income_tax: number
+    soc_sec_npf_tax: number
+    loan_deduct: number
+    salary_advance: number
+    net_salary: number
+    employee_id: number
+  }
+  employee_info: {
+    id: number
+    designation: string
+    phone: string
+    address_line_1: string
+    address_line_2?: string
+  }
+  setting: {
+    logo?: string
+    currency_symbol?: string
+    soc_sec_npf_tax?: number
+  }
+  company?: {
+    company_name?: string
+    address?: string
+    email?: string
+    mobile?: string
+  }
+  total_deductions: number
+  total_benefits: number
+  month_name: string
+  year_name: string
+  from_date: string
+  to_date: string
+  work_days: number
+  prepared_by: string
+}

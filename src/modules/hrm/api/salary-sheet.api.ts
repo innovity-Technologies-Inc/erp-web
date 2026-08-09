@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/client'
 import type { ApiResponse, DataTablesResponse } from '@/api/types'
-import type { SalarySheet, SalarySheetFilters, GenerateSalarySheetDto, SalaryChartResponse, SalaryApprovalInfoResponse, ApproveSalaryDto } from './types'
+import type { SalarySheet, SalarySheetFilters, GenerateSalarySheetDto, SalaryChartResponse, SalaryApprovalInfoResponse, ApproveSalaryDto, EmployeeSalary, EmployeeSalaryFilters, SalaryPaySlipResponse } from './types'
 
 export const getSalarySheetsDatatable = async (filters: SalarySheetFilters): Promise<DataTablesResponse<SalarySheet>> => {
   const response = await apiClient.get<DataTablesResponse<SalarySheet>>('/hrm/salary-sheet/datatable', {
@@ -31,5 +31,17 @@ export const getSalarySheetApprovalInfo = async (id: number): Promise<SalaryAppr
 
 export const approveSalarySheet = async (dto: ApproveSalaryDto): Promise<ApiResponse<null>> => {
   const response = await apiClient.post<ApiResponse<null>>('/hrm/salary-sheet/approve', dto)
+  return response.data
+}
+
+export const getEmployeeSalariesDatatable = async (filters: EmployeeSalaryFilters): Promise<DataTablesResponse<EmployeeSalary>> => {
+  const response = await apiClient.get<DataTablesResponse<EmployeeSalary>>('/hrm/employee/employee-salary/datatable', {
+    params: filters,
+  })
+  return response.data
+}
+
+export const getSalaryPaySlipInfo = async (uuid: string): Promise<{ status: string; data: SalaryPaySlipResponse }> => {
+  const response = await apiClient.get<{ status: string; data: SalaryPaySlipResponse }>(`/hrm/salary-slip/info/${uuid}`)
   return response.data
 }
