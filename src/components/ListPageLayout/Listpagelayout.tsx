@@ -399,7 +399,7 @@ export const ListPageLayout = <T extends object>({
             pagination={false}
             className=""
             gridOptions={{
-              rowHeight: 40,
+              rowHeight: (gridOptions.rowHeight === undefined || gridOptions.getRowHeight) ? undefined : 40,
               headerHeight: 38,
               suppressHorizontalScroll: true,
               getRowClass: (params: any) => {

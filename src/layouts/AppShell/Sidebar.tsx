@@ -11,7 +11,8 @@ import {
   RotateCcw, 
   Wrench, 
   FileText,
-  BookOpen
+  BookOpen,
+  UserCog
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -155,6 +156,18 @@ const menuItems: MenuGroup[] = [
         to: '/hrm/designation', 
         permission: 'view_designation',
         activePaths: ['/hrm']
+      },
+    ]
+  },
+  {
+    group: 'USER CONFIG',
+    items: [
+      { 
+        name: 'User Management', 
+        icon: UserCog, 
+        to: '/role', 
+        permission: 'view_role',
+        activePaths: ['/user', '/role']
       },
     ]
   }
