@@ -544,7 +544,7 @@ export const RoleCreatePage = () => {
           </div>
 
           {/* Action Row */}
-          <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-150 max-w-[1600px] mx-auto">
+          <div className="flex items-center justify-end gap-3 pt-6 max-w-[1600px] mx-auto">
             <button
               type="button"
               onClick={handleBackOrCancel}

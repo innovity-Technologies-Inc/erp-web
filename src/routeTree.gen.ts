@@ -17,6 +17,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AuthenticatedUserIndexRouteImport } from './routes/_authenticated/user.index'
 import { Route as AuthenticatedRoleIndexRouteImport } from './routes/_authenticated/role.index'
+import { Route as AuthenticatedUserCreateRouteImport } from './routes/_authenticated/user.create'
 import { Route as AuthenticatedRoleCreateRouteImport } from './routes/_authenticated/role.create'
 import { Route as AuthenticatedHrmPayrollManageSalaryRouteImport } from './routes/_authenticated/hrm.payroll-manage-salary'
 import { Route as AuthenticatedHrmPayrollGenerateRouteImport } from './routes/_authenticated/hrm.payroll-generate'
@@ -50,6 +51,7 @@ import { Route as AuthenticatedInventoryMerchantIndexRouteImport } from './route
 import { Route as AuthenticatedHrmEmployeeIndexRouteImport } from './routes/_authenticated/hrm.employee.index'
 import { Route as AuthenticatedAccountReportsIndexRouteImport } from './routes/_authenticated/account.reports.index'
 import { Route as AuthenticatedAccountOpeningBalanceIndexRouteImport } from './routes/_authenticated/account.opening-balance.index'
+import { Route as AuthenticatedUserEditUuidRouteImport } from './routes/_authenticated/user.edit.$uuid'
 import { Route as AuthenticatedRoleEditUuidRouteImport } from './routes/_authenticated/role.edit.$uuid'
 import { Route as AuthenticatedInventoryWarehouseStockMovementRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement'
 import { Route as AuthenticatedInventoryWarehouseCreateRouteImport } from './routes/_authenticated/inventory/warehouse.create'
@@ -180,6 +182,11 @@ const AuthenticatedUserIndexRoute = AuthenticatedUserIndexRouteImport.update({
 const AuthenticatedRoleIndexRoute = AuthenticatedRoleIndexRouteImport.update({
   id: '/role/',
   path: '/role/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedUserCreateRoute = AuthenticatedUserCreateRouteImport.update({
+  id: '/user/create',
+  path: '/user/create',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedRoleCreateRoute = AuthenticatedRoleCreateRouteImport.update({
@@ -375,6 +382,12 @@ const AuthenticatedAccountOpeningBalanceIndexRoute =
   AuthenticatedAccountOpeningBalanceIndexRouteImport.update({
     id: '/account/opening-balance/',
     path: '/account/opening-balance/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUserEditUuidRoute =
+  AuthenticatedUserEditUuidRouteImport.update({
+    id: '/user/edit/$uuid',
+    path: '/user/edit/$uuid',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedRoleEditUuidRoute =
@@ -962,6 +975,7 @@ export interface FileRoutesByFullPath {
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
+  '/user/create': typeof AuthenticatedUserCreateRoute
   '/role/': typeof AuthenticatedRoleIndexRoute
   '/user/': typeof AuthenticatedUserIndexRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -1016,6 +1030,7 @@ export interface FileRoutesByFullPath {
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
+  '/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
   '/hrm/employee/': typeof AuthenticatedHrmEmployeeIndexRoute
@@ -1096,6 +1111,7 @@ export interface FileRoutesByTo {
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
+  '/user/create': typeof AuthenticatedUserCreateRoute
   '/role': typeof AuthenticatedRoleIndexRoute
   '/user': typeof AuthenticatedUserIndexRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -1150,6 +1166,7 @@ export interface FileRoutesByTo {
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
+  '/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/account/opening-balance': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/account/reports': typeof AuthenticatedAccountReportsIndexRoute
   '/hrm/employee': typeof AuthenticatedHrmEmployeeIndexRoute
@@ -1233,6 +1250,7 @@ export interface FileRoutesById {
   '/_authenticated/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/_authenticated/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/_authenticated/role/create': typeof AuthenticatedRoleCreateRoute
+  '/_authenticated/user/create': typeof AuthenticatedUserCreateRoute
   '/_authenticated/role/': typeof AuthenticatedRoleIndexRoute
   '/_authenticated/user/': typeof AuthenticatedUserIndexRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -1287,6 +1305,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/_authenticated/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/_authenticated/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
+  '/_authenticated/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/_authenticated/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/_authenticated/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
   '/_authenticated/hrm/employee/': typeof AuthenticatedHrmEmployeeIndexRoute
@@ -1369,6 +1388,7 @@ export interface FileRouteTypes {
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
     | '/role/create'
+    | '/user/create'
     | '/role/'
     | '/user/'
     | '/account/opening-balance/create'
@@ -1423,6 +1443,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/stock-movement'
     | '/role/edit/$uuid'
+    | '/user/edit/$uuid'
     | '/account/opening-balance/'
     | '/account/reports/'
     | '/hrm/employee/'
@@ -1503,6 +1524,7 @@ export interface FileRouteTypes {
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
     | '/role/create'
+    | '/user/create'
     | '/role'
     | '/user'
     | '/account/opening-balance/create'
@@ -1557,6 +1579,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/stock-movement'
     | '/role/edit/$uuid'
+    | '/user/edit/$uuid'
     | '/account/opening-balance'
     | '/account/reports'
     | '/hrm/employee'
@@ -1639,6 +1662,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hrm/payroll-generate'
     | '/_authenticated/hrm/payroll-manage-salary'
     | '/_authenticated/role/create'
+    | '/_authenticated/user/create'
     | '/_authenticated/role/'
     | '/_authenticated/user/'
     | '/_authenticated/account/opening-balance/create'
@@ -1693,6 +1717,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/warehouse/create'
     | '/_authenticated/inventory/warehouse/stock-movement'
     | '/_authenticated/role/edit/$uuid'
+    | '/_authenticated/user/edit/$uuid'
     | '/_authenticated/account/opening-balance/'
     | '/_authenticated/account/reports/'
     | '/_authenticated/hrm/employee/'
@@ -1809,6 +1834,13 @@ declare module '@tanstack/react-router' {
       path: '/role'
       fullPath: '/role/'
       preLoaderRoute: typeof AuthenticatedRoleIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/user/create': {
+      id: '/_authenticated/user/create'
+      path: '/user/create'
+      fullPath: '/user/create'
+      preLoaderRoute: typeof AuthenticatedUserCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/role/create': {
@@ -2040,6 +2072,13 @@ declare module '@tanstack/react-router' {
       path: '/account/opening-balance'
       fullPath: '/account/opening-balance/'
       preLoaderRoute: typeof AuthenticatedAccountOpeningBalanceIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/user/edit/$uuid': {
+      id: '/_authenticated/user/edit/$uuid'
+      path: '/user/edit/$uuid'
+      fullPath: '/user/edit/$uuid'
+      preLoaderRoute: typeof AuthenticatedUserEditUuidRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/role/edit/$uuid': {
@@ -2748,6 +2787,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHrmPayrollGenerateRoute: typeof AuthenticatedHrmPayrollGenerateRoute
   AuthenticatedHrmPayrollManageSalaryRoute: typeof AuthenticatedHrmPayrollManageSalaryRoute
   AuthenticatedRoleCreateRoute: typeof AuthenticatedRoleCreateRoute
+  AuthenticatedUserCreateRoute: typeof AuthenticatedUserCreateRoute
   AuthenticatedRoleIndexRoute: typeof AuthenticatedRoleIndexRoute
   AuthenticatedUserIndexRoute: typeof AuthenticatedUserIndexRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
@@ -2802,6 +2842,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryWarehouseCreateRoute: typeof AuthenticatedInventoryWarehouseCreateRoute
   AuthenticatedInventoryWarehouseStockMovementRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   AuthenticatedRoleEditUuidRoute: typeof AuthenticatedRoleEditUuidRoute
+  AuthenticatedUserEditUuidRoute: typeof AuthenticatedUserEditUuidRoute
   AuthenticatedAccountOpeningBalanceIndexRoute: typeof AuthenticatedAccountOpeningBalanceIndexRoute
   AuthenticatedAccountReportsIndexRoute: typeof AuthenticatedAccountReportsIndexRoute
   AuthenticatedHrmEmployeeIndexRoute: typeof AuthenticatedHrmEmployeeIndexRoute
@@ -2891,6 +2932,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHrmPayrollManageSalaryRoute:
     AuthenticatedHrmPayrollManageSalaryRoute,
   AuthenticatedRoleCreateRoute: AuthenticatedRoleCreateRoute,
+  AuthenticatedUserCreateRoute: AuthenticatedUserCreateRoute,
   AuthenticatedRoleIndexRoute: AuthenticatedRoleIndexRoute,
   AuthenticatedUserIndexRoute: AuthenticatedUserIndexRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
@@ -2992,6 +3034,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedInventoryWarehouseStockMovementRoute:
     AuthenticatedInventoryWarehouseStockMovementRouteWithChildren,
   AuthenticatedRoleEditUuidRoute: AuthenticatedRoleEditUuidRoute,
+  AuthenticatedUserEditUuidRoute: AuthenticatedUserEditUuidRoute,
   AuthenticatedAccountOpeningBalanceIndexRoute:
     AuthenticatedAccountOpeningBalanceIndexRoute,
   AuthenticatedAccountReportsIndexRoute: AuthenticatedAccountReportsIndexRoute,

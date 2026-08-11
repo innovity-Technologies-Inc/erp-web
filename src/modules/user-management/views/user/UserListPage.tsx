@@ -10,32 +10,6 @@ import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 
-// Live interactive status toggle switch component
-const StatusToggle = () => {
-  const [isActive, setIsActive] = useState(true)
-  return (
-    <div className="flex items-center gap-2 h-full">
-      <button
-        onClick={(e) => {
-          e.stopPropagation()
-          setIsActive(!isActive)
-        }}
-        className={`w-8 h-4 rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none shrink-0 ${
-          isActive ? 'bg-[#1E3A5F]' : 'bg-gray-300'
-        }`}
-      >
-        <div
-          className={`w-3 h-3 rounded-full bg-white transform transition-transform duration-200 ease-in-out ${
-            isActive ? 'translate-x-4' : 'translate-x-0'
-          }`}
-        />
-      </button>
-      <span className={`text-[11px] font-semibold tracking-tight ${isActive ? 'text-primary font-bold' : 'text-gray-400'}`}>
-        {isActive ? 'Active' : 'Inactive'}
-      </span>
-    </div>
-  )
-}
 
 export const UserListPage = () => {
   const navigate = useNavigate()
@@ -48,7 +22,6 @@ export const UserListPage = () => {
   const [search, setSearch] = useState('')
   const [userTypeFilter, setUserTypeFilter] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -63,7 +36,6 @@ export const UserListPage = () => {
     user_type: true,
     role: true,
     demo_user: true,
-    status: true,
     action: true,
   })
 
@@ -77,11 +49,10 @@ export const UserListPage = () => {
       // Optional extra filters matching UI dropdowns
       user_type: userTypeFilter || undefined,
       role_id: roleFilter || undefined,
-      status: statusFilter || undefined,
       start_date: dateRange.start || undefined,
       end_date: dateRange.end || undefined,
     }),
-    [currentPage, pageSize, search, userTypeFilter, roleFilter, statusFilter, dateRange]
+    [currentPage, pageSize, search, userTypeFilter, roleFilter, dateRange]
   )
 
   const { data: usersData, isLoading } = useUsersDatatable(params)
@@ -263,13 +234,6 @@ export const UserListPage = () => {
         },
       },
       {
-        headerName: 'STATUS',
-        width: 150,
-        hide: !visibleCols.status,
-        cellClass: 'flex items-center',
-        cellRenderer: StatusToggle,
-      },
-      {
         headerName: 'ACTION',
         width: 100,
         pinned: 'right',
@@ -323,7 +287,6 @@ export const UserListPage = () => {
       { name: 'User Type', field: 'user_type', visible: visibleCols.user_type },
       { name: 'Role', field: 'role', visible: visibleCols.role },
       { name: 'Demo User', field: 'demo_user', visible: visibleCols.demo_user },
-      { name: 'Status', field: 'status', visible: visibleCols.status },
       { name: 'Action', field: 'action', visible: visibleCols.action },
     ],
     [visibleCols]
@@ -387,19 +350,6 @@ export const UserListPage = () => {
               <option value="">User Type</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
-            </select>
-
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value)
-                setCurrentPage(1)
-              }}
-              className="bg-[#f8fafc] border border-gray-100 px-3 py-1.5 rounded-full text-[11px] font-semibold text-gray-500 hover:border-gray-300 focus:ring-1 focus:ring-primary/20 transition-all outline-none"
-            >
-              <option value="">Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
             </select>
           </div>
         }
