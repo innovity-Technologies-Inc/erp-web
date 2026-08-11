@@ -15,6 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AuthenticatedUserIndexRouteImport } from './routes/_authenticated/user.index'
 import { Route as AuthenticatedRoleIndexRouteImport } from './routes/_authenticated/role.index'
 import { Route as AuthenticatedRoleCreateRouteImport } from './routes/_authenticated/role.create'
 import { Route as AuthenticatedHrmPayrollManageSalaryRouteImport } from './routes/_authenticated/hrm.payroll-manage-salary'
@@ -170,6 +171,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
+} as any)
+const AuthenticatedUserIndexRoute = AuthenticatedUserIndexRouteImport.update({
+  id: '/user/',
+  path: '/user/',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedRoleIndexRoute = AuthenticatedRoleIndexRouteImport.update({
   id: '/role/',
@@ -957,6 +963,7 @@ export interface FileRoutesByFullPath {
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
   '/role/': typeof AuthenticatedRoleIndexRoute
+  '/user/': typeof AuthenticatedUserIndexRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1090,6 +1097,7 @@ export interface FileRoutesByTo {
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
   '/role': typeof AuthenticatedRoleIndexRoute
+  '/user': typeof AuthenticatedUserIndexRoute
   '/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1226,6 +1234,7 @@ export interface FileRoutesById {
   '/_authenticated/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/_authenticated/role/create': typeof AuthenticatedRoleCreateRoute
   '/_authenticated/role/': typeof AuthenticatedRoleIndexRoute
+  '/_authenticated/user/': typeof AuthenticatedUserIndexRoute
   '/_authenticated/account/opening-balance/create': typeof AuthenticatedAccountOpeningBalanceCreateRoute
   '/_authenticated/account/reports/balance-sheet': typeof AuthenticatedAccountReportsBalanceSheetRoute
   '/_authenticated/account/reports/bank-book': typeof AuthenticatedAccountReportsBankBookRoute
@@ -1361,6 +1370,7 @@ export interface FileRouteTypes {
     | '/hrm/payroll-manage-salary'
     | '/role/create'
     | '/role/'
+    | '/user/'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
@@ -1494,6 +1504,7 @@ export interface FileRouteTypes {
     | '/hrm/payroll-manage-salary'
     | '/role/create'
     | '/role'
+    | '/user'
     | '/account/opening-balance/create'
     | '/account/reports/balance-sheet'
     | '/account/reports/bank-book'
@@ -1629,6 +1640,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hrm/payroll-manage-salary'
     | '/_authenticated/role/create'
     | '/_authenticated/role/'
+    | '/_authenticated/user/'
     | '/_authenticated/account/opening-balance/create'
     | '/_authenticated/account/reports/balance-sheet'
     | '/_authenticated/account/reports/bank-book'
@@ -1784,6 +1796,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_authenticated/user/': {
+      id: '/_authenticated/user/'
+      path: '/user'
+      fullPath: '/user/'
+      preLoaderRoute: typeof AuthenticatedUserIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/role/': {
       id: '/_authenticated/role/'
@@ -2730,6 +2749,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHrmPayrollManageSalaryRoute: typeof AuthenticatedHrmPayrollManageSalaryRoute
   AuthenticatedRoleCreateRoute: typeof AuthenticatedRoleCreateRoute
   AuthenticatedRoleIndexRoute: typeof AuthenticatedRoleIndexRoute
+  AuthenticatedUserIndexRoute: typeof AuthenticatedUserIndexRoute
   AuthenticatedAccountOpeningBalanceCreateRoute: typeof AuthenticatedAccountOpeningBalanceCreateRoute
   AuthenticatedAccountReportsBalanceSheetRoute: typeof AuthenticatedAccountReportsBalanceSheetRoute
   AuthenticatedAccountReportsBankBookRoute: typeof AuthenticatedAccountReportsBankBookRoute
@@ -2872,6 +2892,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedHrmPayrollManageSalaryRoute,
   AuthenticatedRoleCreateRoute: AuthenticatedRoleCreateRoute,
   AuthenticatedRoleIndexRoute: AuthenticatedRoleIndexRoute,
+  AuthenticatedUserIndexRoute: AuthenticatedUserIndexRoute,
   AuthenticatedAccountOpeningBalanceCreateRoute:
     AuthenticatedAccountOpeningBalanceCreateRoute,
   AuthenticatedAccountReportsBalanceSheetRoute:

@@ -165,8 +165,8 @@ const menuItems: MenuGroup[] = [
       { 
         name: 'User Management', 
         icon: UserCog, 
-        to: '/role', 
-        permission: 'view_role',
+        to: '/user', 
+        permission: 'view_user',
         activePaths: ['/user', '/role']
       },
     ]
