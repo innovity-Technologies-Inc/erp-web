@@ -18,6 +18,12 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as AuthenticatedUserIndexRouteImport } from './routes/_authenticated/user.index'
 import { Route as AuthenticatedRoleIndexRouteImport } from './routes/_authenticated/role.index'
 import { Route as AuthenticatedUserCreateRouteImport } from './routes/_authenticated/user.create'
+import { Route as AuthenticatedSettingsSettingRouteImport } from './routes/_authenticated/settings.setting'
+import { Route as AuthenticatedSettingsPrintRouteImport } from './routes/_authenticated/settings.print'
+import { Route as AuthenticatedSettingsOrganizationRouteImport } from './routes/_authenticated/settings.organization'
+import { Route as AuthenticatedSettingsEmailRouteImport } from './routes/_authenticated/settings.email'
+import { Route as AuthenticatedSettingsCurrencyRouteImport } from './routes/_authenticated/settings.currency'
+import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings.company'
 import { Route as AuthenticatedRoleCreateRouteImport } from './routes/_authenticated/role.create'
 import { Route as AuthenticatedHrmPayrollManageSalaryRouteImport } from './routes/_authenticated/hrm.payroll-manage-salary'
 import { Route as AuthenticatedHrmPayrollGenerateRouteImport } from './routes/_authenticated/hrm.payroll-generate'
@@ -189,6 +195,42 @@ const AuthenticatedUserCreateRoute = AuthenticatedUserCreateRouteImport.update({
   path: '/user/create',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSettingsSettingRoute =
+  AuthenticatedSettingsSettingRouteImport.update({
+    id: '/settings/setting',
+    path: '/settings/setting',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsPrintRoute =
+  AuthenticatedSettingsPrintRouteImport.update({
+    id: '/settings/print',
+    path: '/settings/print',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsOrganizationRoute =
+  AuthenticatedSettingsOrganizationRouteImport.update({
+    id: '/settings/organization',
+    path: '/settings/organization',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsEmailRoute =
+  AuthenticatedSettingsEmailRouteImport.update({
+    id: '/settings/email',
+    path: '/settings/email',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsCurrencyRoute =
+  AuthenticatedSettingsCurrencyRouteImport.update({
+    id: '/settings/currency',
+    path: '/settings/currency',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsCompanyRoute =
+  AuthenticatedSettingsCompanyRouteImport.update({
+    id: '/settings/company',
+    path: '/settings/company',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedRoleCreateRoute = AuthenticatedRoleCreateRouteImport.update({
   id: '/role/create',
   path: '/role/create',
@@ -975,6 +1017,12 @@ export interface FileRoutesByFullPath {
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
+  '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
+  '/settings/email': typeof AuthenticatedSettingsEmailRoute
+  '/settings/organization': typeof AuthenticatedSettingsOrganizationRoute
+  '/settings/print': typeof AuthenticatedSettingsPrintRoute
+  '/settings/setting': typeof AuthenticatedSettingsSettingRoute
   '/user/create': typeof AuthenticatedUserCreateRoute
   '/role/': typeof AuthenticatedRoleIndexRoute
   '/user/': typeof AuthenticatedUserIndexRoute
@@ -1111,6 +1159,12 @@ export interface FileRoutesByTo {
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
+  '/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
+  '/settings/email': typeof AuthenticatedSettingsEmailRoute
+  '/settings/organization': typeof AuthenticatedSettingsOrganizationRoute
+  '/settings/print': typeof AuthenticatedSettingsPrintRoute
+  '/settings/setting': typeof AuthenticatedSettingsSettingRoute
   '/user/create': typeof AuthenticatedUserCreateRoute
   '/role': typeof AuthenticatedRoleIndexRoute
   '/user': typeof AuthenticatedUserIndexRoute
@@ -1250,6 +1304,12 @@ export interface FileRoutesById {
   '/_authenticated/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/_authenticated/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/_authenticated/role/create': typeof AuthenticatedRoleCreateRoute
+  '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
+  '/_authenticated/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
+  '/_authenticated/settings/email': typeof AuthenticatedSettingsEmailRoute
+  '/_authenticated/settings/organization': typeof AuthenticatedSettingsOrganizationRoute
+  '/_authenticated/settings/print': typeof AuthenticatedSettingsPrintRoute
+  '/_authenticated/settings/setting': typeof AuthenticatedSettingsSettingRoute
   '/_authenticated/user/create': typeof AuthenticatedUserCreateRoute
   '/_authenticated/role/': typeof AuthenticatedRoleIndexRoute
   '/_authenticated/user/': typeof AuthenticatedUserIndexRoute
@@ -1388,6 +1448,12 @@ export interface FileRouteTypes {
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
     | '/role/create'
+    | '/settings/company'
+    | '/settings/currency'
+    | '/settings/email'
+    | '/settings/organization'
+    | '/settings/print'
+    | '/settings/setting'
     | '/user/create'
     | '/role/'
     | '/user/'
@@ -1524,6 +1590,12 @@ export interface FileRouteTypes {
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
     | '/role/create'
+    | '/settings/company'
+    | '/settings/currency'
+    | '/settings/email'
+    | '/settings/organization'
+    | '/settings/print'
+    | '/settings/setting'
     | '/user/create'
     | '/role'
     | '/user'
@@ -1662,6 +1734,12 @@ export interface FileRouteTypes {
     | '/_authenticated/hrm/payroll-generate'
     | '/_authenticated/hrm/payroll-manage-salary'
     | '/_authenticated/role/create'
+    | '/_authenticated/settings/company'
+    | '/_authenticated/settings/currency'
+    | '/_authenticated/settings/email'
+    | '/_authenticated/settings/organization'
+    | '/_authenticated/settings/print'
+    | '/_authenticated/settings/setting'
     | '/_authenticated/user/create'
     | '/_authenticated/role/'
     | '/_authenticated/user/'
@@ -1841,6 +1919,48 @@ declare module '@tanstack/react-router' {
       path: '/user/create'
       fullPath: '/user/create'
       preLoaderRoute: typeof AuthenticatedUserCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/setting': {
+      id: '/_authenticated/settings/setting'
+      path: '/settings/setting'
+      fullPath: '/settings/setting'
+      preLoaderRoute: typeof AuthenticatedSettingsSettingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/print': {
+      id: '/_authenticated/settings/print'
+      path: '/settings/print'
+      fullPath: '/settings/print'
+      preLoaderRoute: typeof AuthenticatedSettingsPrintRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/organization': {
+      id: '/_authenticated/settings/organization'
+      path: '/settings/organization'
+      fullPath: '/settings/organization'
+      preLoaderRoute: typeof AuthenticatedSettingsOrganizationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/email': {
+      id: '/_authenticated/settings/email'
+      path: '/settings/email'
+      fullPath: '/settings/email'
+      preLoaderRoute: typeof AuthenticatedSettingsEmailRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/currency': {
+      id: '/_authenticated/settings/currency'
+      path: '/settings/currency'
+      fullPath: '/settings/currency'
+      preLoaderRoute: typeof AuthenticatedSettingsCurrencyRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/company': {
+      id: '/_authenticated/settings/company'
+      path: '/settings/company'
+      fullPath: '/settings/company'
+      preLoaderRoute: typeof AuthenticatedSettingsCompanyRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/role/create': {
@@ -2787,6 +2907,12 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHrmPayrollGenerateRoute: typeof AuthenticatedHrmPayrollGenerateRoute
   AuthenticatedHrmPayrollManageSalaryRoute: typeof AuthenticatedHrmPayrollManageSalaryRoute
   AuthenticatedRoleCreateRoute: typeof AuthenticatedRoleCreateRoute
+  AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
+  AuthenticatedSettingsCurrencyRoute: typeof AuthenticatedSettingsCurrencyRoute
+  AuthenticatedSettingsEmailRoute: typeof AuthenticatedSettingsEmailRoute
+  AuthenticatedSettingsOrganizationRoute: typeof AuthenticatedSettingsOrganizationRoute
+  AuthenticatedSettingsPrintRoute: typeof AuthenticatedSettingsPrintRoute
+  AuthenticatedSettingsSettingRoute: typeof AuthenticatedSettingsSettingRoute
   AuthenticatedUserCreateRoute: typeof AuthenticatedUserCreateRoute
   AuthenticatedRoleIndexRoute: typeof AuthenticatedRoleIndexRoute
   AuthenticatedUserIndexRoute: typeof AuthenticatedUserIndexRoute
@@ -2932,6 +3058,13 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedHrmPayrollManageSalaryRoute:
     AuthenticatedHrmPayrollManageSalaryRoute,
   AuthenticatedRoleCreateRoute: AuthenticatedRoleCreateRoute,
+  AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
+  AuthenticatedSettingsCurrencyRoute: AuthenticatedSettingsCurrencyRoute,
+  AuthenticatedSettingsEmailRoute: AuthenticatedSettingsEmailRoute,
+  AuthenticatedSettingsOrganizationRoute:
+    AuthenticatedSettingsOrganizationRoute,
+  AuthenticatedSettingsPrintRoute: AuthenticatedSettingsPrintRoute,
+  AuthenticatedSettingsSettingRoute: AuthenticatedSettingsSettingRoute,
   AuthenticatedUserCreateRoute: AuthenticatedUserCreateRoute,
   AuthenticatedRoleIndexRoute: AuthenticatedRoleIndexRoute,
   AuthenticatedUserIndexRoute: AuthenticatedUserIndexRoute,

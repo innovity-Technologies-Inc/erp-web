@@ -1,0 +1,6 @@
+export { OrganizationPage } from './views/OrganizationPage'
+export { CompanyPage } from './views/CompanyPage'
+export { CurrencyPage } from './views/CurrencyPage'
+export { PrintPage } from './views/PrintPage'
+export { EmailPage } from './views/EmailPage'
+export { GeneralSettingPage } from './views/GeneralSettingPage'

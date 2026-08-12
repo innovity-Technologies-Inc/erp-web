@@ -12,7 +12,8 @@ import {
   Wrench, 
   FileText,
   BookOpen,
-  UserCog
+  UserCog,
+  Settings
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -168,6 +169,12 @@ const menuItems: MenuGroup[] = [
         to: '/user', 
         permission: 'view_user',
         activePaths: ['/user', '/role']
+      },
+      { 
+        name: 'Settings', 
+        icon: Settings, 
+        to: '/settings/organization', 
+        activePaths: ['/settings']
       },
     ]
   }
