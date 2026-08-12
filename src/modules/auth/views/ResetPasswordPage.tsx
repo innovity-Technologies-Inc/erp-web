@@ -48,9 +48,10 @@ export const ResetPasswordPage = () => {
             </div>
           </div>
         )}
-        <span className="text-[20px] font-bold font-poppins tracking-tight text-slate-800">
-          {siteName}
-        </span>
+        <span 
+          className="text-[20px] font-bold font-poppins tracking-tight text-slate-800"
+          dangerouslySetInnerHTML={{ __html: siteName }}
+        />
       </div>
 
       <div className="mb-8">

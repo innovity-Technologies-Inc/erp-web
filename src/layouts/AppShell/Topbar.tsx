@@ -55,7 +55,7 @@ export const Topbar = () => {
       {/* Logo Area */}
       <div 
         className={clsx(
-          "flex items-center justify-between px-6 transition-all duration-300 shrink-0 h-full",
+          "flex items-center justify-between px-2 transition-all duration-300 shrink-0 h-full",
           sidebarOpen ? "w-64" : "w-20 px-0 justify-center"
         )}
       >
@@ -73,11 +73,10 @@ export const Topbar = () => {
           </div>
           {sidebarOpen && (
             <span 
-              className="text-[14px] font-bold font-poppins tracking-tight truncate max-w-[100px] select-none"
+              className="text-[14px] font-bold font-poppins tracking-tight truncate max-w-[200px] select-none"
               style={{ color: 'var(--color-sidebar)' }}
-            >
-              {siteName}
-            </span>
+              dangerouslySetInnerHTML={{ __html: siteName }}
+            />
           )}
         </div>
         
