@@ -37,3 +37,17 @@ export const printSettingSchema = z.object({
 })
 
 export type PrintSettingFormValues = z.infer<typeof printSettingSchema>
+
+export const emailConfigSchema = z.object({
+  protocol: z.string().min(1, 'Protocol is required'),
+  smtp_host: z.string().min(1, 'SMTP Host is required'),
+  smtp_port: z.any().optional(),
+  smtp_user: z.string().min(1, 'Sender Mail is required'),
+  smtp_pass: z.string().min(1, 'Password is required'),
+  mailtype: z.string().min(1, 'Mail Type is required'),
+  isinvoice: z.any().optional(),
+  isservice: z.any().optional(),
+  isquotation: z.any().optional(),
+})
+
+export type EmailConfigFormValues = z.infer<typeof emailConfigSchema>

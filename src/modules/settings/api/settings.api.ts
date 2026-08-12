@@ -201,3 +201,37 @@ export const updatePrintSetting = async (
   const response = await apiClient.post<{ status: boolean; message: string }>('/print-setting/update', dto)
   return response.data
 }
+
+export interface EmailConfig {
+  id: number
+  protocol: string
+  smtp_host: string
+  smtp_port: number | string
+  smtp_user: string
+  smtp_pass: string
+  mailtype: string
+  isinvoice: boolean | number
+  isservice: boolean | number
+  isquotation: boolean | number
+}
+
+export const getEmailConfig = async (): Promise<{ status: boolean; data: EmailConfig }> => {
+  const response = await apiClient.get<{ status: boolean; data: EmailConfig }>('/email-config')
+  return response.data
+}
+
+export const updateEmailConfig = async (
+  dto: Omit<EmailConfig, 'id'>
+): Promise<{ status: boolean; message: string }> => {
+  const response = await apiClient.post<{ status: boolean; message: string }>('/email-config/update', dto)
+  return response.data
+}
+
+export const sendTestEmail = async (
+  testEmail: string
+): Promise<{ status: boolean; message: string }> => {
+  const response = await apiClient.post<{ status: boolean; message: string }>('/email-config/test-api', {
+    test_email: testEmail,
+  })
+  return response.data
+}
