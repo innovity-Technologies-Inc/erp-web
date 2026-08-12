@@ -51,3 +51,29 @@ export const emailConfigSchema = z.object({
 })
 
 export type EmailConfigFormValues = z.infer<typeof emailConfigSchema>
+
+export const webSettingSchema = z.object({
+  site_name: z.string().min(1, 'Site Name is required'),
+  currency: z.string().min(1, 'Currency is required'),
+  timezone: z.string().min(1, 'Time Zone is required'),
+  currency_position: z.any().optional(),
+  footer_text: z.string().min(1, 'Footer Text is required'),
+  language: z.string().min(1, 'Language is required'),
+  rtr: z.any().optional(),
+  discount_type: z.any().optional(),
+  color_primary: z.string().optional(),
+  color_info: z.string().optional(),
+  color_success: z.string().optional(),
+  color_warning: z.string().optional(),
+  color_danger: z.string().optional(),
+  navbar_color: z.string().optional(),
+  sidebar_color: z.string().optional(),
+  is_qr: z.any().optional(),
+  is_autoapprove_v: z.any().optional(),
+  logo: z.any().optional(),
+  invoice_logo: z.any().optional(),
+  favicon: z.any().optional(),
+  login_sidebar_image: z.any().optional(),
+})
+
+export type WebSettingFormValues = z.infer<typeof webSettingSchema>

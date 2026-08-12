@@ -90,7 +90,9 @@ export const CompanyPage = () => {
   const handleEditClick = (optionsHtml: string) => {
     const match = optionsHtml.match(/data-uuid="([^"]+)"/)
     if (match && match[1]) {
-      setSelectedUuid(match[1])
+      const uuid = match[1]
+      queryClient.removeQueries({ queryKey: ['company', uuid] })
+      setSelectedUuid(uuid)
       setIsModalOpen(true)
     }
   }
@@ -133,7 +135,7 @@ export const CompanyPage = () => {
       await storeCompany(payload)
 
       queryClient.invalidateQueries({ queryKey: ['companies'] })
-      queryClient.invalidateQueries({ queryKey: ['company'] })
+      queryClient.removeQueries({ queryKey: ['company', uuid] })
       
       showNotificationModal(
         'Status Updated!',

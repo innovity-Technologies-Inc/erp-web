@@ -235,3 +235,54 @@ export const sendTestEmail = async (
   })
   return response.data
 }
+
+export interface WebSetting {
+  site_name: string
+  logo?: string
+  logo_url?: string
+  invoice_logo?: string
+  invoice_logo_url?: string
+  favicon?: string
+  favicon_url?: string
+  login_sidebar_image?: string
+  login_sidebar_image_url?: string
+  currency: string
+  timezone: string
+  currency_position: string | number
+  footer_text: string
+  language: string
+  rtr: string | number
+  discount_type: string | number
+  color_primary: string
+  color_info: string
+  color_success: string
+  color_warning: string
+  color_danger: string
+  navbar_color: string
+  sidebar_color: string
+  is_qr: boolean | number
+  is_autoapprove_v: boolean | number
+}
+
+export interface WebSettingResponse {
+  setting: WebSetting
+  languages: { value: string; label: string }[]
+  timezones: { value: string; label: string }[]
+  currencies: { value: string; label: string }[]
+}
+
+export const getWebSetting = async (): Promise<{ status: boolean; data: WebSettingResponse }> => {
+  const response = await apiClient.get<{ status: boolean; data: WebSettingResponse }>('/web-setting')
+  return response.data
+}
+
+export const updateWebSetting = async (
+  formData: FormData
+): Promise<{ status: boolean; message: string }> => {
+  const response = await apiClient.post<{ status: boolean; message: string }>('/web-setting/update', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return response.data
+}

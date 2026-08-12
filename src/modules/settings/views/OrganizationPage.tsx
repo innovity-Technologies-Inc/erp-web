@@ -97,7 +97,9 @@ export const OrganizationPage = () => {
   const handleEditClick = (optionsHtml: string) => {
     const match = optionsHtml.match(/data-uuid="([^"]+)"/)
     if (match && match[1]) {
-      setSelectedUuid(match[1])
+      const uuid = match[1]
+      queryClient.removeQueries({ queryKey: ['organization', uuid] })
+      setSelectedUuid(uuid)
       setIsModalOpen(true)
     }
   }
@@ -144,7 +146,7 @@ export const OrganizationPage = () => {
       console.log('Backend response:', res)
 
       queryClient.invalidateQueries({ queryKey: ['organizations'] })
-      queryClient.invalidateQueries({ queryKey: ['organization'] })
+      queryClient.removeQueries({ queryKey: ['organization', uuid] })
       
       showNotificationModal(
         'Status Updated!',

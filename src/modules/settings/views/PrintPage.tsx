@@ -58,6 +58,13 @@ export const PrintPage = () => {
     return Math.min(Math.max(val / 4, 15), 100)
   }, [footerValue])
 
+  const activePreset = useMemo(() => {
+    if (headerValue === '200' && footerValue === '100') return 'standard'
+    if (headerValue === '80' && footerValue === '40') return 'compact'
+    if (headerValue === '250' && footerValue === '150') return 'report'
+    return null
+  }, [headerValue, footerValue])
+
   // Fetch current print settings
   const { data: printData, isLoading } = usePrintSetting()
   const { mutate: updatePrint, isPending: isUpdating } = useUpdatePrintSetting()
@@ -218,7 +225,11 @@ export const PrintPage = () => {
                   {/* Preset 1 */}
                   <div 
                     onClick={() => applyPreset('200', '100')}
-                    className="border border-gray-100 hover:border-primary/30 rounded-xl p-4 cursor-pointer hover:bg-slate-50/30 transition-all text-left"
+                    className={`border rounded-xl p-4 cursor-pointer transition-all text-left ${
+                      activePreset === 'standard'
+                        ? 'border-primary ring-1 ring-primary/30 bg-slate-50/50 shadow-sm'
+                        : 'border-gray-100 hover:border-primary/30 hover:bg-slate-50/30'
+                    }`}
                   >
                     <h3 className="text-sm font-semibold text-slate-800 leading-none">
                       Standard Invoice
@@ -231,7 +242,11 @@ export const PrintPage = () => {
                   {/* Preset 2 */}
                   <div 
                     onClick={() => applyPreset('80', '40')}
-                    className="border border-gray-100 hover:border-primary/30 rounded-xl p-4 cursor-pointer hover:bg-slate-50/30 transition-all text-left"
+                    className={`border rounded-xl p-4 cursor-pointer transition-all text-left ${
+                      activePreset === 'compact'
+                        ? 'border-primary ring-1 ring-primary/30 bg-slate-50/50 shadow-sm'
+                        : 'border-gray-100 hover:border-primary/30 hover:bg-slate-50/30'
+                    }`}
                   >
                     <h3 className="text-sm font-semibold text-slate-800 leading-none">
                       Compact Receipt
@@ -244,7 +259,11 @@ export const PrintPage = () => {
                   {/* Preset 3 */}
                   <div 
                     onClick={() => applyPreset('250', '150')}
-                    className="border border-gray-100 hover:border-primary/30 rounded-xl p-4 cursor-pointer hover:bg-slate-50/30 transition-all text-left"
+                    className={`border rounded-xl p-4 cursor-pointer transition-all text-left ${
+                      activePreset === 'report'
+                        ? 'border-primary ring-1 ring-primary/30 bg-slate-50/50 shadow-sm'
+                        : 'border-gray-100 hover:border-primary/30 hover:bg-slate-50/30'
+                    }`}
                   >
                     <h3 className="text-sm font-semibold text-slate-800 leading-none">
                       Full Report
