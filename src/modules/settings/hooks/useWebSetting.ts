@@ -14,6 +14,7 @@ export const useUpdateWebSetting = () => {
     mutationFn: (formData: FormData) => updateWebSetting(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['web-setting'] })
+      queryClient.invalidateQueries({ queryKey: ['global-settings'] })
     },
   })
 }

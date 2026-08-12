@@ -53,20 +53,32 @@ export const Topbar = () => {
   return (
     <header className="h-16 flex items-center bg-white shrink-0 relative z-30 border-b border-gray-100 shadow-[0_2px_10px_rgba(30,75,161,0.5)] px-0 print:hidden">
       {/* Logo Area */}
-      <div className={clsx(
-        "flex items-center justify-between px-6 transition-all duration-300 shrink-0 border-r border-gray-100 h-full",
-        sidebarOpen ? "w-64" : "w-20 px-0 justify-center"
-      )}>
-        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-           {logo ? (
-             <img src={logo} alt={siteName} className="w-full h-full object-contain" />
-           ) : (
-             <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 4L34 11.5V28.5L20 36L6 28.5V11.5L20 4Z" stroke="var(--color-primary)" strokeWidth="3" strokeLinejoin="round"/>
-                <path d="M10 15L20 10L30 15V25L20 30L10 25V15Z" fill="var(--color-primary)" fillOpacity="0.1"/>
-                <path d="M20 12V28M12 20H28" stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"/>
-             </svg>
-           )}
+      <div 
+        className={clsx(
+          "flex items-center justify-between px-6 transition-all duration-300 shrink-0 h-full",
+          sidebarOpen ? "w-64" : "w-20 px-0 justify-center"
+        )}
+      >
+        <div className="flex items-center gap-1 shrink-0">
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shrink-0 overflow-hidden ml-2 mr-2">
+             {logo ? (
+               <img src={logo} alt={siteName} className="w-full h-full object-contain" />
+             ) : (
+               <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 4L34 11.5V28.5L20 36L6 28.5V11.5L20 4Z" stroke="var(--color-primary)" strokeWidth="3" strokeLinejoin="round"/>
+                  <path d="M10 15L20 10L30 15V25L20 30L10 25V15Z" fill="var(--color-primary)" fillOpacity="0.1"/>
+                  <path d="M20 12V28M12 20H28" stroke="var(--color-primary)" strokeWidth="3" strokeLinecap="round"/>
+               </svg>
+             )}
+          </div>
+          {sidebarOpen && (
+            <span 
+              className="text-[14px] font-bold font-poppins tracking-tight truncate max-w-[100px] select-none"
+              style={{ color: 'var(--color-sidebar)' }}
+            >
+              {siteName}
+            </span>
+          )}
         </div>
         
 
@@ -74,7 +86,8 @@ export const Topbar = () => {
         {sidebarOpen && (
           <button 
             onClick={toggleSidebar}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
+            className="hover:bg-gray-100 rounded-lg transition-colors p-1 flex items-center justify-center"
+            style={{ color: 'var(--color-sidebar)' }}
           >
             {/* Image er ulto icon (Minimize) */}
             <Shrink className="w-5 h-5" /> 
@@ -85,13 +98,20 @@ export const Topbar = () => {
         {!sidebarOpen && (
           <button 
             onClick={toggleSidebar}
-            className="p-2 ml-4 hover:bg-gray-100 rounded-lg transition-colors text-gray-400"
+            className="mr-3 hover:bg-gray-100 rounded-lg transition-colors p-1 flex items-center justify-center"
+            style={{ color: 'var(--color-sidebar)' }}
           >
             {/* Precisely your shared image icon */}
             <Expand className="w-5 h-5" /> 
           </button>
         )}
       </div>
+
+      {/* Floating Vertical Divider (Slightly thicker, with top/bottom space) */}
+      <div 
+        className="w-[2px] h-8 shrink-0 rounded-full"
+        style={{ backgroundColor: 'var(--color-sidebar)' }}
+      />
 
       {/* Navigation / Breadcrumbs */}
       <div className="flex-1 flex items-center px-6 gap-3">

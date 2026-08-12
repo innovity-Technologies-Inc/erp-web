@@ -33,10 +33,10 @@ export const ResetPasswordPage = () => {
 
   return (
     <div className="w-full">
-      {/* Logo */}
-      <div className="mb-10">
+      {/* Logo & Site Name */}
+      <div className="flex items-center gap-3 mb-10 shrink-0 select-none">
         {logoUrl ? (
-          <img src={logoUrl} alt={siteName} className="h-12 w-auto object-contain" />
+          <img src={logoUrl} alt={siteName} className="h-10 w-auto object-contain" />
         ) : (
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shrink-0">
             <div className="text-white font-black text-2xl flex items-center justify-center">
@@ -48,6 +48,9 @@ export const ResetPasswordPage = () => {
             </div>
           </div>
         )}
+        <span className="text-[20px] font-bold font-poppins tracking-tight text-slate-800">
+          {siteName}
+        </span>
       </div>
 
       <div className="mb-8">
