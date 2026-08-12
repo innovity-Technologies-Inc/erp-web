@@ -106,8 +106,8 @@ export const PurchaseViewPage = () => {
       <div className="max-w-[1200px] mx-auto bg-white rounded-xl border border-gray-200 shadow-sm print:shadow-none print:border-none print:m-0 print:max-w-none mb-8">
         <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 print:flex-row print:items-center print:p-4">
           <div>
-            {webSetting?.logo_url || companyInformation?.logo_url ? (
-              <img src={webSetting?.logo_url || companyInformation?.logo_url || undefined} alt="Logo" className="h-12 object-contain print:h-10" />
+            {webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url ? (
+              <img src={webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url || undefined} alt="Logo" className="h-12 object-contain print:h-10" />
             ) : (
               <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight print:text-xl">
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white print:w-8 print:h-8">

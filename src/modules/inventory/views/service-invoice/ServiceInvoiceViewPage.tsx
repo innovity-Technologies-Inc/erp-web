@@ -60,7 +60,7 @@ export const ServiceInvoiceViewPage = () => {
   const paymentStatus = parseFloat(invoice.due_amount) <= 0 ? 'Paid' : 
                        parseFloat(invoice.paid_amount) > 0 ? 'Partial' : 'Unpaid';
 
-  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url || undefined;
+  const logoUrl = webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url || undefined;
 
   return (
     <div className="min-h-screen font-poppins print:bg-white print:pb-0">

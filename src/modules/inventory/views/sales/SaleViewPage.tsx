@@ -75,7 +75,7 @@ export const SaleViewPage = () => {
   };
   const deliveryStatus = deliveryStatusMap[saleDetails.delivery_status?.toString()] || 'Pending';
 
-  const logoUrl = webSetting?.logo_url || companyInformation?.logo_url || undefined;
+  const logoUrl = webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url || undefined;
 
   return (
     <div className="min-h-screen font-poppins print:bg-white print:pb-0">

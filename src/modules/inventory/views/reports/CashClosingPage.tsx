@@ -126,8 +126,8 @@ export const CashClosingPage = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center justify-between">
             <div className="flex flex-col gap-3">
               <div className="text-[#1e4ba1]">
-                {webSetting?.logo_url || companyInformation?.logo_url ? (
-                  <img src={webSetting?.logo_url || companyInformation?.logo_url || undefined} alt="Logo" className="h-12 object-contain" />
+                {webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url ? (
+                  <img src={webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url || undefined} alt="Logo" className="h-12 object-contain" />
                 ) : (
                   <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight">
                     <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">

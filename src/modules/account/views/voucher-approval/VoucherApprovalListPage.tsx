@@ -365,9 +365,9 @@ export const VoucherApprovalListPage = () => {
               {/* Logo & Info header */}
               <div className="flex justify-between items-start pb-6 border-b border-gray-100">
                 <div>
-                  {voucherDetails.webSetting?.logo_url || voucherDetails.company?.logo_url ? (
+                  {voucherDetails.webSetting?.invoice_logo_url || voucherDetails.webSetting?.logo_url || voucherDetails.company?.logo_url ? (
                     <img 
-                      src={voucherDetails.webSetting?.logo_url || voucherDetails.company?.logo_url} 
+                      src={voucherDetails.webSetting?.invoice_logo_url || voucherDetails.webSetting?.logo_url || voucherDetails.company?.logo_url} 
                       alt="Logo" 
                       className="h-10 w-auto object-contain mb-3" 
                     />
@@ -376,9 +376,11 @@ export const VoucherApprovalListPage = () => {
                       G
                     </div>
                   )}
-                  <h4 className="text-md font-bold text-slate-800">
-                    {voucherDetails.company?.company_name || 'GEN-ITECH'}
-                  </h4>
+                  {!(voucherDetails.webSetting?.invoice_logo_url || voucherDetails.webSetting?.logo_url || voucherDetails.company?.logo_url) && (
+                    <h4 className="text-md font-bold text-slate-800">
+                      {voucherDetails.company?.company_name || 'GEN-ITECH'}
+                    </h4>
+                  )}
                 </div>
                 <div className="text-right text-sm text-gray-500 space-y-1">
                   <div><strong>Voucher No:</strong> <span className="text-slate-800 font-semibold">{voucherDetails.data.v_no}</span></div>

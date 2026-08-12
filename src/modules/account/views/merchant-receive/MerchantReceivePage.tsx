@@ -512,9 +512,9 @@ export const MerchantReceivePage = () => {
               <div className="flex justify-between items-center pb-6 border-b border-gray-100 mb-6">
                 {/* Logo and Type */}
                 <div className="flex items-center gap-4">
-                  {webSetting?.logo_url || companyInformation?.logo_url ? (
+                  {webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url ? (
                     <img 
-                      src={webSetting?.logo_url || companyInformation?.logo_url || undefined} 
+                      src={webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url || undefined} 
                       alt="Logo" 
                       className="h-10 w-auto object-contain max-w-[150px]" 
                     />
@@ -524,9 +524,11 @@ export const MerchantReceivePage = () => {
                     </div>
                   )}
                   <div className="border-l border-gray-200 pl-4">
-                    <h3 className="text-lg font-extrabold text-[#003671] tracking-wide leading-none uppercase">
-                      {webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH'}
-                    </h3>
+                    {!(webSetting?.invoice_logo_url || webSetting?.logo_url || companyInformation?.logo_url) && (
+                      <h3 className="text-lg font-extrabold text-[#003671] tracking-wide leading-none uppercase mb-1.5">
+                        {webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH'}
+                      </h3>
+                    )}
                     <span className="text-xs font-bold text-gray-400 tracking-wider mt-1.5 block uppercase">
                       Merchant Receive
                     </span>
