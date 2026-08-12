@@ -124,7 +124,9 @@ export const UserEditPage = () => {
   const getImageUrl = (imagePath: string | null) => {
     if (!imagePath) return null
     if (imagePath.startsWith('http')) return imagePath
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/storage/${imagePath}`
+    const storageUrl = import.meta.env.VITE_STORAGE_URL || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') + '/storage' : 'http://localhost:5000/storage')
+    const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+    return `${storageUrl}/${cleanPath}`
   }
 
   // Populate form values when user details are loaded

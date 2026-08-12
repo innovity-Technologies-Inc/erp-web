@@ -212,7 +212,7 @@ export const GeneralSettingPage = () => {
           <p className="text-[13px] text-gray-400 font-medium tracking-tight">Loading settings...</p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-[1600px] mx-auto px-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-[1600px] mx-auto ">
           
           {/* Row 1: Brand Identity & Theme Customization */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">

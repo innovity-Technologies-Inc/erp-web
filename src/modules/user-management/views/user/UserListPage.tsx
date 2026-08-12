@@ -105,7 +105,9 @@ export const UserListPage = () => {
   const getImageUrl = (imagePath: string | undefined) => {
     if (!imagePath) return null
     if (imagePath.startsWith('http')) return imagePath
-    return `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/storage/${imagePath}`
+    const storageUrl = import.meta.env.VITE_STORAGE_URL || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') + '/storage' : 'http://localhost:5000/storage')
+    const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath
+    return `${storageUrl}/${cleanPath}`
   }
 
   // AG Grid Column Definitions
@@ -196,16 +198,15 @@ export const UserListPage = () => {
         minWidth: 150,
         flex: 1.2,
         hide: !visibleCols.role,
-        cellClass: 'py-0 px-3 whitespace-normal border-r border-gray-100 flex items-center',
         cellRenderer: (params: any) => {
           const roleNames = params.data?.role_name ? params.data.role_name.split(', ') : []
           if (roleNames.length === 0) return <span className="text-gray-300">—</span>
           return (
-            <div className="flex flex-wrap gap-1 items-center">
+            <div className="flex gap-1.5 items-center h-full">
               {roleNames.map((role: string) => (
                 <span
                   key={role}
-                  className="inline-flex items-center px-1.5 py-0 rounded-md text-[9px] font-semibold bg-gray-50 text-gray-600 border border-gray-200 uppercase tracking-tight"
+                  className="inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase bg-gray-50 text-gray-600 border border-gray-200 leading-none"
                 >
                   {role}
                 </span>
@@ -223,13 +224,15 @@ export const UserListPage = () => {
         cellRenderer: (params: any) => {
           const isDemo = params.data?.is_demo_user === 1
           return (
-            <span
-              className={`inline-flex items-center px-2 py-0 rounded-md text-[9px] font-bold uppercase tracking-tight ${
-                isDemo ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200'
-              }`}
-            >
-              {isDemo ? 'Yes' : 'No'}
-            </span>
+            <div className="flex items-center justify-center h-full">
+              <span
+                className={`inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase leading-none ${
+                  isDemo ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200'
+                }`}
+              >
+                {isDemo ? 'Yes' : 'No'}
+              </span>
+            </div>
           )
         },
       },

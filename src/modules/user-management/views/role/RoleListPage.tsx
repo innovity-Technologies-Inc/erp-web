@@ -115,13 +115,15 @@ export const RoleListPage = () => {
         autoHeight: true,
         wrapText: true,
         hide: !visibleCols.assigned_modules,
-        cellClass: 'px-3 whitespace-normal border-r border-gray-100',
+        cellClass: 'px-3 whitespace-normal border-r border-gray-100 py-1.5',
         cellRenderer: (params: any) => {
           if (params.data.name === 'System Administrator') {
             return (
-              <span className="inline-flex items-center px-2 py-0 rounded-md text-[9px] font-bold bg-[#1E3A5F] text-white uppercase tracking-tight">
-                All Modules
-              </span>
+              <div className="flex items-center h-full">
+                <span className="inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase bg-[#1E3A5F] text-white leading-none">
+                  All Modules
+                </span>
+              </div>
             )
           }
           
@@ -131,10 +133,10 @@ export const RoleListPage = () => {
           if (modules.length === 0) return <span className="text-gray-300">—</span>
 
           return (
-            <div className="flex flex-col gap-0.5 py-1 w-full justify-start">
+            <div className="flex flex-col gap-1 w-full justify-start">
               {modules.map((mod) => (
-                <div key={mod} className="flex flex-wrap gap-1 min-h-[16px] items-center">
-                  <span className="inline-flex items-center px-2 py-0 rounded-md text-[9px] font-bold bg-[#eff6ff] text-blue-600 border border-blue-100 uppercase tracking-tight">
+                <div key={mod} className="flex flex-wrap gap-1 min-h-[22px] items-center">
+                  <span className="inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase bg-[#eff6ff] text-blue-600 border border-blue-100 leading-none">
                     {mod}
                   </span>
                 </div>
@@ -151,13 +153,15 @@ export const RoleListPage = () => {
         autoHeight: true,
         wrapText: true,
         hide: !visibleCols.permissions,
-        cellClass: 'py-1 px-3 whitespace-normal',
+        cellClass: 'py-1.5 px-3 whitespace-normal',
         cellRenderer: (params: any) => {
           if (params.data.name === 'System Administrator') {
             return (
-              <span className="inline-flex items-center px-2 py-0 rounded-md text-[9px] font-bold bg-blue-600 text-white uppercase tracking-tight">
-                Full Access
-              </span>
+              <div className="flex items-center h-full">
+                <span className="inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase bg-blue-600 text-white leading-none">
+                  Full Access
+                </span>
+              </div>
             )
           }
           
@@ -167,13 +171,13 @@ export const RoleListPage = () => {
           if (modules.length === 0) return <span className="text-gray-300">—</span>
 
           return (
-            <div className="flex flex-col gap-0.5 py-1 w-full justify-start">
+            <div className="flex flex-col gap-1 w-full justify-start">
               {modules.map((mod) => (
-                <div key={mod} className="flex flex-wrap gap-1 min-h-[16px] items-center">
+                <div key={mod} className="flex flex-wrap gap-1 min-h-[22px] items-center">
                   {grouped[mod].map((perm: string) => (
                     <span
                       key={perm}
-                      className="inline-flex items-center px-1.5 py-0 rounded-md text-[9px] font-semibold bg-gray-50 text-gray-600 border border-gray-200 uppercase tracking-tight"
+                      className="inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase bg-gray-50 text-gray-600 border border-gray-200 leading-none"
                     >
                       {perm.replace(/_/g, ' ')}
                     </span>
@@ -273,12 +277,12 @@ export const RoleListPage = () => {
             const modulesCount = Object.keys(grouped).length
             if (modulesCount === 0) return 36
 
-            const itemHeight = 16
+            const itemHeight = 22
             const badgeLineGap = 4
             const moduleGap = 4
-            const basePadding = 24
+            const basePadding = 18
 
-            // Calculate height of the modules column: each module is 16px + gap (4px)
+            // Calculate height of the modules column: each module is 22px + gap (4px)
             const modulesColumnHeight = modulesCount * itemHeight + (modulesCount - 1) * moduleGap + basePadding
 
             // Calculate height of the permissions column based on simulated character-wrap
@@ -287,12 +291,12 @@ export const RoleListPage = () => {
               const perms = grouped[mod] || []
               let currentLineLength = 0
               let linesCount = 1
-              const maxLineLength = 260 // Squeezed width to calculate safe height
+              const maxLineLength = 450 // Aligned with the column's 550px minWidth
 
               perms.forEach((perm: string) => {
                 const cleanName = perm.replace(/_/g, ' ')
-                // width estimation at text-[9px]: charCount * 5.0px + 16px padding + 4px gap
-                const badgeWidth = cleanName.length * 5.0 + 20
+                // width estimation: charCount * 5.2px + 24px horizontal padding + 4px gap
+                const badgeWidth = cleanName.length * 5.2 + 28
                 if (currentLineLength + badgeWidth > maxLineLength) {
                   linesCount++
                   currentLineLength = badgeWidth
