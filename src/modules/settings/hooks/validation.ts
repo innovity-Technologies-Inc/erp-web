@@ -30,3 +30,10 @@ export const currencySchema = z.object({
 })
 
 export type CurrencyFormValues = z.infer<typeof currencySchema>
+
+export const printSettingSchema = z.object({
+  header: z.string().min(1, 'Header is required'),
+  footer: z.string().min(1, 'Footer is required'),
+})
+
+export type PrintSettingFormValues = z.infer<typeof printSettingSchema>

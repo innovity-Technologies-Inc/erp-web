@@ -183,3 +183,21 @@ export const deleteCurrency = async (
   const response = await apiClient.delete<{ status: boolean; message: string }>(`/currency/${id}`)
   return response.data
 }
+
+export interface PrintSetting {
+  id: number
+  header: string
+  footer: string
+}
+
+export const getPrintSetting = async (): Promise<{ status: boolean; data: PrintSetting }> => {
+  const response = await apiClient.get<{ status: boolean; data: PrintSetting }>('/print-setting')
+  return response.data
+}
+
+export const updatePrintSetting = async (
+  dto: { header: string; footer: string }
+): Promise<{ status: boolean; message: string }> => {
+  const response = await apiClient.post<{ status: boolean; message: string }>('/print-setting/update', dto)
+  return response.data
+}
