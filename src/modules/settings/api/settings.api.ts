@@ -128,3 +128,58 @@ export const deleteCompany = async (
   const response = await apiClient.delete<{ status: string; message: string }>(`/company/delete/${uuid}`)
   return response.data
 }
+
+export interface CurrencyListItem {
+  id: number
+  uuid: string
+  currency_name: string
+  icon: string
+}
+
+export interface CurrencyDetails {
+  id: number
+  uuid: string
+  currency_name: string
+  icon: string
+}
+
+export interface CurrencyDTO {
+  id?: number
+  currency_name: string
+  icon: string
+}
+
+export const getCurrenciesDatatable = async (
+  params: any
+): Promise<DataTablesResponse<CurrencyListItem>> => {
+  const response = await apiClient.get<DataTablesResponse<CurrencyListItem>>('/datatable/currency', {
+    params,
+  })
+  return response.data
+}
+
+export const showCurrency = async (
+  id: number | string
+): Promise<{ status: boolean; data: CurrencyDetails }> => {
+  const response = await apiClient.get<{ status: boolean; data: CurrencyDetails }>(`/currency/${id}`)
+  return response.data
+}
+
+export const storeCurrency = async (
+  dto: CurrencyDTO
+): Promise<{ status: boolean; message: string }> => {
+  if (dto.id) {
+    const response = await apiClient.put<{ status: boolean; message: string }>(`/currency/${dto.id}`, dto)
+    return response.data
+  } else {
+    const response = await apiClient.post<{ status: boolean; message: string }>('/currency', dto)
+    return response.data
+  }
+}
+
+export const deleteCurrency = async (
+  id: number | string
+): Promise<{ status: boolean; message: string }> => {
+  const response = await apiClient.delete<{ status: boolean; message: string }>(`/currency/${id}`)
+  return response.data
+}

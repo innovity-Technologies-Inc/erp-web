@@ -23,3 +23,10 @@ export const companySchema = z.object({
 })
 
 export type CompanyFormValues = z.infer<typeof companySchema>
+
+export const currencySchema = z.object({
+  currency_name: z.string().min(1, 'Currency Name is required'),
+  icon: z.string().min(1, 'Currency Symbol is required'),
+})
+
+export type CurrencyFormValues = z.infer<typeof currencySchema>
