@@ -16,7 +16,7 @@ import { exportToExcel } from '@/utils/exportUtils'
 export const ProductListPage = () => {
   const navigate = useNavigate()
   const { showNotificationModal } = useUiStore()
-  const { hasAnyPermission } = usePermissions()
+  const { hasPermission, hasAnyPermission } = usePermissions()
   
   // States
   const [currentPage, setCurrentPage] = useState(1)
@@ -307,12 +307,15 @@ export const ProductListPage = () => {
 
   const totalPages = Math.ceil((productsData?.recordsFiltered ?? 0) / pageSize)
 
-  const tabs = [
-    { name: 'Manage Product', to: '/inventory/product', active: true },
-    { name: 'Manage Category', to: '/inventory/product/category' },
-    { name: 'Manage Sub-Category', to: '/inventory/product/sub-category' },
-    { name: 'Manage Unit', to: '/inventory/product/unit' },
-  ]
+  const tabs = useMemo(() => {
+    const list = [
+      { name: 'Manage Product', to: '/inventory/product', active: true, permission: 'view_product' },
+      { name: 'Manage Category', to: '/inventory/product/category', permission: 'view_product_category' },
+      { name: 'Manage Sub-Category', to: '/inventory/product/sub-category', permission: 'view_product_category' },
+      { name: 'Manage Unit', to: '/inventory/product/unit', permission: 'view_unit' },
+    ]
+    return list.filter(tab => !tab.permission || hasPermission(tab.permission))
+  }, [hasPermission])
 
   return (
     <>

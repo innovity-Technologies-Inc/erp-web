@@ -13,13 +13,6 @@ import { exportToExcel } from '@/utils/exportUtils'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 
-const tabs = [
-  { name: 'Manage Sale', to: '/inventory/sales' },
-  { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
-  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms', active: true },
-  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us' },
-]
-
 export const TermsListPage = () => {
   const [searchTerm, setSearchTerm]   = useState('')
   const [status, setStatus]           = useState('')
@@ -32,7 +25,17 @@ export const TermsListPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize]       = useState(10)
   const { showNotificationModal } = useUiStore()
-  const { hasAnyPermission } = usePermissions()
+  const { hasPermission, hasAnyPermission } = usePermissions()
+
+  const tabs = useMemo(() => {
+    const list = [
+      { name: 'Manage Sale', to: '/inventory/sales', permission: 'view_sales' },
+      { name: 'Manage Sales Payment', to: '/inventory/sales/payments', permission: 'sales_payment_list' },
+      { name: 'Manage Sales Terms',   to: '/inventory/sales/terms', active: true, permission: 'view_terms_condition' },
+      { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us', permission: 'view_sales' },
+    ]
+    return list.filter(tab => !tab.permission || hasPermission(tab.permission))
+  }, [hasPermission])
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({

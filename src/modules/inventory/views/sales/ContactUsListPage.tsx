@@ -10,13 +10,6 @@ import { clsx } from 'clsx'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 
-const tabs = [
-  { name: 'Manage Sale', to: '/inventory/sales' },
-  { name: 'Manage Sales Payment', to: '/inventory/sales/payments' },
-  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms' },
-  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us', active: true },
-]
-
 export const ContactUsListPage = () => {
   const [searchTerm, setSearchTerm]   = useState('')
   const [fromDate, setFromDate]       = useState('')
@@ -25,6 +18,16 @@ export const ContactUsListPage = () => {
   const [pageSize, setPageSize]       = useState(10)
   const navigate = useNavigate()
   const { hasPermission } = usePermissions()
+
+  const tabs = useMemo(() => {
+    const list = [
+      { name: 'Manage Sale', to: '/inventory/sales', permission: 'view_sales' },
+      { name: 'Manage Sales Payment', to: '/inventory/sales/payments', permission: 'sales_payment_list' },
+      { name: 'Manage Sales Terms',   to: '/inventory/sales/terms', permission: 'view_terms_condition' },
+      { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us', active: true, permission: 'view_sales' },
+    ]
+    return list.filter(tab => !tab.permission || hasPermission(tab.permission))
+  }, [hasPermission])
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({

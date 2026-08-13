@@ -18,7 +18,7 @@ interface CategoryListPageProps {
 
 export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProps) => {
   const { showNotificationModal } = useUiStore()
-  const { hasAnyPermission } = usePermissions()
+  const { hasPermission, hasAnyPermission } = usePermissions()
   
   // States
   const [currentPage, setCurrentPage] = useState(1)
@@ -289,12 +289,15 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
 
   const totalPages = Math.ceil((categoriesData?.recordsFiltered ?? 0) / pageSize)
 
-  const tabs = [
-    { name: 'Manage Product', to: '/inventory/product' },
-    { name: 'Manage Category', to: '/inventory/product/category', active: !isSubCategory },
-    { name: 'Manage Sub-Category', to: '/inventory/product/sub-category', active: isSubCategory },
-    { name: 'Manage Unit', to: '/inventory/product/unit' },
-  ]
+  const tabs = useMemo(() => {
+    const list = [
+      { name: 'Manage Product', to: '/inventory/product', permission: 'view_product' },
+      { name: 'Manage Category', to: '/inventory/product/category', active: !isSubCategory, permission: 'view_product_category' },
+      { name: 'Manage Sub-Category', to: '/inventory/product/sub-category', active: isSubCategory, permission: 'view_product_category' },
+      { name: 'Manage Unit', to: '/inventory/product/unit', permission: 'view_unit' },
+    ]
+    return list.filter(tab => !tab.permission || hasPermission(tab.permission))
+  }, [isSubCategory, hasPermission])
 
   return (
     <>

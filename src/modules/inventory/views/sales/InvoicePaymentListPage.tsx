@@ -14,13 +14,6 @@ import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { Link } from '@tanstack/react-router'
 
-const tabs = [
-  { name: 'Manage Sale', to: '/inventory/sales' },
-  { name: 'Manage Sales Payment', to: '/inventory/sales/payments', active: true },
-  { name: 'Manage Sales Terms',   to: '/inventory/sales/terms' },
-  { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us' },
-]
-
 export const InvoicePaymentListPage = () => {
   const [searchTerm, setSearchTerm]     = useState('')
   const [status, setStatus]             = useState('')
@@ -38,6 +31,16 @@ export const InvoicePaymentListPage = () => {
   const { data: usersResponse } = useUsers()
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateConfirmStatus()
   const { hasPermission } = usePermissions()
+
+  const tabs = useMemo(() => {
+    const list = [
+      { name: 'Manage Sale', to: '/inventory/sales', permission: 'view_sales' },
+      { name: 'Manage Sales Payment', to: '/inventory/sales/payments', active: true, permission: 'sales_payment_list' },
+      { name: 'Manage Sales Terms',   to: '/inventory/sales/terms', permission: 'view_terms_condition' },
+      { name: 'Manage Contact Us',    to: '/inventory/sales/contact-us', permission: 'view_sales' },
+    ]
+    return list.filter(tab => !tab.permission || hasPermission(tab.permission))
+  }, [hasPermission])
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
