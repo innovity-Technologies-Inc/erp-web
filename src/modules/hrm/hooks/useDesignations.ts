@@ -33,6 +33,7 @@ export const useCreateDesignation = () => {
     mutationFn: (dto: CreateDesignationDto) => createDesignation(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: designationKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['designation-select2'] })
     },
   })
 }
@@ -43,6 +44,7 @@ export const useUpdateDesignation = () => {
     mutationFn: (dto: UpdateDesignationDto) => updateDesignation(dto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: designationKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['designation-select2'] })
     },
   })
 }
@@ -53,6 +55,7 @@ export const useDeleteDesignation = () => {
     mutationFn: (id: number) => deleteDesignation(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: designationKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['designation-select2'] })
     },
   })
 }
@@ -63,6 +66,7 @@ export const useToggleDesignationStatus = () => {
     mutationFn: ({ id, designation, status }: { id: number; designation: string; status: number }) => toggleDesignationStatus({ id, designation, status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: designationKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['designation-select2'] })
     },
   })
 }

@@ -47,6 +47,9 @@ export const useStoreCategory = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['categories-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['category-list'] })
+      queryClient.invalidateQueries({ queryKey: ['category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['main-category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['sub-category-select2'] })
       showNotificationModal(
         'Category Created!',
         res.message || 'New category has been added successfully.',
@@ -69,6 +72,9 @@ export const useUpdateCategory = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['categories-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['category-list'] })
+      queryClient.invalidateQueries({ queryKey: ['category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['main-category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['sub-category-select2'] })
       showNotificationModal(
         'Category Updated!',
         res.message || 'Category details have been updated successfully.',
@@ -90,6 +96,9 @@ export const useToggleCategoryStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['category-list'] })
+      queryClient.invalidateQueries({ queryKey: ['category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['main-category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['sub-category-select2'] })
     },
   })
 }
@@ -101,6 +110,9 @@ export const useDeleteCategory = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['category-list'] })
+      queryClient.invalidateQueries({ queryKey: ['category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['main-category-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['sub-category-select2'] })
     },
   })
 }

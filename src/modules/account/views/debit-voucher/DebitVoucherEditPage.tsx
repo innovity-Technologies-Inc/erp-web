@@ -63,8 +63,8 @@ export const DebitVoucherEditPage = () => {
 
   // Determine if the selected credit head is a bank nature
   const showBankFields = useMemo(() => {
-    const selected = creditAccountHeads.find(h => String(h.value) === creditAccountHead)
-    return selected?.is_bank_nature === 1
+    const selected = creditAccountHeads.find(h => String(h.value) === String(creditAccountHead))
+    return Number(selected?.is_bank_nature) === 1
   }, [creditAccountHead, creditAccountHeads])
 
   // Populate from record
@@ -150,8 +150,8 @@ export const DebitVoucherEditPage = () => {
     setCreditAccountHead(value)
     setErrors(prev => ({ ...prev, creditAccountHead: '' }))
     
-    const selected = creditAccountHeads.find(h => String(h.value) === value)
-    if (selected?.is_bank_nature !== 1) {
+    const selected = creditAccountHeads.find(h => String(h.value) === String(value))
+    if (Number(selected?.is_bank_nature) !== 1) {
       setCheckNo('')
       setCheckDate('')
       setIsHonours(false)

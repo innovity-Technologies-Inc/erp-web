@@ -24,6 +24,7 @@ export const useStoreUnit = () => {
     mutationFn: api.storeUnit,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['units-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['unit-select2'] })
       showNotificationModal(
         'Unit Created!',
         res.message || 'New unit has been added successfully.',
@@ -46,6 +47,7 @@ export const useUpdateUnit = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['units-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['unit-details'] })
+      queryClient.invalidateQueries({ queryKey: ['unit-select2'] })
       showNotificationModal(
         'Unit Updated!',
         res.message || 'Unit details have been updated successfully.',
@@ -67,6 +69,7 @@ export const useToggleUnitStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['units-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['unit-details'] })
+      queryClient.invalidateQueries({ queryKey: ['unit-select2'] })
     },
   })
 }
@@ -77,6 +80,7 @@ export const useDeleteUnit = () => {
     mutationFn: api.deleteUnit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['units-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['unit-select2'] })
     },
   })
 }

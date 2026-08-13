@@ -29,6 +29,7 @@ export const useCreateRole = () => {
     mutationFn: createRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['roles-select2'] })
     },
   })
 }
@@ -48,6 +49,7 @@ export const useUpdateRole = (id: string | number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['role-details', id] })
+      queryClient.invalidateQueries({ queryKey: ['roles-select2'] })
     },
   })
 }
@@ -58,6 +60,7 @@ export const useDeleteRole = () => {
     mutationFn: deleteRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['roles-select2'] })
     },
   })
 }

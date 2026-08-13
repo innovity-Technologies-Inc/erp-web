@@ -50,6 +50,7 @@ export const useCreateWarehouse = () => {
     mutationFn: (data: WarehouseFormData) => createWarehouse(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['warehouse'] })
+      queryClient.invalidateQueries({ queryKey: ['warehouses', 'list'] })
       showNotificationModal(
         'Warehouse Created!',
         'The warehouse has been created successfully.',
@@ -74,6 +75,7 @@ export const useUpdateWarehouse = () => {
     mutationFn: (data: WarehouseFormData & { uuid: string }) => updateWarehouse(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['warehouse'] })
+      queryClient.invalidateQueries({ queryKey: ['warehouses', 'list'] })
       showNotificationModal(
         'Warehouse Updated!',
         'The warehouse has been updated successfully.',
@@ -98,6 +100,7 @@ export const useDeleteWarehouse = () => {
     mutationFn: ({ uuid, id }: { uuid: string; id: number }) => deleteWarehouse(uuid, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['warehouse'] })
+      queryClient.invalidateQueries({ queryKey: ['warehouses', 'list'] })
       showNotificationModal(
         'Deleted Successfully!',
         'The warehouse has been deleted successfully.',

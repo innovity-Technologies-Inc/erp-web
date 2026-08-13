@@ -19,6 +19,8 @@ export const useStoreProduct = () => {
     mutationFn: api.storeProduct,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['product-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['products-list'] })
       showNotificationModal(
         'Product Created!',
         res.message || 'New product has been added successfully.',
@@ -41,6 +43,8 @@ export const useUpdateProduct = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['product-details'] })
+      queryClient.invalidateQueries({ queryKey: ['product-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['products-list'] })
       showNotificationModal(
         'Product Updated!',
         res.message || 'Product details have been updated successfully.',
@@ -66,6 +70,8 @@ export const useToggleProductStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['product-details'] })
+      queryClient.invalidateQueries({ queryKey: ['product-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['products-list'] })
     },
   })
 }
@@ -76,6 +82,8 @@ export const useDeleteProduct = () => {
     mutationFn: api.deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['product-select2'] })
+      queryClient.invalidateQueries({ queryKey: ['products-list'] })
     },
   })
 }

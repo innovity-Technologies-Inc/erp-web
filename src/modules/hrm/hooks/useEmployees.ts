@@ -17,6 +17,7 @@ export const useDeleteEmployee = () => {
     mutationFn: (payload: { uuid: string; id: number }) => deleteEmployee(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: employeeKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['employees', 'select2'] })
     },
   })
 }
@@ -27,6 +28,7 @@ export const useCreateEmployee = () => {
     mutationFn: (data: FormData) => createEmployee(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: employeeKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['employees', 'select2'] })
     },
   })
 }
@@ -37,6 +39,7 @@ export const useUpdateEmployee = () => {
     mutationFn: (data: FormData) => updateEmployee(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: employeeKeys.all() })
+      queryClient.invalidateQueries({ queryKey: ['employees', 'select2'] })
     },
   })
 }

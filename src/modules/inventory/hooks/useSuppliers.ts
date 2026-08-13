@@ -40,6 +40,7 @@ export const useCreateSupplier = () => {
     mutationFn: (data: any) => createSupplier(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] })
+      queryClient.invalidateQueries({ queryKey: ['vendors', 'select2'] })
       showNotificationModal(
         'Vendor Created!',
         'The vendor has been created successfully.',
@@ -64,6 +65,7 @@ export const useUpdateSupplier = () => {
     mutationFn: ({ uuid, data }: { uuid: string; data: any }) => updateSupplier(uuid, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] })
+      queryClient.invalidateQueries({ queryKey: ['vendors', 'select2'] })
       showNotificationModal(
         'Vendor Updated!',
         'The vendor information has been updated successfully.',
@@ -88,6 +90,7 @@ export const useDeleteSupplier = () => {
     mutationFn: ({ id, uuid }: { id: number; uuid: string }) => deleteSupplier(id, uuid),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['suppliers'] })
+      queryClient.invalidateQueries({ queryKey: ['vendors', 'select2'] })
       showNotificationModal(
         'Vendor Deleted!',
         'The vendor has been removed successfully.',

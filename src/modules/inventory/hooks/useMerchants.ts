@@ -17,6 +17,7 @@ export const useStoreMerchant = () => {
     mutationFn: api.storeMerchant,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['merchants-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['merchant-select2'] })
       showNotificationModal(
         'Merchant Created!',
         res.message || 'New merchant has been added successfully.',
@@ -39,6 +40,7 @@ export const useUpdateMerchant = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['merchants-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['merchant-details'] })
+      queryClient.invalidateQueries({ queryKey: ['merchant-select2'] })
       showNotificationModal(
         'Merchant Updated!',
         res.message || 'Merchant details have been updated successfully.',
@@ -58,6 +60,7 @@ export const useDeleteMerchant = () => {
     mutationFn: api.deleteMerchant,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['merchants-datatable'] })
+      queryClient.invalidateQueries({ queryKey: ['merchant-select2'] })
     },
   })
 }

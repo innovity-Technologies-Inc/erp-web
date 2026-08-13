@@ -108,10 +108,10 @@ export const SalaryPaySlipPage = () => {
             {/* Logo & Company details */}
             <div className="flex flex-row justify-between items-center pb-4 w-full">
               <div className="flex flex-col gap-1 text-[13px] text-gray-500 font-poppins">
-                {slip.setting?.logo ? (
+                {slip.setting?.invoice_logo_url || slip.setting?.invoice_logo ? (
                   <div className="pb-2">
                     <img
-                      src={`${import.meta.env.VITE_STORAGE_URL || 'http://localhost:5000/storage'}/${slip.setting.logo}`}
+                      src={slip.setting.invoice_logo_url || `${import.meta.env.VITE_STORAGE_URL || 'http://localhost:5000/storage'}/${slip.setting.invoice_logo}`}
                       alt="Company Logo"
                       className="h-10 object-contain"
                     />
@@ -126,11 +126,7 @@ export const SalaryPaySlipPage = () => {
                     </h2>
                   </div>
                 )}
-                {slip.setting?.logo && (
-                  <h2 className="font-bold text-[15px] text-blue-900 uppercase font-poppins">
-                    {slip.company?.company_name || 'GEN-ITECH'}
-                  </h2>
-                )}
+
                 <p className="text-[12px] text-gray-400">
                   {slip.company?.address || 'Block -C, House-66, Level-5 Niketon Road-8, Dhaka 1212, Bangladesh'}
                 </p>

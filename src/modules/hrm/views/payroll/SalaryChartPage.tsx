@@ -141,18 +141,20 @@ export const SalaryChartPage = () => {
             {/* Logo & Company details */}
             <div className="flex flex-row justify-between items-center pb-6 border-b border-gray-100 mb-6 w-full">
               <div className="flex flex-col gap-1 text-[13px] text-gray-500 font-poppins">
-                {setting?.logo && (
+                {(setting?.invoice_logo_url || setting?.invoice_logo) && (
                   <div className="pb-2">
                     <img
-                      src={`${import.meta.env.VITE_STORAGE_URL || 'http://localhost:5000/storage'}/${setting.logo}`}
+                      src={setting.invoice_logo_url || `${import.meta.env.VITE_STORAGE_URL || 'http://localhost:5000/storage'}/${setting.invoice_logo}`}
                       alt="Company Logo"
                       className="h-10 object-contain"
                     />
                   </div>
                 )}
-                <h2 className="font-bold text-[16px] text-blue-900 uppercase font-poppins">
-                  {company?.company_name || 'GEN-ITECH'}
-                </h2>
+                {!(setting?.invoice_logo_url || setting?.invoice_logo) && (
+                  <h2 className="font-bold text-[16px] text-blue-900 uppercase font-poppins">
+                    {company?.company_name || 'GEN-ITECH'}
+                  </h2>
+                )}
                 <p>{company?.address || 'Block -C, House-66, Level-5 Niketon Road-8, Dhaka 1212, Bangladesh'}</p>
                 <p>Email: {company?.email || 'info@genitech.com'} | Mob: {company?.mobile || '+8801771850228'}</p>
               </div>
