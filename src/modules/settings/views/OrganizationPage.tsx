@@ -7,6 +7,7 @@ import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
 import { getSettingsTabs } from '../tabs'
+import { usePermissions } from '@/hooks/usePermissions'
 import { useOrganizationsDatatable, useDeleteOrganization } from '../hooks/useOrganizations'
 import { showOrganization, storeOrganization } from '../api/settings.api'
 import { OrganizationModal } from '../components/OrganizationModal'
@@ -18,6 +19,7 @@ export const OrganizationPage = () => {
   const queryClient = useQueryClient()
   const { showNotificationModal } = useUiStore()
   const loggedInUser = useAuthStore((state) => state.user)
+  const { hasPermission } = usePermissions()
 
   // Super Admin check
   const isSuperAdmin = useMemo(() => {
@@ -64,7 +66,7 @@ export const OrganizationPage = () => {
   }
 
   // Load tabs with dynamic active status
-  const tabs = useMemo(() => getSettingsTabs('/settings/organization', isSuperAdmin), [isSuperAdmin])
+  const tabs = useMemo(() => getSettingsTabs('/settings/organization', isSuperAdmin, hasPermission), [isSuperAdmin, hasPermission])
 
   const statusOptions = useMemo(
     () => [

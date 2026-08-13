@@ -149,8 +149,8 @@ export const UserEditPage = () => {
         company_id: u.company_id ? String(u.company_id) : '',
         roles: u.roles.map((r) => r.id),
       })
-      if (u.image) {
-        setImagePreview(getImageUrl(u.image))
+      if (u.image || u.image_url) {
+        setImagePreview(u.image_url || getImageUrl(u.image))
       }
     }
   }, [userDetails, reset])

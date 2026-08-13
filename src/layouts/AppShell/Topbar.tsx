@@ -244,9 +244,9 @@ export const Topbar = () => {
           >
             <span className="text-[14px] font-medium text-[#475569]">{userFullName}</span>
             <div className="w-8.5 h-8.5 rounded-full flex items-center justify-center overflow-hidden bg-[#e2e8f0]">
-               {user?.image ? (
+               {(user?.image || user?.image_url) ? (
                  <img 
-                   src={`${import.meta.env.VITE_STORAGE_URL}/${user.image}`} 
+                   src={user.image_url || (user.image?.startsWith('http') ? user.image : `${import.meta.env.VITE_STORAGE_URL}/${user.image}`)} 
                    alt={userFullName} 
                    className="w-full h-full object-cover"
                  />

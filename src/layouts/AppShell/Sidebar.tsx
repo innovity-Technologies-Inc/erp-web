@@ -174,6 +174,7 @@ const menuItems: MenuGroup[] = [
         name: 'Settings', 
         icon: Settings, 
         to: '/settings/organization', 
+        permission: ['view_company', 'view_currency', 'view_print_setting', 'view_email_setting', 'view_general_setting'],
         activePaths: ['/settings']
       },
     ]
@@ -182,13 +183,19 @@ const menuItems: MenuGroup[] = [
 
 export const Sidebar = () => {
   const { sidebarOpen } = useUiStore()
-  const { hasPermission } = usePermissions()
+  const { hasPermission, hasAnyPermission } = usePermissions()
   const location = useLocation()
   const [hoveredItem, setHoveredItem] = useState<{ name: string, top: number, left: number } | null>(null)
 
   const filteredMenuItems = menuItems.map(group => ({
     ...group,
-    items: group.items.filter(item => !item.permission || hasPermission(item.permission))
+    items: group.items.filter(item => {
+      if (!item.permission) return true
+      if (Array.isArray(item.permission)) {
+        return hasAnyPermission(item.permission)
+      }
+      return hasPermission(item.permission)
+    })
   })).filter(group => group.items.length > 0)
 
   return (

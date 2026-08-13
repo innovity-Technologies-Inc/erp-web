@@ -161,7 +161,7 @@ export const UserListPage = () => {
         cellRenderer: (params: any) => {
           const user = params.data
           if (!user) return null
-          const imgUrl = getImageUrl(user.image)
+          const imgUrl = user.image_url || getImageUrl(user.image)
           
           return (
             <div className="flex items-center gap-3 w-full">

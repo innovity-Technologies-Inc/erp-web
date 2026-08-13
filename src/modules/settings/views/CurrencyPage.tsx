@@ -5,6 +5,7 @@ import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
 import { getSettingsTabs } from '../tabs'
+import { usePermissions } from '@/hooks/usePermissions'
 import { useCurrenciesDatatable, useDeleteCurrency } from '../hooks/useCurrencies'
 import { CurrencyModal } from '../components/CurrencyModal'
 import type { ColDef } from 'ag-grid-community'
@@ -13,6 +14,7 @@ import type { CurrencyListItem } from '../api/settings.api'
 export const CurrencyPage = () => {
   const { showNotificationModal } = useUiStore()
   const loggedInUser = useAuthStore((state) => state.user)
+  const { hasPermission } = usePermissions()
 
   // Super Admin check
   const isSuperAdmin = useMemo(() => {
@@ -22,6 +24,22 @@ export const CurrencyPage = () => {
       return name?.toLowerCase() === 'super-admin' || name?.toLowerCase() === 'super admin'
     })
   }, [loggedInUser])
+
+  if (!isSuperAdmin && !hasPermission('view_currency')) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-xl border border-gray-100 p-8 shadow-sm">
+        <div className="bg-red-50 p-4 rounded-full text-red-500 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 className="text-[18px] font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-500 text-[13px] text-center max-w-[360px]">
+          You do not have the required permissions to view this settings page. Please contact your system administrator.
+        </p>
+      </div>
+    )
+  }
 
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -46,7 +64,7 @@ export const CurrencyPage = () => {
   }
 
   // Load tabs with dynamic active status
-  const tabs = useMemo(() => getSettingsTabs('/settings/currency', isSuperAdmin), [isSuperAdmin])
+  const tabs = useMemo(() => getSettingsTabs('/settings/currency', isSuperAdmin, hasPermission), [isSuperAdmin, hasPermission])
 
   // Params for Datatable endpoint
   const params = useMemo(
