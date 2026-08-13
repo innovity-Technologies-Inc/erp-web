@@ -10,6 +10,7 @@ import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
 import { CategoryModal } from '../../components'
+import { exportToExcel } from '@/utils/exportUtils'
 
 interface CategoryListPageProps {
   isSubCategory?: boolean
@@ -132,6 +133,24 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
 
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!categoriesData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Category Name', key: 'name', width: 30 },
+      { header: 'Status', key: 'status', width: 12 },
+    ]
+
+    const exportData = categoriesData.data.map((item, index) => ({
+      sl: index + 1,
+      name: item.category_name.replace(/(&nbsp;)*=>\s*/g, '').replace(/^\*\s*/, ''),
+      status: Number(item.status) === 1 ? 'Active' : 'Inactive',
+    }))
+
+    exportToExcel(exportData, exportColumns, isSubCategory ? 'sub-categories-list' : 'categories-list')
   }
 
   // AG Grid Column Definitions
@@ -310,6 +329,8 @@ export const CategoryListPage = ({ isSubCategory = false }: CategoryListPageProp
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
       />
 
       <CategoryModal

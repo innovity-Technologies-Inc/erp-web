@@ -11,6 +11,7 @@ import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const ProductListPage = () => {
   const navigate = useNavigate()
@@ -103,6 +104,32 @@ export const ProductListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!productsData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Product Name', key: 'name', width: 30 },
+      { header: 'Category', key: 'category', width: 20 },
+      { header: 'Supplier', key: 'supplier', width: 25 },
+      { header: 'Price', key: 'price', width: 12 },
+      { header: 'Supplier Price', key: 'supplierPrice', width: 15 },
+      { header: 'Status', key: 'status', width: 12 },
+    ]
+
+    const exportData = productsData.data.map((item, index) => ({
+      sl: index + 1,
+      name: item.product_name,
+      category: item.category_name,
+      supplier: item.supplier_name,
+      price: item.price,
+      supplierPrice: item.supplier_price,
+      status: Number(item.status) === 1 ? 'Active' : 'Inactive',
+    }))
+
+    exportToExcel(exportData, exportColumns, 'products-list')
   }
 
   // AG Grid Column Definitions
@@ -317,6 +344,8 @@ export const ProductListPage = () => {
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
       />
 
       <ConfirmationModal

@@ -10,6 +10,7 @@ import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
 import { UnitModal } from '../../components'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const UnitListPage = () => {
   const { showNotificationModal } = useUiStore()
@@ -108,6 +109,24 @@ export const UnitListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!unitsData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Unit Name', key: 'name', width: 30 },
+      { header: 'Status', key: 'status', width: 12 },
+    ]
+
+    const exportData = unitsData.data.map((item, index) => ({
+      sl: index + 1,
+      name: item.unit_name,
+      status: Number(item.status) === 1 ? 'Active' : 'Inactive',
+    }))
+
+    exportToExcel(exportData, exportColumns, 'units-list')
   }
 
   // AG Grid Column Definitions
@@ -275,6 +294,8 @@ export const UnitListPage = () => {
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
       />
 
       <UnitModal

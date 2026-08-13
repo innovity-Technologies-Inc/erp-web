@@ -9,6 +9,7 @@ import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { exportToExcel } from '@/utils/exportUtils'
 
 
 export const UserListPage = () => {
@@ -92,6 +93,30 @@ export const UserListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!usersData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'User Name', key: 'name', width: 25 },
+      { header: 'Email', key: 'email', width: 25 },
+      { header: 'Mobile', key: 'mobile', width: 15 },
+      { header: 'Role', key: 'role', width: 20 },
+      { header: 'User Type', key: 'userType', width: 15 },
+    ]
+
+    const exportData = usersData.data.map((item, index) => ({
+      sl: index + 1,
+      name: item.name,
+      email: item.email,
+      mobile: item.mobile,
+      role: item.role_name,
+      userType: item.user_type,
+    }))
+
+    exportToExcel(exportData, exportColumns, 'users-list')
   }
 
   // Helper to generate initials avatar
@@ -335,10 +360,12 @@ export const UserListPage = () => {
           setPageSize(size)
           setCurrentPage(1)
         }}
-        // Filters & Toolbar
+        // Column Filter
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
         // Extra Filters row
         toolbarExtra={
           <div className="flex items-center gap-2">

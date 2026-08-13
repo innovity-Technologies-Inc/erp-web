@@ -10,6 +10,7 @@ import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const VendorListPage = () => {
   const navigate = useNavigate()
@@ -90,6 +91,40 @@ export const VendorListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!vendorsData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Vendor ID', key: 'id', width: 12 },
+      { header: 'Vendor Name', key: 'name', width: 30 },
+      { header: 'Address', key: 'address', width: 40 },
+      { header: 'Mobile No', key: 'mobile', width: 15 },
+      { header: 'Email', key: 'email', width: 25 },
+      { header: 'Country', key: 'country', width: 15 },
+      { header: 'State', key: 'state', width: 15 },
+      { header: 'City', key: 'city', width: 15 },
+      { header: 'Zip', key: 'zip', width: 10 },
+      { header: 'Status', key: 'status', width: 12 },
+    ]
+
+    const exportData = vendorsData.data.map((item, index) => ({
+      sl: index + 1,
+      id: item.id,
+      name: item.supplier_name,
+      address: item.address,
+      mobile: item.mobile,
+      email: item.emailnumber,
+      country: item.country,
+      state: item.state,
+      city: item.city,
+      zip: item.zip,
+      status: Number(item.status) === 1 ? 'Active' : 'Inactive',
+    }))
+
+    exportToExcel(exportData, exportColumns, 'vendors-list')
   }
 
   // AG Grid Column Definitions
@@ -255,6 +290,7 @@ export const VendorListPage = () => {
         backTo="/"
         onCreate={handleAdd}
         createPermission="create_supplier"
+        searchWidth="max-w-[200px]"
         searchValue={search}
         onSearchChange={(val) => { setSearch(val); setCurrentPage(1) }}
         isLoading={isLoading}
@@ -281,7 +317,7 @@ export const VendorListPage = () => {
         columns={filterColumns}
         onColumnToggle={toggleColumn}
         // Export
-        onExport={() => {}} 
+        onExport={handleExport} 
       />
 
       <ConfirmationModal

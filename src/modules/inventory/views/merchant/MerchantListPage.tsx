@@ -11,6 +11,7 @@ import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const MerchantListPage = () => {
   const navigate = useNavigate()
@@ -86,6 +87,32 @@ export const MerchantListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!merchantsData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Merchant Name', key: 'name', width: 30 },
+      { header: 'Mobile No', key: 'mobile', width: 15 },
+      { header: 'Email', key: 'email', width: 25 },
+      { header: 'SP No', key: 'spNo', width: 15 },
+      { header: 'Address', key: 'address', width: 40 },
+      { header: 'Status', key: 'status', width: 12 },
+    ]
+
+    const exportData = merchantsData.data.map((item, index) => ({
+      sl: index + 1,
+      name: item.customer_name,
+      mobile: item.customer_mobile,
+      email: item.customer_email,
+      spNo: item.sales_permit_number,
+      address: item.address,
+      status: Number(item.status) === 1 ? 'Active' : 'Inactive',
+    }))
+
+    exportToExcel(exportData, exportColumns, 'merchants-list')
   }
 
   // AG Grid Column Definitions
@@ -263,7 +290,7 @@ export const MerchantListPage = () => {
         columns={filterColumns}
         onColumnToggle={toggleColumn}
         // Export
-        onExport={() => {}} 
+        onExport={handleExport} 
       />
 
       <ConfirmationModal

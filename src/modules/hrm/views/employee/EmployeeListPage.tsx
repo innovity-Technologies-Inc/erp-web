@@ -13,6 +13,7 @@ import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { formatDate } from '@/utils/formatters'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const EmployeeListPage = () => {
   const navigate = useNavigate()
@@ -90,6 +91,30 @@ export const EmployeeListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!employeesData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Employee Name', key: 'name', width: 25 },
+      { header: 'Designation', key: 'designation', width: 20 },
+      { header: 'Phone No', key: 'phone', width: 15 },
+      { header: 'Email', key: 'email', width: 25 },
+      { header: 'Join Date', key: 'joinDate', width: 15 },
+    ]
+
+    const exportData = employeesData.data.map((item, index) => ({
+      sl: index + 1,
+      name: item.name,
+      designation: item.designation,
+      phone: item.phone,
+      email: item.email,
+      joinDate: item.created_at ? formatDate(item.created_at) : '',
+    }))
+
+    exportToExcel(exportData, exportColumns, 'employees-list')
   }
 
   // AG Grid Column Definitions
@@ -277,6 +302,8 @@ export const EmployeeListPage = () => {
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
       />
 
       <ConfirmationModal

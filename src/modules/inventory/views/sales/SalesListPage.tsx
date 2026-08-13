@@ -296,6 +296,7 @@ export const SalesListPage = () => {
         tabs={tabs}
         onCreate={handleCreate}
         createPermission="create_sales"
+        searchWidth="max-w-[200px]"
         showStatusFilter={true}
         statusValue={status}
         onStatusChange={(val) => { setStatus(val); setCurrentPage(1) }}

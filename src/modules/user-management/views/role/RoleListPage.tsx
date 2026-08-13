@@ -10,6 +10,7 @@ import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { clsx } from 'clsx'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const RoleListPage = () => {
   const { showNotificationModal } = useUiStore()
@@ -85,6 +86,31 @@ export const RoleListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!rolesData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Role Name', key: 'name', width: 25 },
+      { header: 'Permissions Grouped', key: 'permissions', width: 50 },
+    ]
+
+    const exportData = rolesData.data.map((item, index) => {
+      const grouped = item.permissions_grouped || {}
+      const permissionsString = Object.keys(grouped)
+        .map((mod) => `${mod}: ${(grouped[mod] || []).join(', ')}`)
+        .join(' | ')
+
+      return {
+        sl: index + 1,
+        name: item.name,
+        permissions: permissionsString,
+      }
+    })
+
+    exportToExcel(exportData, exportColumns, 'roles-list')
   }
 
   // AG Grid Column Definitions
@@ -269,6 +295,8 @@ export const RoleListPage = () => {
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
         gridOptions={{
           getRowHeight: (params: any) => {
             if (!params.data) return 36

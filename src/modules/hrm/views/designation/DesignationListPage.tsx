@@ -16,6 +16,7 @@ import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
 import { DesignationModal } from '../../components/DesignationModal'
 import { formatDate } from '@/utils/formatters'
+import { exportToExcel } from '@/utils/exportUtils'
 
 export const DesignationListPage = () => {
   const { showNotificationModal } = useUiStore()
@@ -123,6 +124,26 @@ export const DesignationListPage = () => {
 
   const toggleColumn = (field: string) => {
     setVisibleColumns((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+  }
+
+  const handleExport = () => {
+    if (!designationsData?.data) return
+
+    const exportColumns = [
+      { header: 'SL', key: 'sl', width: 8 },
+      { header: 'Designation', key: 'designation', width: 30 },
+      { header: 'Details', key: 'details', width: 40 },
+      { header: 'Status', key: 'status', width: 12 },
+    ]
+
+    const exportData = designationsData.data.map((item, index) => ({
+      sl: index + 1,
+      designation: item.designation,
+      details: item.details || '',
+      status: Number(item.status) === 1 ? 'Active' : 'Inactive',
+    }))
+
+    exportToExcel(exportData, exportColumns, 'designations-list')
   }
 
   // AG Grid Column Definitions
@@ -318,6 +339,8 @@ export const DesignationListPage = () => {
         showColumnFilter={true}
         columns={filterColumns}
         onColumnToggle={toggleColumn}
+        // Export
+        onExport={handleExport}
       />
 
       <DesignationModal
