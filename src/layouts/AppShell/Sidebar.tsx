@@ -23,7 +23,7 @@ interface MenuItem {
   name: string
   icon: any
   to: string
-  permission?: string
+  permission?: string | string[]
   activePaths?: string[]
 }
 
