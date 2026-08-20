@@ -6,6 +6,8 @@ export interface WebSetting {
   site_name: string
   logo: string | null
   logo_url: string | null
+  invoice_logo: string | null
+  invoice_logo_url: string | null
   favicon: string | null
   favicon_url: string | null
   login_sidebar_image: string | null

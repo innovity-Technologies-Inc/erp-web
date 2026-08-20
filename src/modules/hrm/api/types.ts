@@ -35,10 +35,21 @@ export interface Employee {
   id: number
   uuid: string
   name: string
+  first_name?: string
+  last_name?: string
   designation: string
+  designation_name?: string
   phone: string
   email: string
   image: string
+  blood_group?: string | null
+  address_line_1?: string | null
+  address_line_2?: string | null
+  city?: string | null
+  zip?: string | null
+  country?: string | null
+  rate_type?: string | number
+  hrate?: string | number
   created_at: string
 }
 

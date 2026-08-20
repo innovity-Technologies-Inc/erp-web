@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/client'
-import type { DataTablesResponse } from '@/types'
+import type { DataTablesResponse } from '@/api/types'
 import type { Role, RoleFilters, RoleDTO, PermissionsListResponse, UserListItem, UserFilters, UserDetailData } from './types'
 
 export const getRolesDatatable = async (

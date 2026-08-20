@@ -211,7 +211,7 @@ export const EmailPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <FormField label="SMTP Port" error={errors.smtp_port?.message} required>
+                <FormField label="SMTP Port" error={errors.smtp_port?.message as string} required>
                   <input
                     {...register('smtp_port')}
                     type="text"

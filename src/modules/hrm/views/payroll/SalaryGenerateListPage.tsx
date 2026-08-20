@@ -261,7 +261,7 @@ export const SalaryGenerateListPage = () => {
       },
       {
         headerName: 'ACTION',
-        field: 'actions',
+        field: 'actions' as any,
         width: 130,
         flex: 0,
         pinned: 'right',
@@ -361,6 +361,8 @@ export const SalaryGenerateListPage = () => {
         tabs={tabs}
         disableCard={true}
         hideFilterRow={true}
+        rowData={[]}
+        columnDefs={[]}
       >
         <div className="flex flex-col lg:flex-row gap-6 mt-6">
           {/* Left Panel - Width 25% */}
@@ -666,11 +668,11 @@ export const SalaryGenerateListPage = () => {
         }}
         onConfirm={handleConfirmDelete}
         title="Delete Salary Generation"
-        description="Are you sure you want to delete this salary sheet? This will delete all generated employee salary records for this month. This action cannot be undone."
+        message="Are you sure you want to delete this salary sheet? This will delete all generated employee salary records for this month. This action cannot be undone."
         confirmText="Delete"
         cancelText="Cancel"
         variant="danger"
-        loading={isDeleting}
+        isLoading={isDeleting}
       />
     </>
   )

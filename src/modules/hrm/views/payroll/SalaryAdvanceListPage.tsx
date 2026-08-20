@@ -151,7 +151,7 @@ export const SalaryAdvanceListPage = () => {
       },
       {
         headerName: 'ACTIONS',
-        field: 'actions',
+        field: 'actions' as any,
         width: 120,
         pinned: 'right',
         hide: !visibleCols.actions,
@@ -261,11 +261,11 @@ export const SalaryAdvanceListPage = () => {
         }}
         onConfirm={handleConfirmDelete}
         title="Delete Salary Advance"
-        description="Are you sure you want to delete this salary advance? This action cannot be undone."
+        message="Are you sure you want to delete this salary advance? This action cannot be undone."
         confirmText="Delete"
         cancelText="Cancel"
         variant="danger"
-        loading={isDeleting}
+        isLoading={isDeleting}
       />
     </>
   )

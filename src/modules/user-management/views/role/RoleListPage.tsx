@@ -97,7 +97,7 @@ export const RoleListPage = () => {
       { header: 'Permissions Grouped', key: 'permissions', width: 50 },
     ]
 
-    const exportData = rolesData.data.map((item, index) => {
+    const exportData = rolesData.data.map((item: any, index: number) => {
       const grouped = item.permissions_grouped || {}
       const permissionsString = Object.keys(grouped)
         .map((mod) => `${mod}: ${(grouped[mod] || []).join(', ')}`)
@@ -352,7 +352,7 @@ export const RoleListPage = () => {
         title="Delete Role"
         message="Are you sure you want to delete this role? This action cannot be undone."
         onConfirm={handleConfirmDelete}
-        onCancel={() => setIsConfirmOpen(false)}
+        onClose={() => setIsConfirmOpen(false)}
         confirmText="Yes, delete it"
         cancelText="Cancel"
         isLoading={isDeleting}

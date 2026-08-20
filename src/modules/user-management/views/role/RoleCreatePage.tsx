@@ -347,7 +347,7 @@ export const RoleCreatePage = () => {
 
             {isSuperAdmin && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <FormField label="Organization" error={errors.organization_id?.message}>
+                <FormField label="Organization" error={errors.organization_id?.message as string}>
                   <Controller
                     name="organization_id"
                     control={control}
@@ -362,7 +362,7 @@ export const RoleCreatePage = () => {
                   />
                 </FormField>
 
-                <FormField label="Company" error={errors.company_id?.message}>
+                <FormField label="Company" error={errors.company_id?.message as string}>
                   <Controller
                     name="company_id"
                     control={control}
@@ -570,7 +570,7 @@ export const RoleCreatePage = () => {
         title="Discard Changes?"
         message="You have unsaved changes. Are you sure you want to discard them?"
         onConfirm={() => navigate({ to: '/role' })}
-        onCancel={() => setIsDiscardModalOpen(false)}
+        onClose={() => setIsDiscardModalOpen(false)}
         confirmText="Yes, discard"
         cancelText="Keep editing"
         variant="danger"

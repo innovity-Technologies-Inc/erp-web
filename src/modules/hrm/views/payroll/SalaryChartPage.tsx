@@ -64,7 +64,8 @@ export const SalaryChartPage = () => {
     )
   }
 
-  const { sheet, charts, company, setting } = chartData
+  const { sheet, charts, company, setting: rawSetting } = chartData
+  const setting = rawSetting as any
 
   return (
     <>

@@ -57,7 +57,6 @@ export const AttendanceModal = ({
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<AttendanceFormValues>({
     resolver: zodResolver(attendanceSchema) as any,
@@ -66,7 +65,7 @@ export const AttendanceModal = ({
       date: '',
       sign_in: '',
       sign_out: '',
-    },
+    } as any,
   })
 
   // Synchronize form on open
@@ -83,21 +82,21 @@ export const AttendanceModal = ({
             date: today,
             sign_in: nowTime,
             sign_out: null,
-          })
+          } as any)
         } else if (mode === 'edit' && initialData) {
           reset({
             employee_id: initialData.employee_id || '',
             date: initialData.date || '',
             sign_in: convertToDateTimeLocal(initialData.sign_in),
             sign_out: convertToDateTimeLocal(initialData.sign_out) || null,
-          })
+          } as any)
         } else if (mode === 'sign_out' && initialData) {
           reset({
             employee_id: initialData.employee_id || '',
             date: initialData.date || '',
             sign_in: convertToDateTimeLocal(initialData.sign_in),
             sign_out: convertToDateTimeLocal(initialData.sign_out) || nowTime,
-          })
+          } as any)
         }
       })
     }
@@ -171,7 +170,7 @@ export const AttendanceModal = ({
           <Button variant="outline" onClick={onClose} disabled={isPending}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit(onSubmit)} loading={isPending}>
+          <Button onClick={handleSubmit(onSubmit as any)} loading={isPending}>
             {mode === 'create' ? (
               <>
                 <Save className="h-4 w-4" />
@@ -192,7 +191,7 @@ export const AttendanceModal = ({
         </div>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
         {/* Hide Employee ID selection in Quick Sign Out mode */}
         {mode !== 'sign_out' ? (
           <FormField label="Employee Name" error={errors.employee_id?.message} required>

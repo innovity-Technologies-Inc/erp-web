@@ -11,6 +11,7 @@ export interface MerchantListItem {
   sales_permit: string // HTML or URL
   balance: number
   status: string // HTML badge or text
+  address?: string | null
 }
 
 export const getMerchantsDatatable = async (params: any): Promise<DataTablesResponse<MerchantListItem>> => {

@@ -108,10 +108,10 @@ export const SalaryPaySlipPage = () => {
             {/* Logo & Company details */}
             <div className="flex flex-row justify-between items-center pb-4 w-full">
               <div className="flex flex-col gap-1 text-[13px] text-gray-500 font-poppins">
-                {slip.setting?.invoice_logo_url || slip.setting?.invoice_logo ? (
+                {(slip.setting as any)?.invoice_logo_url || (slip.setting as any)?.invoice_logo ? (
                   <div className="pb-2">
                     <img
-                      src={slip.setting.invoice_logo_url || `${import.meta.env.VITE_STORAGE_URL || 'http://localhost:5000/storage'}/${slip.setting.invoice_logo}`}
+                      src={(slip.setting as any).invoice_logo_url || `${import.meta.env.VITE_STORAGE_URL || 'http://localhost:5000/storage'}/${(slip.setting as any).invoice_logo}`}
                       alt="Company Logo"
                       className="h-10 object-contain"
                     />

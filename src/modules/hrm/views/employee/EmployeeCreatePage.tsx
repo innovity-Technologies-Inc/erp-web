@@ -59,7 +59,7 @@ export const EmployeeCreatePage = () => {
     setValue,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
-    resolver: zodResolver(employeeSchema),
+    resolver: zodResolver(employeeSchema) as any,
     defaultValues: {
       first_name: '',
       last_name: '',
@@ -144,7 +144,7 @@ export const EmployeeCreatePage = () => {
       </div>
 
       <div className="max-w-[1600px] mx-auto">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
           <div className="space-y-4">
             
             {/* Row 1: Personal Info (Left) & Photo (Right) */}

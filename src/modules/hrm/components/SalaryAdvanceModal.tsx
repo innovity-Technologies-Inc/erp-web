@@ -94,7 +94,7 @@ export const SalaryAdvanceModal = ({
       salary_month: '',
       salary_month_name: '',
       salary_month_year: '',
-    },
+    } as any,
   })
 
   const watchMonth = watch('salary_month_name')
@@ -112,7 +112,7 @@ export const SalaryAdvanceModal = ({
           salary_month: `${defaultMonthName} ${defaultYearStr}`,
           salary_month_name: defaultMonthName,
           salary_month_year: defaultYearStr,
-        })
+        } as any)
       } else if (mode === 'edit' && detailData?.data && detailData.data.id === salaryAdvanceId) {
         const advance = detailData.data
         const [mName, yName] = (advance.salary_month || '').split(' ')
@@ -122,7 +122,7 @@ export const SalaryAdvanceModal = ({
           salary_month: advance.salary_month,
           salary_month_name: mName || '',
           salary_month_year: yName || '',
-        })
+        } as any)
       }
     }
   }, [isOpen, mode, detailData, salaryAdvanceId, reset])
@@ -136,7 +136,7 @@ export const SalaryAdvanceModal = ({
         salary_month: '',
         salary_month_name: '',
         salary_month_year: '',
-      })
+      } as any)
     }
   }, [isOpen, reset])
 
@@ -196,7 +196,7 @@ export const SalaryAdvanceModal = ({
           <Button variant="outline" onClick={onClose} disabled={isPending}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit(onSubmit)} loading={isPending}>
+          <Button onClick={handleSubmit(onSubmit as any)} loading={isPending}>
             {mode === 'create' ? (
               <>
                 <Save className="h-4 w-4" />
@@ -212,7 +212,7 @@ export const SalaryAdvanceModal = ({
         </div>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-4">
         <FormField label="Employee Name" error={errors.employee_id?.message} required>
           <Controller
             name="employee_id"

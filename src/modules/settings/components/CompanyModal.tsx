@@ -179,7 +179,7 @@ export const CompanyModal = ({ isOpen, onClose, companyUuid }: CompanyModalProps
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {isSuperAdmin && (
-            <FormField label="Organization" error={errors.organization_id?.message}>
+            <FormField label="Organization" error={errors.organization_id?.message as string}>
               <Controller
                 name="organization_id"
                 control={control}

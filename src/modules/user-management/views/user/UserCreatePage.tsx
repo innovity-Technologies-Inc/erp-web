@@ -55,7 +55,7 @@ export const UserCreatePage = () => {
     trigger,
     formState: { errors, isDirty },
   } = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(userSchema) as any,
     defaultValues: {
       first_name: '',
       last_name: '',
@@ -271,7 +271,7 @@ export const UserCreatePage = () => {
             {/* Super Admin specific selectors */}
             {isSuperAdmin && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-dashed border-gray-100">
-                <FormField label="Organization" error={errors.organization_id?.message}>
+                <FormField label="Organization" error={errors.organization_id?.message as string}>
                   <Controller
                     name="organization_id"
                     control={control}
@@ -286,7 +286,7 @@ export const UserCreatePage = () => {
                   />
                 </FormField>
 
-                <FormField label="Company" error={errors.company_id?.message}>
+                <FormField label="Company" error={errors.company_id?.message as string}>
                   <Controller
                     name="company_id"
                     control={control}
@@ -530,7 +530,7 @@ export const UserCreatePage = () => {
         title="Discard Changes?"
         message="You have unsaved changes. Are you sure you want to discard them?"
         onConfirm={() => navigate({ to: '/user' })}
-        onCancel={() => setIsDiscardModalOpen(false)}
+        onClose={() => setIsDiscardModalOpen(false)}
         confirmText="Yes, discard"
         cancelText="Keep editing"
         variant="danger"

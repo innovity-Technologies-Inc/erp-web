@@ -107,7 +107,7 @@ export const UserListPage = () => {
       { header: 'User Type', key: 'userType', width: 15 },
     ]
 
-    const exportData = usersData.data.map((item, index) => ({
+    const exportData = usersData.data.map((item: any, index: number) => ({
       sl: index + 1,
       name: item.name,
       email: item.email,
@@ -394,7 +394,7 @@ export const UserListPage = () => {
         title="Delete User"
         message="Are you sure you want to delete this user? This action cannot be undone."
         onConfirm={handleConfirmDelete}
-        onCancel={() => setIsConfirmOpen(false)}
+        onClose={() => setIsConfirmOpen(false)}
         confirmText="Yes, delete it"
         cancelText="Cancel"
         isLoading={isDeleting}

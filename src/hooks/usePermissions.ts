@@ -24,6 +24,7 @@ export const usePermissions = () => {
   }
 
   return {
+    user,
     isSuperAdmin,
     hasPermission,
     hasAnyPermission,

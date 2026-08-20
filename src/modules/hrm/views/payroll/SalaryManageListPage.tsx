@@ -91,7 +91,7 @@ export const SalaryManageListPage = () => {
       },
       {
         headerName: 'ACTIONS',
-        field: 'actions',
+        field: 'actions' as any,
         width: 180,
         flex: 0,
         pinned: 'right',

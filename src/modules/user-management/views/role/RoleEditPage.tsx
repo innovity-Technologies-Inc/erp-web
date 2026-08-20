@@ -321,7 +321,7 @@ export const RoleEditPage = () => {
 
             {isSuperAdmin && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <FormField label="Organization" error={errors.organization_id?.message}>
+                <FormField label="Organization" error={errors.organization_id?.message as string}>
                   <Controller
                     name="organization_id"
                     control={control}
@@ -336,7 +336,7 @@ export const RoleEditPage = () => {
                   />
                 </FormField>
 
-                <FormField label="Company" error={errors.company_id?.message}>
+                <FormField label="Company" error={errors.company_id?.message as string}>
                   <Controller
                     name="company_id"
                     control={control}

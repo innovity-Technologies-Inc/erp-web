@@ -64,7 +64,7 @@ export const UserEditPage = () => {
     reset,
     formState: { errors, isDirty },
   } = useForm<UserEditFormValues>({
-    resolver: zodResolver(userEditSchema),
+    resolver: zodResolver(userEditSchema) as any,
     defaultValues: {
       first_name: '',
       last_name: '',
@@ -149,8 +149,8 @@ export const UserEditPage = () => {
         company_id: u.company_id ? String(u.company_id) : '',
         roles: u.roles.map((r) => r.id),
       })
-      if (u.image || u.image_url) {
-        setImagePreview(u.image_url || getImageUrl(u.image))
+      if (u.image || (u as any).image_url) {
+        setImagePreview((u as any).image_url || getImageUrl(u.image))
       }
     }
   }, [userDetails, reset])
@@ -328,7 +328,7 @@ export const UserEditPage = () => {
             {/* Super Admin specific selectors */}
             {isSuperAdmin && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-dashed border-gray-100">
-                <FormField label="Organization" error={errors.organization_id?.message}>
+                <FormField label="Organization" error={errors.organization_id?.message as string}>
                   <Controller
                     name="organization_id"
                     control={control}
@@ -343,7 +343,7 @@ export const UserEditPage = () => {
                   />
                 </FormField>
 
-                <FormField label="Company" error={errors.company_id?.message}>
+                <FormField label="Company" error={errors.company_id?.message as string}>
                   <Controller
                     name="company_id"
                     control={control}
@@ -587,7 +587,7 @@ export const UserEditPage = () => {
         title="Discard Changes?"
         message="You have unsaved changes. Are you sure you want to discard them?"
         onConfirm={() => navigate({ to: '/user' })}
-        onCancel={() => setIsDiscardModalOpen(false)}
+        onClose={() => setIsDiscardModalOpen(false)}
         confirmText="Yes, discard"
         cancelText="Keep editing"
         variant="danger"
