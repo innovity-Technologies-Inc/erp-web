@@ -3,9 +3,6 @@
 # ==========================================
 FROM node:20-alpine AS base
 
-# Install common node native dependencies / compatibility packages
-RUN apk add --no-cache libc6-compat
-
 WORKDIR /app
 
 # Copy dependency definition files to leverage Docker layer caching
@@ -36,6 +33,9 @@ CMD ["npm", "run", "dev", "--", "--host"]
 # ==========================================
 FROM base AS builder
 
+# Install dependencies (Vite and TypeScript are needed for building).
+RUN npm ci --include=dev --no-audit --no-fund
+
 # Inject build-time environment variables for Vite compiler
 ARG VITE_API_URL
 ARG VITE_STORAGE_URL
@@ -47,9 +47,6 @@ ENV VITE_API_URL=$VITE_API_URL \
     VITE_APP_NAME=$VITE_APP_NAME \
     NODE_ENV=production
 
-# Install dependencies (Vite and TypeScript are needed for building)
-RUN npm ci
-
 # Copy the application source code
 COPY . .
 
@@ -59,20 +56,14 @@ RUN npm run build
 # ==========================================
 # --- Production Web Stage (Nginx Web Server) ---
 # ==========================================
-FROM nginx:1.25-alpine AS production
-
-# Remove default nginx configurations
-RUN rm -rf /etc/nginx/conf.d/*
+FROM nginx:stable-alpine-slim AS production
 
 # Copy custom Nginx configuration with security headers & gzip compression
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Copy static built assets from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Set correct permissions for security
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html
+# Set ownership while copying so the bundle is stored in only one image layer.
+# The source modes already provide readable files and executable directories.
+COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
