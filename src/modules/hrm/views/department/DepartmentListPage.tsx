@@ -1,24 +1,24 @@
 import { useMemo, useState } from 'react'
 import { Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react'
 import {
-  useDesignationsDatatable,
-  useDeleteDesignation,
-  useDesignationData,
-  useToggleDesignationStatus,
-} from '../../hooks/useDesignations'
+  useDepartments,
+  useDeleteDepartment,
+  useDepartmentData,
+  useToggleDepartmentStatus,
+} from '../../hooks/useDepartments'
 import type { ColDef } from 'ag-grid-community'
-import type { Designation } from '../../api/types'
+import type { Department } from '../../api/types'
 import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { clsx } from 'clsx'
-import { DesignationModal } from '../../components/DesignationModal'
+import { DepartmentModal } from '../../components/DepartmentModal'
 import { formatDate } from '@/utils/formatters'
 import { exportToExcel } from '@/utils/exportUtils'
 
-export const DesignationListPage = () => {
+export const DepartmentListPage = () => {
   const { showNotificationModal } = useUiStore()
   const { hasAnyPermission } = usePermissions()
 
@@ -27,74 +27,79 @@ export const DesignationListPage = () => {
   const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string | undefined>(undefined)
-  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
+  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
+    start: '',
+    end: '',
+  })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedDesignationId, setSelectedDesignationId] = useState<number | null>(null)
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | null>(null)
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const [designationToDelete, setDesignationToDelete] = useState<number | null>(null)
+  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null)
 
   // Column Visibility State
   const [visibleCols, setVisibleColumns] = useState({
     sl: true,
-    designation: true,
+    name: true,
+    code: true,
     details: true,
     date: true,
     status: true,
     action: true,
   })
 
-  // Data Fetching params
   const params = useMemo(
     () => ({
-      draw: 1,
-      start: (currentPage - 1) * pageSize,
-      length: pageSize,
-      search: { value: search },
-      status,
-      start_date: dateRange.start,
-      end_date: dateRange.end,
+      page: currentPage,
+      per_page: pageSize,
+      search: search || undefined,
+      status: status || undefined,
+      start_date: dateRange.start || undefined,
+      end_date: dateRange.end || undefined,
     }),
     [currentPage, pageSize, search, status, dateRange]
   )
 
-  const { data: designationsData, isLoading } = useDesignationsDatatable(params)
-  const { mutate: deleteDesignation, isPending: isDeleting } = useDeleteDesignation()
-  const { mutate: toggleStatus, isPending: isToggling } = useToggleDesignationStatus()
+  const { data: departmentsData, isLoading } = useDepartments(params)
+  const { mutate: deleteDepartment, isPending: isDeleting } = useDeleteDepartment()
+  const { mutate: toggleStatus, isPending: isToggling } = useToggleDepartmentStatus()
   const [togglingId, setTogglingId] = useState<number | null>(null)
 
-  // Fetch single designation data for edit prehydration
-  const { data: editData } = useDesignationData(selectedDesignationId)
+  // Fetch single department data for edit prehydration
+  const { data: editData } = useDepartmentData(selectedDepartmentId)
 
   // Actions
   const handleAdd = () => {
-    setSelectedDesignationId(null)
+    setSelectedDepartmentId(null)
     setIsModalOpen(true)
   }
 
   const handleEdit = (id: number) => {
-    setSelectedDesignationId(id)
+    setSelectedDepartmentId(id)
     setIsModalOpen(true)
   }
 
-  const handleStatusToggle = (id: number, designation: string, currentStatus: number) => {
+  const handleStatusToggle = (id: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1
     setTogglingId(id)
     toggleStatus(
-      { id, designation, status: newStatus },
+      { id, status: newStatus },
       {
         onSuccess: () => {
           setTogglingId(null)
           showNotificationModal(
             'Status Updated!',
-            `Designation status has been changed to ${newStatus === 1 ? 'Active' : 'Inactive'}.`,
+            `Department status has been changed to ${newStatus === 1 ? 'Active' : 'Inactive'}.`,
             'success'
           )
         },
         onError: (error: any) => {
           setTogglingId(null)
-          const message = error.response?.data?.message || error.message || 'Failed to update designation status.'
+          const message =
+            error.response?.data?.message ||
+            error.message ||
+            'Failed to update department status.'
           showNotificationModal('Status Update Failed', message, 'error')
         },
       }
@@ -102,52 +107,71 @@ export const DesignationListPage = () => {
   }
 
   const handleDeleteClick = (id: number) => {
-    setDesignationToDelete(id)
+    setDepartmentToDelete(id)
     setIsConfirmOpen(true)
   }
 
   const handleConfirmDelete = () => {
-    if (designationToDelete) {
-      deleteDesignation(designationToDelete, {
+    if (departmentToDelete) {
+      deleteDepartment(departmentToDelete, {
         onSuccess: () => {
           setIsConfirmOpen(false)
-          setDesignationToDelete(null)
+          setDepartmentToDelete(null)
           showNotificationModal(
-            'Designation Deleted!',
-            'The designation has been removed successfully.',
+            'Department Deleted!',
+            'The department has been removed successfully.',
             'success'
           )
+        },
+        onError: (error: any) => {
+          const message =
+            error.response?.data?.message ||
+            error.message ||
+            'Failed to delete department.'
+          showNotificationModal('Delete Failed', message, 'error')
         },
       })
     }
   }
 
   const toggleColumn = (field: string) => {
-    setVisibleColumns((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+    setVisibleColumns((prev) => ({
+      ...prev,
+      [field]: !prev[field as keyof typeof prev],
+    }))
   }
 
+  const departmentsList = useMemo(
+    () => departmentsData?.response || departmentsData?.data || [],
+    [departmentsData]
+  )
+  const totalRecords = departmentsData?.meta?.total ?? 0
+  const totalPages = Math.ceil(totalRecords / pageSize) || 1
+
   const handleExport = () => {
-    if (!designationsData?.data) return
+    if (!departmentsList.length) return
 
     const exportColumns = [
       { header: 'SL', key: 'sl', width: 8 },
-      { header: 'Designation', key: 'designation', width: 30 },
+      { header: 'Department Name', key: 'name', width: 30 },
+      { header: 'Code', key: 'code', width: 16 },
       { header: 'Details', key: 'details', width: 40 },
       { header: 'Status', key: 'status', width: 12 },
     ]
 
-    const exportData = designationsData.data.map((item, index) => ({
+    const exportData = departmentsList.map((item, index) => ({
       sl: index + 1,
-      designation: item.designation,
+      name: item.name,
+      code: item.code || '—',
       details: item.details || '',
       status: Number(item.status) === 1 ? 'Active' : 'Inactive',
     }))
 
-    exportToExcel(exportData, exportColumns, 'designations-list')
+    exportToExcel(exportData, exportColumns, 'departments-list')
   }
 
   // AG Grid Column Definitions
-  const columnDefs = useMemo<ColDef<Designation>[]>(
+  const columnDefs = useMemo<ColDef<Department>[]>(
     () => [
       {
         headerName: 'SL',
@@ -158,20 +182,29 @@ export const DesignationListPage = () => {
         width: 80,
         pinned: 'left',
         hide: !visibleCols.sl,
-        cellClass: 'text-gray-400 font-medium border-r border-primary/10 flex items-center justify-center',
+        cellClass:
+          'text-gray-400 font-medium border-r border-primary/10 flex items-center justify-center',
       },
       {
-        headerName: 'DESIGNATION',
-        field: 'designation',
+        headerName: 'DEPARTMENT NAME',
+        field: 'name',
         minWidth: 200,
-        flex: 1,
-        hide: !visibleCols.designation,
-        cellClass: 'font-medium text-gray-900 flex items-center',
+        flex: 1.2,
+        hide: !visibleCols.name,
+        cellClass: 'font-semibold text-gray-900 flex items-center',
       },
       {
-        headerName: 'DETAILS',
+        headerName: 'CODE',
+        field: 'code',
+        width: 140,
+        hide: !visibleCols.code,
+        cellClass: 'font-mono text-xs text-indigo-600 font-bold flex items-center',
+        valueFormatter: (params) => params.value || '—',
+      },
+      {
+        headerName: 'DETAILS / FUNCTION',
         field: 'details',
-        minWidth: 250,
+        minWidth: 240,
         flex: 1.5,
         hide: !visibleCols.details,
         cellClass: 'text-gray-600 flex items-center',
@@ -180,15 +213,15 @@ export const DesignationListPage = () => {
       {
         headerName: 'DATE',
         field: 'created_at',
-        width: 150,
+        width: 140,
         hide: !visibleCols.date,
-        cellClass: 'text-gray-600 flex items-center justify-center',
+        cellClass: 'text-gray-600 flex items-center justify-center text-xs',
         valueFormatter: (params) => formatDate(params.value),
       },
       {
         headerName: 'STATUS',
         field: 'status',
-        width: 180,
+        width: 170,
         hide: !visibleCols.status,
         cellRenderer: (params: any) => {
           const isActive = Number(params.value) === 1
@@ -199,16 +232,23 @@ export const DesignationListPage = () => {
               <span
                 className={clsx(
                   'inline-flex items-center px-2 py-1 rounded-full text-[11px] font-medium tracking-tight uppercase leading-none',
-                  isActive ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#fee2e2] text-[#991b1b]',
+                  isActive
+                    ? 'bg-[#dcfce7] text-[#166534]'
+                    : 'bg-[#fee2e2] text-[#991b1b]',
                   isProcessing && 'opacity-50 blur-[0.5px]'
                 )}
               >
                 {isActive ? 'Active' : 'Inactive'}
               </span>
 
-              <PermissionGuard permission="edit_designation">
+              <PermissionGuard permission="edit_department">
                 <button
-                  onClick={() => handleStatusToggle(params.data.id, params.data.designation, Number(params.value))}
+                  onClick={() =>
+                    handleStatusToggle(
+                      params.data.id,
+                      Number(params.value)
+                    )
+                  }
                   disabled={isProcessing}
                   className={clsx(
                     'flex items-center justify-center transition-all duration-300 transform active:scale-90',
@@ -235,25 +275,27 @@ export const DesignationListPage = () => {
         headerName: 'ACTIONS',
         width: 120,
         pinned: 'right',
-        hide: !visibleCols.action || !hasAnyPermission(['edit_designation', 'delete_designation']),
+        hide:
+          !visibleCols.action ||
+          !hasAnyPermission(['edit_department', 'delete_department']),
         cellClass: 'flex items-center justify-center gap-1.5',
         cellRenderer: (params: any) => (
           <div className="flex items-center gap-1.5 h-full">
-            <PermissionGuard permission="edit_designation">
+            <PermissionGuard permission="edit_department">
               <button
                 onClick={() => handleEdit(params.data.id)}
                 className="p-2 hover:bg-emerald-50 text-[#10b981] rounded-xl transition-all border border-transparent hover:border-emerald-100 hover:scale-110 group/edit"
-                title="Edit Designation"
+                title="Edit Department"
               >
                 <Edit className="h-4 w-4" />
               </button>
             </PermissionGuard>
 
-            <PermissionGuard permission="delete_designation">
+            <PermissionGuard permission="delete_department">
               <button
                 onClick={() => handleDeleteClick(params.data.id)}
-                className="p-2 hover:bg-rose-50 text-[#ef4444] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110 group/del"
-                title="Delete Designation"
+                className="p-2 hover:bg-rose-50 text-[#f43f5e] rounded-xl transition-all border border-transparent hover:border-rose-100 hover:scale-110 group/delete"
+                title="Delete Department"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -262,12 +304,20 @@ export const DesignationListPage = () => {
         ),
       },
     ],
-    [currentPage, pageSize, visibleCols, hasAnyPermission, isToggling, togglingId]
+    [
+      currentPage,
+      pageSize,
+      visibleCols,
+      isToggling,
+      togglingId,
+      hasAnyPermission,
+    ]
   )
 
   const filterColumns = [
     { name: 'SL', field: 'sl', visible: visibleCols.sl },
-    { name: 'Designation', field: 'designation', visible: visibleCols.designation },
+    { name: 'Department Name', field: 'name', visible: visibleCols.name },
+    { name: 'Code', field: 'code', visible: visibleCols.code },
     { name: 'Details', field: 'details', visible: visibleCols.details },
     { name: 'Date', field: 'date', visible: visibleCols.date },
     { name: 'Status', field: 'status', visible: visibleCols.status },
@@ -279,10 +329,8 @@ export const DesignationListPage = () => {
     { label: 'Inactive', value: '0' },
   ]
 
-  const totalPages = Math.ceil((designationsData?.recordsFiltered ?? 0) / pageSize)
-
   const tabs = [
-    { name: 'HRM', to: '/hrm/designation', active: true },
+    { name: 'HRM', to: '/hrm/department', active: true },
     { name: 'Attendance', to: '/hrm/attendance' },
     { name: 'Payroll', to: '/hrm/payroll' },
   ]
@@ -296,12 +344,12 @@ export const DesignationListPage = () => {
   return (
     <>
       <ListPageLayout
-        title="Designation List"
+        title="Department List"
         titleOptions={titleOptions}
         backTo="/"
         tabs={tabs}
         onCreate={handleAdd}
-        createPermission="create_designation"
+        createPermission="create_department"
         searchWidth="max-w-[200px]"
         searchValue={search}
         onSearchChange={(val) => {
@@ -310,10 +358,10 @@ export const DesignationListPage = () => {
         }}
         isLoading={isLoading}
         // AG Grid Props
-        rowData={designationsData?.data || []}
+        rowData={departmentsList}
         columnDefs={columnDefs}
         // Pagination
-        recordsTotal={designationsData?.recordsFiltered || 0}
+        recordsTotal={totalRecords}
         currentPage={currentPage}
         pageSize={pageSize}
         totalPages={totalPages}
@@ -344,10 +392,10 @@ export const DesignationListPage = () => {
         onExport={handleExport}
       />
 
-      <DesignationModal
+      <DepartmentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        designationId={selectedDesignationId}
+        departmentId={selectedDepartmentId}
         initialData={editData?.data}
       />
 
@@ -355,8 +403,8 @@ export const DesignationListPage = () => {
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Delete Designation?"
-        message="Are you sure you want to remove this designation? This action cannot be undone."
+        title="Delete Department?"
+        message="Are you sure you want to remove this department? This action cannot be undone."
         confirmText="Yes, Delete"
         isLoading={isDeleting}
       />

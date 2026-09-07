@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VendorOnboardingRouteImport } from './routes/vendor-onboarding'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -25,10 +26,12 @@ import { Route as AuthenticatedSettingsEmailRouteImport } from './routes/_authen
 import { Route as AuthenticatedSettingsCurrencyRouteImport } from './routes/_authenticated/settings/currency'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings/company'
 import { Route as AuthenticatedRoleCreateRouteImport } from './routes/_authenticated/role/create'
+import { Route as AuthenticatedProcurementCostCentersRouteImport } from './routes/_authenticated/procurement/cost-centers'
 import { Route as AuthenticatedHrmPayrollManageSalaryRouteImport } from './routes/_authenticated/hrm/payroll-manage-salary'
 import { Route as AuthenticatedHrmPayrollGenerateRouteImport } from './routes/_authenticated/hrm/payroll-generate'
 import { Route as AuthenticatedHrmPayrollRouteImport } from './routes/_authenticated/hrm/payroll'
 import { Route as AuthenticatedHrmDesignationRouteImport } from './routes/_authenticated/hrm/designation'
+import { Route as AuthenticatedHrmDepartmentRouteImport } from './routes/_authenticated/hrm/department'
 import { Route as AuthenticatedHrmAttendanceReportRouteImport } from './routes/_authenticated/hrm/attendance-report'
 import { Route as AuthenticatedHrmAttendanceRouteImport } from './routes/_authenticated/hrm/attendance'
 import { Route as AuthenticatedAccountVoucherApprovalRouteImport } from './routes/_authenticated/account/voucher-approval'
@@ -45,6 +48,8 @@ import { Route as AuthenticatedAccountEinRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAccountChartOfAccountsRouteImport } from './routes/_authenticated/account/chart-of-accounts'
 import { Route as AuthenticatedAccountCashAdjustmentRouteImport } from './routes/_authenticated/account/cash-adjustment'
 import { Route as AuthenticatedAccountBankReconciliationRouteImport } from './routes/_authenticated/account/bank-reconciliation'
+import { Route as AuthenticatedProcurementVendorsIndexRouteImport } from './routes/_authenticated/procurement/vendors.index'
+import { Route as AuthenticatedProcurementBudgetsIndexRouteImport } from './routes/_authenticated/procurement/budgets.index'
 import { Route as AuthenticatedInventoryWarehouseIndexRouteImport } from './routes/_authenticated/inventory/warehouse.index'
 import { Route as AuthenticatedInventoryVendorsIndexRouteImport } from './routes/_authenticated/inventory/vendors.index'
 import { Route as AuthenticatedInventoryServiceIndexRouteImport } from './routes/_authenticated/inventory/service.index'
@@ -59,6 +64,13 @@ import { Route as AuthenticatedAccountReportsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedAccountOpeningBalanceIndexRouteImport } from './routes/_authenticated/account/opening-balance.index'
 import { Route as AuthenticatedUserEditUuidRouteImport } from './routes/_authenticated/user/edit.$uuid'
 import { Route as AuthenticatedRoleEditUuidRouteImport } from './routes/_authenticated/role/edit.$uuid'
+import { Route as AuthenticatedProcurementVendorsInvitationsRouteImport } from './routes/_authenticated/procurement/vendors.invitations'
+import { Route as AuthenticatedProcurementVendorsDocumentTypesRouteImport } from './routes/_authenticated/procurement/vendors.document-types'
+import { Route as AuthenticatedProcurementVendorsCreateRouteImport } from './routes/_authenticated/procurement/vendors.create'
+import { Route as AuthenticatedProcurementVendorsCategoriesRouteImport } from './routes/_authenticated/procurement/vendors.categories'
+import { Route as AuthenticatedProcurementVendorsBlacklistsRouteImport } from './routes/_authenticated/procurement/vendors.blacklists'
+import { Route as AuthenticatedProcurementBudgetsHeadsRouteImport } from './routes/_authenticated/procurement/budgets.heads'
+import { Route as AuthenticatedProcurementBudgetsCategoriesRouteImport } from './routes/_authenticated/procurement/budgets.categories'
 import { Route as AuthenticatedInventoryWarehouseStockMovementRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement'
 import { Route as AuthenticatedInventoryWarehouseCreateRouteImport } from './routes/_authenticated/inventory/warehouse.create'
 import { Route as AuthenticatedInventoryVendorsCreateRouteImport } from './routes/_authenticated/inventory/vendors.create'
@@ -118,6 +130,8 @@ import { Route as AuthenticatedAccountVoucherJournalIndexRouteImport } from './r
 import { Route as AuthenticatedAccountVoucherDebitIndexRouteImport } from './routes/_authenticated/account/voucher.debit.index'
 import { Route as AuthenticatedAccountVoucherCreditIndexRouteImport } from './routes/_authenticated/account/voucher.credit.index'
 import { Route as AuthenticatedAccountVoucherContraIndexRouteImport } from './routes/_authenticated/account/voucher.contra.index'
+import { Route as AuthenticatedProcurementVendorsViewIdRouteImport } from './routes/_authenticated/procurement/vendors.view.$id'
+import { Route as AuthenticatedProcurementVendorsEditIdRouteImport } from './routes/_authenticated/procurement/vendors.edit.$id'
 import { Route as AuthenticatedInventoryWarehouseStockMovementCreateRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement.create'
 import { Route as AuthenticatedInventoryWarehouseEditIdRouteImport } from './routes/_authenticated/inventory/warehouse.edit.$id'
 import { Route as AuthenticatedInventoryVendorsEditIdRouteImport } from './routes/_authenticated/inventory/vendors.edit.$id'
@@ -152,6 +166,11 @@ import { Route as AuthenticatedAccountVoucherDebitEditUuidRouteImport } from './
 import { Route as AuthenticatedAccountVoucherCreditEditUuidRouteImport } from './routes/_authenticated/account/voucher.credit.edit.$uuid'
 import { Route as AuthenticatedAccountVoucherContraEditUuidRouteImport } from './routes/_authenticated/account/voucher.contra.edit.$uuid'
 
+const VendorOnboardingRoute = VendorOnboardingRouteImport.update({
+  id: '/vendor-onboarding',
+  path: '/vendor-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -236,6 +255,12 @@ const AuthenticatedRoleCreateRoute = AuthenticatedRoleCreateRouteImport.update({
   path: '/role/create',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedProcurementCostCentersRoute =
+  AuthenticatedProcurementCostCentersRouteImport.update({
+    id: '/procurement/cost-centers',
+    path: '/procurement/cost-centers',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedHrmPayrollManageSalaryRoute =
   AuthenticatedHrmPayrollManageSalaryRouteImport.update({
     id: '/hrm/payroll-manage-salary',
@@ -257,6 +282,12 @@ const AuthenticatedHrmDesignationRoute =
   AuthenticatedHrmDesignationRouteImport.update({
     id: '/hrm/designation',
     path: '/hrm/designation',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHrmDepartmentRoute =
+  AuthenticatedHrmDepartmentRouteImport.update({
+    id: '/hrm/department',
+    path: '/hrm/department',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedHrmAttendanceReportRoute =
@@ -354,6 +385,18 @@ const AuthenticatedAccountBankReconciliationRoute =
     path: '/account/bank-reconciliation',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementVendorsIndexRoute =
+  AuthenticatedProcurementVendorsIndexRouteImport.update({
+    id: '/procurement/vendors/',
+    path: '/procurement/vendors/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementBudgetsIndexRoute =
+  AuthenticatedProcurementBudgetsIndexRouteImport.update({
+    id: '/procurement/budgets/',
+    path: '/procurement/budgets/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryWarehouseIndexRoute =
   AuthenticatedInventoryWarehouseIndexRouteImport.update({
     id: '/inventory/warehouse/',
@@ -436,6 +479,48 @@ const AuthenticatedRoleEditUuidRoute =
   AuthenticatedRoleEditUuidRouteImport.update({
     id: '/role/edit/$uuid',
     path: '/role/edit/$uuid',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementVendorsInvitationsRoute =
+  AuthenticatedProcurementVendorsInvitationsRouteImport.update({
+    id: '/procurement/vendors/invitations',
+    path: '/procurement/vendors/invitations',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementVendorsDocumentTypesRoute =
+  AuthenticatedProcurementVendorsDocumentTypesRouteImport.update({
+    id: '/procurement/vendors/document-types',
+    path: '/procurement/vendors/document-types',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementVendorsCreateRoute =
+  AuthenticatedProcurementVendorsCreateRouteImport.update({
+    id: '/procurement/vendors/create',
+    path: '/procurement/vendors/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementVendorsCategoriesRoute =
+  AuthenticatedProcurementVendorsCategoriesRouteImport.update({
+    id: '/procurement/vendors/categories',
+    path: '/procurement/vendors/categories',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementVendorsBlacklistsRoute =
+  AuthenticatedProcurementVendorsBlacklistsRouteImport.update({
+    id: '/procurement/vendors/blacklists',
+    path: '/procurement/vendors/blacklists',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementBudgetsHeadsRoute =
+  AuthenticatedProcurementBudgetsHeadsRouteImport.update({
+    id: '/procurement/budgets/heads',
+    path: '/procurement/budgets/heads',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementBudgetsCategoriesRoute =
+  AuthenticatedProcurementBudgetsCategoriesRouteImport.update({
+    id: '/procurement/budgets/categories',
+    path: '/procurement/budgets/categories',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryWarehouseStockMovementRoute =
@@ -792,6 +877,18 @@ const AuthenticatedAccountVoucherContraIndexRoute =
     path: '/account/voucher/contra/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementVendorsViewIdRoute =
+  AuthenticatedProcurementVendorsViewIdRouteImport.update({
+    id: '/procurement/vendors/view/$id',
+    path: '/procurement/vendors/view/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementVendorsEditIdRoute =
+  AuthenticatedProcurementVendorsEditIdRouteImport.update({
+    id: '/procurement/vendors/edit/$id',
+    path: '/procurement/vendors/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryWarehouseStockMovementCreateRoute =
   AuthenticatedInventoryWarehouseStockMovementCreateRouteImport.update({
     id: '/create',
@@ -993,6 +1090,7 @@ const AuthenticatedAccountVoucherContraEditUuidRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/vendor-onboarding': typeof VendorOnboardingRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
@@ -1012,10 +1110,12 @@ export interface FileRoutesByFullPath {
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
   '/hrm/attendance-report': typeof AuthenticatedHrmAttendanceReportRoute
+  '/hrm/department': typeof AuthenticatedHrmDepartmentRoute
   '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
   '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
+  '/procurement/cost-centers': typeof AuthenticatedProcurementCostCentersRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
@@ -1077,6 +1177,13 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
+  '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
+  '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
+  '/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
+  '/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
+  '/procurement/vendors/document-types': typeof AuthenticatedProcurementVendorsDocumentTypesRoute
+  '/procurement/vendors/invitations': typeof AuthenticatedProcurementVendorsInvitationsRoute
   '/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
   '/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
@@ -1091,6 +1198,8 @@ export interface FileRoutesByFullPath {
   '/inventory/service/': typeof AuthenticatedInventoryServiceIndexRoute
   '/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
+  '/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/procurement/vendors/': typeof AuthenticatedProcurementVendorsIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   '/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
   '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -1117,6 +1226,8 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
+  '/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
   '/account/voucher/contra/': typeof AuthenticatedAccountVoucherContraIndexRoute
   '/account/voucher/credit/': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/account/voucher/debit/': typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -1135,6 +1246,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
+  '/vendor-onboarding': typeof VendorOnboardingRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/login': typeof AuthLoginRoute
   '/reset-password': typeof AuthResetPasswordRoute
@@ -1154,10 +1266,12 @@ export interface FileRoutesByTo {
   '/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
   '/hrm/attendance-report': typeof AuthenticatedHrmAttendanceReportRoute
+  '/hrm/department': typeof AuthenticatedHrmDepartmentRoute
   '/hrm/designation': typeof AuthenticatedHrmDesignationRoute
   '/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
+  '/procurement/cost-centers': typeof AuthenticatedProcurementCostCentersRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
@@ -1219,6 +1333,13 @@ export interface FileRoutesByTo {
   '/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
+  '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
+  '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
+  '/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
+  '/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
+  '/procurement/vendors/document-types': typeof AuthenticatedProcurementVendorsDocumentTypesRoute
+  '/procurement/vendors/invitations': typeof AuthenticatedProcurementVendorsInvitationsRoute
   '/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
   '/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/account/opening-balance': typeof AuthenticatedAccountOpeningBalanceIndexRoute
@@ -1233,6 +1354,8 @@ export interface FileRoutesByTo {
   '/inventory/service': typeof AuthenticatedInventoryServiceIndexRoute
   '/inventory/vendors': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse': typeof AuthenticatedInventoryWarehouseIndexRoute
+  '/procurement/budgets': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/procurement/vendors': typeof AuthenticatedProcurementVendorsIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   '/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
   '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -1259,6 +1382,8 @@ export interface FileRoutesByTo {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
+  '/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
   '/account/voucher/contra': typeof AuthenticatedAccountVoucherContraIndexRoute
   '/account/voucher/credit': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/account/voucher/debit': typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -1279,6 +1404,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/vendor-onboarding': typeof VendorOnboardingRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
@@ -1299,10 +1425,12 @@ export interface FileRoutesById {
   '/_authenticated/account/voucher-approval': typeof AuthenticatedAccountVoucherApprovalRoute
   '/_authenticated/hrm/attendance': typeof AuthenticatedHrmAttendanceRoute
   '/_authenticated/hrm/attendance-report': typeof AuthenticatedHrmAttendanceReportRoute
+  '/_authenticated/hrm/department': typeof AuthenticatedHrmDepartmentRoute
   '/_authenticated/hrm/designation': typeof AuthenticatedHrmDesignationRoute
   '/_authenticated/hrm/payroll': typeof AuthenticatedHrmPayrollRoute
   '/_authenticated/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/_authenticated/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
+  '/_authenticated/procurement/cost-centers': typeof AuthenticatedProcurementCostCentersRoute
   '/_authenticated/role/create': typeof AuthenticatedRoleCreateRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/_authenticated/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
@@ -1364,6 +1492,13 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/_authenticated/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/_authenticated/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
+  '/_authenticated/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
+  '/_authenticated/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/_authenticated/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
+  '/_authenticated/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
+  '/_authenticated/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
+  '/_authenticated/procurement/vendors/document-types': typeof AuthenticatedProcurementVendorsDocumentTypesRoute
+  '/_authenticated/procurement/vendors/invitations': typeof AuthenticatedProcurementVendorsInvitationsRoute
   '/_authenticated/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
   '/_authenticated/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/_authenticated/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
@@ -1378,6 +1513,8 @@ export interface FileRoutesById {
   '/_authenticated/inventory/service/': typeof AuthenticatedInventoryServiceIndexRoute
   '/_authenticated/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/_authenticated/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
+  '/_authenticated/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/_authenticated/procurement/vendors/': typeof AuthenticatedProcurementVendorsIndexRoute
   '/_authenticated/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   '/_authenticated/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
   '/_authenticated/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -1404,6 +1541,8 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/_authenticated/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/_authenticated/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/_authenticated/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
+  '/_authenticated/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
   '/_authenticated/account/voucher/contra/': typeof AuthenticatedAccountVoucherContraIndexRoute
   '/_authenticated/account/voucher/credit/': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/_authenticated/account/voucher/debit/': typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -1424,6 +1563,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/vendor-onboarding'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
@@ -1443,10 +1583,12 @@ export interface FileRouteTypes {
     | '/account/voucher-approval'
     | '/hrm/attendance'
     | '/hrm/attendance-report'
+    | '/hrm/department'
     | '/hrm/designation'
     | '/hrm/payroll'
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
+    | '/procurement/cost-centers'
     | '/role/create'
     | '/settings/company'
     | '/settings/currency'
@@ -1508,6 +1650,13 @@ export interface FileRouteTypes {
     | '/inventory/vendors/create'
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/stock-movement'
+    | '/procurement/budgets/categories'
+    | '/procurement/budgets/heads'
+    | '/procurement/vendors/blacklists'
+    | '/procurement/vendors/categories'
+    | '/procurement/vendors/create'
+    | '/procurement/vendors/document-types'
+    | '/procurement/vendors/invitations'
     | '/role/edit/$uuid'
     | '/user/edit/$uuid'
     | '/account/opening-balance/'
@@ -1522,6 +1671,8 @@ export interface FileRouteTypes {
     | '/inventory/service/'
     | '/inventory/vendors/'
     | '/inventory/warehouse/'
+    | '/procurement/budgets/'
+    | '/procurement/vendors/'
     | '/account/opening-balance/edit/$uuid'
     | '/account/voucher/contra/create'
     | '/account/voucher/credit/create'
@@ -1548,6 +1699,8 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/procurement/vendors/edit/$id'
+    | '/procurement/vendors/view/$id'
     | '/account/voucher/contra/'
     | '/account/voucher/credit/'
     | '/account/voucher/debit/'
@@ -1566,6 +1719,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/vendor-onboarding'
     | '/forgot-password'
     | '/login'
     | '/reset-password'
@@ -1585,10 +1739,12 @@ export interface FileRouteTypes {
     | '/account/voucher-approval'
     | '/hrm/attendance'
     | '/hrm/attendance-report'
+    | '/hrm/department'
     | '/hrm/designation'
     | '/hrm/payroll'
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
+    | '/procurement/cost-centers'
     | '/role/create'
     | '/settings/company'
     | '/settings/currency'
@@ -1650,6 +1806,13 @@ export interface FileRouteTypes {
     | '/inventory/vendors/create'
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/stock-movement'
+    | '/procurement/budgets/categories'
+    | '/procurement/budgets/heads'
+    | '/procurement/vendors/blacklists'
+    | '/procurement/vendors/categories'
+    | '/procurement/vendors/create'
+    | '/procurement/vendors/document-types'
+    | '/procurement/vendors/invitations'
     | '/role/edit/$uuid'
     | '/user/edit/$uuid'
     | '/account/opening-balance'
@@ -1664,6 +1827,8 @@ export interface FileRouteTypes {
     | '/inventory/service'
     | '/inventory/vendors'
     | '/inventory/warehouse'
+    | '/procurement/budgets'
+    | '/procurement/vendors'
     | '/account/opening-balance/edit/$uuid'
     | '/account/voucher/contra/create'
     | '/account/voucher/credit/create'
@@ -1690,6 +1855,8 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/procurement/vendors/edit/$id'
+    | '/procurement/vendors/view/$id'
     | '/account/voucher/contra'
     | '/account/voucher/credit'
     | '/account/voucher/debit'
@@ -1709,6 +1876,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_authenticated'
+    | '/vendor-onboarding'
     | '/_auth/forgot-password'
     | '/_auth/login'
     | '/_auth/reset-password'
@@ -1729,10 +1897,12 @@ export interface FileRouteTypes {
     | '/_authenticated/account/voucher-approval'
     | '/_authenticated/hrm/attendance'
     | '/_authenticated/hrm/attendance-report'
+    | '/_authenticated/hrm/department'
     | '/_authenticated/hrm/designation'
     | '/_authenticated/hrm/payroll'
     | '/_authenticated/hrm/payroll-generate'
     | '/_authenticated/hrm/payroll-manage-salary'
+    | '/_authenticated/procurement/cost-centers'
     | '/_authenticated/role/create'
     | '/_authenticated/settings/company'
     | '/_authenticated/settings/currency'
@@ -1794,6 +1964,13 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/create'
     | '/_authenticated/inventory/warehouse/create'
     | '/_authenticated/inventory/warehouse/stock-movement'
+    | '/_authenticated/procurement/budgets/categories'
+    | '/_authenticated/procurement/budgets/heads'
+    | '/_authenticated/procurement/vendors/blacklists'
+    | '/_authenticated/procurement/vendors/categories'
+    | '/_authenticated/procurement/vendors/create'
+    | '/_authenticated/procurement/vendors/document-types'
+    | '/_authenticated/procurement/vendors/invitations'
     | '/_authenticated/role/edit/$uuid'
     | '/_authenticated/user/edit/$uuid'
     | '/_authenticated/account/opening-balance/'
@@ -1808,6 +1985,8 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/service/'
     | '/_authenticated/inventory/vendors/'
     | '/_authenticated/inventory/warehouse/'
+    | '/_authenticated/procurement/budgets/'
+    | '/_authenticated/procurement/vendors/'
     | '/_authenticated/account/opening-balance/edit/$uuid'
     | '/_authenticated/account/voucher/contra/create'
     | '/_authenticated/account/voucher/credit/create'
@@ -1834,6 +2013,8 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/edit/$id'
     | '/_authenticated/inventory/warehouse/edit/$id'
     | '/_authenticated/inventory/warehouse/stock-movement/create'
+    | '/_authenticated/procurement/vendors/edit/$id'
+    | '/_authenticated/procurement/vendors/view/$id'
     | '/_authenticated/account/voucher/contra/'
     | '/_authenticated/account/voucher/credit/'
     | '/_authenticated/account/voucher/debit/'
@@ -1854,10 +2035,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  VendorOnboardingRoute: typeof VendorOnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vendor-onboarding': {
+      id: '/vendor-onboarding'
+      path: '/vendor-onboarding'
+      fullPath: '/vendor-onboarding'
+      preLoaderRoute: typeof VendorOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -1970,6 +2159,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRoleCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/cost-centers': {
+      id: '/_authenticated/procurement/cost-centers'
+      path: '/procurement/cost-centers'
+      fullPath: '/procurement/cost-centers'
+      preLoaderRoute: typeof AuthenticatedProcurementCostCentersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/hrm/payroll-manage-salary': {
       id: '/_authenticated/hrm/payroll-manage-salary'
       path: '/hrm/payroll-manage-salary'
@@ -1996,6 +2192,13 @@ declare module '@tanstack/react-router' {
       path: '/hrm/designation'
       fullPath: '/hrm/designation'
       preLoaderRoute: typeof AuthenticatedHrmDesignationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/hrm/department': {
+      id: '/_authenticated/hrm/department'
+      path: '/hrm/department'
+      fullPath: '/hrm/department'
+      preLoaderRoute: typeof AuthenticatedHrmDepartmentRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/hrm/attendance-report': {
@@ -2110,6 +2313,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountBankReconciliationRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/vendors/': {
+      id: '/_authenticated/procurement/vendors/'
+      path: '/procurement/vendors'
+      fullPath: '/procurement/vendors/'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/budgets/': {
+      id: '/_authenticated/procurement/budgets/'
+      path: '/procurement/budgets'
+      fullPath: '/procurement/budgets/'
+      preLoaderRoute: typeof AuthenticatedProcurementBudgetsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/warehouse/': {
       id: '/_authenticated/inventory/warehouse/'
       path: '/inventory/warehouse'
@@ -2206,6 +2423,55 @@ declare module '@tanstack/react-router' {
       path: '/role/edit/$uuid'
       fullPath: '/role/edit/$uuid'
       preLoaderRoute: typeof AuthenticatedRoleEditUuidRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/vendors/invitations': {
+      id: '/_authenticated/procurement/vendors/invitations'
+      path: '/procurement/vendors/invitations'
+      fullPath: '/procurement/vendors/invitations'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsInvitationsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/vendors/document-types': {
+      id: '/_authenticated/procurement/vendors/document-types'
+      path: '/procurement/vendors/document-types'
+      fullPath: '/procurement/vendors/document-types'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsDocumentTypesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/vendors/create': {
+      id: '/_authenticated/procurement/vendors/create'
+      path: '/procurement/vendors/create'
+      fullPath: '/procurement/vendors/create'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/vendors/categories': {
+      id: '/_authenticated/procurement/vendors/categories'
+      path: '/procurement/vendors/categories'
+      fullPath: '/procurement/vendors/categories'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsCategoriesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/vendors/blacklists': {
+      id: '/_authenticated/procurement/vendors/blacklists'
+      path: '/procurement/vendors/blacklists'
+      fullPath: '/procurement/vendors/blacklists'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsBlacklistsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/budgets/heads': {
+      id: '/_authenticated/procurement/budgets/heads'
+      path: '/procurement/budgets/heads'
+      fullPath: '/procurement/budgets/heads'
+      preLoaderRoute: typeof AuthenticatedProcurementBudgetsHeadsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/budgets/categories': {
+      id: '/_authenticated/procurement/budgets/categories'
+      path: '/procurement/budgets/categories'
+      fullPath: '/procurement/budgets/categories'
+      preLoaderRoute: typeof AuthenticatedProcurementBudgetsCategoriesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/warehouse/stock-movement': {
@@ -2621,6 +2887,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountVoucherContraIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/vendors/view/$id': {
+      id: '/_authenticated/procurement/vendors/view/$id'
+      path: '/procurement/vendors/view/$id'
+      fullPath: '/procurement/vendors/view/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsViewIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/vendors/edit/$id': {
+      id: '/_authenticated/procurement/vendors/edit/$id'
+      path: '/procurement/vendors/edit/$id'
+      fullPath: '/procurement/vendors/edit/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementVendorsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/warehouse/stock-movement/create': {
       id: '/_authenticated/inventory/warehouse/stock-movement/create'
       path: '/create'
@@ -2902,10 +3182,12 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccountVoucherApprovalRoute: typeof AuthenticatedAccountVoucherApprovalRoute
   AuthenticatedHrmAttendanceRoute: typeof AuthenticatedHrmAttendanceRoute
   AuthenticatedHrmAttendanceReportRoute: typeof AuthenticatedHrmAttendanceReportRoute
+  AuthenticatedHrmDepartmentRoute: typeof AuthenticatedHrmDepartmentRoute
   AuthenticatedHrmDesignationRoute: typeof AuthenticatedHrmDesignationRoute
   AuthenticatedHrmPayrollRoute: typeof AuthenticatedHrmPayrollRoute
   AuthenticatedHrmPayrollGenerateRoute: typeof AuthenticatedHrmPayrollGenerateRoute
   AuthenticatedHrmPayrollManageSalaryRoute: typeof AuthenticatedHrmPayrollManageSalaryRoute
+  AuthenticatedProcurementCostCentersRoute: typeof AuthenticatedProcurementCostCentersRoute
   AuthenticatedRoleCreateRoute: typeof AuthenticatedRoleCreateRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
   AuthenticatedSettingsCurrencyRoute: typeof AuthenticatedSettingsCurrencyRoute
@@ -2967,6 +3249,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryVendorsCreateRoute: typeof AuthenticatedInventoryVendorsCreateRoute
   AuthenticatedInventoryWarehouseCreateRoute: typeof AuthenticatedInventoryWarehouseCreateRoute
   AuthenticatedInventoryWarehouseStockMovementRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
+  AuthenticatedProcurementBudgetsCategoriesRoute: typeof AuthenticatedProcurementBudgetsCategoriesRoute
+  AuthenticatedProcurementBudgetsHeadsRoute: typeof AuthenticatedProcurementBudgetsHeadsRoute
+  AuthenticatedProcurementVendorsBlacklistsRoute: typeof AuthenticatedProcurementVendorsBlacklistsRoute
+  AuthenticatedProcurementVendorsCategoriesRoute: typeof AuthenticatedProcurementVendorsCategoriesRoute
+  AuthenticatedProcurementVendorsCreateRoute: typeof AuthenticatedProcurementVendorsCreateRoute
+  AuthenticatedProcurementVendorsDocumentTypesRoute: typeof AuthenticatedProcurementVendorsDocumentTypesRoute
+  AuthenticatedProcurementVendorsInvitationsRoute: typeof AuthenticatedProcurementVendorsInvitationsRoute
   AuthenticatedRoleEditUuidRoute: typeof AuthenticatedRoleEditUuidRoute
   AuthenticatedUserEditUuidRoute: typeof AuthenticatedUserEditUuidRoute
   AuthenticatedAccountOpeningBalanceIndexRoute: typeof AuthenticatedAccountOpeningBalanceIndexRoute
@@ -2981,6 +3270,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryServiceIndexRoute: typeof AuthenticatedInventoryServiceIndexRoute
   AuthenticatedInventoryVendorsIndexRoute: typeof AuthenticatedInventoryVendorsIndexRoute
   AuthenticatedInventoryWarehouseIndexRoute: typeof AuthenticatedInventoryWarehouseIndexRoute
+  AuthenticatedProcurementBudgetsIndexRoute: typeof AuthenticatedProcurementBudgetsIndexRoute
+  AuthenticatedProcurementVendorsIndexRoute: typeof AuthenticatedProcurementVendorsIndexRoute
   AuthenticatedAccountOpeningBalanceEditUuidRoute: typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   AuthenticatedAccountVoucherContraCreateRoute: typeof AuthenticatedAccountVoucherContraCreateRoute
   AuthenticatedAccountVoucherCreditCreateRoute: typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -3006,6 +3297,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryServiceInvoiceViewIdRoute: typeof AuthenticatedInventoryServiceInvoiceViewIdRoute
   AuthenticatedInventoryVendorsEditIdRoute: typeof AuthenticatedInventoryVendorsEditIdRoute
   AuthenticatedInventoryWarehouseEditIdRoute: typeof AuthenticatedInventoryWarehouseEditIdRoute
+  AuthenticatedProcurementVendorsEditIdRoute: typeof AuthenticatedProcurementVendorsEditIdRoute
+  AuthenticatedProcurementVendorsViewIdRoute: typeof AuthenticatedProcurementVendorsViewIdRoute
   AuthenticatedAccountVoucherContraIndexRoute: typeof AuthenticatedAccountVoucherContraIndexRoute
   AuthenticatedAccountVoucherCreditIndexRoute: typeof AuthenticatedAccountVoucherCreditIndexRoute
   AuthenticatedAccountVoucherDebitIndexRoute: typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -3052,11 +3345,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedAccountVoucherApprovalRoute,
   AuthenticatedHrmAttendanceRoute: AuthenticatedHrmAttendanceRoute,
   AuthenticatedHrmAttendanceReportRoute: AuthenticatedHrmAttendanceReportRoute,
+  AuthenticatedHrmDepartmentRoute: AuthenticatedHrmDepartmentRoute,
   AuthenticatedHrmDesignationRoute: AuthenticatedHrmDesignationRoute,
   AuthenticatedHrmPayrollRoute: AuthenticatedHrmPayrollRoute,
   AuthenticatedHrmPayrollGenerateRoute: AuthenticatedHrmPayrollGenerateRoute,
   AuthenticatedHrmPayrollManageSalaryRoute:
     AuthenticatedHrmPayrollManageSalaryRoute,
+  AuthenticatedProcurementCostCentersRoute:
+    AuthenticatedProcurementCostCentersRoute,
   AuthenticatedRoleCreateRoute: AuthenticatedRoleCreateRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
   AuthenticatedSettingsCurrencyRoute: AuthenticatedSettingsCurrencyRoute,
@@ -3166,6 +3462,20 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseCreateRoute,
   AuthenticatedInventoryWarehouseStockMovementRoute:
     AuthenticatedInventoryWarehouseStockMovementRouteWithChildren,
+  AuthenticatedProcurementBudgetsCategoriesRoute:
+    AuthenticatedProcurementBudgetsCategoriesRoute,
+  AuthenticatedProcurementBudgetsHeadsRoute:
+    AuthenticatedProcurementBudgetsHeadsRoute,
+  AuthenticatedProcurementVendorsBlacklistsRoute:
+    AuthenticatedProcurementVendorsBlacklistsRoute,
+  AuthenticatedProcurementVendorsCategoriesRoute:
+    AuthenticatedProcurementVendorsCategoriesRoute,
+  AuthenticatedProcurementVendorsCreateRoute:
+    AuthenticatedProcurementVendorsCreateRoute,
+  AuthenticatedProcurementVendorsDocumentTypesRoute:
+    AuthenticatedProcurementVendorsDocumentTypesRoute,
+  AuthenticatedProcurementVendorsInvitationsRoute:
+    AuthenticatedProcurementVendorsInvitationsRoute,
   AuthenticatedRoleEditUuidRoute: AuthenticatedRoleEditUuidRoute,
   AuthenticatedUserEditUuidRoute: AuthenticatedUserEditUuidRoute,
   AuthenticatedAccountOpeningBalanceIndexRoute:
@@ -3189,6 +3499,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryVendorsIndexRoute,
   AuthenticatedInventoryWarehouseIndexRoute:
     AuthenticatedInventoryWarehouseIndexRoute,
+  AuthenticatedProcurementBudgetsIndexRoute:
+    AuthenticatedProcurementBudgetsIndexRoute,
+  AuthenticatedProcurementVendorsIndexRoute:
+    AuthenticatedProcurementVendorsIndexRoute,
   AuthenticatedAccountOpeningBalanceEditUuidRoute:
     AuthenticatedAccountOpeningBalanceEditUuidRoute,
   AuthenticatedAccountVoucherContraCreateRoute:
@@ -3237,6 +3551,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryVendorsEditIdRoute,
   AuthenticatedInventoryWarehouseEditIdRoute:
     AuthenticatedInventoryWarehouseEditIdRoute,
+  AuthenticatedProcurementVendorsEditIdRoute:
+    AuthenticatedProcurementVendorsEditIdRoute,
+  AuthenticatedProcurementVendorsViewIdRoute:
+    AuthenticatedProcurementVendorsViewIdRoute,
   AuthenticatedAccountVoucherContraIndexRoute:
     AuthenticatedAccountVoucherContraIndexRoute,
   AuthenticatedAccountVoucherCreditIndexRoute:
@@ -3276,6 +3594,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  VendorOnboardingRoute: VendorOnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,3 +1,41 @@
+export interface Department {
+  id: number
+  uuid: string
+  name: string
+  code?: string | null
+  details?: string | null
+  status: number // 1 for active, 0 for inactive
+  created_at?: string
+  updated_at?: string
+}
+
+export interface DepartmentFilters {
+  page?: number
+  per_page?: number
+  search?: string
+  status?: string | number
+  start_date?: string
+  end_date?: string
+  sort_by?: string
+  sort_direction?: 'asc' | 'desc'
+  all?: boolean | number
+}
+
+export interface CreateDepartmentDto {
+  name: string
+  code?: string | null
+  details?: string | null
+  status?: number
+}
+
+export interface UpdateDepartmentDto {
+  id: number
+  name: string
+  code?: string | null
+  details?: string | null
+  status?: number
+}
+
 export interface Designation {
   id: number
   uuid: string

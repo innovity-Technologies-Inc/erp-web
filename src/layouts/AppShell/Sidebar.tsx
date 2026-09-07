@@ -13,7 +13,8 @@ import {
   FileText,
   BookOpen,
   UserCog,
-  Settings
+  Settings,
+  ShoppingBag
 } from 'lucide-react'
 import { useUiStore } from '@/store/useUiStore'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -108,6 +109,18 @@ const menuItems: MenuGroup[] = [
     ]
   },
   {
+    group: 'PROCUREMENT',
+    items: [
+      { 
+        name: 'Procurement', 
+        icon: ShoppingBag, 
+        to: '/procurement/vendors', 
+        permission: ['view_vendor', 'view_procurement_pr', 'view_purchase_order', 'view_rfq'],
+        activePaths: ['/procurement']
+      },
+    ]
+  },
+  {
     group: 'REPORT',
     items: [
       { 
@@ -154,8 +167,8 @@ const menuItems: MenuGroup[] = [
       { 
         name: 'HRM', 
         icon: Users, 
-        to: '/hrm/designation', 
-        permission: 'view_designation',
+        to: '/hrm/department', 
+        permission: ['view_department', 'view_designation', 'view_employee'],
         activePaths: ['/hrm']
       },
     ]

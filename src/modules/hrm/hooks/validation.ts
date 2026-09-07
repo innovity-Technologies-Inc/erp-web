@@ -1,5 +1,23 @@
 import { z } from 'zod'
 
+export const departmentSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Department name is required')
+    .max(255, 'Department name must not exceed 255 characters'),
+  code: z.string().max(50, 'Code must not exceed 50 characters').optional().nullable(),
+  details: z.string().optional().nullable(),
+  status: z
+    .union([z.number(), z.boolean(), z.string()])
+    .transform((val) => {
+      if (typeof val === 'boolean') return val ? 1 : 0
+      return Number(val)
+    })
+    .default(1),
+})
+
+export type DepartmentFormValues = z.infer<typeof departmentSchema>
+
 export const designationSchema = z.object({
   designation: z
     .string()

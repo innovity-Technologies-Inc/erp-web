@@ -1,3 +1,9 @@
+export { DepartmentListPage } from './views/department/DepartmentListPage'
+export { DepartmentModal } from './components/DepartmentModal'
+export * from './api/department.api'
+export * from './api/department.keys'
+export * from './hooks/useDepartments'
+
 export { DesignationListPage } from './views/designation/DesignationListPage'
 export { EmployeeListPage } from './views/employee/EmployeeListPage'
 export { EmployeeCreatePage } from './views/employee/EmployeeCreatePage'

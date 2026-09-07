@@ -258,6 +258,7 @@ export const EmployeeListPage = () => {
   ]
 
   const titleOptions = [
+    { name: 'Department List', to: '/hrm/department' },
     { name: 'Designation List', to: '/hrm/designation' },
     { name: 'Employee List', to: '/hrm/employee' },
   ]

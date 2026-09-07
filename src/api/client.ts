@@ -10,15 +10,17 @@ export const apiClient = axios.create({
 })
 
 apiClient.interceptors.request.use((config) => {
-  const { token, expiresAt, clearUser } = useAuthStore.getState()
+  const { expiresAt, clearUser } = useAuthStore.getState()
   
   if (expiresAt && Date.now() > expiresAt) {
     clearUser()
-    return Promise.reject(new Error('Token expired'))
   }
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  const currentToken = useAuthStore.getState().token
+  if (currentToken) {
+    config.headers.Authorization = `Bearer ${currentToken}`
+  } else {
+    delete config.headers.Authorization
   }
   return config
 })

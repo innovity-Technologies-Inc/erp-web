@@ -69,6 +69,9 @@ export interface ListPageLayoutProps<T extends object> {
 
   /** Label for the dark create button. Defaults to 'Create' */
   addLabel?: string
+
+  /** Extra button or component rendered immediately beside the create button */
+  createExtra?: ReactNode
   
   /** Extra component to show in the toolbar */
   toolbarExtra?: ReactNode
@@ -137,6 +140,7 @@ export const ListPageLayout = <T extends object>({
   onDateRangeChange,
   onExport,
   addLabel,
+  createExtra,
   toolbarExtra,
   toolbarRightExtra,
   customHeaderRight,
@@ -272,6 +276,8 @@ export const ListPageLayout = <T extends object>({
                 </button>
               )
             )}
+
+            {createExtra}
 
             {showSearch && (
               <div className={clsx("relative w-full shrink-0", searchWidth || "max-w-[320px]")}>
