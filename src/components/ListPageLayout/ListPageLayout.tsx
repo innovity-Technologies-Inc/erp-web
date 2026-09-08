@@ -22,7 +22,8 @@ import { Link } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import type { ColDef } from 'ag-grid-community'
 
-import { PageTitleDropdown } from '@/components/Dropdown/PageTitleDropdown'
+import { PageTitleDropdown, type PageTitleDropdownOption } from '@/components/Dropdown/PageTitleDropdown'
+import { usePermissions } from '@/hooks/usePermissions'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,12 +31,13 @@ export interface NavTab {
   name: string
   to: string
   active?: boolean
+  permission?: string | string[]
 }
 
 export interface ListPageLayoutProps<T extends object> {
   // ── Header ──
   title: string
-  titleOptions?: { name: string; to: string }[]
+  titleOptions?: PageTitleDropdownOption[]
   backTo: string
 
   // ── Nav tabs (top-right) ──
@@ -166,6 +168,17 @@ export const ListPageLayout = <T extends object>({
 
   const [colMenuOpen, setColMenuOpen] = useState(false)
   const colMenuRef = useRef<HTMLDivElement>(null)
+  const { hasPermission, hasAnyPermission } = usePermissions()
+
+  const visibleTabs = useMemo(() => {
+    return tabs?.filter((tab) => {
+      if (!tab.permission) return true
+      if (Array.isArray(tab.permission)) {
+        return hasAnyPermission(tab.permission)
+      }
+      return hasPermission(tab.permission)
+    })
+  }, [tabs, hasPermission, hasAnyPermission])
 
   // Close column menu on click outside
   useEffect(() => {
@@ -225,7 +238,7 @@ export const ListPageLayout = <T extends object>({
           {customHeaderRight ? (
             customHeaderRight
           ) : (
-            tabs?.map((tab) => (
+            visibleTabs?.map((tab) => (
               <Link
                 key={tab.name}
                 to={tab.to}

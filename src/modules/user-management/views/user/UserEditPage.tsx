@@ -143,7 +143,8 @@ export const UserEditPage = () => {
         city: u.city || '',
         state: u.state || '',
         zip_code: u.zip_code || '',
-        user_type: u.user_type,
+        user_type: u.user_type ? u.user_type.toLowerCase() : 'user',
+        status: (u as any).status !== undefined ? (u as any).status : 1,
         is_demo_user: u.is_demo_user,
         organization_id: u.organization_id ? String(u.organization_id) : '',
         company_id: u.company_id ? String(u.company_id) : '',
@@ -197,6 +198,7 @@ export const UserEditPage = () => {
     formData.append('state', data.state || '')
     formData.append('zip_code', data.zip_code || '')
     formData.append('user_type', data.user_type)
+    formData.append('status', String(data.status ?? 1))
     formData.append('is_demo_user', String(data.is_demo_user))
 
     if (data.organization_id) {
@@ -481,8 +483,11 @@ export const UserEditPage = () => {
                   <select
                     {...register('user_type')}
                     className="erp-input w-full"
+                    disabled
                   >
                     <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                    <option value="vendor">Vendor</option>
                   </select>
                 ) : (
                   <select
@@ -491,8 +496,19 @@ export const UserEditPage = () => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
+                    <option value="vendor">Vendor</option>
                   </select>
                 )}
+              </FormField>
+
+              <FormField label="Account Status" error={errors.status?.message} required>
+                <select
+                  {...register('status')}
+                  className="erp-input w-full"
+                >
+                  <option value="1">Active</option>
+                  <option value="0">Inactive / Locked</option>
+                </select>
               </FormField>
 
               <FormField label="Role" error={errors.roles?.message} required>

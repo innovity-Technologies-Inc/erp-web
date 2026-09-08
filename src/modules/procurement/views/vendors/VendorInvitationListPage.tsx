@@ -391,20 +391,20 @@ export const VendorInvitationListPage = () => {
   const totalPages = Math.ceil(totalRecords / pageSize) || 1
 
   const tabs = [
-    { name: 'Vendors', to: '/procurement/vendors', active: true },
-    { name: 'Requisitions & RFQ', to: '/procurement/sourcing' },
-    { name: 'Purchase Orders', to: '/procurement/purchase-orders' },
-    { name: 'Goods Receipt (GRN)', to: '/procurement/grns' },
-    { name: 'Invoices & Payments', to: '/procurement/invoices' },
-    { name: 'Budgets & Cost Centers', to: '/procurement/budgets' },
+    { name: 'Vendors', to: '/procurement/vendors', active: true, permission: ['view_vendor', 'view_vendor_invitation', 'view_vendor_category', 'view_vendor_document_type', 'view_vendor_blacklist'] },
+    { name: 'Requisitions & RFQ', to: '/procurement/sourcing', permission: ['view_rfq', 'view_procurement_pr'] },
+    { name: 'Purchase Orders', to: '/procurement/purchase-orders', permission: 'view_purchase_order' },
+    { name: 'Goods Receipt (GRN)', to: '/procurement/grns', permission: 'view_grn' },
+    { name: 'Invoices & Payments', to: '/procurement/invoices', permission: ['view_invoice', 'submit_invoice', 'view_vendor_invoice'] },
+    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head', 'view_cost_center'] },
   ]
 
   const titleOptions = [
-    { name: 'Vendor List', to: '/procurement/vendors' },
-    { name: 'Invited Vendors', to: '/procurement/vendors/invitations' },
-    { name: 'Vendor Categories', to: '/procurement/vendors/categories' },
-    { name: 'Document Types', to: '/procurement/vendors/document-types' },
-    { name: 'Blacklisted Vendors', to: '/procurement/vendors/blacklists' },
+    { name: 'Vendor List', to: '/procurement/vendors', permission: 'view_vendor' },
+    { name: 'Invited Vendors', to: '/procurement/vendors/invitations', permission: 'view_vendor_invitation' },
+    { name: 'Vendor Categories', to: '/procurement/vendors/categories', permission: 'view_vendor_category' },
+    { name: 'Document Types', to: '/procurement/vendors/document-types', permission: 'view_vendor_document_type' },
+    { name: 'Blacklisted Vendors', to: '/procurement/vendors/blacklists', permission: 'view_vendor_blacklist' },
   ]
 
   return (

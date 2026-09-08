@@ -67,6 +67,7 @@ export const UserCreatePage = () => {
       state: '',
       zip_code: '',
       user_type: 'user',
+      status: 1,
       is_demo_user: 0,
       organization_id: '',
       company_id: '',
@@ -151,6 +152,7 @@ export const UserCreatePage = () => {
     formData.append('state', data.state || '')
     formData.append('zip_code', data.zip_code || '')
     formData.append('user_type', data.user_type)
+    formData.append('status', String(data.status ?? 1))
     formData.append('is_demo_user', String(data.is_demo_user))
 
     if (data.organization_id) {
@@ -434,8 +436,19 @@ export const UserCreatePage = () => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
+                    <option value="vendor">Vendor</option>
                   </select>
                 )}
+              </FormField>
+
+              <FormField label="Account Status" error={errors.status?.message} required>
+                <select
+                  {...register('status')}
+                  className="erp-input w-full"
+                >
+                  <option value="1">Active</option>
+                  <option value="0">Inactive / Locked</option>
+                </select>
               </FormField>
 
               <FormField label="Role" error={errors.roles?.message} required>

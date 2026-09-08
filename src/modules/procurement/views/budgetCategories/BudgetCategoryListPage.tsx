@@ -230,19 +230,19 @@ export const BudgetCategoryListPage = () => {
   const totalPages = Math.ceil(totalRecords / pageSize) || 1
 
   const tabs = [
-    { name: 'Vendors', to: '/procurement/vendors' },
-    { name: 'Requisitions & RFQ', to: '/procurement/sourcing' },
-    { name: 'Purchase Orders', to: '/procurement/purchase-orders' },
-    { name: 'Goods Receipt (GRN)', to: '/procurement/grns' },
-    { name: 'Invoices & Payments', to: '/procurement/invoices' },
-    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', active: true },
+    { name: 'Vendors', to: '/procurement/vendors', permission: ['view_vendor', 'view_vendor_invitation', 'view_vendor_category', 'view_vendor_document_type', 'view_vendor_blacklist'] },
+    { name: 'Requisitions & RFQ', to: '/procurement/sourcing', permission: ['view_rfq', 'view_procurement_pr'] },
+    { name: 'Purchase Orders', to: '/procurement/purchase-orders', permission: 'view_purchase_order' },
+    { name: 'Goods Receipt (GRN)', to: '/procurement/grns', permission: 'view_grn' },
+    { name: 'Invoices & Payments', to: '/procurement/invoices', permission: ['view_invoice', 'submit_invoice', 'view_vendor_invoice'] },
+    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', active: true, permission: ['view_budget', 'view_budget_category', 'view_budget_head', 'view_cost_center'] },
   ]
 
   const titleOptions = [
-    { name: 'Budget Allocations', to: '/procurement/budgets' },
-    { name: 'Budget Categories', to: '/procurement/budgets/categories' },
-    { name: 'Budget Heads', to: '/procurement/budgets/heads' },
-    { name: 'Cost Centers', to: '/procurement/cost-centers' },
+    { name: 'Budget Allocations', to: '/procurement/budgets', permission: 'view_budget' },
+    { name: 'Budget Categories', to: '/procurement/budgets/categories', permission: 'view_budget_category' },
+    { name: 'Budget Heads', to: '/procurement/budgets/heads', permission: 'view_budget_head' },
+    { name: 'Cost Centers', to: '/procurement/cost-centers', permission: 'view_cost_center' },
   ]
 
   return (

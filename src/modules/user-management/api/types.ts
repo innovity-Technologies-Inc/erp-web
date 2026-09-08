@@ -46,6 +46,7 @@ export interface UserListItem {
   role: string
   role_name: string
   user_type: string
+  status?: number
   is_demo_user: number
   demo_user_status: string
   image?: string // Path to profile image

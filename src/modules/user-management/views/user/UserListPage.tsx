@@ -22,6 +22,7 @@ export const UserListPage = () => {
   const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [userTypeFilter, setUserTypeFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
 
@@ -35,6 +36,7 @@ export const UserListPage = () => {
     email: true,
     mobile: true,
     user_type: true,
+    status: true,
     role: true,
     demo_user: true,
     action: true,
@@ -49,11 +51,12 @@ export const UserListPage = () => {
       search: { value: search },
       // Optional extra filters matching UI dropdowns
       user_type: userTypeFilter || undefined,
+      status: statusFilter !== '' ? statusFilter : undefined,
       role_id: roleFilter || undefined,
       start_date: dateRange.start || undefined,
       end_date: dateRange.end || undefined,
     }),
-    [currentPage, pageSize, search, userTypeFilter, roleFilter, dateRange]
+    [currentPage, pageSize, search, userTypeFilter, statusFilter, roleFilter, dateRange]
   )
 
   const { data: usersData, isLoading } = useUsersDatatable(params)
@@ -105,6 +108,7 @@ export const UserListPage = () => {
       { header: 'Mobile', key: 'mobile', width: 15 },
       { header: 'Role', key: 'role', width: 20 },
       { header: 'User Type', key: 'userType', width: 15 },
+      { header: 'Status', key: 'status', width: 12 },
     ]
 
     const exportData = usersData.data.map((item: any, index: number) => ({
@@ -114,6 +118,7 @@ export const UserListPage = () => {
       mobile: item.mobile,
       role: item.role_name,
       userType: item.user_type,
+      status: Number(item.status ?? 1) === 1 ? 'Active' : 'Inactive',
     }))
 
     exportToExcel(exportData, exportColumns, 'users-list')
@@ -218,6 +223,29 @@ export const UserListPage = () => {
         cellClass: 'text-gray-600 flex items-center',
       },
       {
+        headerName: 'STATUS',
+        field: 'status',
+        width: 105,
+        hide: !visibleCols.status,
+        cellClass: 'flex items-center justify-center',
+        cellRenderer: (params: any) => {
+          const isActive = Number(params.data?.status ?? 1) === 1
+          return (
+            <div className="flex items-center justify-center h-full">
+              <span
+                className={`inline-flex items-center justify-center h-[22px] px-3 rounded-full text-[11px] font-medium tracking-tight uppercase leading-none ${
+                  isActive
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-rose-50 text-rose-700 border border-rose-200'
+                }`}
+              >
+                {isActive ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+          )
+        },
+      },
+      {
         headerName: 'ROLE',
         field: 'role_name',
         minWidth: 150,
@@ -313,6 +341,7 @@ export const UserListPage = () => {
       { name: 'Email', field: 'email', visible: visibleCols.email },
       { name: 'Mobile', field: 'mobile', visible: visibleCols.mobile },
       { name: 'User Type', field: 'user_type', visible: visibleCols.user_type },
+      { name: 'Status', field: 'status', visible: visibleCols.status },
       { name: 'Role', field: 'role', visible: visibleCols.role },
       { name: 'Demo User', field: 'demo_user', visible: visibleCols.demo_user },
       { name: 'Action', field: 'action', visible: visibleCols.action },
@@ -322,8 +351,8 @@ export const UserListPage = () => {
 
   const tabs = useMemo(
     () => [
-      { name: 'User Management', to: '/user', active: true },
-      { name: 'Role', to: '/role' },
+      { name: 'User Management', to: '/user', active: true, permission: 'view_user' },
+      { name: 'Role', to: '/role', permission: 'view_role' },
     ],
     []
   )
@@ -380,6 +409,20 @@ export const UserListPage = () => {
               <option value="">User Type</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
+              <option value="vendor">Vendor</option>
+            </select>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="bg-[#f8fafc] border border-gray-100 px-3 py-1.5 rounded-full text-[11px] font-semibold text-gray-500 hover:border-gray-300 focus:ring-1 focus:ring-primary/20 transition-all outline-none"
+            >
+              <option value="">Status</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
             </select>
           </div>
         }

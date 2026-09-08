@@ -23,6 +23,7 @@ export const userSchema = z.object({
   state: z.string().optional(),
   zip_code: z.string().optional(),
   user_type: z.string().min(1, 'User type is required'),
+  status: z.union([z.string(), z.number()]).optional().default(1),
   is_demo_user: z.number().optional().default(0),
   organization_id: z.any().optional(),
   company_id: z.any().optional(),
