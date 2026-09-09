@@ -5,6 +5,7 @@ export const settingsTabs = [
   { name: 'Print', to: '/settings/print', permission: 'view_print_setting' },
   { name: 'Email', to: '/settings/email', permission: 'view_email_setting' },
   { name: 'Setting', to: '/settings/setting', permission: 'view_general_setting' },
+  { name: 'Approval Workflows', to: '/settings/approval-workflows' },
 ]
 
 export const getSettingsTabs = (

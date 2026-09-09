@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { queryClient } from '@/api/QueryProvider'
 
 export interface User {
   id: number
@@ -33,10 +34,22 @@ export const useAuthStore = create<AuthState>()(
       expiresAt: null,
       permissions: [],
       setUser: (user, token, permissions, expiresIn) => {
+        try {
+          queryClient.clear()
+        } catch {
+          // ignore if not mounted yet
+        }
         const expiresAt = Date.now() + expiresIn * 1000
         set({ user, token, permissions, expiresAt })
       },
-      clearUser: () => set({ user: null, token: null, permissions: [], expiresAt: null }),
+      clearUser: () => {
+        try {
+          queryClient.clear()
+        } catch {
+          // ignore if not mounted yet
+        }
+        set({ user: null, token: null, permissions: [], expiresAt: null })
+      },
       setToken: (token) => set({ token }),
     }),
     {

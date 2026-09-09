@@ -12,6 +12,14 @@ export { CostCenterListPage } from './views/costCenters/CostCenterListPage'
 export { BudgetCategoryListPage } from './views/budgetCategories/BudgetCategoryListPage'
 export { BudgetHeadListPage } from './views/budgetHeads/BudgetHeadListPage'
 export { BudgetListPage } from './views/budgets/BudgetListPage'
+export { PurchaseRequisitionListPage } from './views/purchaseRequisitions/PurchaseRequisitionListPage'
+export { PurchaseRequisitionCreatePage } from './views/purchaseRequisitions/PurchaseRequisitionCreatePage'
+export { PurchaseRequisitionEditPage } from './views/purchaseRequisitions/PurchaseRequisitionEditPage'
+export { PurchaseRequisitionViewPage } from './views/purchaseRequisitions/PurchaseRequisitionViewPage'
+export { TermsLibraryListPage } from './views/termsLibrary/TermsLibraryListPage'
+export { RFQEvaluationTemplateListPage } from './views/rfqEvaluationTemplates/RFQEvaluationTemplateListPage'
+export { RFQEvaluationTemplateCreatePage } from './views/rfqEvaluationTemplates/RFQEvaluationTemplateCreatePage'
+export { RFQEvaluationTemplateEditPage } from './views/rfqEvaluationTemplates/RFQEvaluationTemplateEditPage'
 
 // Components
 export { VendorCategoryModal } from './components/vendor/VendorCategoryModal'
@@ -27,6 +35,8 @@ export { BudgetModal } from './components/budget/BudgetModal'
 export { BudgetApprovalModal } from './components/budget/BudgetApprovalModal'
 export { BudgetTransferModal } from './components/budget/BudgetTransferModal'
 export { BudgetDetailsModal } from './components/budget/BudgetDetailsModal'
+export { TermsLibraryModal } from './components/termsLibrary/TermsLibraryModal'
+export { RFQEvaluationTemplateModal } from './components/rfqEvaluationTemplate/RFQEvaluationTemplateModal'
 
 // Hooks
 export {
@@ -104,6 +114,31 @@ export {
   useTransferBudget,
 } from './hooks/useBudgets'
 
+export {
+  usePurchaseRequisitions,
+  usePurchaseRequisitionDetails,
+  useCreatePurchaseRequisition,
+  useUpdatePurchaseRequisition,
+  useDeletePurchaseRequisition,
+  useApprovePurchaseRequisition,
+} from './hooks/usePurchaseRequisitions'
+
+export {
+  useTermsLibrary,
+  useTermsLibraryDetails,
+  useCreateTermsLibrary,
+  useUpdateTermsLibrary,
+  useDeleteTermsLibrary,
+} from './hooks/useTermsLibrary'
+
+export {
+  useRFQEvaluationTemplates,
+  useRFQEvaluationTemplateDetails,
+  useCreateRFQEvaluationTemplate,
+  useUpdateRFQEvaluationTemplate,
+  useDeleteRFQEvaluationTemplate,
+} from './hooks/useRFQEvaluationTemplates'
+
 // Validation
 export {
   vendorCategorySchema,
@@ -115,6 +150,11 @@ export {
   budgetSchema,
   budgetApprovalSchema,
   budgetTransferSchema,
+  purchaseRequisitionSchema,
+  purchaseRequisitionItemSchema,
+  termsLibrarySchema,
+  rfqEvaluationTemplateSchema,
+  evaluationCriterionSchema,
 } from './hooks/validation'
 export type {
   VendorCategoryFormValues,
@@ -126,6 +166,11 @@ export type {
   BudgetFormValues,
   BudgetApprovalFormValues,
   BudgetTransferFormValues,
+  PurchaseRequisitionFormValues,
+  PurchaseRequisitionItemFormValues,
+  TermsLibraryFormValues,
+  RFQEvaluationTemplateFormValues,
+  EvaluationCriterionFormValues,
 } from './hooks/validation'
 
 // API & Types
@@ -137,6 +182,9 @@ export * from './api/costCenter.api'
 export * from './api/budgetCategory.api'
 export * from './api/budgetHead.api'
 export * from './api/budget.api'
+export * from './api/purchaseRequisition.api'
+export * from './api/termsLibrary.api'
+export * from './api/rfqEvaluationTemplate.api'
 export * from './api/types'
 export * from './api/vendor.keys'
 export * from './utils/treeUtils'

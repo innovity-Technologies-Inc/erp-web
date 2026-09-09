@@ -59,6 +59,31 @@ export const vendorInvitationKeys = {
   detail: (uuid: string | null) => [...vendorInvitationKeys.details(), uuid] as const,
 }
 
+export const purchaseRequisitionKeys = {
+  all: () => ['procurement', 'purchase-requisitions'] as const,
+  lists: () => [...purchaseRequisitionKeys.all(), 'list'] as const,
+  list: (filters?: Record<string, any>) => [...purchaseRequisitionKeys.lists(), filters] as const,
+  details: () => [...purchaseRequisitionKeys.all(), 'detail'] as const,
+  detail: (uuid: string | null) => [...purchaseRequisitionKeys.details(), uuid] as const,
+}
+
+export const termsLibraryKeys = {
+  all: () => ['procurement', 'terms-library'] as const,
+  lists: () => [...termsLibraryKeys.all(), 'list'] as const,
+  list: (filters?: Record<string, any>) => [...termsLibraryKeys.lists(), filters] as const,
+  details: () => [...termsLibraryKeys.all(), 'detail'] as const,
+  detail: (uuid: string | null) => [...termsLibraryKeys.details(), uuid] as const,
+}
+
+export const rfqEvaluationTemplateKeys = {
+  all: () => ['procurement', 'rfq-evaluation-templates'] as const,
+  lists: () => [...rfqEvaluationTemplateKeys.all(), 'list'] as const,
+  list: (filters?: Record<string, any>) => [...rfqEvaluationTemplateKeys.lists(), filters] as const,
+  details: () => [...rfqEvaluationTemplateKeys.all(), 'detail'] as const,
+  detail: (uuid: string | null) => [...rfqEvaluationTemplateKeys.details(), uuid] as const,
+}
+
+
 
 
 

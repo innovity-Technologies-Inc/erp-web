@@ -30,3 +30,14 @@ export const useMerchantSelect2 = () => {
     },
   })
 }
+
+export const useEmployeeSelect2 = () => {
+  return useQuery({
+    queryKey: ['employee-select2'],
+    queryFn: async () => {
+      const response = await apiClient.get<any[]>('/select2/get-employee-select2')
+      return response.data
+    },
+  })
+}
+

@@ -26,6 +26,8 @@ import { Route as AuthenticatedSettingsEmailRouteImport } from './routes/_authen
 import { Route as AuthenticatedSettingsCurrencyRouteImport } from './routes/_authenticated/settings/currency'
 import { Route as AuthenticatedSettingsCompanyRouteImport } from './routes/_authenticated/settings/company'
 import { Route as AuthenticatedRoleCreateRouteImport } from './routes/_authenticated/role/create'
+import { Route as AuthenticatedProcurementTermsLibraryRouteImport } from './routes/_authenticated/procurement/terms-library'
+import { Route as AuthenticatedProcurementSourcingRouteImport } from './routes/_authenticated/procurement/sourcing'
 import { Route as AuthenticatedProcurementCostCentersRouteImport } from './routes/_authenticated/procurement/cost-centers'
 import { Route as AuthenticatedHrmPayrollManageSalaryRouteImport } from './routes/_authenticated/hrm/payroll-manage-salary'
 import { Route as AuthenticatedHrmPayrollGenerateRouteImport } from './routes/_authenticated/hrm/payroll-generate'
@@ -48,7 +50,10 @@ import { Route as AuthenticatedAccountEinRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAccountChartOfAccountsRouteImport } from './routes/_authenticated/account/chart-of-accounts'
 import { Route as AuthenticatedAccountCashAdjustmentRouteImport } from './routes/_authenticated/account/cash-adjustment'
 import { Route as AuthenticatedAccountBankReconciliationRouteImport } from './routes/_authenticated/account/bank-reconciliation'
+import { Route as AuthenticatedSettingsApprovalWorkflowsIndexRouteImport } from './routes/_authenticated/settings/approval-workflows/index'
 import { Route as AuthenticatedProcurementVendorsIndexRouteImport } from './routes/_authenticated/procurement/vendors.index'
+import { Route as AuthenticatedProcurementRfqTemplatesIndexRouteImport } from './routes/_authenticated/procurement/rfq-templates.index'
+import { Route as AuthenticatedProcurementPurchaseRequisitionsIndexRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.index'
 import { Route as AuthenticatedProcurementBudgetsIndexRouteImport } from './routes/_authenticated/procurement/budgets.index'
 import { Route as AuthenticatedInventoryWarehouseIndexRouteImport } from './routes/_authenticated/inventory/warehouse.index'
 import { Route as AuthenticatedInventoryVendorsIndexRouteImport } from './routes/_authenticated/inventory/vendors.index'
@@ -63,12 +68,15 @@ import { Route as AuthenticatedHrmEmployeeIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedAccountReportsIndexRouteImport } from './routes/_authenticated/account/reports.index'
 import { Route as AuthenticatedAccountOpeningBalanceIndexRouteImport } from './routes/_authenticated/account/opening-balance.index'
 import { Route as AuthenticatedUserEditUuidRouteImport } from './routes/_authenticated/user/edit.$uuid'
+import { Route as AuthenticatedSettingsApprovalWorkflowsCreateRouteImport } from './routes/_authenticated/settings/approval-workflows/create'
 import { Route as AuthenticatedRoleEditUuidRouteImport } from './routes/_authenticated/role/edit.$uuid'
 import { Route as AuthenticatedProcurementVendorsInvitationsRouteImport } from './routes/_authenticated/procurement/vendors.invitations'
 import { Route as AuthenticatedProcurementVendorsDocumentTypesRouteImport } from './routes/_authenticated/procurement/vendors.document-types'
 import { Route as AuthenticatedProcurementVendorsCreateRouteImport } from './routes/_authenticated/procurement/vendors.create'
 import { Route as AuthenticatedProcurementVendorsCategoriesRouteImport } from './routes/_authenticated/procurement/vendors.categories'
 import { Route as AuthenticatedProcurementVendorsBlacklistsRouteImport } from './routes/_authenticated/procurement/vendors.blacklists'
+import { Route as AuthenticatedProcurementRfqTemplatesCreateRouteImport } from './routes/_authenticated/procurement/rfq-templates.create'
+import { Route as AuthenticatedProcurementPurchaseRequisitionsCreateRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.create'
 import { Route as AuthenticatedProcurementBudgetsHeadsRouteImport } from './routes/_authenticated/procurement/budgets.heads'
 import { Route as AuthenticatedProcurementBudgetsCategoriesRouteImport } from './routes/_authenticated/procurement/budgets.categories'
 import { Route as AuthenticatedInventoryWarehouseStockMovementRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement'
@@ -130,8 +138,12 @@ import { Route as AuthenticatedAccountVoucherJournalIndexRouteImport } from './r
 import { Route as AuthenticatedAccountVoucherDebitIndexRouteImport } from './routes/_authenticated/account/voucher.debit.index'
 import { Route as AuthenticatedAccountVoucherCreditIndexRouteImport } from './routes/_authenticated/account/voucher.credit.index'
 import { Route as AuthenticatedAccountVoucherContraIndexRouteImport } from './routes/_authenticated/account/voucher.contra.index'
+import { Route as AuthenticatedSettingsApprovalWorkflowsEditIdRouteImport } from './routes/_authenticated/settings/approval-workflows/edit.$id'
 import { Route as AuthenticatedProcurementVendorsViewIdRouteImport } from './routes/_authenticated/procurement/vendors.view.$id'
 import { Route as AuthenticatedProcurementVendorsEditIdRouteImport } from './routes/_authenticated/procurement/vendors.edit.$id'
+import { Route as AuthenticatedProcurementRfqTemplatesEditIdRouteImport } from './routes/_authenticated/procurement/rfq-templates.edit.$id'
+import { Route as AuthenticatedProcurementPurchaseRequisitionsViewIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.view.$id'
+import { Route as AuthenticatedProcurementPurchaseRequisitionsEditIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.edit.$id'
 import { Route as AuthenticatedInventoryWarehouseStockMovementCreateRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement.create'
 import { Route as AuthenticatedInventoryWarehouseEditIdRouteImport } from './routes/_authenticated/inventory/warehouse.edit.$id'
 import { Route as AuthenticatedInventoryVendorsEditIdRouteImport } from './routes/_authenticated/inventory/vendors.edit.$id'
@@ -255,6 +267,18 @@ const AuthenticatedRoleCreateRoute = AuthenticatedRoleCreateRouteImport.update({
   path: '/role/create',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedProcurementTermsLibraryRoute =
+  AuthenticatedProcurementTermsLibraryRouteImport.update({
+    id: '/procurement/terms-library',
+    path: '/procurement/terms-library',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementSourcingRoute =
+  AuthenticatedProcurementSourcingRouteImport.update({
+    id: '/procurement/sourcing',
+    path: '/procurement/sourcing',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementCostCentersRoute =
   AuthenticatedProcurementCostCentersRouteImport.update({
     id: '/procurement/cost-centers',
@@ -385,10 +409,28 @@ const AuthenticatedAccountBankReconciliationRoute =
     path: '/account/bank-reconciliation',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSettingsApprovalWorkflowsIndexRoute =
+  AuthenticatedSettingsApprovalWorkflowsIndexRouteImport.update({
+    id: '/settings/approval-workflows/',
+    path: '/settings/approval-workflows/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementVendorsIndexRoute =
   AuthenticatedProcurementVendorsIndexRouteImport.update({
     id: '/procurement/vendors/',
     path: '/procurement/vendors/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementRfqTemplatesIndexRoute =
+  AuthenticatedProcurementRfqTemplatesIndexRouteImport.update({
+    id: '/procurement/rfq-templates/',
+    path: '/procurement/rfq-templates/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementPurchaseRequisitionsIndexRoute =
+  AuthenticatedProcurementPurchaseRequisitionsIndexRouteImport.update({
+    id: '/procurement/purchase-requisitions/',
+    path: '/procurement/purchase-requisitions/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProcurementBudgetsIndexRoute =
@@ -475,6 +517,12 @@ const AuthenticatedUserEditUuidRoute =
     path: '/user/edit/$uuid',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSettingsApprovalWorkflowsCreateRoute =
+  AuthenticatedSettingsApprovalWorkflowsCreateRouteImport.update({
+    id: '/settings/approval-workflows/create',
+    path: '/settings/approval-workflows/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedRoleEditUuidRoute =
   AuthenticatedRoleEditUuidRouteImport.update({
     id: '/role/edit/$uuid',
@@ -509,6 +557,18 @@ const AuthenticatedProcurementVendorsBlacklistsRoute =
   AuthenticatedProcurementVendorsBlacklistsRouteImport.update({
     id: '/procurement/vendors/blacklists',
     path: '/procurement/vendors/blacklists',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementRfqTemplatesCreateRoute =
+  AuthenticatedProcurementRfqTemplatesCreateRouteImport.update({
+    id: '/procurement/rfq-templates/create',
+    path: '/procurement/rfq-templates/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementPurchaseRequisitionsCreateRoute =
+  AuthenticatedProcurementPurchaseRequisitionsCreateRouteImport.update({
+    id: '/procurement/purchase-requisitions/create',
+    path: '/procurement/purchase-requisitions/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProcurementBudgetsHeadsRoute =
@@ -877,6 +937,12 @@ const AuthenticatedAccountVoucherContraIndexRoute =
     path: '/account/voucher/contra/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedSettingsApprovalWorkflowsEditIdRoute =
+  AuthenticatedSettingsApprovalWorkflowsEditIdRouteImport.update({
+    id: '/settings/approval-workflows/edit/$id',
+    path: '/settings/approval-workflows/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementVendorsViewIdRoute =
   AuthenticatedProcurementVendorsViewIdRouteImport.update({
     id: '/procurement/vendors/view/$id',
@@ -887,6 +953,24 @@ const AuthenticatedProcurementVendorsEditIdRoute =
   AuthenticatedProcurementVendorsEditIdRouteImport.update({
     id: '/procurement/vendors/edit/$id',
     path: '/procurement/vendors/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementRfqTemplatesEditIdRoute =
+  AuthenticatedProcurementRfqTemplatesEditIdRouteImport.update({
+    id: '/procurement/rfq-templates/edit/$id',
+    path: '/procurement/rfq-templates/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementPurchaseRequisitionsViewIdRoute =
+  AuthenticatedProcurementPurchaseRequisitionsViewIdRouteImport.update({
+    id: '/procurement/purchase-requisitions/view/$id',
+    path: '/procurement/purchase-requisitions/view/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementPurchaseRequisitionsEditIdRoute =
+  AuthenticatedProcurementPurchaseRequisitionsEditIdRouteImport.update({
+    id: '/procurement/purchase-requisitions/edit/$id',
+    path: '/procurement/purchase-requisitions/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryWarehouseStockMovementCreateRoute =
@@ -1116,6 +1200,8 @@ export interface FileRoutesByFullPath {
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/procurement/cost-centers': typeof AuthenticatedProcurementCostCentersRoute
+  '/procurement/sourcing': typeof AuthenticatedProcurementSourcingRoute
+  '/procurement/terms-library': typeof AuthenticatedProcurementTermsLibraryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
@@ -1179,12 +1265,15 @@ export interface FileRoutesByFullPath {
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
+  '/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
   '/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
   '/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
   '/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
   '/procurement/vendors/document-types': typeof AuthenticatedProcurementVendorsDocumentTypesRoute
   '/procurement/vendors/invitations': typeof AuthenticatedProcurementVendorsInvitationsRoute
   '/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
+  '/settings/approval-workflows/create': typeof AuthenticatedSettingsApprovalWorkflowsCreateRoute
   '/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
@@ -1199,7 +1288,10 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/procurement/purchase-requisitions/': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
+  '/procurement/rfq-templates/': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
   '/procurement/vendors/': typeof AuthenticatedProcurementVendorsIndexRoute
+  '/settings/approval-workflows/': typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   '/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
   '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -1226,8 +1318,12 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
+  '/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
+  '/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
   '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
   '/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
+  '/settings/approval-workflows/edit/$id': typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
   '/account/voucher/contra/': typeof AuthenticatedAccountVoucherContraIndexRoute
   '/account/voucher/credit/': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/account/voucher/debit/': typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -1272,6 +1368,8 @@ export interface FileRoutesByTo {
   '/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/procurement/cost-centers': typeof AuthenticatedProcurementCostCentersRoute
+  '/procurement/sourcing': typeof AuthenticatedProcurementSourcingRoute
+  '/procurement/terms-library': typeof AuthenticatedProcurementTermsLibraryRoute
   '/role/create': typeof AuthenticatedRoleCreateRoute
   '/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
@@ -1335,12 +1433,15 @@ export interface FileRoutesByTo {
   '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
+  '/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
   '/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
   '/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
   '/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
   '/procurement/vendors/document-types': typeof AuthenticatedProcurementVendorsDocumentTypesRoute
   '/procurement/vendors/invitations': typeof AuthenticatedProcurementVendorsInvitationsRoute
   '/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
+  '/settings/approval-workflows/create': typeof AuthenticatedSettingsApprovalWorkflowsCreateRoute
   '/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/account/opening-balance': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/account/reports': typeof AuthenticatedAccountReportsIndexRoute
@@ -1355,7 +1456,10 @@ export interface FileRoutesByTo {
   '/inventory/vendors': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/procurement/budgets': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/procurement/purchase-requisitions': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
+  '/procurement/rfq-templates': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
   '/procurement/vendors': typeof AuthenticatedProcurementVendorsIndexRoute
+  '/settings/approval-workflows': typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   '/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
   '/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -1382,8 +1486,12 @@ export interface FileRoutesByTo {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
+  '/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
+  '/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
   '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
   '/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
+  '/settings/approval-workflows/edit/$id': typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
   '/account/voucher/contra': typeof AuthenticatedAccountVoucherContraIndexRoute
   '/account/voucher/credit': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/account/voucher/debit': typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -1431,6 +1539,8 @@ export interface FileRoutesById {
   '/_authenticated/hrm/payroll-generate': typeof AuthenticatedHrmPayrollGenerateRoute
   '/_authenticated/hrm/payroll-manage-salary': typeof AuthenticatedHrmPayrollManageSalaryRoute
   '/_authenticated/procurement/cost-centers': typeof AuthenticatedProcurementCostCentersRoute
+  '/_authenticated/procurement/sourcing': typeof AuthenticatedProcurementSourcingRoute
+  '/_authenticated/procurement/terms-library': typeof AuthenticatedProcurementTermsLibraryRoute
   '/_authenticated/role/create': typeof AuthenticatedRoleCreateRoute
   '/_authenticated/settings/company': typeof AuthenticatedSettingsCompanyRoute
   '/_authenticated/settings/currency': typeof AuthenticatedSettingsCurrencyRoute
@@ -1494,12 +1604,15 @@ export interface FileRoutesById {
   '/_authenticated/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/_authenticated/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/_authenticated/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/_authenticated/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
+  '/_authenticated/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
   '/_authenticated/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
   '/_authenticated/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
   '/_authenticated/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
   '/_authenticated/procurement/vendors/document-types': typeof AuthenticatedProcurementVendorsDocumentTypesRoute
   '/_authenticated/procurement/vendors/invitations': typeof AuthenticatedProcurementVendorsInvitationsRoute
   '/_authenticated/role/edit/$uuid': typeof AuthenticatedRoleEditUuidRoute
+  '/_authenticated/settings/approval-workflows/create': typeof AuthenticatedSettingsApprovalWorkflowsCreateRoute
   '/_authenticated/user/edit/$uuid': typeof AuthenticatedUserEditUuidRoute
   '/_authenticated/account/opening-balance/': typeof AuthenticatedAccountOpeningBalanceIndexRoute
   '/_authenticated/account/reports/': typeof AuthenticatedAccountReportsIndexRoute
@@ -1514,7 +1627,10 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/_authenticated/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/_authenticated/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/_authenticated/procurement/purchase-requisitions/': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
+  '/_authenticated/procurement/rfq-templates/': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
   '/_authenticated/procurement/vendors/': typeof AuthenticatedProcurementVendorsIndexRoute
+  '/_authenticated/settings/approval-workflows/': typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   '/_authenticated/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   '/_authenticated/account/voucher/contra/create': typeof AuthenticatedAccountVoucherContraCreateRoute
   '/_authenticated/account/voucher/credit/create': typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -1541,8 +1657,12 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/_authenticated/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/_authenticated/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/_authenticated/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
+  '/_authenticated/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
+  '/_authenticated/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
   '/_authenticated/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
   '/_authenticated/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
+  '/_authenticated/settings/approval-workflows/edit/$id': typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
   '/_authenticated/account/voucher/contra/': typeof AuthenticatedAccountVoucherContraIndexRoute
   '/_authenticated/account/voucher/credit/': typeof AuthenticatedAccountVoucherCreditIndexRoute
   '/_authenticated/account/voucher/debit/': typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -1589,6 +1709,8 @@ export interface FileRouteTypes {
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
     | '/procurement/cost-centers'
+    | '/procurement/sourcing'
+    | '/procurement/terms-library'
     | '/role/create'
     | '/settings/company'
     | '/settings/currency'
@@ -1652,12 +1774,15 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/stock-movement'
     | '/procurement/budgets/categories'
     | '/procurement/budgets/heads'
+    | '/procurement/purchase-requisitions/create'
+    | '/procurement/rfq-templates/create'
     | '/procurement/vendors/blacklists'
     | '/procurement/vendors/categories'
     | '/procurement/vendors/create'
     | '/procurement/vendors/document-types'
     | '/procurement/vendors/invitations'
     | '/role/edit/$uuid'
+    | '/settings/approval-workflows/create'
     | '/user/edit/$uuid'
     | '/account/opening-balance/'
     | '/account/reports/'
@@ -1672,7 +1797,10 @@ export interface FileRouteTypes {
     | '/inventory/vendors/'
     | '/inventory/warehouse/'
     | '/procurement/budgets/'
+    | '/procurement/purchase-requisitions/'
+    | '/procurement/rfq-templates/'
     | '/procurement/vendors/'
+    | '/settings/approval-workflows/'
     | '/account/opening-balance/edit/$uuid'
     | '/account/voucher/contra/create'
     | '/account/voucher/credit/create'
@@ -1699,8 +1827,12 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/procurement/purchase-requisitions/edit/$id'
+    | '/procurement/purchase-requisitions/view/$id'
+    | '/procurement/rfq-templates/edit/$id'
     | '/procurement/vendors/edit/$id'
     | '/procurement/vendors/view/$id'
+    | '/settings/approval-workflows/edit/$id'
     | '/account/voucher/contra/'
     | '/account/voucher/credit/'
     | '/account/voucher/debit/'
@@ -1745,6 +1877,8 @@ export interface FileRouteTypes {
     | '/hrm/payroll-generate'
     | '/hrm/payroll-manage-salary'
     | '/procurement/cost-centers'
+    | '/procurement/sourcing'
+    | '/procurement/terms-library'
     | '/role/create'
     | '/settings/company'
     | '/settings/currency'
@@ -1808,12 +1942,15 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/stock-movement'
     | '/procurement/budgets/categories'
     | '/procurement/budgets/heads'
+    | '/procurement/purchase-requisitions/create'
+    | '/procurement/rfq-templates/create'
     | '/procurement/vendors/blacklists'
     | '/procurement/vendors/categories'
     | '/procurement/vendors/create'
     | '/procurement/vendors/document-types'
     | '/procurement/vendors/invitations'
     | '/role/edit/$uuid'
+    | '/settings/approval-workflows/create'
     | '/user/edit/$uuid'
     | '/account/opening-balance'
     | '/account/reports'
@@ -1828,7 +1965,10 @@ export interface FileRouteTypes {
     | '/inventory/vendors'
     | '/inventory/warehouse'
     | '/procurement/budgets'
+    | '/procurement/purchase-requisitions'
+    | '/procurement/rfq-templates'
     | '/procurement/vendors'
+    | '/settings/approval-workflows'
     | '/account/opening-balance/edit/$uuid'
     | '/account/voucher/contra/create'
     | '/account/voucher/credit/create'
@@ -1855,8 +1995,12 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/procurement/purchase-requisitions/edit/$id'
+    | '/procurement/purchase-requisitions/view/$id'
+    | '/procurement/rfq-templates/edit/$id'
     | '/procurement/vendors/edit/$id'
     | '/procurement/vendors/view/$id'
+    | '/settings/approval-workflows/edit/$id'
     | '/account/voucher/contra'
     | '/account/voucher/credit'
     | '/account/voucher/debit'
@@ -1903,6 +2047,8 @@ export interface FileRouteTypes {
     | '/_authenticated/hrm/payroll-generate'
     | '/_authenticated/hrm/payroll-manage-salary'
     | '/_authenticated/procurement/cost-centers'
+    | '/_authenticated/procurement/sourcing'
+    | '/_authenticated/procurement/terms-library'
     | '/_authenticated/role/create'
     | '/_authenticated/settings/company'
     | '/_authenticated/settings/currency'
@@ -1966,12 +2112,15 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/warehouse/stock-movement'
     | '/_authenticated/procurement/budgets/categories'
     | '/_authenticated/procurement/budgets/heads'
+    | '/_authenticated/procurement/purchase-requisitions/create'
+    | '/_authenticated/procurement/rfq-templates/create'
     | '/_authenticated/procurement/vendors/blacklists'
     | '/_authenticated/procurement/vendors/categories'
     | '/_authenticated/procurement/vendors/create'
     | '/_authenticated/procurement/vendors/document-types'
     | '/_authenticated/procurement/vendors/invitations'
     | '/_authenticated/role/edit/$uuid'
+    | '/_authenticated/settings/approval-workflows/create'
     | '/_authenticated/user/edit/$uuid'
     | '/_authenticated/account/opening-balance/'
     | '/_authenticated/account/reports/'
@@ -1986,7 +2135,10 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/'
     | '/_authenticated/inventory/warehouse/'
     | '/_authenticated/procurement/budgets/'
+    | '/_authenticated/procurement/purchase-requisitions/'
+    | '/_authenticated/procurement/rfq-templates/'
     | '/_authenticated/procurement/vendors/'
+    | '/_authenticated/settings/approval-workflows/'
     | '/_authenticated/account/opening-balance/edit/$uuid'
     | '/_authenticated/account/voucher/contra/create'
     | '/_authenticated/account/voucher/credit/create'
@@ -2013,8 +2165,12 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/edit/$id'
     | '/_authenticated/inventory/warehouse/edit/$id'
     | '/_authenticated/inventory/warehouse/stock-movement/create'
+    | '/_authenticated/procurement/purchase-requisitions/edit/$id'
+    | '/_authenticated/procurement/purchase-requisitions/view/$id'
+    | '/_authenticated/procurement/rfq-templates/edit/$id'
     | '/_authenticated/procurement/vendors/edit/$id'
     | '/_authenticated/procurement/vendors/view/$id'
+    | '/_authenticated/settings/approval-workflows/edit/$id'
     | '/_authenticated/account/voucher/contra/'
     | '/_authenticated/account/voucher/credit/'
     | '/_authenticated/account/voucher/debit/'
@@ -2157,6 +2313,20 @@ declare module '@tanstack/react-router' {
       path: '/role/create'
       fullPath: '/role/create'
       preLoaderRoute: typeof AuthenticatedRoleCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/terms-library': {
+      id: '/_authenticated/procurement/terms-library'
+      path: '/procurement/terms-library'
+      fullPath: '/procurement/terms-library'
+      preLoaderRoute: typeof AuthenticatedProcurementTermsLibraryRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/sourcing': {
+      id: '/_authenticated/procurement/sourcing'
+      path: '/procurement/sourcing'
+      fullPath: '/procurement/sourcing'
+      preLoaderRoute: typeof AuthenticatedProcurementSourcingRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/procurement/cost-centers': {
@@ -2313,11 +2483,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountBankReconciliationRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/approval-workflows/': {
+      id: '/_authenticated/settings/approval-workflows/'
+      path: '/settings/approval-workflows'
+      fullPath: '/settings/approval-workflows/'
+      preLoaderRoute: typeof AuthenticatedSettingsApprovalWorkflowsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/procurement/vendors/': {
       id: '/_authenticated/procurement/vendors/'
       path: '/procurement/vendors'
       fullPath: '/procurement/vendors/'
       preLoaderRoute: typeof AuthenticatedProcurementVendorsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/rfq-templates/': {
+      id: '/_authenticated/procurement/rfq-templates/'
+      path: '/procurement/rfq-templates'
+      fullPath: '/procurement/rfq-templates/'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqTemplatesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/purchase-requisitions/': {
+      id: '/_authenticated/procurement/purchase-requisitions/'
+      path: '/procurement/purchase-requisitions'
+      fullPath: '/procurement/purchase-requisitions/'
+      preLoaderRoute: typeof AuthenticatedProcurementPurchaseRequisitionsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/procurement/budgets/': {
@@ -2418,6 +2609,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUserEditUuidRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/approval-workflows/create': {
+      id: '/_authenticated/settings/approval-workflows/create'
+      path: '/settings/approval-workflows/create'
+      fullPath: '/settings/approval-workflows/create'
+      preLoaderRoute: typeof AuthenticatedSettingsApprovalWorkflowsCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/role/edit/$uuid': {
       id: '/_authenticated/role/edit/$uuid'
       path: '/role/edit/$uuid'
@@ -2458,6 +2656,20 @@ declare module '@tanstack/react-router' {
       path: '/procurement/vendors/blacklists'
       fullPath: '/procurement/vendors/blacklists'
       preLoaderRoute: typeof AuthenticatedProcurementVendorsBlacklistsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/rfq-templates/create': {
+      id: '/_authenticated/procurement/rfq-templates/create'
+      path: '/procurement/rfq-templates/create'
+      fullPath: '/procurement/rfq-templates/create'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqTemplatesCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/purchase-requisitions/create': {
+      id: '/_authenticated/procurement/purchase-requisitions/create'
+      path: '/procurement/purchase-requisitions/create'
+      fullPath: '/procurement/purchase-requisitions/create'
+      preLoaderRoute: typeof AuthenticatedProcurementPurchaseRequisitionsCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/procurement/budgets/heads': {
@@ -2887,6 +3099,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountVoucherContraIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/approval-workflows/edit/$id': {
+      id: '/_authenticated/settings/approval-workflows/edit/$id'
+      path: '/settings/approval-workflows/edit/$id'
+      fullPath: '/settings/approval-workflows/edit/$id'
+      preLoaderRoute: typeof AuthenticatedSettingsApprovalWorkflowsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/procurement/vendors/view/$id': {
       id: '/_authenticated/procurement/vendors/view/$id'
       path: '/procurement/vendors/view/$id'
@@ -2899,6 +3118,27 @@ declare module '@tanstack/react-router' {
       path: '/procurement/vendors/edit/$id'
       fullPath: '/procurement/vendors/edit/$id'
       preLoaderRoute: typeof AuthenticatedProcurementVendorsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/rfq-templates/edit/$id': {
+      id: '/_authenticated/procurement/rfq-templates/edit/$id'
+      path: '/procurement/rfq-templates/edit/$id'
+      fullPath: '/procurement/rfq-templates/edit/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqTemplatesEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/purchase-requisitions/view/$id': {
+      id: '/_authenticated/procurement/purchase-requisitions/view/$id'
+      path: '/procurement/purchase-requisitions/view/$id'
+      fullPath: '/procurement/purchase-requisitions/view/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/purchase-requisitions/edit/$id': {
+      id: '/_authenticated/procurement/purchase-requisitions/edit/$id'
+      path: '/procurement/purchase-requisitions/edit/$id'
+      fullPath: '/procurement/purchase-requisitions/edit/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/warehouse/stock-movement/create': {
@@ -3188,6 +3428,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedHrmPayrollGenerateRoute: typeof AuthenticatedHrmPayrollGenerateRoute
   AuthenticatedHrmPayrollManageSalaryRoute: typeof AuthenticatedHrmPayrollManageSalaryRoute
   AuthenticatedProcurementCostCentersRoute: typeof AuthenticatedProcurementCostCentersRoute
+  AuthenticatedProcurementSourcingRoute: typeof AuthenticatedProcurementSourcingRoute
+  AuthenticatedProcurementTermsLibraryRoute: typeof AuthenticatedProcurementTermsLibraryRoute
   AuthenticatedRoleCreateRoute: typeof AuthenticatedRoleCreateRoute
   AuthenticatedSettingsCompanyRoute: typeof AuthenticatedSettingsCompanyRoute
   AuthenticatedSettingsCurrencyRoute: typeof AuthenticatedSettingsCurrencyRoute
@@ -3251,12 +3493,15 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryWarehouseStockMovementRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   AuthenticatedProcurementBudgetsCategoriesRoute: typeof AuthenticatedProcurementBudgetsCategoriesRoute
   AuthenticatedProcurementBudgetsHeadsRoute: typeof AuthenticatedProcurementBudgetsHeadsRoute
+  AuthenticatedProcurementPurchaseRequisitionsCreateRoute: typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
+  AuthenticatedProcurementRfqTemplatesCreateRoute: typeof AuthenticatedProcurementRfqTemplatesCreateRoute
   AuthenticatedProcurementVendorsBlacklistsRoute: typeof AuthenticatedProcurementVendorsBlacklistsRoute
   AuthenticatedProcurementVendorsCategoriesRoute: typeof AuthenticatedProcurementVendorsCategoriesRoute
   AuthenticatedProcurementVendorsCreateRoute: typeof AuthenticatedProcurementVendorsCreateRoute
   AuthenticatedProcurementVendorsDocumentTypesRoute: typeof AuthenticatedProcurementVendorsDocumentTypesRoute
   AuthenticatedProcurementVendorsInvitationsRoute: typeof AuthenticatedProcurementVendorsInvitationsRoute
   AuthenticatedRoleEditUuidRoute: typeof AuthenticatedRoleEditUuidRoute
+  AuthenticatedSettingsApprovalWorkflowsCreateRoute: typeof AuthenticatedSettingsApprovalWorkflowsCreateRoute
   AuthenticatedUserEditUuidRoute: typeof AuthenticatedUserEditUuidRoute
   AuthenticatedAccountOpeningBalanceIndexRoute: typeof AuthenticatedAccountOpeningBalanceIndexRoute
   AuthenticatedAccountReportsIndexRoute: typeof AuthenticatedAccountReportsIndexRoute
@@ -3271,7 +3516,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryVendorsIndexRoute: typeof AuthenticatedInventoryVendorsIndexRoute
   AuthenticatedInventoryWarehouseIndexRoute: typeof AuthenticatedInventoryWarehouseIndexRoute
   AuthenticatedProcurementBudgetsIndexRoute: typeof AuthenticatedProcurementBudgetsIndexRoute
+  AuthenticatedProcurementPurchaseRequisitionsIndexRoute: typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
+  AuthenticatedProcurementRfqTemplatesIndexRoute: typeof AuthenticatedProcurementRfqTemplatesIndexRoute
   AuthenticatedProcurementVendorsIndexRoute: typeof AuthenticatedProcurementVendorsIndexRoute
+  AuthenticatedSettingsApprovalWorkflowsIndexRoute: typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   AuthenticatedAccountOpeningBalanceEditUuidRoute: typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
   AuthenticatedAccountVoucherContraCreateRoute: typeof AuthenticatedAccountVoucherContraCreateRoute
   AuthenticatedAccountVoucherCreditCreateRoute: typeof AuthenticatedAccountVoucherCreditCreateRoute
@@ -3297,8 +3545,12 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryServiceInvoiceViewIdRoute: typeof AuthenticatedInventoryServiceInvoiceViewIdRoute
   AuthenticatedInventoryVendorsEditIdRoute: typeof AuthenticatedInventoryVendorsEditIdRoute
   AuthenticatedInventoryWarehouseEditIdRoute: typeof AuthenticatedInventoryWarehouseEditIdRoute
+  AuthenticatedProcurementPurchaseRequisitionsEditIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
+  AuthenticatedProcurementPurchaseRequisitionsViewIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
+  AuthenticatedProcurementRfqTemplatesEditIdRoute: typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
   AuthenticatedProcurementVendorsEditIdRoute: typeof AuthenticatedProcurementVendorsEditIdRoute
   AuthenticatedProcurementVendorsViewIdRoute: typeof AuthenticatedProcurementVendorsViewIdRoute
+  AuthenticatedSettingsApprovalWorkflowsEditIdRoute: typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
   AuthenticatedAccountVoucherContraIndexRoute: typeof AuthenticatedAccountVoucherContraIndexRoute
   AuthenticatedAccountVoucherCreditIndexRoute: typeof AuthenticatedAccountVoucherCreditIndexRoute
   AuthenticatedAccountVoucherDebitIndexRoute: typeof AuthenticatedAccountVoucherDebitIndexRoute
@@ -3353,6 +3605,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedHrmPayrollManageSalaryRoute,
   AuthenticatedProcurementCostCentersRoute:
     AuthenticatedProcurementCostCentersRoute,
+  AuthenticatedProcurementSourcingRoute: AuthenticatedProcurementSourcingRoute,
+  AuthenticatedProcurementTermsLibraryRoute:
+    AuthenticatedProcurementTermsLibraryRoute,
   AuthenticatedRoleCreateRoute: AuthenticatedRoleCreateRoute,
   AuthenticatedSettingsCompanyRoute: AuthenticatedSettingsCompanyRoute,
   AuthenticatedSettingsCurrencyRoute: AuthenticatedSettingsCurrencyRoute,
@@ -3466,6 +3721,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProcurementBudgetsCategoriesRoute,
   AuthenticatedProcurementBudgetsHeadsRoute:
     AuthenticatedProcurementBudgetsHeadsRoute,
+  AuthenticatedProcurementPurchaseRequisitionsCreateRoute:
+    AuthenticatedProcurementPurchaseRequisitionsCreateRoute,
+  AuthenticatedProcurementRfqTemplatesCreateRoute:
+    AuthenticatedProcurementRfqTemplatesCreateRoute,
   AuthenticatedProcurementVendorsBlacklistsRoute:
     AuthenticatedProcurementVendorsBlacklistsRoute,
   AuthenticatedProcurementVendorsCategoriesRoute:
@@ -3477,6 +3736,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedProcurementVendorsInvitationsRoute:
     AuthenticatedProcurementVendorsInvitationsRoute,
   AuthenticatedRoleEditUuidRoute: AuthenticatedRoleEditUuidRoute,
+  AuthenticatedSettingsApprovalWorkflowsCreateRoute:
+    AuthenticatedSettingsApprovalWorkflowsCreateRoute,
   AuthenticatedUserEditUuidRoute: AuthenticatedUserEditUuidRoute,
   AuthenticatedAccountOpeningBalanceIndexRoute:
     AuthenticatedAccountOpeningBalanceIndexRoute,
@@ -3501,8 +3762,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseIndexRoute,
   AuthenticatedProcurementBudgetsIndexRoute:
     AuthenticatedProcurementBudgetsIndexRoute,
+  AuthenticatedProcurementPurchaseRequisitionsIndexRoute:
+    AuthenticatedProcurementPurchaseRequisitionsIndexRoute,
+  AuthenticatedProcurementRfqTemplatesIndexRoute:
+    AuthenticatedProcurementRfqTemplatesIndexRoute,
   AuthenticatedProcurementVendorsIndexRoute:
     AuthenticatedProcurementVendorsIndexRoute,
+  AuthenticatedSettingsApprovalWorkflowsIndexRoute:
+    AuthenticatedSettingsApprovalWorkflowsIndexRoute,
   AuthenticatedAccountOpeningBalanceEditUuidRoute:
     AuthenticatedAccountOpeningBalanceEditUuidRoute,
   AuthenticatedAccountVoucherContraCreateRoute:
@@ -3551,10 +3818,18 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryVendorsEditIdRoute,
   AuthenticatedInventoryWarehouseEditIdRoute:
     AuthenticatedInventoryWarehouseEditIdRoute,
+  AuthenticatedProcurementPurchaseRequisitionsEditIdRoute:
+    AuthenticatedProcurementPurchaseRequisitionsEditIdRoute,
+  AuthenticatedProcurementPurchaseRequisitionsViewIdRoute:
+    AuthenticatedProcurementPurchaseRequisitionsViewIdRoute,
+  AuthenticatedProcurementRfqTemplatesEditIdRoute:
+    AuthenticatedProcurementRfqTemplatesEditIdRoute,
   AuthenticatedProcurementVendorsEditIdRoute:
     AuthenticatedProcurementVendorsEditIdRoute,
   AuthenticatedProcurementVendorsViewIdRoute:
     AuthenticatedProcurementVendorsViewIdRoute,
+  AuthenticatedSettingsApprovalWorkflowsEditIdRoute:
+    AuthenticatedSettingsApprovalWorkflowsEditIdRoute,
   AuthenticatedAccountVoucherContraIndexRoute:
     AuthenticatedAccountVoucherContraIndexRoute,
   AuthenticatedAccountVoucherCreditIndexRoute:

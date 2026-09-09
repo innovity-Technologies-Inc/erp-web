@@ -499,3 +499,219 @@ export interface SubmitVendorOnboardingDto {
     expire_at?: string
   }>
 }
+
+export type PRStatus = 'draft' | 'submitted' | 'approved' | 'rejected'
+export type PRPriority = 'low' | 'medium' | 'high' | 'urgent'
+export type PRProcurementType = 'normal' | 'emergency'
+
+export interface PurchaseRequisitionItem {
+  id?: number
+  purchase_requisition_id?: number
+  product_id: number
+  category_id: number
+  unit_id: number
+  item_description?: string | null
+  budget_head_id?: number | null
+  quantity: number
+  estimated_rate: number
+  estimated_amount?: number
+  product?: {
+    id: number
+    name: string
+    product_name?: string
+    code?: string
+  }
+  category?: {
+    id: number
+    name: string
+    category_name?: string
+  }
+  unit?: {
+    id: number
+    name: string
+    unit_name?: string
+  }
+  budget_head?: BudgetHead | null
+}
+
+export interface PurchaseRequisitionAttachment {
+  id?: number
+  purchase_requisition_id?: number
+  file_name: string
+  file_path: string
+  file_url?: string
+  created_at?: string
+}
+
+export interface PurchaseRequisition {
+  id: number
+  uuid: string
+  pr_no: string
+  pr_date: string
+  department_id: number
+  cost_center_id: number
+  required_by_date: string
+  priority: PRPriority
+  procurement_type: PRProcurementType
+  requisitioner_name: string
+  designation?: string | null
+  contact_no?: string | null
+  email?: string | null
+  purpose_justification?: string | null
+  is_emergency: boolean
+  total_estimated_amount: number | string
+  status: PRStatus
+  status_label?: string
+  remarks?: string | null
+  can_current_user_approve?: boolean
+  active_approval_step?: {
+    step_request_id?: number
+    step_id?: number
+    name: string
+    step_order: number
+    type?: string
+    role_id?: number | null
+    user_id?: number | null
+    required_user_type?: string | null
+  } | null
+  items?: PurchaseRequisitionItem[]
+  attachments?: PurchaseRequisitionAttachment[]
+  cost_center?: CostCenter | null
+  department?: {
+    id: number
+    name: string
+  } | null
+  approval_requests?: any[]
+  approvalRequests?: any[]
+  creator?: any
+  updater?: any
+  submitter?: any
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PurchaseRequisitionFilters {
+  status?: string
+  priority?: string
+  search?: string
+  per_page?: number
+  page?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface CreatePurchaseRequisitionDto {
+  pr_date: string
+  department_id: number
+  cost_center_id: number
+  required_by_date: string
+  priority: PRPriority
+  procurement_type: PRProcurementType
+  requisitioner_name: string
+  designation?: string | null
+  contact_no?: string | null
+  email?: string | null
+  purpose_justification?: string | null
+  is_emergency: boolean
+  remarks?: string | null
+  items: Array<{
+    product_id: number
+    category_id: number
+    unit_id: number
+    item_description?: string | null
+    budget_head_id?: number | null
+    quantity: number
+    estimated_rate: number
+  }>
+  attachments?: File[]
+}
+
+export interface UpdatePurchaseRequisitionDto extends Partial<CreatePurchaseRequisitionDto> {
+  uuid: string
+}
+
+export interface PurchaseRequisitionApprovalDto {
+  uuid: string
+  action: 'submit' | 'approve' | 'reject'
+  remarks?: string | null
+}
+
+export type TermType = 'commercial' | 'technical' | 'legal' | 'payment' | 'delivery' | 'general'
+export type TermResponseType = 'boolean' | 'text' | 'number' | 'select'
+
+export interface TermsLibrary {
+  id: number
+  uuid: string
+  code: string
+  title: string
+  description?: string | null
+  type: TermType | string
+  response_type: TermResponseType
+  options?: string[] | null
+  is_active: boolean
+  creator?: any
+  updater?: any
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TermsLibraryFilters {
+  search?: string
+  type?: string
+  response_type?: string
+  is_active?: boolean | string
+  per_page?: number
+  page?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface CreateTermsLibraryDto {
+  code: string
+  title: string
+  description?: string | null
+  type?: string
+  response_type?: TermResponseType
+  options?: string[] | null
+  is_active?: boolean
+}
+
+export interface UpdateTermsLibraryDto extends CreateTermsLibraryDto {
+  uuid: string
+}
+
+export interface EvaluationCriterion {
+  name: string
+  category: 'technical' | 'commercial'
+  max_score: number
+}
+
+export interface RFQEvaluationTemplate {
+  id: number
+  uuid: string
+  name: string
+  technical_weightage: number
+  commercial_weightage: number
+  criteria: EvaluationCriterion[]
+  creator?: any
+  updater?: any
+  created_at?: string
+  updated_at?: string
+}
+
+export interface RFQEvaluationTemplateFilters {
+  search?: string
+  per_page?: number
+  page?: number
+}
+
+export interface CreateRFQEvaluationTemplateDto {
+  name: string
+  technical_weightage: number
+  commercial_weightage: number
+  criteria: EvaluationCriterion[]
+}
+
+export interface UpdateRFQEvaluationTemplateDto extends CreateRFQEvaluationTemplateDto {
+  uuid: string
+}

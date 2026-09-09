@@ -27,6 +27,7 @@ export const Topbar = () => {
   
   const handleLogout = () => {
     clearUser()
+    resetDashboard()
     notify('Logout successful!', 'success')
   }
 
