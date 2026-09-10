@@ -21,7 +21,7 @@ export const BudgetCategoryListPage = () => {
 
   // States
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(15)
+  const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [dateRange, setDateRange] = useState<{ start: string; end: string }>({ start: '', end: '' })
 

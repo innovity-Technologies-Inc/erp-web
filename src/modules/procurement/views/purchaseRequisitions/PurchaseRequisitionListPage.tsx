@@ -64,7 +64,7 @@ export const PurchaseRequisitionListPage = () => {
 
   // States
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(15)
+  const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string | undefined>(undefined)
   const [priority, setPriority] = useState<string | undefined>(undefined)

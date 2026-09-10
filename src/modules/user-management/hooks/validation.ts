@@ -12,7 +12,7 @@ export const roleSchema = z.object({
 
 export type RoleFormValues = z.infer<typeof roleSchema>
 
-export const userSchema = z.object({
+export const baseUserSchema = z.object({
   first_name: z.string().min(1, 'First name is required').max(255),
   last_name: z.string().min(1, 'Last name is required').max(255),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
@@ -29,6 +29,35 @@ export const userSchema = z.object({
   company_id: z.any().optional(),
   roles: z.array(z.any()).min(1, 'At least one role must be selected'),
   image: z.any().optional(),
+  designation: z.any().optional(),
+  rate_type: z.union([z.string(), z.number()]).optional(),
+  hrate: z.union([z.string(), z.number()]).optional(),
 })
 
-export type UserFormValues = z.infer<typeof userSchema>
+export const userSchema = baseUserSchema.superRefine((data, ctx) => {
+  if (data.user_type === 'employee') {
+    if (!data.designation) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['designation'],
+        message: 'Designation is required for employee',
+      })
+    }
+    if (!data.rate_type) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['rate_type'],
+        message: 'Rate type is required for employee',
+      })
+    }
+    if (data.hrate === undefined || data.hrate === null || String(data.hrate).trim() === '') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['hrate'],
+        message: 'Pay rate / Salary is required for employee',
+      })
+    }
+  }
+})
+
+export type UserFormValues = z.infer<typeof baseUserSchema>

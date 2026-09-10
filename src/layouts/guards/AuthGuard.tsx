@@ -21,9 +21,22 @@ export const AuthGuard = ({ children }: { children?: ReactNode }) => {
       hasToken: !!token,
       isExpired,
       expiresAt: expiresAt ? new Date(expiresAt).toLocaleString() : 'N/A',
-      now: new Date().toLocaleString()
+      now: new Date().toLocaleString(),
     })
-    
+
+    const currentPath =
+      typeof window !== 'undefined'
+        ? window.location.pathname + window.location.search
+        : ''
+
+    if (currentPath && currentPath !== '/' && !currentPath.startsWith('/login')) {
+      try {
+        sessionStorage.setItem('intended_url', currentPath)
+      } catch {
+        // ignore
+      }
+    }
+
     return <Navigate to="/login" />
   }
 

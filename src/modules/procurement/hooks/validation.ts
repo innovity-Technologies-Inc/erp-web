@@ -254,4 +254,55 @@ export const rfqEvaluationTemplateSchema = z
 export type EvaluationCriterionFormValues = z.infer<typeof evaluationCriterionSchema>
 export type RFQEvaluationTemplateFormValues = z.infer<typeof rfqEvaluationTemplateSchema>
 
+export const rfqItemSchema = z.object({
+  purchase_requisition_item_id: z.custom<number | string>().optional().nullable(),
+  product_id: requiredId('Product is required'),
+  category_id: requiredId('Category is required'),
+  unit_id: requiredId('Unit is required'),
+  item_description: z.string().optional().nullable(),
+  quantity: requiredPositiveNumber('Quantity must be greater than 0'),
+  remarks: z.string().optional().nullable(),
+})
+
+export const rfqTermSchema = z.object({
+  term_library_id: z.custom<number | string>(),
+  is_mandatory: z.boolean().default(true),
+})
+
+export const rfqSchema = z
+  .object({
+    purchase_requisition_id: z.custom<number | string>().optional().nullable(),
+    rfq_date: z.string().min(1, 'RFQ Date is required'),
+    rfq_expiry_date: z.string().min(1, 'Bid Submission Deadline is required'),
+    expected_delivery_date: z.string().optional().nullable(),
+    department_id: requiredId('Department is required'),
+    cost_center_id: requiredId('Cost Center is required'),
+    evaluation_template_id: z.custom<number | string>().optional().nullable(),
+    currency: z.string().optional().nullable(),
+    payment_terms: z.string().optional().nullable(),
+    delivery_terms: z.string().optional().nullable(),
+    purpose_justification: z.string().optional().nullable(),
+    target_vendor_ids: z.array(z.custom<number | string>()).min(1, 'At least one vendor must be invited'),
+    terms: z.array(rfqTermSchema).optional().nullable(),
+    items: z.array(rfqItemSchema).min(1, 'At least one item is required in the RFQ'),
+    attachments: z.array(z.any()).optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      const validProductIds = data.items
+        .map((i) => Number(i.product_id))
+        .filter((id) => !isNaN(id) && id > 0)
+      return new Set(validProductIds).size === validProductIds.length
+    },
+    {
+      message: 'Duplicate products are not allowed. Please combine quantities into a single item or choose different products.',
+      path: ['items'],
+    }
+  )
+
+export type RFQFormValues = z.infer<typeof rfqSchema>
+export type RFQItemFormValues = z.infer<typeof rfqItemSchema>
+export type RFQTermFormValues = z.infer<typeof rfqTermSchema>
+
+
 

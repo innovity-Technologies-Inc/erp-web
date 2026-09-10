@@ -1,4 +1,4 @@
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Info, Send } from 'lucide-react'
 import { Modal } from '../Modal/Modal'
 import { Button } from '../Button/Button'
 
@@ -11,7 +11,7 @@ interface ConfirmationModalProps {
   confirmText?: string
   cancelText?: string
   isLoading?: boolean
-  variant?: 'danger' | 'warning' | 'info'
+  variant?: 'danger' | 'warning' | 'info' | 'success' | 'dispatch'
 }
 
 export const ConfirmationModal = ({
@@ -37,13 +37,23 @@ export const ConfirmationModal = ({
       iconBg: 'bg-amber-50',
     },
     info: {
-      icon: <AlertTriangle className="h-12 w-12 text-blue-500" />,
+      icon: <Info className="h-12 w-12 text-blue-500" />,
       buttonVariant: 'primary' as const,
       iconBg: 'bg-blue-50',
     },
+    success: {
+      icon: <CheckCircle2 className="h-12 w-12 text-emerald-600" />,
+      buttonVariant: 'primary' as const,
+      iconBg: 'bg-emerald-50',
+    },
+    dispatch: {
+      icon: <Send className="h-10 w-10 text-emerald-600 ml-1" />,
+      buttonVariant: 'primary' as const,
+      iconBg: 'bg-emerald-50',
+    },
   }
 
-  const current = variantConfig[variant]
+  const current = variantConfig[variant] || variantConfig.info
 
   return (
     <Modal

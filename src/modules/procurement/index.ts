@@ -20,6 +20,10 @@ export { TermsLibraryListPage } from './views/termsLibrary/TermsLibraryListPage'
 export { RFQEvaluationTemplateListPage } from './views/rfqEvaluationTemplates/RFQEvaluationTemplateListPage'
 export { RFQEvaluationTemplateCreatePage } from './views/rfqEvaluationTemplates/RFQEvaluationTemplateCreatePage'
 export { RFQEvaluationTemplateEditPage } from './views/rfqEvaluationTemplates/RFQEvaluationTemplateEditPage'
+export { RFQListPage } from './views/rfqs/RFQListPage'
+export { RFQCreatePage } from './views/rfqs/RFQCreatePage'
+export { RFQEditPage } from './views/rfqs/RFQEditPage'
+export { RFQViewPage } from './views/rfqs/RFQViewPage'
 
 // Components
 export { VendorCategoryModal } from './components/vendor/VendorCategoryModal'
@@ -139,6 +143,18 @@ export {
   useDeleteRFQEvaluationTemplate,
 } from './hooks/useRFQEvaluationTemplates'
 
+export {
+  useRFQs,
+  useRFQDetails,
+  useCreateRFQ,
+  useUpdateRFQ,
+  useDeleteRFQ,
+  useDispatchRFQ,
+  useComparativeStatement,
+  useEvaluateQuotation,
+  useAwardRFQ,
+} from './hooks/useRFQs'
+
 // Validation
 export {
   vendorCategorySchema,
@@ -155,6 +171,9 @@ export {
   termsLibrarySchema,
   rfqEvaluationTemplateSchema,
   evaluationCriterionSchema,
+  rfqSchema,
+  rfqItemSchema,
+  rfqTermSchema,
 } from './hooks/validation'
 export type {
   VendorCategoryFormValues,
@@ -171,6 +190,9 @@ export type {
   TermsLibraryFormValues,
   RFQEvaluationTemplateFormValues,
   EvaluationCriterionFormValues,
+  RFQFormValues,
+  RFQItemFormValues,
+  RFQTermFormValues,
 } from './hooks/validation'
 
 // API & Types
@@ -185,6 +207,7 @@ export * from './api/budget.api'
 export * from './api/purchaseRequisition.api'
 export * from './api/termsLibrary.api'
 export * from './api/rfqEvaluationTemplate.api'
+export * from './api/rfq.api'
 export * from './api/types'
 export * from './api/vendor.keys'
 export * from './utils/treeUtils'

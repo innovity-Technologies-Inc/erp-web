@@ -17,10 +17,16 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { useUiStore } from '@/store/useUiStore'
 import { useCreateUser, useRolesSelect2 } from '../../hooks/useUsers'
 import { usePermissionsList } from '../../hooks/useRoles'
+import { useDesignationSelect2 } from '@/modules/hrm/hooks/useDesignations'
 import { userSchema, type UserFormValues } from '../../hooks/validation'
 import { Select2 } from '@/components/Select/Select2'
 import { FormField } from '@/components/Form/FormField'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
+
+const rateTypes = [
+  { value: 1, label: 'Hourly' },
+  { value: 2, label: 'Monthly Salary' },
+]
 
 export const UserCreatePage = () => {
   const navigate = useNavigate()
@@ -72,12 +78,23 @@ export const UserCreatePage = () => {
       organization_id: '',
       company_id: '',
       roles: [],
+      designation: '',
+      rate_type: 1,
+      hrate: '',
     },
   })
+
+  const watchedUserType = watch('user_type')
 
   // Watch org & company to filter lists and roles dynamically
   const selectedOrgId = watch('organization_id')
   const selectedCompanyId = watch('company_id')
+
+  // Fetch designations for employee user type
+  const { data: designationSelectData, isLoading: isLoadingDesignations } = useDesignationSelect2()
+  const designationOptions = useMemo(() => {
+    return designationSelectData?.map((d: any) => ({ value: d.id, label: d.text })) || []
+  }, [designationSelectData])
 
   // Fetch companies & orgs (available to super-admin)
   const { data: permissionsData, isLoading: isLoadingPermissions } = usePermissionsList()
@@ -164,6 +181,18 @@ export const UserCreatePage = () => {
 
     // Roles must be submitted to the backend as a JSON-encoded array string
     formData.append('roles', JSON.stringify(data.roles))
+
+    if (data.user_type === 'employee') {
+      if (data.designation) {
+        formData.append('designation', String(data.designation))
+      }
+      if (data.rate_type) {
+        formData.append('rate_type', String(data.rate_type))
+      }
+      if (data.hrate !== undefined && data.hrate !== '') {
+        formData.append('hrate', String(data.hrate))
+      }
+    }
 
     if (selectedFile) {
       formData.append('image', selectedFile)
@@ -436,10 +465,55 @@ export const UserCreatePage = () => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
+                    <option value="employee">Employee</option>
                     <option value="vendor">Vendor</option>
                   </select>
                 )}
               </FormField>
+
+              {watchedUserType === 'employee' && (
+                <>
+                  <FormField label="Designation" error={errors.designation?.message as string} required>
+                    <Controller
+                      name="designation"
+                      control={control}
+                      render={({ field }) => (
+                        <Select2
+                          {...field}
+                          options={designationOptions}
+                          placeholder="Select Designation"
+                          isLoading={isLoadingDesignations}
+                        />
+                      )}
+                    />
+                  </FormField>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField label="Rate Type" error={errors.rate_type?.message as string} required>
+                      <select
+                        {...register('rate_type')}
+                        className="erp-input w-full"
+                      >
+                        {rateTypes.map((rt) => (
+                          <option key={rt.value} value={rt.value}>
+                            {rt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </FormField>
+
+                    <FormField label="Pay Rate / Salary" error={errors.hrate?.message as string} required>
+                      <input
+                        type="number"
+                        step="any"
+                        placeholder="e.g. 500.00"
+                        {...register('hrate')}
+                        className="erp-input w-full"
+                      />
+                    </FormField>
+                  </div>
+                </>
+              )}
 
               <FormField label="Account Status" error={errors.status?.message} required>
                 <select

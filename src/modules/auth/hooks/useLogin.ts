@@ -30,7 +30,19 @@ export const useLogin = () => {
         }
 
         notify('Login successful!', 'success')
-        navigate({ to: '/' })
+
+        let redirectUrl = '/'
+        try {
+          const intended = sessionStorage.getItem('intended_url')
+          if (intended && intended !== '/' && !intended.startsWith('/login')) {
+            redirectUrl = intended
+            sessionStorage.removeItem('intended_url')
+          }
+        } catch {
+          // ignore
+        }
+
+        navigate({ to: redirectUrl as any })
       } else {
         notify(response.message || 'Login failed', 'error')
       }

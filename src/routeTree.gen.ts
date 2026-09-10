@@ -52,6 +52,7 @@ import { Route as AuthenticatedAccountCashAdjustmentRouteImport } from './routes
 import { Route as AuthenticatedAccountBankReconciliationRouteImport } from './routes/_authenticated/account/bank-reconciliation'
 import { Route as AuthenticatedSettingsApprovalWorkflowsIndexRouteImport } from './routes/_authenticated/settings/approval-workflows/index'
 import { Route as AuthenticatedProcurementVendorsIndexRouteImport } from './routes/_authenticated/procurement/vendors.index'
+import { Route as AuthenticatedProcurementRfqsIndexRouteImport } from './routes/_authenticated/procurement/rfqs.index'
 import { Route as AuthenticatedProcurementRfqTemplatesIndexRouteImport } from './routes/_authenticated/procurement/rfq-templates.index'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsIndexRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.index'
 import { Route as AuthenticatedProcurementBudgetsIndexRouteImport } from './routes/_authenticated/procurement/budgets.index'
@@ -75,6 +76,7 @@ import { Route as AuthenticatedProcurementVendorsDocumentTypesRouteImport } from
 import { Route as AuthenticatedProcurementVendorsCreateRouteImport } from './routes/_authenticated/procurement/vendors.create'
 import { Route as AuthenticatedProcurementVendorsCategoriesRouteImport } from './routes/_authenticated/procurement/vendors.categories'
 import { Route as AuthenticatedProcurementVendorsBlacklistsRouteImport } from './routes/_authenticated/procurement/vendors.blacklists'
+import { Route as AuthenticatedProcurementRfqsCreateRouteImport } from './routes/_authenticated/procurement/rfqs.create'
 import { Route as AuthenticatedProcurementRfqTemplatesCreateRouteImport } from './routes/_authenticated/procurement/rfq-templates.create'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsCreateRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.create'
 import { Route as AuthenticatedProcurementBudgetsHeadsRouteImport } from './routes/_authenticated/procurement/budgets.heads'
@@ -141,6 +143,8 @@ import { Route as AuthenticatedAccountVoucherContraIndexRouteImport } from './ro
 import { Route as AuthenticatedSettingsApprovalWorkflowsEditIdRouteImport } from './routes/_authenticated/settings/approval-workflows/edit.$id'
 import { Route as AuthenticatedProcurementVendorsViewIdRouteImport } from './routes/_authenticated/procurement/vendors.view.$id'
 import { Route as AuthenticatedProcurementVendorsEditIdRouteImport } from './routes/_authenticated/procurement/vendors.edit.$id'
+import { Route as AuthenticatedProcurementRfqsViewIdRouteImport } from './routes/_authenticated/procurement/rfqs.view.$id'
+import { Route as AuthenticatedProcurementRfqsEditIdRouteImport } from './routes/_authenticated/procurement/rfqs.edit.$id'
 import { Route as AuthenticatedProcurementRfqTemplatesEditIdRouteImport } from './routes/_authenticated/procurement/rfq-templates.edit.$id'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsViewIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.view.$id'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsEditIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.edit.$id'
@@ -421,6 +425,12 @@ const AuthenticatedProcurementVendorsIndexRoute =
     path: '/procurement/vendors/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementRfqsIndexRoute =
+  AuthenticatedProcurementRfqsIndexRouteImport.update({
+    id: '/procurement/rfqs/',
+    path: '/procurement/rfqs/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementRfqTemplatesIndexRoute =
   AuthenticatedProcurementRfqTemplatesIndexRouteImport.update({
     id: '/procurement/rfq-templates/',
@@ -557,6 +567,12 @@ const AuthenticatedProcurementVendorsBlacklistsRoute =
   AuthenticatedProcurementVendorsBlacklistsRouteImport.update({
     id: '/procurement/vendors/blacklists',
     path: '/procurement/vendors/blacklists',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementRfqsCreateRoute =
+  AuthenticatedProcurementRfqsCreateRouteImport.update({
+    id: '/procurement/rfqs/create',
+    path: '/procurement/rfqs/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProcurementRfqTemplatesCreateRoute =
@@ -955,6 +971,18 @@ const AuthenticatedProcurementVendorsEditIdRoute =
     path: '/procurement/vendors/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementRfqsViewIdRoute =
+  AuthenticatedProcurementRfqsViewIdRouteImport.update({
+    id: '/procurement/rfqs/view/$id',
+    path: '/procurement/rfqs/view/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementRfqsEditIdRoute =
+  AuthenticatedProcurementRfqsEditIdRouteImport.update({
+    id: '/procurement/rfqs/edit/$id',
+    path: '/procurement/rfqs/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementRfqTemplatesEditIdRoute =
   AuthenticatedProcurementRfqTemplatesEditIdRouteImport.update({
     id: '/procurement/rfq-templates/edit/$id',
@@ -1267,6 +1295,7 @@ export interface FileRoutesByFullPath {
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
   '/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   '/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
+  '/procurement/rfqs/create': typeof AuthenticatedProcurementRfqsCreateRoute
   '/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
   '/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
   '/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
@@ -1290,6 +1319,7 @@ export interface FileRoutesByFullPath {
   '/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
   '/procurement/purchase-requisitions/': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   '/procurement/rfq-templates/': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
+  '/procurement/rfqs/': typeof AuthenticatedProcurementRfqsIndexRoute
   '/procurement/vendors/': typeof AuthenticatedProcurementVendorsIndexRoute
   '/settings/approval-workflows/': typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
@@ -1321,6 +1351,8 @@ export interface FileRoutesByFullPath {
   '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   '/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   '/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  '/procurement/rfqs/edit/$id': typeof AuthenticatedProcurementRfqsEditIdRoute
+  '/procurement/rfqs/view/$id': typeof AuthenticatedProcurementRfqsViewIdRoute
   '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
   '/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
   '/settings/approval-workflows/edit/$id': typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
@@ -1435,6 +1467,7 @@ export interface FileRoutesByTo {
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
   '/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   '/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
+  '/procurement/rfqs/create': typeof AuthenticatedProcurementRfqsCreateRoute
   '/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
   '/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
   '/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
@@ -1458,6 +1491,7 @@ export interface FileRoutesByTo {
   '/procurement/budgets': typeof AuthenticatedProcurementBudgetsIndexRoute
   '/procurement/purchase-requisitions': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   '/procurement/rfq-templates': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
+  '/procurement/rfqs': typeof AuthenticatedProcurementRfqsIndexRoute
   '/procurement/vendors': typeof AuthenticatedProcurementVendorsIndexRoute
   '/settings/approval-workflows': typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   '/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
@@ -1489,6 +1523,8 @@ export interface FileRoutesByTo {
   '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   '/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   '/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  '/procurement/rfqs/edit/$id': typeof AuthenticatedProcurementRfqsEditIdRoute
+  '/procurement/rfqs/view/$id': typeof AuthenticatedProcurementRfqsViewIdRoute
   '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
   '/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
   '/settings/approval-workflows/edit/$id': typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
@@ -1606,6 +1642,7 @@ export interface FileRoutesById {
   '/_authenticated/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
   '/_authenticated/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   '/_authenticated/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
+  '/_authenticated/procurement/rfqs/create': typeof AuthenticatedProcurementRfqsCreateRoute
   '/_authenticated/procurement/vendors/blacklists': typeof AuthenticatedProcurementVendorsBlacklistsRoute
   '/_authenticated/procurement/vendors/categories': typeof AuthenticatedProcurementVendorsCategoriesRoute
   '/_authenticated/procurement/vendors/create': typeof AuthenticatedProcurementVendorsCreateRoute
@@ -1629,6 +1666,7 @@ export interface FileRoutesById {
   '/_authenticated/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
   '/_authenticated/procurement/purchase-requisitions/': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   '/_authenticated/procurement/rfq-templates/': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
+  '/_authenticated/procurement/rfqs/': typeof AuthenticatedProcurementRfqsIndexRoute
   '/_authenticated/procurement/vendors/': typeof AuthenticatedProcurementVendorsIndexRoute
   '/_authenticated/settings/approval-workflows/': typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   '/_authenticated/account/opening-balance/edit/$uuid': typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
@@ -1660,6 +1698,8 @@ export interface FileRoutesById {
   '/_authenticated/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   '/_authenticated/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   '/_authenticated/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  '/_authenticated/procurement/rfqs/edit/$id': typeof AuthenticatedProcurementRfqsEditIdRoute
+  '/_authenticated/procurement/rfqs/view/$id': typeof AuthenticatedProcurementRfqsViewIdRoute
   '/_authenticated/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
   '/_authenticated/procurement/vendors/view/$id': typeof AuthenticatedProcurementVendorsViewIdRoute
   '/_authenticated/settings/approval-workflows/edit/$id': typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
@@ -1776,6 +1816,7 @@ export interface FileRouteTypes {
     | '/procurement/budgets/heads'
     | '/procurement/purchase-requisitions/create'
     | '/procurement/rfq-templates/create'
+    | '/procurement/rfqs/create'
     | '/procurement/vendors/blacklists'
     | '/procurement/vendors/categories'
     | '/procurement/vendors/create'
@@ -1799,6 +1840,7 @@ export interface FileRouteTypes {
     | '/procurement/budgets/'
     | '/procurement/purchase-requisitions/'
     | '/procurement/rfq-templates/'
+    | '/procurement/rfqs/'
     | '/procurement/vendors/'
     | '/settings/approval-workflows/'
     | '/account/opening-balance/edit/$uuid'
@@ -1830,6 +1872,8 @@ export interface FileRouteTypes {
     | '/procurement/purchase-requisitions/edit/$id'
     | '/procurement/purchase-requisitions/view/$id'
     | '/procurement/rfq-templates/edit/$id'
+    | '/procurement/rfqs/edit/$id'
+    | '/procurement/rfqs/view/$id'
     | '/procurement/vendors/edit/$id'
     | '/procurement/vendors/view/$id'
     | '/settings/approval-workflows/edit/$id'
@@ -1944,6 +1988,7 @@ export interface FileRouteTypes {
     | '/procurement/budgets/heads'
     | '/procurement/purchase-requisitions/create'
     | '/procurement/rfq-templates/create'
+    | '/procurement/rfqs/create'
     | '/procurement/vendors/blacklists'
     | '/procurement/vendors/categories'
     | '/procurement/vendors/create'
@@ -1967,6 +2012,7 @@ export interface FileRouteTypes {
     | '/procurement/budgets'
     | '/procurement/purchase-requisitions'
     | '/procurement/rfq-templates'
+    | '/procurement/rfqs'
     | '/procurement/vendors'
     | '/settings/approval-workflows'
     | '/account/opening-balance/edit/$uuid'
@@ -1998,6 +2044,8 @@ export interface FileRouteTypes {
     | '/procurement/purchase-requisitions/edit/$id'
     | '/procurement/purchase-requisitions/view/$id'
     | '/procurement/rfq-templates/edit/$id'
+    | '/procurement/rfqs/edit/$id'
+    | '/procurement/rfqs/view/$id'
     | '/procurement/vendors/edit/$id'
     | '/procurement/vendors/view/$id'
     | '/settings/approval-workflows/edit/$id'
@@ -2114,6 +2162,7 @@ export interface FileRouteTypes {
     | '/_authenticated/procurement/budgets/heads'
     | '/_authenticated/procurement/purchase-requisitions/create'
     | '/_authenticated/procurement/rfq-templates/create'
+    | '/_authenticated/procurement/rfqs/create'
     | '/_authenticated/procurement/vendors/blacklists'
     | '/_authenticated/procurement/vendors/categories'
     | '/_authenticated/procurement/vendors/create'
@@ -2137,6 +2186,7 @@ export interface FileRouteTypes {
     | '/_authenticated/procurement/budgets/'
     | '/_authenticated/procurement/purchase-requisitions/'
     | '/_authenticated/procurement/rfq-templates/'
+    | '/_authenticated/procurement/rfqs/'
     | '/_authenticated/procurement/vendors/'
     | '/_authenticated/settings/approval-workflows/'
     | '/_authenticated/account/opening-balance/edit/$uuid'
@@ -2168,6 +2218,8 @@ export interface FileRouteTypes {
     | '/_authenticated/procurement/purchase-requisitions/edit/$id'
     | '/_authenticated/procurement/purchase-requisitions/view/$id'
     | '/_authenticated/procurement/rfq-templates/edit/$id'
+    | '/_authenticated/procurement/rfqs/edit/$id'
+    | '/_authenticated/procurement/rfqs/view/$id'
     | '/_authenticated/procurement/vendors/edit/$id'
     | '/_authenticated/procurement/vendors/view/$id'
     | '/_authenticated/settings/approval-workflows/edit/$id'
@@ -2497,6 +2549,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProcurementVendorsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/rfqs/': {
+      id: '/_authenticated/procurement/rfqs/'
+      path: '/procurement/rfqs'
+      fullPath: '/procurement/rfqs/'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/procurement/rfq-templates/': {
       id: '/_authenticated/procurement/rfq-templates/'
       path: '/procurement/rfq-templates'
@@ -2656,6 +2715,13 @@ declare module '@tanstack/react-router' {
       path: '/procurement/vendors/blacklists'
       fullPath: '/procurement/vendors/blacklists'
       preLoaderRoute: typeof AuthenticatedProcurementVendorsBlacklistsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/rfqs/create': {
+      id: '/_authenticated/procurement/rfqs/create'
+      path: '/procurement/rfqs/create'
+      fullPath: '/procurement/rfqs/create'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqsCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/procurement/rfq-templates/create': {
@@ -3120,6 +3186,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProcurementVendorsEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/rfqs/view/$id': {
+      id: '/_authenticated/procurement/rfqs/view/$id'
+      path: '/procurement/rfqs/view/$id'
+      fullPath: '/procurement/rfqs/view/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqsViewIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/rfqs/edit/$id': {
+      id: '/_authenticated/procurement/rfqs/edit/$id'
+      path: '/procurement/rfqs/edit/$id'
+      fullPath: '/procurement/rfqs/edit/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/procurement/rfq-templates/edit/$id': {
       id: '/_authenticated/procurement/rfq-templates/edit/$id'
       path: '/procurement/rfq-templates/edit/$id'
@@ -3495,6 +3575,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProcurementBudgetsHeadsRoute: typeof AuthenticatedProcurementBudgetsHeadsRoute
   AuthenticatedProcurementPurchaseRequisitionsCreateRoute: typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   AuthenticatedProcurementRfqTemplatesCreateRoute: typeof AuthenticatedProcurementRfqTemplatesCreateRoute
+  AuthenticatedProcurementRfqsCreateRoute: typeof AuthenticatedProcurementRfqsCreateRoute
   AuthenticatedProcurementVendorsBlacklistsRoute: typeof AuthenticatedProcurementVendorsBlacklistsRoute
   AuthenticatedProcurementVendorsCategoriesRoute: typeof AuthenticatedProcurementVendorsCategoriesRoute
   AuthenticatedProcurementVendorsCreateRoute: typeof AuthenticatedProcurementVendorsCreateRoute
@@ -3518,6 +3599,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProcurementBudgetsIndexRoute: typeof AuthenticatedProcurementBudgetsIndexRoute
   AuthenticatedProcurementPurchaseRequisitionsIndexRoute: typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   AuthenticatedProcurementRfqTemplatesIndexRoute: typeof AuthenticatedProcurementRfqTemplatesIndexRoute
+  AuthenticatedProcurementRfqsIndexRoute: typeof AuthenticatedProcurementRfqsIndexRoute
   AuthenticatedProcurementVendorsIndexRoute: typeof AuthenticatedProcurementVendorsIndexRoute
   AuthenticatedSettingsApprovalWorkflowsIndexRoute: typeof AuthenticatedSettingsApprovalWorkflowsIndexRoute
   AuthenticatedAccountOpeningBalanceEditUuidRoute: typeof AuthenticatedAccountOpeningBalanceEditUuidRoute
@@ -3548,6 +3630,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProcurementPurchaseRequisitionsEditIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   AuthenticatedProcurementPurchaseRequisitionsViewIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   AuthenticatedProcurementRfqTemplatesEditIdRoute: typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  AuthenticatedProcurementRfqsEditIdRoute: typeof AuthenticatedProcurementRfqsEditIdRoute
+  AuthenticatedProcurementRfqsViewIdRoute: typeof AuthenticatedProcurementRfqsViewIdRoute
   AuthenticatedProcurementVendorsEditIdRoute: typeof AuthenticatedProcurementVendorsEditIdRoute
   AuthenticatedProcurementVendorsViewIdRoute: typeof AuthenticatedProcurementVendorsViewIdRoute
   AuthenticatedSettingsApprovalWorkflowsEditIdRoute: typeof AuthenticatedSettingsApprovalWorkflowsEditIdRoute
@@ -3725,6 +3809,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProcurementPurchaseRequisitionsCreateRoute,
   AuthenticatedProcurementRfqTemplatesCreateRoute:
     AuthenticatedProcurementRfqTemplatesCreateRoute,
+  AuthenticatedProcurementRfqsCreateRoute:
+    AuthenticatedProcurementRfqsCreateRoute,
   AuthenticatedProcurementVendorsBlacklistsRoute:
     AuthenticatedProcurementVendorsBlacklistsRoute,
   AuthenticatedProcurementVendorsCategoriesRoute:
@@ -3766,6 +3852,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProcurementPurchaseRequisitionsIndexRoute,
   AuthenticatedProcurementRfqTemplatesIndexRoute:
     AuthenticatedProcurementRfqTemplatesIndexRoute,
+  AuthenticatedProcurementRfqsIndexRoute:
+    AuthenticatedProcurementRfqsIndexRoute,
   AuthenticatedProcurementVendorsIndexRoute:
     AuthenticatedProcurementVendorsIndexRoute,
   AuthenticatedSettingsApprovalWorkflowsIndexRoute:
@@ -3824,6 +3912,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProcurementPurchaseRequisitionsViewIdRoute,
   AuthenticatedProcurementRfqTemplatesEditIdRoute:
     AuthenticatedProcurementRfqTemplatesEditIdRoute,
+  AuthenticatedProcurementRfqsEditIdRoute:
+    AuthenticatedProcurementRfqsEditIdRoute,
+  AuthenticatedProcurementRfqsViewIdRoute:
+    AuthenticatedProcurementRfqsViewIdRoute,
   AuthenticatedProcurementVendorsEditIdRoute:
     AuthenticatedProcurementVendorsEditIdRoute,
   AuthenticatedProcurementVendorsViewIdRoute:

@@ -23,7 +23,7 @@ export const RFQEvaluationTemplateListPage = () => {
 
   // States
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(15)
+  const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
 
   // Confirmation Delete States

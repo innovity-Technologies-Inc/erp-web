@@ -598,6 +598,7 @@ export interface PurchaseRequisitionFilters {
   page?: number
   start_date?: string
   end_date?: string
+  unassigned_rfq?: boolean
 }
 
 export interface CreatePurchaseRequisitionDto {
@@ -715,3 +716,192 @@ export interface CreateRFQEvaluationTemplateDto {
 export interface UpdateRFQEvaluationTemplateDto extends CreateRFQEvaluationTemplateDto {
   uuid: string
 }
+
+// ─── Request For Quotations (RFQ) ─────────────────────────────────────────────
+
+export type RFQStatus =
+  | 'draft'
+  | 'sent'
+  | 'acknowledged'
+  | 'submitted'
+  | 'under_evaluation'
+  | 'awarded'
+  | 'expired'
+  | 'cancelled'
+
+export type RFQVendorStatus = 'pending' | 'sent' | 'viewed' | 'submitted' | 'declined'
+export type VendorQuotationStatus = 'submitted' | 'under_evaluation' | 'selected' | 'rejected'
+
+export interface RFQItem {
+  id?: number
+  rfq_id?: number
+  purchase_requisition_item_id?: number | null
+  product_id: number
+  category_id: number
+  unit_id: number
+  item_description?: string | null
+  quantity: number
+  remarks?: string | null
+  product?: {
+    id: number
+    name: string
+    code?: string
+  }
+  category?: {
+    id: number
+    name: string
+  }
+  unit?: {
+    id: number
+    name: string
+  }
+}
+
+export interface RFQVendor {
+  id?: number
+  rfq_id?: number
+  vendor_id: number
+  status: RFQVendorStatus
+  sent_at?: string | null
+  viewed_at?: string | null
+  submitted_at?: string | null
+  vendor?: Vendor | null
+}
+
+export interface RFQTerm {
+  id?: number
+  rfq_id?: number
+  term_library_id: number
+  is_mandatory: boolean
+  term?: TermsLibrary | null
+}
+
+export interface RFQAttachment {
+  id?: number
+  rfq_id?: number
+  file_name: string
+  file_path: string
+  file_url?: string
+  created_at?: string
+}
+
+export interface VendorQuotationItem {
+  id: number
+  vendor_quotation_id: number
+  rfq_item_id: number
+  unit_price: number | string
+  total_price: number | string
+  remarks?: string | null
+}
+
+export interface VendorQuotationCompliance {
+  id: number
+  vendor_quotation_id: number
+  rfq_term_id: number
+  compliance_value: string
+  vendor_remarks?: string | null
+  term?: TermsLibrary | null
+}
+
+export interface VendorQuotation {
+  id: number
+  uuid: string
+  rfq_id: number
+  vendor_id: number
+  quotation_no?: string | null
+  quotation_date?: string | null
+  total_quoted_amount: number | string
+  currency?: string
+  delivery_days?: number | null
+  payment_terms?: string | null
+  warranty_terms?: string | null
+  technical_score?: number | null
+  commercial_score?: number | null
+  final_score?: number | null
+  rank?: number | null
+  status: VendorQuotationStatus
+  vendor?: Vendor | null
+  items?: VendorQuotationItem[]
+  compliances?: VendorQuotationCompliance[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface RFQ {
+  id: number
+  uuid: string
+  rfq_no: string
+  purchase_requisition_id?: number | null
+  purchase_requisition?: PurchaseRequisition | null
+  rfq_date: string
+  department_id: number
+  cost_center_id: number
+  evaluation_template_id?: number | null
+  evaluation_template?: RFQEvaluationTemplate | null
+  purpose_justification?: string | null
+  rfq_expiry_date: string
+  expected_delivery_date?: string | null
+  currency?: string
+  payment_terms?: string | null
+  delivery_terms?: string | null
+  status: RFQStatus
+  items?: RFQItem[]
+  target_vendors?: RFQVendor[]
+  targetVendors?: RFQVendor[]
+  rfq_terms?: RFQTerm[]
+  rfqTerms?: RFQTerm[]
+  attachments?: RFQAttachment[]
+  quotations?: VendorQuotation[]
+  department?: {
+    id: number
+    name: string
+  } | null
+  cost_center?: CostCenter | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface RFQFilters {
+  status?: string
+  department_id?: number | string
+  cost_center_id?: number | string
+  search?: string
+  per_page?: number
+  page?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface CreateRFQDto {
+  purchase_requisition_id?: number | null
+  rfq_date: string
+  department_id: number
+  cost_center_id: number
+  evaluation_template_id?: number | null
+  purpose_justification?: string | null
+  rfq_expiry_date: string
+  expected_delivery_date?: string | null
+  currency?: string
+  payment_terms?: string | null
+  delivery_terms?: string | null
+  target_vendor_ids: number[]
+  terms?: Array<{
+    term_library_id: number
+    is_mandatory?: boolean
+  }>
+  items: Array<{
+    purchase_requisition_item_id?: number | null
+    product_id: number
+    category_id: number
+    unit_id: number
+    item_description?: string | null
+    quantity: number
+    remarks?: string | null
+  }>
+  attachments?: File[]
+}
+
+export interface UpdateRFQDto extends CreateRFQDto {
+  uuid: string
+}
+

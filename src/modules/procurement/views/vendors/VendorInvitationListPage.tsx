@@ -35,7 +35,7 @@ export const VendorInvitationListPage = () => {
 
   // States
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(15)
+  const [pageSize, setPageSize] = useState(10)
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string | undefined>(undefined)
   const [excludeApproved, setExcludeApproved] = useState(true)

@@ -83,6 +83,16 @@ export const rfqEvaluationTemplateKeys = {
   detail: (uuid: string | null) => [...rfqEvaluationTemplateKeys.details(), uuid] as const,
 }
 
+export const rfqKeys = {
+  all: () => ['procurement', 'rfqs'] as const,
+  lists: () => [...rfqKeys.all(), 'list'] as const,
+  list: (filters?: Record<string, any>) => [...rfqKeys.lists(), filters] as const,
+  details: () => [...rfqKeys.all(), 'detail'] as const,
+  detail: (uuid: string | null) => [...rfqKeys.details(), uuid] as const,
+  comparativeStatement: (uuid: string | null) => [...rfqKeys.details(), uuid, 'cs'] as const,
+}
+
+
 
 
 
