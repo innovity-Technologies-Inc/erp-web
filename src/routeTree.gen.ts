@@ -145,6 +145,7 @@ import { Route as AuthenticatedProcurementVendorsViewIdRouteImport } from './rou
 import { Route as AuthenticatedProcurementVendorsEditIdRouteImport } from './routes/_authenticated/procurement/vendors.edit.$id'
 import { Route as AuthenticatedProcurementRfqsViewIdRouteImport } from './routes/_authenticated/procurement/rfqs.view.$id'
 import { Route as AuthenticatedProcurementRfqsEditIdRouteImport } from './routes/_authenticated/procurement/rfqs.edit.$id'
+import { Route as AuthenticatedProcurementRfqsCsIdRouteImport } from './routes/_authenticated/procurement/rfqs.cs.$id'
 import { Route as AuthenticatedProcurementRfqTemplatesEditIdRouteImport } from './routes/_authenticated/procurement/rfq-templates.edit.$id'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsViewIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.view.$id'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsEditIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.edit.$id'
@@ -983,6 +984,12 @@ const AuthenticatedProcurementRfqsEditIdRoute =
     path: '/procurement/rfqs/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementRfqsCsIdRoute =
+  AuthenticatedProcurementRfqsCsIdRouteImport.update({
+    id: '/procurement/rfqs/cs/$id',
+    path: '/procurement/rfqs/cs/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementRfqTemplatesEditIdRoute =
   AuthenticatedProcurementRfqTemplatesEditIdRouteImport.update({
     id: '/procurement/rfq-templates/edit/$id',
@@ -1351,6 +1358,7 @@ export interface FileRoutesByFullPath {
   '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   '/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   '/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  '/procurement/rfqs/cs/$id': typeof AuthenticatedProcurementRfqsCsIdRoute
   '/procurement/rfqs/edit/$id': typeof AuthenticatedProcurementRfqsEditIdRoute
   '/procurement/rfqs/view/$id': typeof AuthenticatedProcurementRfqsViewIdRoute
   '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
@@ -1523,6 +1531,7 @@ export interface FileRoutesByTo {
   '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   '/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   '/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  '/procurement/rfqs/cs/$id': typeof AuthenticatedProcurementRfqsCsIdRoute
   '/procurement/rfqs/edit/$id': typeof AuthenticatedProcurementRfqsEditIdRoute
   '/procurement/rfqs/view/$id': typeof AuthenticatedProcurementRfqsViewIdRoute
   '/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
@@ -1698,6 +1707,7 @@ export interface FileRoutesById {
   '/_authenticated/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   '/_authenticated/procurement/purchase-requisitions/view/$id': typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   '/_authenticated/procurement/rfq-templates/edit/$id': typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  '/_authenticated/procurement/rfqs/cs/$id': typeof AuthenticatedProcurementRfqsCsIdRoute
   '/_authenticated/procurement/rfqs/edit/$id': typeof AuthenticatedProcurementRfqsEditIdRoute
   '/_authenticated/procurement/rfqs/view/$id': typeof AuthenticatedProcurementRfqsViewIdRoute
   '/_authenticated/procurement/vendors/edit/$id': typeof AuthenticatedProcurementVendorsEditIdRoute
@@ -1872,6 +1882,7 @@ export interface FileRouteTypes {
     | '/procurement/purchase-requisitions/edit/$id'
     | '/procurement/purchase-requisitions/view/$id'
     | '/procurement/rfq-templates/edit/$id'
+    | '/procurement/rfqs/cs/$id'
     | '/procurement/rfqs/edit/$id'
     | '/procurement/rfqs/view/$id'
     | '/procurement/vendors/edit/$id'
@@ -2044,6 +2055,7 @@ export interface FileRouteTypes {
     | '/procurement/purchase-requisitions/edit/$id'
     | '/procurement/purchase-requisitions/view/$id'
     | '/procurement/rfq-templates/edit/$id'
+    | '/procurement/rfqs/cs/$id'
     | '/procurement/rfqs/edit/$id'
     | '/procurement/rfqs/view/$id'
     | '/procurement/vendors/edit/$id'
@@ -2218,6 +2230,7 @@ export interface FileRouteTypes {
     | '/_authenticated/procurement/purchase-requisitions/edit/$id'
     | '/_authenticated/procurement/purchase-requisitions/view/$id'
     | '/_authenticated/procurement/rfq-templates/edit/$id'
+    | '/_authenticated/procurement/rfqs/cs/$id'
     | '/_authenticated/procurement/rfqs/edit/$id'
     | '/_authenticated/procurement/rfqs/view/$id'
     | '/_authenticated/procurement/vendors/edit/$id'
@@ -3200,6 +3213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProcurementRfqsEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/rfqs/cs/$id': {
+      id: '/_authenticated/procurement/rfqs/cs/$id'
+      path: '/procurement/rfqs/cs/$id'
+      fullPath: '/procurement/rfqs/cs/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementRfqsCsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/procurement/rfq-templates/edit/$id': {
       id: '/_authenticated/procurement/rfq-templates/edit/$id'
       path: '/procurement/rfq-templates/edit/$id'
@@ -3630,6 +3650,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedProcurementPurchaseRequisitionsEditIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
   AuthenticatedProcurementPurchaseRequisitionsViewIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsViewIdRoute
   AuthenticatedProcurementRfqTemplatesEditIdRoute: typeof AuthenticatedProcurementRfqTemplatesEditIdRoute
+  AuthenticatedProcurementRfqsCsIdRoute: typeof AuthenticatedProcurementRfqsCsIdRoute
   AuthenticatedProcurementRfqsEditIdRoute: typeof AuthenticatedProcurementRfqsEditIdRoute
   AuthenticatedProcurementRfqsViewIdRoute: typeof AuthenticatedProcurementRfqsViewIdRoute
   AuthenticatedProcurementVendorsEditIdRoute: typeof AuthenticatedProcurementVendorsEditIdRoute
@@ -3912,6 +3933,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProcurementPurchaseRequisitionsViewIdRoute,
   AuthenticatedProcurementRfqTemplatesEditIdRoute:
     AuthenticatedProcurementRfqTemplatesEditIdRoute,
+  AuthenticatedProcurementRfqsCsIdRoute: AuthenticatedProcurementRfqsCsIdRoute,
   AuthenticatedProcurementRfqsEditIdRoute:
     AuthenticatedProcurementRfqsEditIdRoute,
   AuthenticatedProcurementRfqsViewIdRoute:

@@ -122,7 +122,17 @@ export const ApprovalWorkflowCreatePage = () => {
   const handleStepChange = (index: number, field: keyof StepFormItem, value: any) => {
     setSteps((prev) => {
       const copy = [...prev]
-      copy[index] = { ...copy[index], [field]: value }
+      if (field === 'type') {
+        copy[index] = {
+          ...copy[index],
+          type: value,
+          required_user_type: value === 'user-type' ? copy[index].required_user_type || designationOptions[0]?.value || '' : undefined,
+          role_id: value === 'role-user' ? copy[index].role_id || null : null,
+          user_id: value === 'specific-user' ? copy[index].user_id || null : null,
+        }
+      } else {
+        copy[index] = { ...copy[index], [field]: value }
+      }
       return copy
     })
   }
@@ -163,8 +173,8 @@ export const ApprovalWorkflowCreatePage = () => {
         step_order: idx + 1,
         type: s.type,
         required_user_type: s.type === 'user-type' ? s.required_user_type : null,
-        role_id: s.type === 'role-user' ? Number(s.role_id) : null,
-        user_id: s.type === 'specific-user' ? Number(s.user_id) : null,
+        role_id: s.type === 'role-user' && s.role_id ? Number(s.role_id) : null,
+        user_id: s.type === 'specific-user' && s.user_id ? Number(s.user_id) : null,
       })),
     }
 
@@ -445,13 +455,13 @@ export const ApprovalWorkflowCreatePage = () => {
 
                       {step.type === 'role-user' && (
                         <select
-                          value={step.role_id || ''}
+                          value={step.role_id !== null && step.role_id !== undefined ? String(step.role_id) : ''}
                           onChange={(e) => handleStepChange(index, 'role_id', e.target.value ? Number(e.target.value) : null)}
                           className="erp-input w-full text-xs font-medium bg-white text-slate-800"
                         >
                           <option value="">Select Role</option>
                           {roleOptions.map((r: any) => (
-                            <option key={r.id} value={r.id}>
+                            <option key={r.id} value={String(r.id)}>
                               {r.text || r.name}
                             </option>
                           ))}
@@ -460,13 +470,13 @@ export const ApprovalWorkflowCreatePage = () => {
 
                       {step.type === 'specific-user' && (
                         <select
-                          value={step.user_id || ''}
+                          value={step.user_id !== null && step.user_id !== undefined ? String(step.user_id) : ''}
                           onChange={(e) => handleStepChange(index, 'user_id', e.target.value ? Number(e.target.value) : null)}
                           className="erp-input w-full text-xs font-medium bg-white text-slate-800"
                         >
                           <option value="">Select Employee</option>
                           {employeeOptions.map((emp: any) => (
-                            <option key={emp.id} value={emp.id}>
+                            <option key={emp.id} value={String(emp.id)}>
                               {emp.text || emp.name} {emp.designation ? `(${emp.designation})` : ''}
                             </option>
                           ))}

@@ -128,10 +128,10 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
               id: s.id,
               name: s.name || '',
               step_order: idx + 1,
-              type: s.type || 'user-type',
-              required_user_type: s.required_user_type || 'department_head',
-              role_id: s.role_id || null,
-              user_id: s.user_id || null,
+              type: (s.type as any) || (s.role_id ? 'role-user' : s.user_id ? 'specific-user' : 'user-type'),
+              required_user_type: s.required_user_type || '',
+              role_id: s.role_id && Number(s.role_id) > 0 ? Number(s.role_id) : null,
+              user_id: s.user_id && Number(s.user_id) > 0 ? Number(s.user_id) : null,
             }))
           )
         } else {
@@ -141,6 +141,8 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
               step_order: 1,
               type: 'user-type',
               required_user_type: 'department_head',
+              role_id: null,
+              user_id: null,
             },
           ])
         }
@@ -161,7 +163,9 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
             name: '',
             step_order: 1,
             type: 'user-type',
-            required_user_type: 'department_head',
+            required_user_type: designationOptions[0]?.value || '',
+            role_id: null,
+            user_id: null,
           },
         ])
       }
@@ -176,7 +180,9 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
         name: '',
         step_order: nextOrder,
         type: 'user-type',
-        required_user_type: 'procurement_manager',
+        required_user_type: designationOptions[0]?.value || '',
+        role_id: null,
+        user_id: null,
       },
     ])
   }
@@ -194,7 +200,17 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
   const handleStepChange = (index: number, field: keyof StepFormItem, value: any) => {
     setSteps((prev) => {
       const copy = [...prev]
-      copy[index] = { ...copy[index], [field]: value }
+      if (field === 'type') {
+        copy[index] = {
+          ...copy[index],
+          type: value,
+          required_user_type: value === 'user-type' ? copy[index].required_user_type || designationOptions[0]?.value || '' : undefined,
+          role_id: value === 'role-user' ? copy[index].role_id || null : null,
+          user_id: value === 'specific-user' ? copy[index].user_id || null : null,
+        }
+      } else {
+        copy[index] = { ...copy[index], [field]: value }
+      }
       return copy
     })
   }
@@ -229,8 +245,8 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
         step_order: idx + 1,
         type: s.type,
         required_user_type: s.type === 'user-type' ? s.required_user_type : null,
-        role_id: s.type === 'role-user' ? Number(s.role_id) : null,
-        user_id: s.type === 'specific-user' ? Number(s.user_id) : null,
+        role_id: s.type === 'role-user' && s.role_id ? Number(s.role_id) : null,
+        user_id: s.type === 'specific-user' && s.user_id ? Number(s.user_id) : null,
       })),
     }
 
@@ -595,13 +611,13 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
 
                     {step.type === 'role-user' && (
                       <select
-                        value={step.role_id || ''}
+                        value={step.role_id !== null && step.role_id !== undefined ? String(step.role_id) : ''}
                         onChange={(e) => handleStepChange(index, 'role_id', e.target.value ? Number(e.target.value) : null)}
                         className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-slate-800"
                       >
                         <option value="">Select Role</option>
                         {roleOptions.map((r: any) => (
-                          <option key={r.id} value={r.id}>
+                          <option key={r.id} value={String(r.id)}>
                             {r.text || r.name}
                           </option>
                         ))}
@@ -610,13 +626,13 @@ export const WorkflowModal = ({ isOpen, onClose, workflowId }: WorkflowModalProp
 
                     {step.type === 'specific-user' && (
                       <select
-                        value={step.user_id || ''}
+                        value={step.user_id !== null && step.user_id !== undefined ? String(step.user_id) : ''}
                         onChange={(e) => handleStepChange(index, 'user_id', e.target.value ? Number(e.target.value) : null)}
                         className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-slate-800"
                       >
                         <option value="">Select Employee</option>
                         {employeeOptions.map((emp: any) => (
-                          <option key={emp.id} value={emp.id}>
+                          <option key={emp.id} value={String(emp.id)}>
                             {emp.text || emp.name} {emp.designation ? `(${emp.designation})` : ''}
                           </option>
                         ))}

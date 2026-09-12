@@ -23,6 +23,7 @@ import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
+import { useAuthStore } from '@/store/useAuthStore'
 import { formatDate } from '@/utils/formatters'
 import { exportToExcel } from '@/utils/exportUtils'
 import { clsx } from 'clsx'
@@ -40,6 +41,8 @@ const statusBadgeColors: Record<RFQStatus, { bg: string; label: string }> = {
 
 export const RFQListPage = () => {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
+  const isVendor = user?.user_type === 'vendor'
   const { showNotificationModal } = useUiStore()
   const { hasPermission, hasAnyPermission } = usePermissions()
 
@@ -124,6 +127,7 @@ export const RFQListPage = () => {
   }
 
   const handleComparativeStatement = (data: RFQ) => {
+    if (isVendor) return
     navigate({
       to: '/procurement/rfqs/cs/$id' as any,
       params: { id: data.uuid } as any,
@@ -375,8 +379,8 @@ export const RFQListPage = () => {
                 <Eye className="h-4 w-4" />
               </button>
 
-              {/* Comparative Statement (CS) Matrix */}
-              {hasQuotes && (
+              {/* Comparative Statement (CS) Matrix - Strictly for non-vendors */}
+              {hasQuotes && !isVendor && (
                 <button
                   onClick={() => handleComparativeStatement(data)}
                   className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-all cursor-pointer"
@@ -466,11 +470,16 @@ export const RFQListPage = () => {
 
   const tabs = [
     { name: 'Vendors', to: '/procurement/vendors', permission: ['view_vendor', 'view_vendor_invitation', 'view_vendor_category', 'view_vendor_document_type', 'view_vendor_blacklist'] },
-    { name: 'Requisitions & RFQ', to: '/procurement/purchase-requisitions', active: true, permission: ['view_rfq', 'view_purchase_requisition'] },
+    {
+      name: hasPermission('view_purchase_requisition') ? 'Requisitions & RFQ' : 'Request For Quotations',
+      to: hasPermission('view_purchase_requisition') ? '/procurement/purchase-requisitions' : '/procurement/rfqs',
+      active: true,
+      permission: ['view_rfq', 'view_purchase_requisition']
+    },
     { name: 'Purchase Orders', to: '/procurement/purchase-orders', permission: 'view_purchase_order' },
     { name: 'Goods Receipt (GRN)', to: '/procurement/grns', permission: 'view_grn' },
     { name: 'Invoices & Payments', to: '/procurement/invoices', permission: ['view_invoice', 'submit_invoice', 'view_vendor_invoice'] },
-    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head', 'view_cost_center'] },
+    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head'] },
   ]
 
   const titleOptions = [

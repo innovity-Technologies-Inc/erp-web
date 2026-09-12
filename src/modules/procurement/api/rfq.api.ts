@@ -6,6 +6,7 @@ import type {
   CreateRFQDto,
   UpdateRFQDto,
   VendorQuotation,
+  SubmitQuotationDto,
 } from './types'
 
 export interface PaginatedRFQsResponse {
@@ -193,6 +194,17 @@ export const evaluateQuotation = async (
 ): Promise<ApiResponse<VendorQuotation>> => {
   const response = await apiClient.post<ApiResponse<VendorQuotation>>(
     `/procurement/rfqs/${uuid}/evaluations`,
+    data
+  )
+  return response.data
+}
+
+export const submitVendorQuotation = async (
+  uuid: string,
+  data: SubmitQuotationDto
+): Promise<ApiResponse<VendorQuotation>> => {
+  const response = await apiClient.post<ApiResponse<VendorQuotation>>(
+    `/procurement/rfqs/${uuid}/vendor-quotations`,
     data
   )
   return response.data

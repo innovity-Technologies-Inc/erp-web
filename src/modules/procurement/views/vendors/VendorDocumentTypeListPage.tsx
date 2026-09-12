@@ -18,7 +18,7 @@ import { clsx } from 'clsx'
 
 export const VendorDocumentTypeListPage = () => {
   const { showNotificationModal } = useUiStore()
-  const { hasAnyPermission } = usePermissions()
+  const { hasPermission, hasAnyPermission } = usePermissions()
 
   // States
   const [currentPage, setCurrentPage] = useState(1)
@@ -248,11 +248,15 @@ export const VendorDocumentTypeListPage = () => {
 
   const tabs = [
     { name: 'Vendors', to: '/procurement/vendors', active: true, permission: ['view_vendor', 'view_vendor_invitation', 'view_vendor_category', 'view_vendor_document_type', 'view_vendor_blacklist'] },
-    { name: 'Requisitions & RFQ', to: '/procurement/purchase-requisitions', permission: ['view_rfq', 'view_purchase_requisition'] },
+    {
+      name: hasPermission('view_purchase_requisition') ? 'Requisitions & RFQ' : 'Request For Quotations',
+      to: hasPermission('view_purchase_requisition') ? '/procurement/purchase-requisitions' : '/procurement/rfqs',
+      permission: ['view_rfq', 'view_purchase_requisition']
+    },
     { name: 'Purchase Orders', to: '/procurement/purchase-orders', permission: 'view_purchase_order' },
     { name: 'Goods Receipt (GRN)', to: '/procurement/grns', permission: 'view_grn' },
     { name: 'Invoices & Payments', to: '/procurement/invoices', permission: ['view_invoice', 'submit_invoice', 'view_vendor_invoice'] },
-    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head', 'view_cost_center'] },
+    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head'] },
   ]
 
   const titleOptions = [

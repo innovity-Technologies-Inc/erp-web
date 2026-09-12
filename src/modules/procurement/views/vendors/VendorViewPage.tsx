@@ -28,6 +28,7 @@ import { useVendorDetails } from '../../hooks/useVendors'
 import { formatDate } from '@/utils/formatters'
 import { VendorApprovalModal } from '../../components/vendor/VendorApprovalModal'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { useAuthStore } from '@/store/useAuthStore'
 import { clsx } from 'clsx'
 import type {
   VendorCategory,
@@ -42,6 +43,7 @@ export const VendorViewPage = () => {
   const params = useParams({ strict: false }) as Record<string, string | undefined>
   const targetUuid = params.uuid || params.id || null
   const navigate = useNavigate()
+  const { user } = useAuthStore()
 
   const { data: vendorResponse, isLoading, error } = useVendorDetails(targetUuid)
   const [isApprovalOpen, setIsApprovalOpen] = useState(false)
@@ -141,15 +143,17 @@ export const VendorViewPage = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <PermissionGuard permission="edit_vendor">
-              <button
-                type="button"
-                onClick={() => setIsApprovalOpen(true)}
-                className="flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-[12px] font-medium transition-all shadow-2xs cursor-pointer"
-              >
-                <UserCheck className="h-4 w-4 text-primary" />
-                <span>Change Status</span>
-              </button>
+            <PermissionGuard permission="approve_vendor">
+              {user?.user_type !== 'vendor' && (
+                <button
+                  type="button"
+                  onClick={() => setIsApprovalOpen(true)}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-[12px] font-medium transition-all shadow-2xs cursor-pointer"
+                >
+                  <UserCheck className="h-4 w-4 text-primary" />
+                  <span>Change Status</span>
+                </button>
+              )}
             </PermissionGuard>
 
             <PermissionGuard permission="edit_vendor">

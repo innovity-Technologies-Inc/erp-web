@@ -9,9 +9,10 @@ import {
   getComparativeStatement,
   evaluateQuotation,
   awardRFQ,
+  submitVendorQuotation,
 } from '../api/rfq.api'
 import { rfqKeys } from '../api/vendor.keys'
-import type { RFQFilters, CreateRFQDto, UpdateRFQDto } from '../api/types'
+import type { RFQFilters, CreateRFQDto, UpdateRFQDto, SubmitQuotationDto } from '../api/types'
 
 export const useRFQs = (params?: RFQFilters) => {
   return useQuery({
@@ -116,6 +117,20 @@ export const useAwardRFQ = () => {
 
   return useMutation({
     mutationFn: ({ uuid, vendorId }: { uuid: string; vendorId: number }) => awardRFQ(uuid, vendorId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: rfqKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: rfqKeys.detail(variables.uuid) })
+      queryClient.invalidateQueries({ queryKey: rfqKeys.comparativeStatement(variables.uuid) })
+    },
+  })
+}
+
+export const useSubmitVendorQuotation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ uuid, data }: { uuid: string; data: SubmitQuotationDto }) =>
+      submitVendorQuotation(uuid, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: rfqKeys.lists() })
       queryClient.invalidateQueries({ queryKey: rfqKeys.detail(variables.uuid) })

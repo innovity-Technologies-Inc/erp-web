@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import {
   ArrowLeft,
+  DollarSign,
   Printer,
   Edit,
   Send,
@@ -34,6 +35,9 @@ import { getUnitSelect2 } from '@/modules/inventory/api/units.api'
 import { useQuery } from '@tanstack/react-query'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
+import { VendorQuotationModal } from '../../components/rfq/VendorQuotationModal'
+import { useAuthStore } from '@/store/useAuthStore'
+import { usePermissions } from '@/hooks/usePermissions'
 import { useSettings } from '@/hooks/useSettings'
 import { useUiStore } from '@/store/useUiStore'
 import { formatDate } from '@/utils/formatters'
@@ -60,6 +64,9 @@ export const RFQViewPage = () => {
   const { showNotificationModal } = useUiStore()
 
   const [isDispatchOpen, setIsDispatchOpen] = useState(false)
+  const [isQuotationModalOpen, setIsQuotationModalOpen] = useState(false)
+  const { user } = useAuthStore()
+  const { hasPermission, hasAnyPermission } = usePermissions()
 
   // RFQ Query
   const { data: rfqResponse, isLoading, error } = useRFQDetails(targetId)
@@ -130,6 +137,30 @@ export const RFQViewPage = () => {
     return rfq.attachments || []
   }, [rfq])
 
+  const isVendor = user?.user_type === 'vendor'
+
+  const myTargetVendor = useMemo(() => {
+    return targetVendors.find((tv: any) => {
+      const v = tv.vendor || tv
+      return v?.email === user?.email || (v as any)?.user_id === user?.id
+    })
+  }, [targetVendors, user])
+
+  const myQuotation = useMemo(() => {
+    if (!rfq?.quotations || !Array.isArray(rfq.quotations)) return null
+    if (isVendor) {
+      return rfq.quotations.find((q: any) => {
+        const v = q.vendor
+        return (
+          (myTargetVendor?.vendor_id && Number(q.vendor_id) === Number(myTargetVendor.vendor_id)) ||
+          (user?.email && (v?.email === user.email || q.email === user.email)) ||
+          (user?.id && (v?.user_id === user.id || q.user_id === user.id))
+        )
+      }) || null
+    }
+    return null
+  }, [rfq?.quotations, isVendor, myTargetVendor, user])
+
   const handlePrint = () => {
     window.print()
   }
@@ -189,6 +220,11 @@ export const RFQViewPage = () => {
     label: rfq.status || 'Draft',
   }
   const isDraft = rfq.status === 'draft'
+  const isInvitedVendor = Boolean(isVendor && myTargetVendor)
+  const canSubmitQuotation =
+    isInvitedVendor &&
+    ['sent', 'acknowledged', 'submitted'].includes(rfq.status)
+
   const hasQuotes = (rfq.quotations?.length ?? 0) > 0 || ['submitted', 'under_evaluation', 'awarded'].includes(rfq.status)
   const backendBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '')
 
@@ -223,8 +259,20 @@ export const RFQViewPage = () => {
             <span>Print RFQ</span>
           </button>
 
-          {/* Comparative Statement (CS Matrix) */}
-          {hasQuotes && (
+          {/* Submit / Update Quotation (Vendors / Authorized Staff) */}
+          {canSubmitQuotation && isInvitedVendor && (
+            <button
+              type="button"
+              onClick={() => setIsQuotationModalOpen(true)}
+              className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-[10px] font-bold rounded-lg transition-all flex items-center gap-2 shadow-md shadow-primary/20 active:scale-95 cursor-pointer"
+            >
+              <DollarSign className="h-4 w-4" />
+              <span>{myQuotation ? 'Update Quotation / Bid' : 'Submit Quotation'}</span>
+            </button>
+          )}
+
+          {/* Comparative Statement (CS Matrix) - Restricted to internal procurement staff */}
+          {hasQuotes && !isVendor && (
             <button
               type="button"
               onClick={() => navigate({ to: `/procurement/rfqs/cs/${rfq.uuid}` as any })}
@@ -278,10 +326,17 @@ export const RFQViewPage = () => {
                 />
               ) : (
                 <div className="flex items-center gap-2 text-primary font-bold text-2xl tracking-tight print:text-xl">
-                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white print:w-8 print:h-8">
+                  <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white print:w-8 print:h-8 shrink-0">
                     <Globe className="w-6 h-6 print:w-5 print:h-5" />
                   </div>
-                  {webSetting?.site_name || companyInformation?.company_name || 'GEN-ITECH ERP'}
+                  {webSetting?.site_name && webSetting.site_name.includes('<') ? (
+                    <div
+                      className="site-brand-rich leading-tight"
+                      dangerouslySetInnerHTML={{ __html: webSetting.site_name }}
+                    />
+                  ) : (
+                    <span>{companyInformation?.company_name || webSetting?.site_name || 'GEN-ITECH ERP'}</span>
+                  )}
                 </div>
               )}
             </div>
@@ -317,17 +372,24 @@ export const RFQViewPage = () => {
               </div>
 
               <h3 className="text-[18px] font-semibold text-gray-900 mb-4 print:text-[16px] print:mb-2">
-                {deptMap.get(rfq.department_id) || `Department #${rfq.department_id}`}
+                {deptMap.get(rfq.department_id) || rfq.department?.name || (rfq.department_id ? `Department #${rfq.department_id}` : 'General Department')}
               </h3>
 
               <div className="space-y-3 print:space-y-1.5">
                 <div className="flex items-start gap-3 text-[13px] text-gray-500 font-medium leading-relaxed print:text-[11px]">
                   <span className="font-bold text-gray-700 shrink-0">Cost Center:</span>
-                  <span>{costCenterMap.get(rfq.cost_center_id) || (rfq.cost_center_id ? `Cost Center #${rfq.cost_center_id}` : 'General / Central')}</span>
+                  <span>
+                    {costCenterMap.get(rfq.cost_center_id) ||
+                      (rfq.cost_center || rfq.costCenter
+                        ? `${(rfq.cost_center || rfq.costCenter)?.code} - ${(rfq.cost_center || rfq.costCenter)?.name}`
+                        : rfq.cost_center_id
+                        ? `Cost Center #${rfq.cost_center_id}`
+                        : 'General / Central')}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
                   <span className="font-bold text-gray-700 shrink-0">Currency:</span>
-                  <span className="font-semibold text-slate-800">{rfq.currency || 'USD ($)'}</span>
+                  <span className="font-semibold text-slate-800">{rfq.currency || webSetting?.currency || '৳'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
                   <span className="font-bold text-gray-700 shrink-0">Sourcing Mode:</span>
@@ -370,7 +432,12 @@ export const RFQViewPage = () => {
                 </div>
                 <div className="flex items-center gap-3 text-[13px] text-gray-500 font-medium print:text-[11px]">
                   <span className="font-bold text-gray-700 shrink-0">Evaluation Template:</span>
-                  <span>{activeTemplate?.name || (rfq.evaluation_template_id ? `Template #${rfq.evaluation_template_id}` : 'Standard / Price-Based')}</span>
+                  <span>
+                    {activeTemplate?.name ||
+                      rfq.evaluation_template?.name ||
+                      rfq.evaluationTemplate?.name ||
+                      (rfq.evaluation_template_id ? `Template #${rfq.evaluation_template_id}` : 'Standard / Price-Based')}
+                  </span>
                 </div>
               </div>
             </div>
@@ -406,7 +473,7 @@ export const RFQViewPage = () => {
                         <td className="px-4 py-4 print:px-2 print:py-2">
                           <div className="flex flex-col gap-0.5">
                             <span className="font-semibold text-[#1e4ba1] text-[14px] print:text-[12px]">
-                              {productMap.get(item.product_id) || item.product?.product_name || `Product #${item.product_id}`}
+                              {productMap.get(item.product_id) || item.product?.name || item.product?.product_name || `Product #${item.product_id}`}
                             </span>
                             {item.item_description && (
                               <span className="text-[11px] text-gray-500 font-medium print:text-[9px]">
@@ -421,10 +488,10 @@ export const RFQViewPage = () => {
                           </div>
                         </td>
                         <td className="px-4 py-4 text-gray-700 font-medium print:px-2 print:py-2">
-                          {categoryMap.get(item.category_id) || item.category?.category_name || '—'}
+                          {categoryMap.get(item.category_id) || item.category?.name || item.category?.category_name || '—'}
                         </td>
                         <td className="px-4 py-4 text-gray-700 font-medium print:px-2 print:py-2">
-                          {unitMap.get(item.unit_id) || item.unit?.unit_name || '—'}
+                          {unitMap.get(item.unit_id) || item.unit?.name || item.unit?.unit_name || '—'}
                         </td>
                         <td className="px-6 py-4 text-center font-bold text-gray-900 font-mono text-[14px] print:text-[12px] print:px-3 print:py-2">
                           {parseFloat(item.quantity) || 0}
@@ -611,7 +678,7 @@ export const RFQViewPage = () => {
                   <div className="flex flex-col">
                     <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Currency</span>
                     <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">
-                      {rfq.currency || 'USD ($)'}
+                      {rfq.currency || webSetting?.currency || '৳'}
                     </span>
                   </div>
                 </div>
@@ -722,7 +789,7 @@ export const RFQViewPage = () => {
                   <div className="flex justify-between items-center pt-3 pb-3 border-t border-b border-gray-200 my-2 print:pt-1 print:pb-1 print:my-1">
                     <span className="text-gray-900 font-bold">Quotation Currency:</span>
                     <span className="text-[16px] text-[#1e4ba1] font-bold print:text-[14px]">
-                      {rfq.currency || 'USD ($)'}
+                      {rfq.currency || webSetting?.currency || '৳'}
                     </span>
                   </div>
 
@@ -800,6 +867,14 @@ export const RFQViewPage = () => {
 
         </div>
       </div>
+
+      {/* Vendor Quotation Modal */}
+      <VendorQuotationModal
+        isOpen={isQuotationModalOpen}
+        onClose={() => setIsQuotationModalOpen(false)}
+        rfq={rfq}
+        existingQuotation={myQuotation}
+      />
 
       {/* Dispatch Confirmation Modal */}
       <ConfirmationModal

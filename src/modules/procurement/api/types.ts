@@ -803,6 +803,32 @@ export interface VendorQuotationCompliance {
   term?: TermsLibrary | null
 }
 
+export interface SubmitQuotationItemDto {
+  rfq_item_id: number
+  unit_price: number
+  remarks?: string
+}
+
+export interface SubmitQuotationComplianceDto {
+  rfq_term_id: number
+  term_library_id: number
+  compliance_value: string
+  vendor_remarks?: string
+}
+
+export interface SubmitQuotationDto {
+  vendor_id?: number
+  quotation_no: string
+  quotation_date: string
+  valid_until?: string
+  delivery_days?: number
+  payment_terms?: string
+  warranty_terms?: string
+  custom_quoted_terms?: any
+  items: SubmitQuotationItemDto[]
+  compliances?: SubmitQuotationComplianceDto[]
+}
+
 export interface VendorQuotation {
   id: number
   uuid: string
@@ -810,6 +836,7 @@ export interface VendorQuotation {
   vendor_id: number
   quotation_no?: string | null
   quotation_date?: string | null
+  valid_until?: string | null
   total_quoted_amount: number | string
   currency?: string
   delivery_days?: number | null

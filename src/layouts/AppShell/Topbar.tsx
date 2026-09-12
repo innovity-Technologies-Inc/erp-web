@@ -9,6 +9,7 @@ import { useSettings } from '@/hooks/useSettings'
 import { useDashboardStore } from '@/store/useDashboardStore'
 import { DateRangePicker } from '@/components/DateRangePicker/DateRangePicker'
 import { useSelfStatus, useSelfCheckIn } from '@/modules/hrm'
+import { NotificationDropdown } from '@/components/Notification/NotificationDropdown'
 
 export const Topbar = () => {
   const user = useAuthStore((state) => state.user)
@@ -232,10 +233,7 @@ export const Topbar = () => {
           <Settings className="h-5.5 w-5.5" />
         </button>
         
-        <button className="p-2 text-[#94a3b8] hover:text-primary transition-colors relative">
-          <Bell className="h-5.5 w-5.5" />
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#7c3aed] rounded-full border-2 border-white"></span>
-        </button>
+        <NotificationDropdown />
 
         {/* User Profile */}
         <div className="relative ml-1">

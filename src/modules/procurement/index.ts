@@ -24,6 +24,7 @@ export { RFQListPage } from './views/rfqs/RFQListPage'
 export { RFQCreatePage } from './views/rfqs/RFQCreatePage'
 export { RFQEditPage } from './views/rfqs/RFQEditPage'
 export { RFQViewPage } from './views/rfqs/RFQViewPage'
+export { RFQComparativeStatementPage } from './views/rfqs/RFQComparativeStatementPage'
 
 // Components
 export { VendorCategoryModal } from './components/vendor/VendorCategoryModal'
@@ -41,6 +42,7 @@ export { BudgetTransferModal } from './components/budget/BudgetTransferModal'
 export { BudgetDetailsModal } from './components/budget/BudgetDetailsModal'
 export { TermsLibraryModal } from './components/termsLibrary/TermsLibraryModal'
 export { RFQEvaluationTemplateModal } from './components/rfqEvaluationTemplate/RFQEvaluationTemplateModal'
+export { VendorQuotationModal } from './components/rfq/VendorQuotationModal'
 
 // Hooks
 export {

@@ -10,13 +10,15 @@ import { VendorApprovalModal } from '../../components/vendor/VendorApprovalModal
 import { useUiStore } from '@/store/useUiStore'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
+import { useAuthStore } from '@/store/useAuthStore'
 import { exportToExcel } from '@/utils/exportUtils'
 import { clsx } from 'clsx'
 
 export const VendorListPage = () => {
   const navigate = useNavigate()
   const { showNotificationModal } = useUiStore()
-  const { hasAnyPermission } = usePermissions()
+  const { hasAnyPermission, hasPermission } = usePermissions()
+  const { user } = useAuthStore()
 
   // States
   const [currentPage, setCurrentPage] = useState(1)
@@ -265,14 +267,16 @@ export const VendorListPage = () => {
                 </button>
               </PermissionGuard>
 
-              <PermissionGuard permission="edit_vendor">
-                <button
-                  onClick={() => setVendorToApprove(data)}
-                  className="p-2 hover:bg-blue-50 text-blue-600 rounded-xl transition-all border border-transparent hover:border-blue-100 hover:scale-110 group/status"
-                  title="Change Status / Approve"
-                >
-                  <UserCheck className="h-4 w-4" />
-                </button>
+              <PermissionGuard permission="approve_vendor">
+                {user?.user_type !== 'vendor' && (
+                  <button
+                    onClick={() => setVendorToApprove(data)}
+                    className="p-2 hover:bg-blue-50 text-blue-600 rounded-xl transition-all border border-transparent hover:border-blue-100 hover:scale-110 group/status"
+                    title="Change Status / Approve"
+                  >
+                    <UserCheck className="h-4 w-4" />
+                  </button>
+                )}
               </PermissionGuard>
 
               <PermissionGuard permission="edit_vendor">
@@ -330,11 +334,15 @@ export const VendorListPage = () => {
 
   const tabs = [
     { name: 'Vendors', to: '/procurement/vendors', active: true, permission: ['view_vendor', 'view_vendor_invitation', 'view_vendor_category', 'view_vendor_document_type', 'view_vendor_blacklist'] },
-    { name: 'Requisitions & RFQ', to: '/procurement/purchase-requisitions', permission: ['view_rfq', 'view_purchase_requisition'] },
+    {
+      name: hasPermission('view_purchase_requisition') ? 'Requisitions & RFQ' : 'Request For Quotations',
+      to: hasPermission('view_purchase_requisition') ? '/procurement/purchase-requisitions' : '/procurement/rfqs',
+      permission: ['view_rfq', 'view_purchase_requisition']
+    },
     { name: 'Purchase Orders', to: '/procurement/purchase-orders', permission: 'view_purchase_order' },
     { name: 'Goods Receipt (GRN)', to: '/procurement/grns', permission: 'view_grn' },
     { name: 'Invoices & Payments', to: '/procurement/invoices', permission: ['view_invoice', 'submit_invoice', 'view_vendor_invoice'] },
-    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head', 'view_cost_center'] },
+    { name: 'Budgets & Cost Centers', to: '/procurement/budgets', permission: ['view_budget', 'view_budget_category', 'view_budget_head'] },
   ]
 
   const titleOptions = [
