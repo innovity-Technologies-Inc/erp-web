@@ -819,7 +819,7 @@ export const VendorQuotationModal = ({
           <Button
             type="submit"
             variant="primary"
-            isLoading={isSubmitting}
+            loading={isSubmitting}
             disabled={isSubmitting}
             className="flex items-center gap-2"
           >

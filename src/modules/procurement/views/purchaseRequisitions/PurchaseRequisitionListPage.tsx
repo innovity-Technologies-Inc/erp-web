@@ -85,6 +85,8 @@ export const PurchaseRequisitionListPage = () => {
     isOpen: boolean
     uuid: string
     prNo: string
+    amount?: number | string
+    stageName?: string
     action: 'submit' | 'approve' | 'reject'
     remarks?: string
   }>({
@@ -453,8 +455,10 @@ export const PurchaseRequisitionListPage = () => {
                         setActionConfirm({
                           isOpen: true,
                           uuid: data.uuid,
-                          prNo: data.pr_no,
+                          prNo: data.pr_no || '',
+                          amount: data.total_estimated_amount,
                           action: 'submit',
+                          remarks: '',
                         })
                       }
                       className="p-1.5 hover:bg-indigo-50 text-indigo-600 rounded-lg transition-all cursor-pointer"
@@ -495,8 +499,11 @@ export const PurchaseRequisitionListPage = () => {
                           setActionConfirm({
                             isOpen: true,
                             uuid: data.uuid,
-                            prNo: data.pr_no,
+                            prNo: data.pr_no || '',
+                            amount: data.total_estimated_amount,
+                            stageName: data.active_approval_step?.name,
                             action: 'approve',
+                            remarks: '',
                           })
                         }
                         className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-all cursor-pointer"
@@ -509,8 +516,10 @@ export const PurchaseRequisitionListPage = () => {
                           setActionConfirm({
                             isOpen: true,
                             uuid: data.uuid,
-                            prNo: data.pr_no,
+                            prNo: data.pr_no || '',
+                            amount: data.total_estimated_amount,
                             action: 'reject',
+                            remarks: '',
                           })
                         }
                         className="p-1.5 hover:bg-rose-50 text-rose-600 rounded-lg transition-all cursor-pointer"
@@ -639,64 +648,62 @@ export const PurchaseRequisitionListPage = () => {
         isLoading={isDeleting}
       />
 
-      {/* Action Interactive Modal (Submit, Approve, Reject with Remarks) */}
+      {/* Enhanced Approval / Rejection / Submission Confirmation Modal */}
       {actionConfirm.isOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-gray-100 transform transition-all">
-            <div className="flex items-start gap-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-gray-100 animate-in fade-in zoom-in duration-150">
+            <div className="flex items-center gap-3">
               <div
                 className={clsx(
-                  'p-2.5 rounded-xl shrink-0',
-                  actionConfirm.action === 'submit' && 'bg-blue-50 text-blue-600',
-                  actionConfirm.action === 'approve' && 'bg-emerald-50 text-emerald-600',
-                  actionConfirm.action === 'reject' && 'bg-rose-50 text-rose-600'
+                  'p-3 rounded-xl flex items-center justify-center text-white shrink-0',
+                  actionConfirm.action === 'submit'
+                    ? 'bg-[#0d7a50]'
+                    : actionConfirm.action === 'approve'
+                    ? 'bg-emerald-600'
+                    : 'bg-rose-600'
                 )}
               >
-                {actionConfirm.action === 'submit' ? (
-                  <Send className="w-5 h-5" />
-                ) : actionConfirm.action === 'approve' ? (
-                  <CheckCircle2 className="w-5 h-5" />
-                ) : (
-                  <XCircle className="w-5 h-5" />
-                )}
+                {actionConfirm.action === 'submit' && <Send className="w-5 h-5" />}
+                {actionConfirm.action === 'approve' && <CheckCircle2 className="w-5 h-5" />}
+                {actionConfirm.action === 'reject' && <XCircle className="w-5 h-5" />}
               </div>
-              <div className="flex-1 min-w-0">
+              <div>
                 <h3 className="text-base font-bold text-gray-900 capitalize">
                   {actionConfirm.action === 'submit'
                     ? 'Submit Purchase Requisition'
                     : actionConfirm.action === 'approve'
-                      ? 'Approve Purchase Requisition'
-                      : 'Reject Purchase Requisition'}
+                    ? 'Approve Purchase Requisition'
+                    : 'Reject Purchase Requisition'}
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   {actionConfirm.action === 'submit'
-                    ? 'Submit this requisition to initiate multi-level workflow approvals.'
+                    ? 'Trigger multi-level approval pipeline across designated authorization levels.'
                     : actionConfirm.action === 'approve'
-                      ? 'Authorize and advance this requisition to the next approval level.'
-                      : 'Reject this requisition and notify the requester with your comments.'}
+                    ? 'Authorize and advance this requisition to the next workflow stage.'
+                    : 'Decline this requisition and log your remarks for the requester.'}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setActionConfirm({ isOpen: false, uuid: '', prNo: '', action: 'submit', remarks: '' })}
-                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
 
-            {/* Quick PR Reference Card */}
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs">
-              <span className="text-gray-400 block text-[10px] font-bold uppercase tracking-wider">Purchase Requisition</span>
-              <span className="font-bold text-gray-800 text-[13px]">{actionConfirm.prNo || 'Draft Requisition'}</span>
+            {/* Quick Context Card */}
+            <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs grid grid-cols-2 gap-2">
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase">Requisition No</span>
+                <span className="font-bold text-gray-800">{actionConfirm.prNo || 'Draft'}</span>
+              </div>
+              <div>
+                <span className="text-gray-400 block text-[10px] font-bold uppercase">Estimated Amount</span>
+                <span className="font-bold text-[#1e4ba1] font-mono">
+                  {formatCurrency(actionConfirm.amount || 0, currency, currencyPosition)}
+                </span>
+              </div>
             </div>
 
-            {/* Remarks / Comments Input */}
             <div>
               <label className="text-xs font-bold text-gray-700 block mb-1">
                 {actionConfirm.action === 'reject'
                   ? 'Rejection Reason / Comments (Required)'
-                  : 'Remarks / Comments (Optional)'}
+                  : 'Approval Remarks / Notes (Optional)'}
               </label>
               <textarea
                 rows={3}
@@ -705,13 +712,12 @@ export const PurchaseRequisitionListPage = () => {
                 placeholder={
                   actionConfirm.action === 'reject'
                     ? 'State the reason for rejecting this requisition...'
-                    : 'Add any remarks or instructions (optional)...'
+                    : 'Add any specific instructions or approvals notes...'
                 }
                 className="w-full p-3 text-xs border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
               />
             </div>
 
-            {/* Action Buttons */}
             <div className="flex gap-3 justify-end pt-2">
               <button
                 type="button"
@@ -728,18 +734,16 @@ export const PurchaseRequisitionListPage = () => {
                   'px-5 py-2 text-xs font-bold text-white rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
                   actionConfirm.action === 'reject'
                     ? 'bg-rose-600 hover:bg-rose-700'
-                    : actionConfirm.action === 'submit'
-                      ? 'bg-blue-600 hover:bg-blue-700'
-                      : 'bg-[#0d7a50] hover:bg-[#0a6642]'
+                    : 'bg-[#0d7a50] hover:bg-[#0a6642]'
                 )}
               >
                 {isActionPending
                   ? 'Processing...'
                   : actionConfirm.action === 'submit'
-                    ? 'Submit Now'
-                    : actionConfirm.action === 'approve'
-                      ? 'Confirm Approval'
-                      : 'Confirm Rejection'}
+                  ? 'Submit Now'
+                  : actionConfirm.action === 'approve'
+                  ? `Confirm Approval ${actionConfirm.stageName ? `(${actionConfirm.stageName})` : ''}`
+                  : 'Confirm Rejection'}
               </button>
             </div>
           </div>

@@ -25,6 +25,10 @@ export { RFQCreatePage } from './views/rfqs/RFQCreatePage'
 export { RFQEditPage } from './views/rfqs/RFQEditPage'
 export { RFQViewPage } from './views/rfqs/RFQViewPage'
 export { RFQComparativeStatementPage } from './views/rfqs/RFQComparativeStatementPage'
+export { PurchaseOrderListPage } from './views/purchaseOrders/PurchaseOrderListPage'
+export { PurchaseOrderCreatePage } from './views/purchaseOrders/PurchaseOrderCreatePage'
+export { PurchaseOrderEditPage } from './views/purchaseOrders/PurchaseOrderEditPage'
+export { PurchaseOrderViewPage } from './views/purchaseOrders/PurchaseOrderViewPage'
 
 // Components
 export { VendorCategoryModal } from './components/vendor/VendorCategoryModal'
@@ -157,6 +161,19 @@ export {
   useAwardRFQ,
 } from './hooks/useRFQs'
 
+export {
+  usePurchaseOrders,
+  usePurchaseOrderDetails,
+  useCreatePurchaseOrder,
+  useUpdatePurchaseOrder,
+  useDeletePurchaseOrder,
+  useDispatchPurchaseOrder,
+  useSavePOSchedules,
+  useReceivePOGoods,
+  useApprovePO,
+  useAmendPO,
+} from './hooks/usePurchaseOrders'
+
 // Validation
 export {
   vendorCategorySchema,
@@ -176,6 +193,8 @@ export {
   rfqSchema,
   rfqItemSchema,
   rfqTermSchema,
+  purchaseOrderSchema,
+  purchaseOrderItemSchema,
 } from './hooks/validation'
 export type {
   VendorCategoryFormValues,
@@ -195,6 +214,8 @@ export type {
   RFQFormValues,
   RFQItemFormValues,
   RFQTermFormValues,
+  PurchaseOrderFormValues,
+  PurchaseOrderItemFormValues,
 } from './hooks/validation'
 
 // API & Types
@@ -210,6 +231,7 @@ export * from './api/purchaseRequisition.api'
 export * from './api/termsLibrary.api'
 export * from './api/rfqEvaluationTemplate.api'
 export * from './api/rfq.api'
+export * from './api/purchaseOrder.api'
 export * from './api/types'
 export * from './api/vendor.keys'
 export * from './utils/treeUtils'

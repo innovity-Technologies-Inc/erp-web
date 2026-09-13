@@ -68,6 +68,7 @@ export const RFQComparativeStatementPage = () => {
   const [evaluatingQuotation, setEvaluatingQuotation] = useState<any | null>(null)
   const [techScore, setTechScore] = useState<string>('')
   const [commScore, setCommScore] = useState<string>('')
+  const [criteriaScores, setCriteriaScores] = useState<Record<string, string>>({})
   const [evalRemarks, setEvalRemarks] = useState<string>('')
   const [awardingVendor, setAwardingVendor] = useState<{ id: number; name: string; amount: number } | null>(null)
 
@@ -77,17 +78,126 @@ export const RFQComparativeStatementPage = () => {
   const termsMatrix = useMemo(() => csData?.terms_compliance_matrix || [], [csData])
   const l1Vendor = useMemo(() => csData?.recommended_l1_vendor || null, [csData])
 
+  // Dynamic Evaluation Template & Criteria
+  const evalTemplate = useMemo(() => rfq?.evaluationTemplate || rfq?.evaluation_template || null, [rfq])
+  const templateCriteria = useMemo(() => {
+    if (!evalTemplate?.criteria) return []
+    return Array.isArray(evalTemplate.criteria) ? evalTemplate.criteria : []
+  }, [evalTemplate])
+
+  const technicalCriteria = useMemo(
+    () => templateCriteria.filter((c: any) => (c.category || 'technical') === 'technical'),
+    [templateCriteria]
+  )
+  const commercialCriteria = useMemo(
+    () => templateCriteria.filter((c: any) => c.category === 'commercial'),
+    [templateCriteria]
+  )
+
+  const templateTechWeight = Number(evalTemplate?.technical_weightage) || 50
+  const templateCommWeight = Number(evalTemplate?.commercial_weightage) || 50
+
   const handlePrint = () => {
     window.print()
+  }
+
+  // Recalculate scores from individual criteria points
+  const recalcScoresFromCriteria = (scoresMap: Record<string, string>) => {
+    if (technicalCriteria.length > 0) {
+      let totalEarned = 0
+      let totalMax = 0
+      technicalCriteria.forEach((c: any, index: number) => {
+        const key = c.name || `criterion_tech_${index}`
+        const max = Number(c.max_score) || 0
+        const earned = parseFloat(scoresMap[key] || '0') || 0
+        totalEarned += Math.min(earned, max)
+        totalMax += max
+      })
+      const tPercent = totalMax > 0 ? (totalEarned / totalMax) * 100 : 0
+      setTechScore(tPercent.toFixed(1))
+    }
+
+    if (commercialCriteria.length > 0) {
+      let totalEarned = 0
+      let totalMax = 0
+      commercialCriteria.forEach((c: any, index: number) => {
+        const key = c.name || `criterion_comm_${index}`
+        const max = Number(c.max_score) || 0
+        const earned = parseFloat(scoresMap[key] || '0') || 0
+        totalEarned += Math.min(earned, max)
+        totalMax += max
+      })
+      const cPercent = totalMax > 0 ? (totalEarned / totalMax) * 100 : 0
+      setCommScore(cPercent.toFixed(1))
+    }
+  }
+
+  const updateCriterionScore = (key: string, value: string) => {
+    const nextScores = { ...criteriaScores, [key]: value }
+    setCriteriaScores(nextScores)
+    recalcScoresFromCriteria(nextScores)
+  }
+
+  // Auto-calculate commercial score based on L1 lowest quoted price ratio
+  const autoScoreCommercialFromL1 = () => {
+    if (!evaluatingQuotation || !l1Vendor) return
+    const lowestAmt = Number(l1Vendor.total_quoted_amount) || 0
+    const quoteAmt = Number(evaluatingQuotation.total_quoted_amount) || 0
+    if (lowestAmt <= 0 || quoteAmt <= 0) return
+
+    const ratioScore = Math.min(100, Math.round((lowestAmt / quoteAmt) * 100 * 10) / 10)
+    setCommScore(String(ratioScore))
+
+    // Also distribute proportionally across commercial criteria if present
+    if (commercialCriteria.length > 0) {
+      const nextScores = { ...criteriaScores }
+      commercialCriteria.forEach((c: any, index: number) => {
+        const key = c.name || `criterion_comm_${index}`
+        const max = Number(c.max_score) || 0
+        const pts = Math.round(((ratioScore / 100) * max) * 10) / 10
+        nextScores[key] = String(pts)
+      })
+      setCriteriaScores(nextScores)
+    }
   }
 
   // Open Evaluation Modal
   const openEvaluation = (v: any) => {
     const rawQuote = (rfq?.quotations || []).find((q: any) => q.id === v.quotation_id || q.uuid === v.quotation_uuid)
     setEvaluatingQuotation({ ...v, rawQuote })
-    setTechScore(rawQuote?.technical_score ? String(rawQuote.technical_score) : '80')
-    setCommScore(rawQuote?.commercial_score ? String(rawQuote.commercial_score) : '85')
     setEvalRemarks('')
+
+    const savedBreakdown = rawQuote?.evaluation_scores_breakdown || {}
+    const initialCriteriaScores: Record<string, string> = {}
+
+    if (templateCriteria.length > 0) {
+      templateCriteria.forEach((c: any, index: number) => {
+        const key = c.name || `criterion_${c.category || 'tech'}_${index}`
+        if (savedBreakdown[key] !== undefined && savedBreakdown[key] !== null) {
+          initialCriteriaScores[key] = String(savedBreakdown[key])
+        } else {
+          initialCriteriaScores[key] = ''
+        }
+      })
+      setCriteriaScores(initialCriteriaScores)
+
+      // Pre-fill previously evaluated scores if available, otherwise keep empty
+      if (rawQuote?.technical_score != null) {
+        setTechScore(String(rawQuote.technical_score))
+      } else {
+        setTechScore('')
+      }
+
+      if (rawQuote?.commercial_score != null) {
+        setCommScore(String(rawQuote.commercial_score))
+      } else {
+        setCommScore('')
+      }
+    } else {
+      setTechScore(rawQuote?.technical_score != null ? String(rawQuote.technical_score) : '')
+      setCommScore(rawQuote?.commercial_score != null ? String(rawQuote.commercial_score) : '')
+      setCriteriaScores({})
+    }
   }
 
   // Submit Evaluation Score
@@ -105,6 +215,11 @@ export const RFQComparativeStatementPage = () => {
       return
     }
 
+    const parsedBreakdown: Record<string, number> = {}
+    Object.entries(criteriaScores).forEach(([k, v]) => {
+      parsedBreakdown[k] = parseFloat(v) || 0
+    })
+
     evaluateMutate(
       {
         uuid: targetId,
@@ -112,6 +227,9 @@ export const RFQComparativeStatementPage = () => {
           vendor_quotation_id: evaluatingQuotation.quotation_id,
           technical_score: tScore,
           commercial_score: cScore,
+          technical_weightage: templateTechWeight,
+          commercial_weightage: templateCommWeight,
+          scores: Object.keys(parsedBreakdown).length > 0 ? parsedBreakdown : undefined,
         },
       },
       {
@@ -745,65 +863,238 @@ export const RFQComparativeStatementPage = () => {
       {/* Technical / Commercial Evaluation Score Modal */}
       {evaluatingQuotation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 print:hidden">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-gray-100 space-y-4 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3 shrink-0">
               <div>
-                <h4 className="text-base font-bold text-gray-900">Score Vendor Quotation</h4>
-                <p className="text-xs text-gray-500 font-medium">{evaluatingQuotation.vendor_name}</p>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-base font-bold text-gray-900">Score Vendor Quotation</h4>
+                  {evalTemplate && (
+                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+                      {evalTemplate.name || 'Template Evaluation'}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500 font-medium mt-0.5">
+                  Supplier: <strong className="text-gray-800">{evaluatingQuotation.vendor_name}</strong> • Quoted Total:{' '}
+                  <strong className="text-primary font-mono">
+                    {formatCurrency(evaluatingQuotation.total_quoted_amount, activeCurrency, activeCurrencyPos)}
+                  </strong>
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() => setEvaluatingQuotation(null)}
-                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100"
+                className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-xs font-poppins">
-              <div>
-                <label className="block text-gray-700 font-bold mb-1">
-                  Technical Score (0 - 100) <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={techScore}
-                  onChange={(e) => setTechScore(e.target.value)}
-                  placeholder="e.g. 85"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-mono font-semibold"
-                />
+            {/* Modal Body - Scrollable */}
+            <div className="space-y-4 text-xs font-poppins overflow-y-auto pr-1 flex-1">
+              {templateCriteria.length > 0 ? (
+                <>
+                  {/* Technical Criteria Section */}
+                  {technicalCriteria.length > 0 && (
+                    <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4 text-primary" />
+                          <span className="font-bold text-gray-900 text-xs uppercase tracking-wider">
+                            Technical Criteria (Weight: {templateTechWeight}%)
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-primary font-mono bg-primary/10 px-2 py-0.5 rounded">
+                          Score: {techScore}%
+                        </span>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {technicalCriteria.map((c: any, index: number) => {
+                          const key = c.name || `criterion_tech_${index}`
+                          const max = Number(c.max_score) || 50
+                          const currentVal = criteriaScores[key] ?? ''
+
+                          return (
+                            <div
+                              key={key}
+                              className="p-2.5 bg-white rounded-lg border border-gray-200 flex items-center justify-between gap-3 shadow-2xs"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <span className="font-semibold text-gray-800 block truncate">{c.name}</span>
+                                <span className="text-[10px] text-gray-400">Max Points: {max} pts</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max={max}
+                                  step="0.5"
+                                  value={currentVal}
+                                  onChange={(e) => updateCriterionScore(key, e.target.value)}
+                                  className="w-20 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-right outline-none focus:ring-1 focus:ring-primary/40"
+                                  placeholder="0"
+                                />
+                                <span className="text-[11px] text-gray-400 font-medium">/ {max}</span>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Commercial Criteria Section */}
+                  {commercialCriteria.length > 0 && (
+                    <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200/80 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-emerald-600" />
+                          <span className="font-bold text-gray-900 text-xs uppercase tracking-wider">
+                            Commercial Criteria (Weight: {templateCommWeight}%)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {l1Vendor && (
+                            <button
+                              type="button"
+                              onClick={autoScoreCommercialFromL1}
+                              className="text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded cursor-pointer transition-colors"
+                              title="Calculate score automatically from L1 price ratio"
+                            >
+                              Auto-Score (L1 Ratio)
+                            </button>
+                          )}
+                          <span className="text-xs font-bold text-emerald-700 font-mono bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                            Score: {commScore}%
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {commercialCriteria.map((c: any, index: number) => {
+                          const key = c.name || `criterion_comm_${index}`
+                          const max = Number(c.max_score) || 50
+                          const currentVal = criteriaScores[key] ?? ''
+
+                          return (
+                            <div
+                              key={key}
+                              className="p-2.5 bg-white rounded-lg border border-gray-200 flex items-center justify-between gap-3 shadow-2xs"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <span className="font-semibold text-gray-800 block truncate">{c.name}</span>
+                                <span className="text-[10px] text-gray-400">Max Points: {max} pts</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max={max}
+                                  step="0.5"
+                                  value={currentVal}
+                                  onChange={(e) => updateCriterionScore(key, e.target.value)}
+                                  className="w-20 px-2.5 py-1.5 border border-gray-300 rounded-lg text-xs font-mono font-bold text-right outline-none focus:ring-1 focus:ring-primary/40"
+                                  placeholder="0"
+                                />
+                                <span className="text-[11px] text-gray-400 font-medium">/ {max}</span>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* Fallback Direct Score Inputs */
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200">
+                    <label className="block text-gray-700 font-bold mb-1">
+                      Technical Score (0 - 100) <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={techScore}
+                      onChange={(e) => setTechScore(e.target.value)}
+                      placeholder="e.g. 85"
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-mono font-semibold"
+                    />
+                    <span className="text-[10px] text-gray-400 mt-1 block">
+                      Weightage: {templateTechWeight}%
+                    </span>
+                  </div>
+
+                  <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-gray-700 font-bold">
+                        Commercial Score (0 - 100) <span className="text-rose-500">*</span>
+                      </label>
+                      {l1Vendor && (
+                        <button
+                          type="button"
+                          onClick={autoScoreCommercialFromL1}
+                          className="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer"
+                        >
+                          Auto L1
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={commScore}
+                      onChange={(e) => setCommScore(e.target.value)}
+                      placeholder="e.g. 90"
+                      className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-mono font-semibold"
+                    />
+                    <span className="text-[10px] text-gray-400 mt-1 block">
+                      Weightage: {templateCommWeight}%
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Live Final Score Summary Banner */}
+              <div className="p-3.5 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary block">
+                    Calculated Weighted Total
+                  </span>
+                  <div className="text-xs text-gray-600 font-mono mt-0.5">
+                    ({techScore || '0'} × {templateTechWeight}%) + ({commScore || '0'} × {templateCommWeight}%)
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-xl font-extrabold text-primary font-mono">
+                    {(
+                      ((parseFloat(techScore) || 0) * (templateTechWeight / 100)) +
+                      ((parseFloat(commScore) || 0) * (templateCommWeight / 100))
+                    ).toFixed(2)}
+                  </div>
+                  <span className="text-[10px] text-gray-400 font-medium">Final Score / 100</span>
+                </div>
               </div>
 
+              {/* Evaluation Remarks */}
               <div>
-                <label className="block text-gray-700 font-bold mb-1">
-                  Commercial Score (0 - 100) <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={commScore}
-                  onChange={(e) => setCommScore(e.target.value)}
-                  placeholder="e.g. 90"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-mono font-semibold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 font-bold mb-1">Evaluation Remarks</label>
+                <label className="block text-gray-700 font-bold mb-1">Evaluation Remarks / Feedback</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={evalRemarks}
                   onChange={(e) => setEvalRemarks(e.target.value)}
                   placeholder="Optional committee / reviewer feedback..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-xs"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-gray-100">
+            {/* Modal Footer */}
+            <div className="flex justify-end gap-2 pt-3 border-t border-gray-100 shrink-0">
               <button
                 type="button"
                 onClick={() => setEvaluatingQuotation(null)}
@@ -815,9 +1106,10 @@ export const RFQComparativeStatementPage = () => {
                 type="button"
                 onClick={handleSaveEvaluation}
                 disabled={isEvaluating}
-                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-xs font-bold rounded-lg transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
               >
-                {isEvaluating ? 'Saving...' : 'Save Evaluation'}
+                <Star className="w-3.5 h-3.5 text-amber-300" />
+                <span>{isEvaluating ? 'Saving...' : 'Save Evaluation'}</span>
               </button>
             </div>
           </div>

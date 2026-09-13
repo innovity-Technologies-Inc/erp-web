@@ -197,6 +197,9 @@ export interface Vendor {
   name: string
   email?: string
   phone?: string
+  mobile?: string
+  contact_person?: string
+  address?: string
   website?: string
   license_no?: string
   rating?: number | string
@@ -930,5 +933,257 @@ export interface CreateRFQDto {
 
 export interface UpdateRFQDto extends CreateRFQDto {
   uuid: string
+}
+
+// ==========================================
+// Purchase Order (PO) Module Types
+// ==========================================
+
+export type POStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'issued'
+  | 'partially_delivered'
+  | 'fully_delivered'
+  | 'invoiced'
+  | 'closed'
+  | 'cancelled'
+
+export type POScheduleStatus =
+  | 'in_progress'
+  | 'partially_received'
+  | 'completed'
+  | 'cancelled'
+
+export type POAmendmentStatus =
+  | 'draft'
+  | 'pending_approval'
+  | 'approved'
+  | 'rejected'
+
+export interface PurchaseOrderItem {
+  id: number
+  uuid: string
+  purchase_order_id: number
+  product_id: number
+  category_id: number
+  unit_id: number
+  item_description?: string | null
+  hs_code?: string | null
+  quantity: number
+  rate: number
+  vat_percentage?: number
+  vat_amount?: number
+  total_price: number
+  received_quantity: number
+  product?: {
+    id: number
+    name?: string
+    product_name?: string
+    code?: string
+    sku?: string
+  } | null
+  category?: {
+    id: number
+    name?: string
+    category_name?: string
+  } | null
+  unit?: {
+    id: number
+    name?: string
+    unit_name?: string
+    code?: string
+  } | null
+  schedules?: PurchaseOrderSchedule[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PurchaseOrderSchedule {
+  id: number
+  purchase_order_id: number
+  purchase_order_item_id: number
+  schedule_no: string
+  planned_delivery_date: string
+  planned_quantity: number
+  received_quantity: number
+  status: POScheduleStatus
+  item?: PurchaseOrderItem
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PurchaseOrderAmendment {
+  id: number
+  purchase_order_id: number
+  amendment_no: string
+  amendment_date: string
+  amended_by: number
+  amendment_details: {
+    previous?: Record<string, any>
+    updated?: Record<string, any>
+  }
+  reason?: string | null
+  status: POAmendmentStatus
+  amendedBy?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PurchaseOrderAttachment {
+  id: number
+  purchase_order_id: number
+  file_name: string
+  file_path: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PurchaseOrder {
+  id: number
+  uuid: string
+  po_no: string
+  po_date: string
+  rfq_id?: number | null
+  rfq?: RFQ | null
+  vendor_id: number
+  vendor?: Vendor | null
+  department_id: number
+  department?: {
+    id: number
+    name: string
+  } | null
+  cost_center_id: number
+  cost_center?: CostCenter | null
+  costCenter?: CostCenter | null
+  currency: string
+  payment_terms?: string | null
+  delivery_terms?: string | null
+  po_validity_date?: string | null
+  sub_total: number
+  vat_percentage: number
+  vat_amount: number
+  total_amount: number
+  status: POStatus
+  submitted_by?: number | null
+  submitted_at?: string | null
+  remarks?: string | null
+  can_current_user_approve?: boolean
+  active_approval_step?: {
+    step_request_id?: number
+    step_id?: number
+    name: string
+    step_order: number
+    type?: string
+    role_id?: number | null
+    user_id?: number | null
+    required_user_type?: string | null
+  } | null
+  items?: PurchaseOrderItem[]
+  schedules?: PurchaseOrderSchedule[]
+  amendments?: PurchaseOrderAmendment[]
+  attachments?: PurchaseOrderAttachment[]
+  approval_requests?: any[]
+  approvalRequests?: any[]
+  creator?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  updater?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  submitter?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  created_by?: number
+  updated_by?: number
+  created_at?: string
+  updated_at?: string
+}
+
+export interface PurchaseOrderFilters {
+  status?: string
+  vendor_id?: number | string
+  search?: string
+  per_page?: number
+  page?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface CreatePurchaseOrderItemDto {
+  product_id: number
+  category_id: number
+  unit_id: number
+  item_description?: string | null
+  hs_code?: string | null
+  quantity: number
+  rate: number
+  vat_percentage?: number
+}
+
+export interface CreatePurchaseOrderDto {
+  rfq_id?: number | null
+  vendor_id: number
+  department_id: number
+  cost_center_id: number
+  po_date: string
+  po_validity_date?: string | null
+  currency?: string
+  payment_terms?: string | null
+  delivery_terms?: string | null
+  vat_percentage?: number
+  items?: CreatePurchaseOrderItemDto[]
+  attachments?: File[]
+}
+
+export interface UpdatePurchaseOrderDto extends Partial<CreatePurchaseOrderDto> {
+  uuid: string
+}
+
+export interface ReceivePOGoodsItemDto {
+  purchase_order_item_id: number
+  received_quantity: number
+}
+
+export interface ReceivePOGoodsDto {
+  items: ReceivePOGoodsItemDto[]
+}
+
+export interface SavePOScheduleItemDto {
+  purchase_order_item_id: number
+  planned_delivery_date: string
+  planned_quantity: number
+}
+
+export interface SavePOSchedulesDto {
+  schedules: SavePOScheduleItemDto[]
+}
+
+export interface AmendPOItemDto {
+  purchase_order_item_id: number
+  quantity?: number
+  rate?: number
+}
+
+export interface AmendPODto {
+  reason: string
+  items: AmendPOItemDto[]
+}
+
+export interface SinglePurchaseOrderResponse {
+  status: string
+  message: string
+  response: PurchaseOrder
 }
 

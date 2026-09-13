@@ -304,5 +304,49 @@ export type RFQFormValues = z.infer<typeof rfqSchema>
 export type RFQItemFormValues = z.infer<typeof rfqItemSchema>
 export type RFQTermFormValues = z.infer<typeof rfqTermSchema>
 
+export const purchaseOrderItemSchema = z.object({
+  id: z.number().optional().nullable(),
+  product_id: requiredId('Product is required'),
+  category_id: requiredId('Category is required'),
+  unit_id: requiredId('Unit is required'),
+  item_description: z.string().optional().nullable(),
+  hs_code: z.string().optional().nullable(),
+  quantity: requiredPositiveNumber('Quantity must be greater than 0'),
+  rate: z.coerce.number().min(0, 'Rate must be 0 or greater'),
+  vat_percentage: z.coerce.number().min(0, 'VAT % must be 0 or greater').default(0),
+})
+
+export const purchaseOrderSchema = z
+  .object({
+    rfq_id: z.custom<number | string>().optional().nullable(),
+    vendor_id: requiredId('Vendor is required'),
+    department_id: requiredId('Department is required'),
+    cost_center_id: requiredId('Cost Center is required'),
+    po_date: z.string().min(1, 'PO Date is required'),
+    po_validity_date: z.string().optional().nullable(),
+    currency: z.string().optional().nullable(),
+    payment_terms: z.string().optional().nullable(),
+    delivery_terms: z.string().optional().nullable(),
+    vat_percentage: z.coerce.number().min(0).default(0),
+    items: z.array(purchaseOrderItemSchema).min(1, 'At least one item is required in the Purchase Order'),
+    attachments: z.array(z.any()).optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      const validProductIds = data.items
+        .map((i) => Number(i.product_id))
+        .filter((id) => !isNaN(id) && id > 0)
+      return new Set(validProductIds).size === validProductIds.length
+    },
+    {
+      message: 'Duplicate products are not allowed. Please combine quantities into a single item or choose different products.',
+      path: ['items'],
+    }
+  )
+
+export type PurchaseOrderFormValues = z.infer<typeof purchaseOrderSchema>
+export type PurchaseOrderItemFormValues = z.infer<typeof purchaseOrderItemSchema>
+
+
 
 

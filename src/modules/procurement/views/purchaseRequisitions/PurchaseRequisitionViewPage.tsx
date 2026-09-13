@@ -342,274 +342,9 @@ export const PurchaseRequisitionViewPage = () => {
         </div>
       </div>
 
-      {/* Main Container: 20% Left Vertical Pipeline + 80% Right Invoice Document */}
+      {/* Main Container: Left Document + Right Vertical Approval Pipeline */}
       <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-5 items-start pb-12 print:block print:p-0 print:m-0">
-        
-        {/* Left Column (~20%): Sleek Vertical Multi-Level Approval Pipeline (Sticky on scroll) */}
-        <div className="w-full lg:w-[260px] xl:w-[280px] shrink-0 sticky top-6 print:hidden space-y-3">
-          
-          {/* Card: Approval Pipeline Stepper */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-3.5">
-            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
-              <div className="flex items-center gap-1.5">
-                <div className="p-1 bg-primary/10 text-primary rounded-md">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <h3 className="text-[11px] font-bold text-gray-900 uppercase tracking-wider">Approval Path</h3>
-                  <p className="text-[9px] text-gray-400">Workflow Stages</p>
-                </div>
-              </div>
-
-              <span className={clsx(
-                'text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider',
-                pr.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
-                pr.status === 'rejected' ? 'bg-rose-100 text-rose-800' :
-                pr.status === 'submitted' ? 'bg-blue-100 text-blue-800 animate-pulse' :
-                'bg-slate-100 text-slate-700'
-              )}>
-                {pr.status === 'submitted' ? 'In Review' : (pr.status || 'Draft')}
-              </span>
-            </div>
-
-            {/* If In Review: Context Action Box */}
-            {pr.status === 'submitted' && (
-              <div className="p-2.5 bg-blue-50/90 rounded-lg border border-blue-200 text-xs space-y-2">
-                <div className="flex items-start gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5 animate-spin" />
-                  <div>
-                    <span className="text-[9px] font-bold text-blue-700 uppercase tracking-wider block">
-                      {pr.can_current_user_approve ? 'Action Required (Your Stage):' : 'Awaiting Action:'}
-                    </span>
-                    <p className="text-[11px] font-bold text-gray-900 leading-tight mt-0.5 truncate max-w-[200px]" title={pr.can_current_user_approve ? (myActiveStep?.name || 'Your Review Stage') : (activeStageNames || 'Department / Management Review')}>
-                      {pr.can_current_user_approve
-                        ? (myActiveStep?.name || 'Your Review Stage')
-                        : (activeStageNames || 'Department / Management Review')}
-                    </p>
-                    {pr.can_current_user_approve && myActiveStep?.name && (
-                      <p className="text-[10px] text-emerald-700 font-semibold mt-0.5">
-                        ✓ You are the assigned approver for this stage
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {pr.can_current_user_approve ? (
-                  <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-blue-100">
-                    <button
-                      type="button"
-                      onClick={() => setActionConfirm({ isOpen: true, action: 'approve', remarks: '' })}
-                      className="py-1 px-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[9.5px] font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-3 h-3" />
-                      <span>Approve</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActionConfirm({ isOpen: true, action: 'reject', remarks: '' })}
-                      className="py-1 px-2 bg-rose-600 hover:bg-rose-700 text-white text-[9.5px] font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer"
-                    >
-                      <XCircle className="w-3 h-3" />
-                      <span>Reject</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="pt-1.5 border-t border-blue-100">
-                    <p className="text-[9.5px] text-amber-700 font-medium italic">
-                      Waiting for designated approvers ({activeStageNames || 'Approver'})
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Vertical Stepper Timeline */}
-            <div className="relative pl-5 space-y-4 before:absolute before:left-[8px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-200">
-              
-              {/* Step 1: Draft Created */}
-              <div className="relative group">
-                <div className="absolute -left-[20px] top-0 w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center ring-3 ring-white shadow-xs">
-                  <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider">
-                      1. Draft Created
-                    </span>
-                    <span className="text-[9px] text-gray-400 font-mono">
-                      {formatDate(pr.created_at || pr.pr_date)}
-                    </span>
-                  </div>
-                  <h4 className="text-[11px] font-bold text-gray-900 mt-0.5 truncate">Requisition Created</h4>
-                  <p className="text-[10px] text-gray-500 truncate" title={pr.creator?.name || pr.requisitioner_name || 'Creator'}>
-                    By {pr.creator?.name || pr.requisitioner_name || 'Creator'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Step 2: Submitted for Approval */}
-              <div className="relative group">
-                <div className={clsx(
-                  'absolute -left-[20px] top-0 w-4 h-4 rounded-full flex items-center justify-center text-white ring-3 ring-white shadow-xs',
-                  pr.status !== 'draft' ? 'bg-emerald-600' : 'bg-amber-500 ring-amber-100 animate-pulse'
-                )}>
-                  {pr.status !== 'draft' ? (
-                    <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                  ) : (
-                    <Send className="w-2.5 h-2.5" />
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className={clsx(
-                      'text-[9px] font-bold uppercase tracking-wider',
-                      pr.status !== 'draft' ? 'text-emerald-700' : 'text-amber-700'
-                    )}>
-                      2. Submission
-                    </span>
-                    {pr.status !== 'draft' && (
-                      <span className="text-[9px] text-gray-400 font-mono">
-                        {formatDate(pr.submitted_at || activeApprovalRequest?.created_at || pr.updated_at || pr.pr_date)}
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="text-[11px] font-bold text-gray-900 mt-0.5 truncate">
-                    {pr.status !== 'draft' ? 'Submitted for Approval' : 'Awaiting Submission'}
-                  </h4>
-                  <p className="text-[10px] text-gray-500 truncate" title={pr.status !== 'draft' ? `Sent by ${pr.submitter?.name || pr.updater?.name || pr.creator?.name || 'Submitter'}` : ''}>
-                    {pr.status !== 'draft'
-                      ? `Sent by ${pr.submitter?.name || pr.updater?.name || pr.creator?.name || 'Submitter'}`
-                      : 'Click "Submit for Approval"'}
-                  </p>
-                </div>
-              </div>
-
-              {/* Dynamic Approval Steps (Level 1, 2, ... N) */}
-              {stepRequests.length > 0 &&
-                stepRequests.map((step: any, idx: number) => {
-                  const stepName = step.workflow_step?.name || step.workflowStep?.name || `Level ${idx + 1} Review`
-                  const isApproved = step.status === 'approved'
-                  const isPending = step.status === 'pending'
-                  const isRejected = step.status === 'rejected'
-                  const isMyStep = isPending && myActiveStep?.step_request_id === step.id
-                  const approverName = step.approver?.name || (isApproved ? 'Authorized' : 'Assigned Approver')
-
-                  return (
-                    <div key={step.id || idx} className="relative group">
-                      <div className={clsx(
-                        'absolute -left-[20px] top-0 w-4 h-4 rounded-full flex items-center justify-center text-white ring-3 ring-white shadow-xs transition-all',
-                        isApproved ? 'bg-emerald-600' :
-                        isMyStep ? 'bg-emerald-600 ring-emerald-200 animate-pulse' :
-                        isPending ? 'bg-blue-600 ring-blue-100' :
-                        isRejected ? 'bg-rose-600' :
-                        'bg-gray-300 text-gray-600'
-                      )}>
-                        {isApproved && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
-                        {isPending && <Clock className="w-2.5 h-2.5" />}
-                        {isRejected && <XCircle className="w-2.5 h-2.5" />}
-                        {!isApproved && !isPending && !isRejected && <span className="text-[8px] font-bold">{idx + 1}</span>}
-                      </div>
-
-                      <div className={clsx(
-                        'p-2.5 rounded-lg border text-xs transition-all',
-                        isApproved ? 'bg-emerald-50/40 border-emerald-200' :
-                        isMyStep ? 'bg-emerald-50/80 border-emerald-300 ring-2 ring-emerald-400/30 shadow-xs' :
-                        isPending ? 'bg-blue-50/70 border-blue-300' :
-                        isRejected ? 'bg-rose-50/60 border-rose-300' :
-                        'bg-gray-50/50 border-gray-200'
-                      )}>
-                        <div className="flex items-center justify-between mb-0.5">
-                          <span className={clsx(
-                            'text-[8.5px] font-bold uppercase tracking-wider px-1 py-0.2 rounded',
-                            isApproved ? 'bg-emerald-100 text-emerald-800' :
-                            isMyStep ? 'bg-emerald-100 text-emerald-800 font-extrabold' :
-                            isPending ? 'bg-blue-100 text-blue-800' :
-                            isRejected ? 'bg-rose-100 text-rose-800' :
-                            'bg-gray-200 text-gray-600'
-                          )}>
-                            Level {idx + 1}
-                          </span>
-                          <span className={clsx(
-                            'text-[9px] font-semibold capitalize',
-                            isApproved ? 'text-emerald-700' :
-                            isMyStep ? 'text-emerald-700 font-bold' :
-                            isPending ? 'text-blue-700 font-semibold' :
-                            isRejected ? 'text-rose-700 font-bold' :
-                            'text-gray-400'
-                          )}>
-                            {isApproved ? 'Approved' : isMyStep ? 'Your Action' : isPending ? 'Pending' : isRejected ? 'Rejected' : 'Queued'}
-                          </span>
-                        </div>
-
-                        <h4 className="text-[11px] font-bold text-gray-900 truncate" title={stepName}>
-                          {stepName}
-                        </h4>
-                        <p className="text-[10px] text-gray-600 truncate mt-0.5" title={approverName}>
-                          {isMyStep ? 'Action required by you' : approverName}
-                        </p>
-
-                        {step.action_taken_at && (
-                          <div className="text-[8.5px] text-gray-400 font-mono mt-1 pt-1 border-t border-gray-100 flex items-center justify-between">
-                            <span>Done</span>
-                            <span>{formatDate(step.action_taken_at)}</span>
-                          </div>
-                        )}
-
-                        {step.comments && (
-                          <div className="mt-1.5 p-1 bg-white rounded text-[9px] text-gray-600 italic border border-gray-100 truncate" title={step.comments}>
-                            "{step.comments}"
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-
-              {/* Fallback Configured Preview Steps (If Draft) */}
-              {stepRequests.length === 0 && configuredSteps.length > 0 &&
-                configuredSteps.map((step: any, idx: number) => {
-                  return (
-                    <div key={step.id || idx} className="relative group">
-                      <div className="absolute -left-[20px] top-0 w-4 h-4 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center ring-3 ring-white shadow-xs text-[8px] font-bold">
-                        {idx + 1}
-                      </div>
-                      <div className="p-2 rounded-lg border border-dashed border-gray-200 bg-gray-50/50 text-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[8.5px] font-bold uppercase tracking-wider text-gray-500">
-                            Level {idx + 1}
-                          </span>
-                          <span className="text-[8.5px] text-gray-400 italic">Queued</span>
-                        </div>
-                        <h4 className="text-[10.5px] font-semibold text-gray-700 mt-0.5 truncate">{step.name}</h4>
-                        <p className="text-[9.5px] text-gray-400 truncate mt-0.5">
-                          {step.role?.name || (step.type === 'role-user' ? 'Designated Role' : 'Assigned Approver')}
-                        </p>
-                      </div>
-                    </div>
-                  )
-                })}
-
-              {/* Outcome Step */}
-              <div className="relative group">
-                <div className={clsx(
-                  'absolute -left-[20px] top-0 w-4 h-4 rounded-full flex items-center justify-center text-white ring-3 ring-white shadow-xs',
-                  pr.status === 'approved' ? 'bg-emerald-600' : 'bg-gray-300 text-gray-600'
-                )}>
-                  <Sparkles className="w-2.5 h-2.5" />
-                </div>
-                <div>
-                  <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Outcome</span>
-                  <h4 className="text-[11px] font-bold text-gray-900 mt-0.5">PO Conversion</h4>
-                  <p className="text-[9.5px] text-gray-400">
-                    {pr.status === 'approved' ? 'Authorized for PO' : 'Awaiting approvals'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column (Approx 75% - 80%): Pristine Requisition Document */}
+        {/* Left Column: Pristine Requisition Document */}
         <div className="flex-1 min-w-0 w-full bg-white rounded-xl border border-gray-200 shadow-sm print:shadow-none print:border-none print:m-0 print:max-w-none">
           {/* Document Header */}
           <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 print:flex-row print:items-center print:p-4 border-b border-gray-100">
@@ -1078,6 +813,269 @@ export const PurchaseRequisitionViewPage = () => {
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Sleek Vertical Multi-Level Approval Pipeline (Sticky on scroll) */}
+        <div className="w-full lg:w-[280px] xl:w-[320px] shrink-0 sticky top-6 print:hidden space-y-3">
+          {/* Card: Approval Pipeline Stepper */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-3.5">
+            <div className="flex items-center justify-between pb-2.5 border-b border-gray-100">
+              <div className="flex items-center gap-1.5">
+                <div className="p-1 bg-primary/10 text-primary rounded-md">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <h3 className="text-[11px] font-bold text-gray-900 uppercase tracking-wider">Approval Path</h3>
+                  <p className="text-[9px] text-gray-400">Workflow Stages</p>
+                </div>
+              </div>
+
+              <span className={clsx(
+                'text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider',
+                pr.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                pr.status === 'rejected' ? 'bg-rose-100 text-rose-800' :
+                pr.status === 'submitted' ? 'bg-blue-100 text-blue-800 animate-pulse' :
+                'bg-slate-100 text-slate-700'
+              )}>
+                {pr.status === 'submitted' ? 'In Review' : (pr.status || 'Draft')}
+              </span>
+            </div>
+
+            {/* If In Review: Context Action Box */}
+            {pr.status === 'submitted' && (
+              <div className="p-2.5 bg-blue-50/90 rounded-lg border border-blue-200 text-xs space-y-2">
+                <div className="flex items-start gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5 animate-spin" />
+                  <div>
+                    <span className="text-[9px] font-bold text-blue-700 uppercase tracking-wider block">
+                      {pr.can_current_user_approve ? 'Action Required (Your Stage):' : 'Awaiting Action:'}
+                    </span>
+                    <p className="text-[11px] font-bold text-gray-900 leading-tight mt-0.5 truncate max-w-[200px]" title={pr.can_current_user_approve ? (myActiveStep?.name || 'Your Review Stage') : (activeStageNames || 'Department / Management Review')}>
+                      {pr.can_current_user_approve
+                        ? (myActiveStep?.name || 'Your Review Stage')
+                        : (activeStageNames || 'Department / Management Review')}
+                    </p>
+                    {pr.can_current_user_approve && myActiveStep?.name && (
+                      <p className="text-[10px] text-emerald-700 font-semibold mt-0.5">
+                        ✓ You are the assigned approver for this stage
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {pr.can_current_user_approve ? (
+                  <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-blue-100">
+                    <button
+                      type="button"
+                      onClick={() => setActionConfirm({ isOpen: true, action: 'approve', remarks: '' })}
+                      className="py-1 px-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[9.5px] font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>Approve</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActionConfirm({ isOpen: true, action: 'reject', remarks: '' })}
+                      className="py-1 px-2 bg-rose-600 hover:bg-rose-700 text-white text-[9.5px] font-bold rounded-md transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer"
+                    >
+                      <XCircle className="w-3 h-3" />
+                      <span>Reject</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-1.5 border-t border-blue-100">
+                    <p className="text-[9.5px] text-amber-700 font-medium italic">
+                      Waiting for designated approvers ({activeStageNames || 'Approver'})
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Vertical Stepper Timeline */}
+            <div className="relative pl-5 space-y-4 before:absolute before:left-[8px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-200">
+              
+              {/* Step 1: Draft Created */}
+              <div className="relative group">
+                <div className="absolute -left-[20px] top-0 w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center ring-3 ring-white shadow-xs">
+                  <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider">
+                      1. Draft Created
+                    </span>
+                    <span className="text-[9px] text-gray-400 font-mono">
+                      {formatDate(pr.created_at || pr.pr_date)}
+                    </span>
+                  </div>
+                  <h4 className="text-[11px] font-bold text-gray-900 mt-0.5 truncate">Requisition Created</h4>
+                  <p className="text-[10px] text-gray-500 truncate" title={pr.creator?.name || pr.requisitioner_name || 'Creator'}>
+                    By {pr.creator?.name || pr.requisitioner_name || 'Creator'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2: Submitted for Approval */}
+              <div className="relative group">
+                <div className={clsx(
+                  'absolute -left-[20px] top-0 w-4 h-4 rounded-full flex items-center justify-center text-white ring-3 ring-white shadow-xs',
+                  pr.status !== 'draft' ? 'bg-emerald-600' : 'bg-amber-500 ring-amber-100 animate-pulse'
+                )}>
+                  {pr.status !== 'draft' ? (
+                    <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                  ) : (
+                    <Send className="w-2.5 h-2.5" />
+                  )}
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className={clsx(
+                      'text-[9px] font-bold uppercase tracking-wider',
+                      pr.status !== 'draft' ? 'text-emerald-700' : 'text-amber-700'
+                    )}>
+                      2. Submission
+                    </span>
+                    {pr.status !== 'draft' && (
+                      <span className="text-[9px] text-gray-400 font-mono">
+                        {formatDate(pr.submitted_at || activeApprovalRequest?.created_at || pr.updated_at || pr.pr_date)}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-[11px] font-bold text-gray-900 mt-0.5 truncate">
+                    {pr.status !== 'draft' ? 'Submitted for Approval' : 'Awaiting Submission'}
+                  </h4>
+                  <p className="text-[10px] text-gray-500 truncate" title={pr.status !== 'draft' ? `Sent by ${pr.submitter?.name || pr.updater?.name || pr.creator?.name || 'Submitter'}` : ''}>
+                    {pr.status !== 'draft'
+                      ? `Sent by ${pr.submitter?.name || pr.updater?.name || pr.creator?.name || 'Submitter'}`
+                      : 'Click "Submit for Approval"'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Dynamic Approval Steps (Level 1, 2, ... N) */}
+              {stepRequests.length > 0 &&
+                stepRequests.map((step: any, idx: number) => {
+                  const stepName = step.workflow_step?.name || step.workflowStep?.name || `Level ${idx + 1} Review`
+                  const isApproved = step.status === 'approved'
+                  const isPending = step.status === 'pending'
+                  const isRejected = step.status === 'rejected'
+                  const isMyStep = isPending && myActiveStep?.step_request_id === step.id
+                  const approverName = step.approver?.name || (isApproved ? 'Authorized' : 'Assigned Approver')
+
+                  return (
+                    <div key={step.id || idx} className="relative group">
+                      <div className={clsx(
+                        'absolute -left-[20px] top-0 w-4 h-4 rounded-full flex items-center justify-center text-white ring-3 ring-white shadow-xs transition-all',
+                        isApproved ? 'bg-emerald-600' :
+                        isMyStep ? 'bg-emerald-600 ring-emerald-200 animate-pulse' :
+                        isPending ? 'bg-blue-600 ring-blue-100' :
+                        isRejected ? 'bg-rose-600' :
+                        'bg-gray-300 text-gray-600'
+                      )}>
+                        {isApproved && <Check className="w-2.5 h-2.5" strokeWidth={3} />}
+                        {isPending && <Clock className="w-2.5 h-2.5" />}
+                        {isRejected && <XCircle className="w-2.5 h-2.5" />}
+                        {!isApproved && !isPending && !isRejected && <span className="text-[8px] font-bold">{idx + 1}</span>}
+                      </div>
+
+                      <div className={clsx(
+                        'p-2.5 rounded-lg border text-xs transition-all',
+                        isApproved ? 'bg-emerald-50/40 border-emerald-200' :
+                        isMyStep ? 'bg-emerald-50/80 border-emerald-300 ring-2 ring-emerald-400/30 shadow-xs' :
+                        isPending ? 'bg-blue-50/70 border-blue-300' :
+                        isRejected ? 'bg-rose-50/60 border-rose-300' :
+                        'bg-gray-50/50 border-gray-200'
+                      )}>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className={clsx(
+                            'text-[8.5px] font-bold uppercase tracking-wider px-1 py-0.2 rounded',
+                            isApproved ? 'bg-emerald-100 text-emerald-800' :
+                            isMyStep ? 'bg-emerald-100 text-emerald-800 font-extrabold' :
+                            isPending ? 'bg-blue-100 text-blue-800' :
+                            isRejected ? 'bg-rose-100 text-rose-800' :
+                            'bg-gray-200 text-gray-600'
+                          )}>
+                            Level {idx + 1}
+                          </span>
+                          <span className={clsx(
+                            'text-[9px] font-semibold capitalize',
+                            isApproved ? 'text-emerald-700' :
+                            isMyStep ? 'text-emerald-700 font-bold' :
+                            isPending ? 'text-blue-700 font-semibold' :
+                            isRejected ? 'text-rose-700 font-bold' :
+                            'text-gray-400'
+                          )}>
+                            {isApproved ? 'Approved' : isMyStep ? 'Your Action' : isPending ? 'Pending' : isRejected ? 'Rejected' : 'Queued'}
+                          </span>
+                        </div>
+
+                        <h4 className="text-[11px] font-bold text-gray-900 truncate" title={stepName}>
+                          {stepName}
+                        </h4>
+                        <p className="text-[10px] text-gray-600 truncate mt-0.5" title={approverName}>
+                          {isMyStep ? 'Action required by you' : approverName}
+                        </p>
+
+                        {step.action_taken_at && (
+                          <div className="text-[8.5px] text-gray-400 font-mono mt-1 pt-1 border-t border-gray-100 flex items-center justify-between">
+                            <span>Done</span>
+                            <span>{formatDate(step.action_taken_at)}</span>
+                          </div>
+                        )}
+
+                        {step.comments && (
+                          <div className="mt-1.5 p-1 bg-white rounded text-[9px] text-gray-600 italic border border-gray-100 truncate" title={step.comments}>
+                            "{step.comments}"
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+
+              {/* Fallback Configured Preview Steps (If Draft) */}
+              {stepRequests.length === 0 && configuredSteps.length > 0 &&
+                configuredSteps.map((step: any, idx: number) => {
+                  return (
+                    <div key={step.id || idx} className="relative group">
+                      <div className="absolute -left-[20px] top-0 w-4 h-4 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center ring-3 ring-white shadow-xs text-[8px] font-bold">
+                        {idx + 1}
+                      </div>
+                      <div className="p-2 rounded-lg border border-dashed border-gray-200 bg-gray-50/50 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[8.5px] font-bold uppercase tracking-wider text-gray-500">
+                            Level {idx + 1}
+                          </span>
+                          <span className="text-[8.5px] text-gray-400 italic">Queued</span>
+                        </div>
+                        <h4 className="text-[10.5px] font-semibold text-gray-700 mt-0.5 truncate">{step.name}</h4>
+                        <p className="text-[9.5px] text-gray-400 truncate mt-0.5">
+                          {step.role?.name || (step.type === 'role-user' ? 'Designated Role' : 'Assigned Approver')}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+
+              {/* Outcome Step */}
+              <div className="relative group">
+                <div className={clsx(
+                  'absolute -left-[20px] top-0 w-4 h-4 rounded-full flex items-center justify-center text-white ring-3 ring-white shadow-xs',
+                  pr.status === 'approved' ? 'bg-emerald-600' : 'bg-gray-300 text-gray-600'
+                )}>
+                  <Sparkles className="w-2.5 h-2.5" />
+                </div>
+                <div>
+                  <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Outcome</span>
+                  <h4 className="text-[11px] font-bold text-gray-900 mt-0.5">PO Conversion</h4>
+                  <p className="text-[9.5px] text-gray-400">
+                    {pr.status === 'approved' ? 'Authorized for PO' : 'Awaiting approvals'}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

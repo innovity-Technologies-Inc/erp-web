@@ -115,7 +115,7 @@ const menuItems: MenuGroup[] = [
         name: 'Procurement', 
         icon: ShoppingBag, 
         to: '/procurement/vendors', 
-        permission: ['view_vendor', 'view_procurement_pr', 'view_purchase_order', 'view_rfq'],
+        permission: ['view_vendor', 'view_purchase_requisition', 'view_procurement_pr', 'view_purchase_order', 'view_po', 'view_rfq'],
         activePaths: ['/procurement']
       },
     ]
