@@ -5,10 +5,7 @@ import type { StockMovementListItem } from '../../api/warehouse.api'
 import { ListPageLayout } from '@/components/ListPageLayout/ListPageLayout'
 import { useNavigate } from '@tanstack/react-router'
 
-const tabs = [
-  { name: 'Manage Warehouse', to: '/inventory/warehouse' },
-  { name: 'Stock Movement', to: '/inventory/warehouse/stock-movement', active: true },
-]
+import { getWarehouseTabs } from './warehouseNavigation'
 
 export const StockMovementListPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -121,9 +118,9 @@ export const StockMovementListPage = () => {
 
   return (
     <ListPageLayout<StockMovementListItem>
-      title="Stock Movement List"
-      backTo="/inventory/warehouse"
-      tabs={tabs}
+      title="Stock Movement"
+      backTo="/"
+      tabs={getWarehouseTabs('stock-movement')}
       onCreate={handleCreate}
       createPermission="warehouse_stock_movement"
       showColumnFilter={true}

@@ -10,11 +10,7 @@ import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { exportToExcel } from '@/utils/exportUtils'
-
-const tabs = [
-  { name: 'Manage Warehouse', to: '/inventory/warehouse', active: true },
-  { name: 'Stock Movement', to: '/inventory/warehouse/stock-movement' },
-]
+import { getWarehouseTabs } from './warehouseNavigation'
 
 export const WarehouseListPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -232,7 +228,7 @@ export const WarehouseListPage = () => {
       <ListPageLayout<WarehouseListItem>
         title="Warehouse List"
         backTo="/"
-        tabs={tabs}
+        tabs={getWarehouseTabs('warehouse')}
         onCreate={handleCreate}
         createPermission="create_warehouse"
         showStatusFilter={true}
