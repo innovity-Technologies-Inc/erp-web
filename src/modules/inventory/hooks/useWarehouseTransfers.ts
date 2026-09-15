@@ -47,7 +47,26 @@ export const useCreatePickList = () => {
   const { showNotificationModal } = useUiStore()
 
   return useMutation({
-    mutationFn: (transferId: number) => createPickListForTransfer(transferId),
+    mutationFn: (
+      args:
+        | number
+        | {
+            transferId: number
+            payload?: {
+              items?: {
+                product_id: number
+                batch_master_id?: number | null
+                rack_bin_id?: number | null
+                quantity_requested: number
+              }[]
+            }
+          }
+    ) => {
+      if (typeof args === 'number') {
+        return createPickListForTransfer(args)
+      }
+      return createPickListForTransfer(args.transferId, args.payload)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['warehouse-transfers-datatable'] })
       queryClient.invalidateQueries({ queryKey: ['warehouse-transfer'] })

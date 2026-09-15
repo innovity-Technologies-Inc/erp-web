@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   XCircle,
   Truck,
-  PackageCheck,
   RotateCcw,
   Building2,
   Calendar,
@@ -42,7 +41,6 @@ import {
   usePurchaseOrderDetails,
   useApprovePO,
   useDispatchPurchaseOrder,
-  useReceivePOGoods,
   useAmendPO,
   useDeletePurchaseOrder,
 } from '../../hooks/usePurchaseOrders'
@@ -82,7 +80,6 @@ export const PurchaseOrderViewPage = () => {
   // Mutations
   const { mutate: approvePOMutate, isPending: isApproving } = useApprovePO()
   const { mutate: dispatchPOMutate, isPending: isDispatching } = useDispatchPurchaseOrder()
-  const { mutate: receiveGoodsMutate, isPending: isReceiving } = useReceivePOGoods()
   const { mutate: amendPOMutate, isPending: isAmending } = useAmendPO()
   const { mutate: deletePOMutate, isPending: isDeleting } = useDeletePurchaseOrder()
 
@@ -182,23 +179,18 @@ export const PurchaseOrderViewPage = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-  // Goods Receipt Modal State
-  const [receiveModal, setReceiveModal] = useState<{
-    isOpen: boolean
-    items: Record<number, number>
-  }>({
-    isOpen: false,
-    items: {},
-  })
-
   // Amendment Modal State
   const [amendModal, setAmendModal] = useState<{
     isOpen: boolean
     reason: string
+    deliveryDate: string
+    termsAndConditions: string
     items: Record<number, { quantity: number; rate: number }>
   }>({
     isOpen: false,
     reason: '',
+    deliveryDate: '',
+    termsAndConditions: '',
     items: {},
   })
 
@@ -232,49 +224,6 @@ export const PurchaseOrderViewPage = () => {
     return { totalQuantity: ordered, totalOrdered: ordered, totalReceived: received, progressPercent: percent }
   }, [items])
 
-  // Open Receive Goods Modal
-  const openReceiveModal = () => {
-    const initialItems: Record<number, number> = {}
-    items.forEach((it) => {
-      const remaining = Math.max(0, Number(it.quantity) - Number(it.received_quantity))
-      initialItems[it.id] = remaining
-    })
-    setReceiveModal({ isOpen: true, items: initialItems })
-  }
-
-  // Submit Goods Receipt
-  const handleSaveReceive = () => {
-    const receiptItems = Object.entries(receiveModal.items)
-      .filter(([_, qty]) => Number(qty) > 0)
-      .map(([itemId, qty]) => ({
-        purchase_order_item_id: Number(itemId),
-        received_quantity: Number(qty),
-      }))
-
-    if (receiptItems.length === 0) {
-      showNotificationModal('Invalid Entry', 'Please specify received quantity for at least one item.', 'error')
-      return
-    }
-
-    receiveGoodsMutate(
-      {
-        uuid,
-        data: { items: receiptItems },
-      },
-      {
-        onSuccess: () => {
-          setReceiveModal({ isOpen: false, items: {} })
-          showNotificationModal('Goods Received', 'Goods receipt recorded successfully.', 'success')
-          refetch()
-        },
-        onError: (err: any) => {
-          const msg = err.response?.data?.message || err.message || 'Failed to record goods receipt.'
-          showNotificationModal('Receipt Error', msg, 'error')
-        },
-      }
-    )
-  }
-
   // Open Amendment Modal
   const openAmendModal = () => {
     const initialItems: Record<number, { quantity: number; rate: number }> = {}
@@ -284,7 +233,13 @@ export const PurchaseOrderViewPage = () => {
         rate: Number(it.rate),
       }
     })
-    setAmendModal({ isOpen: true, reason: '', items: initialItems })
+    setAmendModal({
+      isOpen: true,
+      reason: '',
+      deliveryDate: (po as any)?.delivery_date ? (po as any).delivery_date.split('T')[0] : '',
+      termsAndConditions: (po as any)?.terms_and_conditions || '',
+      items: initialItems,
+    })
   }
 
   // Submit PO Amendment
@@ -292,6 +247,21 @@ export const PurchaseOrderViewPage = () => {
     if (!amendModal.reason.trim()) {
       showNotificationModal('Reason Required', 'Please provide a justification / reason for amending this PO.', 'error')
       return
+    }
+
+    // Validation Guard: Quantity cannot be less than already received quantity
+    for (const it of items) {
+      const amendedItem = amendModal.items[it.id]
+      const receivedQty = Number(it.received_quantity || 0)
+      if (amendedItem && Number(amendedItem.quantity) < receivedQty) {
+        const prodName = productMap.get(it.product_id) || it.product?.product_name || it.product?.name || `Item #${it.id}`
+        showNotificationModal(
+          'Invalid Quantity',
+          `Amended quantity for "${prodName}" (${amendedItem.quantity}) cannot be less than the already received quantity (${receivedQty}).`,
+          'error'
+        )
+        return
+      }
     }
 
     const amendItems = Object.entries(amendModal.items).map(([itemId, data]) => ({
@@ -304,14 +274,16 @@ export const PurchaseOrderViewPage = () => {
       {
         uuid,
         data: {
-          reason: amendModal.reason,
+          reason: amendModal.reason.trim(),
+          delivery_date: amendModal.deliveryDate || undefined,
+          terms_and_conditions: amendModal.termsAndConditions || undefined,
           items: amendItems,
         },
       },
       {
         onSuccess: () => {
-          setAmendModal({ isOpen: false, reason: '', items: {} })
-          showNotificationModal('PO Amended', 'Purchase order amendment registered. PO has been set to draft for re-approval.', 'success')
+          setAmendModal({ isOpen: false, reason: '', deliveryDate: '', termsAndConditions: '', items: {} })
+          showNotificationModal('PO Amended', 'Purchase order amendment registered successfully. PO has been set to draft for re-approval.', 'success')
           refetch()
         },
         onError: (err: any) => {
@@ -588,31 +560,18 @@ export const PurchaseOrderViewPage = () => {
             </PermissionGuard>
           )}
 
-          {/* Issued: Goods Receipt & Amendment Actions */}
+          {/* Issued Actions: Amendment */}
           {isIssued && (
-            <>
-              <PermissionGuard permission="edit_po">
-                <button
-                  type="button"
-                  onClick={openReceiveModal}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg transition-all flex items-center gap-2 shadow-md shadow-emerald-500/20 cursor-pointer"
-                >
-                  <PackageCheck className="h-4 w-4" />
-                  <span>Receive Goods</span>
-                </button>
-              </PermissionGuard>
-
-              <PermissionGuard permission="amend_po">
-                <button
-                  type="button"
-                  onClick={openAmendModal}
-                  className="px-4 py-2 bg-white border border-amber-300 text-amber-800 hover:bg-amber-50 text-[10px] font-bold rounded-lg transition-all flex items-center gap-2 shadow-sm cursor-pointer"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  <span>Amend PO</span>
-                </button>
-              </PermissionGuard>
-            </>
+            <PermissionGuard permission="amend_po">
+              <button
+                type="button"
+                onClick={openAmendModal}
+                className="px-4 py-2 bg-white border border-amber-300 text-amber-800 hover:bg-amber-50 text-[10px] font-bold rounded-lg transition-all flex items-center gap-2 shadow-sm cursor-pointer"
+              >
+                <RotateCcw className="h-4 w-4" />
+                <span>Amend PO</span>
+              </button>
+            </PermissionGuard>
           )}
         </div>
       </div>
@@ -869,15 +828,15 @@ export const PurchaseOrderViewPage = () => {
           </div>
 
           {/* Bottom Details Section (12 Columns) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 print:grid-cols-12 gap-6 p-6 pt-2 print:gap-4 print:px-4 print:py-2 print:mt-2">
+          <div className="grid grid-cols-1 lg:grid-cols-12 print:grid-cols-12 gap-6 p-6 pt-2 print:gap-4 print:px-4 print:py-2 print:mt-2 items-start">
             {/* Left Column (8 cols): Terms, Schedules, Attachments */}
-            <div className="lg:col-span-8 print:col-span-7 space-y-6 print:space-y-3">
+            <div className="lg:col-span-8 print:col-span-7 space-y-4 print:space-y-2.5">
               {/* Payment & Delivery Terms */}
-              <div className="p-5 bg-[#f8fafc] rounded-xl border border-gray-200 print:bg-[#f8fafc] print:p-3 space-y-3">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 block">
+              <div className="p-4 bg-[#f8fafc] rounded-xl border border-gray-200 print:bg-[#f8fafc] print:p-2.5 space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 block print:text-[9.5px]">
                   Commercial & Delivery Terms
                 </span>
-                <div className="space-y-2 text-[13px] text-gray-700 leading-relaxed print:text-[11px]">
+                <div className="space-y-1.5 text-[12.5px] text-gray-700 leading-relaxed print:text-[10px]">
                   <div>
                     <span className="font-bold text-gray-800">Payment Terms: </span>
                     <span>{po.payment_terms || 'Standard Net 30 Days after invoice & delivery acceptance'}</span>
@@ -891,53 +850,14 @@ export const PurchaseOrderViewPage = () => {
 
               {/* Special Remarks */}
               {po.remarks && (
-                <div className="p-4 bg-white rounded-xl border border-gray-200 text-xs text-gray-600">
-                  <span className="font-bold text-gray-700 block mb-1">Remarks / Special Instructions:</span>
+                <div className="p-3.5 bg-white rounded-xl border border-gray-200 text-xs text-gray-600 print:p-2 print:text-[10px]">
+                  <span className="font-bold text-gray-700 block mb-0.5">Remarks / Special Instructions:</span>
                   <p>{po.remarks}</p>
                 </div>
               )}
 
-              {/* Meta Summary Chips */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 print:grid-cols-3 gap-4 print:gap-2">
-                <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
-                  <div className="p-2.5 bg-blue-50 text-blue-600 rounded-lg shrink-0 print:bg-blue-50 print:p-1.5">
-                    <ShieldCheck className="w-5 h-5 print:w-4 print:h-4" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Status</span>
-                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px] capitalize">
-                      {status.replace('_', ' ')}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
-                  <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg shrink-0 print:bg-indigo-50 print:p-1.5">
-                    <DollarSign className="w-5 h-5 print:w-4 print:h-4" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Currency</span>
-                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">
-                      {activeCurrency}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4 print:break-inside-avoid print:p-2 print:gap-2">
-                  <div className="p-2.5 bg-purple-50 text-purple-600 rounded-lg shrink-0 print:bg-purple-50 print:p-1.5">
-                    <Truck className="w-5 h-5 print:w-4 print:h-4" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-medium text-gray-400 mb-0.5 print:text-[9px]">Delivery Status</span>
-                    <span className="text-[14px] font-bold text-gray-900 print:text-[12px]">
-                      {isFullyDelivered ? 'Complete' : isIssued ? `${progressPercent}% Received` : 'Pending'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Delivery Schedules Section */}
-              <div className="space-y-3 print:space-y-2">
+              {/* Delivery Schedules Section (Hidden in print) */}
+              <div className="space-y-3 print:hidden">
                 <div className="flex items-center justify-between">
                   <span className="text-[12px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
                     <Truck className="h-4 w-4 text-primary" />
@@ -949,7 +869,7 @@ export const PurchaseOrderViewPage = () => {
                       <button
                         type="button"
                         onClick={() => setIsScheduleModalOpen(true)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors cursor-pointer print:hidden"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors cursor-pointer"
                       >
                         <Edit className="w-3 h-3" />
                         <span>Manage Schedule</span>
@@ -964,12 +884,12 @@ export const PurchaseOrderViewPage = () => {
                       const plannedQty = Number(sched.planned_quantity) || 0
                       const receivedQty = Number(sched.received_quantity) || 0
                       const progress = plannedQty > 0 ? Math.min(100, Math.round((receivedQty / plannedQty) * 100)) : 0
-                      
+
                       // Match item details from po.items
                       const matchedItem = (po.items || []).find((it: any) => Number(it.id) === Number(sched.purchase_order_item_id))
                       const itemName = matchedItem?.product?.name || matchedItem?.product?.product_name || (sched.item?.product?.name) || `Item #${sched.purchase_order_item_id}`
                       const unitName = matchedItem?.unit?.name || matchedItem?.unit?.unit_name || matchedItem?.unit?.code || 'Units'
-                      
+
                       const rawStatus = typeof sched.status === 'object' && sched.status !== null ? sched.status.value : sched.status || 'in_progress'
                       const isComplete = rawStatus === 'completed'
                       const isPartial = rawStatus === 'partially_received'
@@ -1058,16 +978,16 @@ export const PurchaseOrderViewPage = () => {
 
               {/* Supporting Attachments */}
               {Array.isArray(po.attachments) && po.attachments.length > 0 && (
-                <div className="space-y-2.5 print:hidden">
+                <div className="space-y-2 print:hidden">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                      <Paperclip className="h-4 w-4 text-primary" />
+                    <span className="text-[11.5px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <Paperclip className="h-3.5 w-3.5 text-primary" />
                       Attached Documents ({po.attachments.length})
                     </span>
-                    <span className="text-[11px] text-gray-400 font-medium">Click to view or download</span>
+                    <span className="text-[10.5px] text-gray-400 font-medium">Click to view or download</span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {po.attachments.map((att: any, idx: number) => {
                       const backendBaseUrl = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '')
                       const fileUrl = att.file_url 
@@ -1079,13 +999,13 @@ export const PurchaseOrderViewPage = () => {
                       return (
                         <div
                           key={idx}
-                          className="flex items-center justify-between p-3 bg-white border border-gray-200 hover:border-primary/40 rounded-xl text-xs shadow-2xs hover:shadow-xs transition-all group"
+                          className="flex items-center justify-between p-2.5 bg-white border border-gray-200 hover:border-primary/40 rounded-xl text-xs shadow-2xs hover:shadow-xs transition-all group"
                         >
-                          <div className="flex items-center gap-2.5 truncate pr-2 min-w-0">
+                          <div className="flex items-center gap-2 truncate pr-2 min-w-0">
                             <span className="px-1.5 py-0.5 bg-primary/10 text-primary font-mono text-[9px] font-bold rounded shrink-0">
                               {ext}
                             </span>
-                            <span className="font-semibold text-gray-800 truncate group-hover:text-primary transition-colors" title={att.file_name}>
+                            <span className="font-semibold text-gray-800 truncate group-hover:text-primary transition-colors text-[11px]" title={att.file_name}>
                               {att.file_name}
                             </span>
                           </div>
@@ -1097,20 +1017,20 @@ export const PurchaseOrderViewPage = () => {
                                   href={fileUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-2xs cursor-pointer"
+                                  className="p-1 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-2xs cursor-pointer"
                                   title="View / Preview File in New Tab"
                                 >
-                                  <Eye className="h-3.5 w-3.5" />
+                                  <Eye className="h-3 w-3" />
                                 </a>
                                 <a
                                   href={fileUrl}
                                   download={att.file_name || 'attachment'}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="p-1.5 bg-gray-50 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors shadow-2xs cursor-pointer"
+                                  className="p-1 bg-gray-50 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors shadow-2xs cursor-pointer"
                                   title="Download File"
                                 >
-                                  <Download className="h-3.5 w-3.5" />
+                                  <Download className="h-3 w-3" />
                                 </a>
                               </>
                             )}
@@ -1121,16 +1041,58 @@ export const PurchaseOrderViewPage = () => {
                   </div>
                 </div>
               )}
+
+              {/* Amendment Revisions History (Audit Trail) */}
+              {Array.isArray(po.amendments) && po.amendments.length > 0 && (
+                <div className="space-y-2.5 pt-1 print:break-inside-avoid">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11.5px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <RotateCcw className="h-3.5 w-3.5 text-amber-600" />
+                      Amendment Revisions History ({po.amendments.length})
+                    </span>
+                    <span className="text-[10.5px] text-gray-400 font-medium">Audit Trail</span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {po.amendments.map((amend: any, aIdx: number) => (
+                      <div
+                        key={amend.id || aIdx}
+                        className="p-3 bg-amber-50/40 border border-amber-200/70 rounded-xl text-xs space-y-1.5 shadow-2xs print:p-2"
+                      >
+                        <div className="flex items-center justify-between font-bold text-gray-900">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded-md bg-amber-100 font-mono text-[10.5px] font-bold text-amber-800 border border-amber-300 print:text-[9px]">
+                              {amend.amendment_no || `POA-${aIdx + 1}`}
+                            </span>
+                            <span className="text-gray-500 text-[10.5px] font-normal print:text-[9px]">
+                              {formatDate(amend.amendment_date || amend.created_at)}
+                            </span>
+                          </div>
+                          <span className="text-[10.5px] font-semibold text-gray-700 print:text-[9px]">
+                            By: {amend.amended_by?.name || amend.amendedBy?.name || 'Authorized User'}
+                          </span>
+                        </div>
+
+                        {amend.reason && (
+                          <p className="text-[11px] text-gray-700 italic bg-white/70 p-1.5 rounded-lg border border-amber-100 print:text-[9.5px]">
+                            <strong className="not-italic text-gray-800 font-semibold">Justification:</strong> {amend.reason}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Right Column (4 cols): Order Financial Summary */}
             <div className="lg:col-span-4 print:col-span-5 flex flex-col print:break-inside-avoid">
-              <div className="bg-[#f8fafc] border border-gray-200 rounded-t-xl flex-grow print:bg-[#f8fafc]">
-                <h3 className="text-[16px] font-semibold text-[#1e4ba1] p-4 print:text-[14px] print:p-2">
+              <div className="bg-[#f8fafc] border border-gray-200 rounded-t-xl print:bg-[#f8fafc]">
+                <h3 className="text-[15px] font-semibold text-[#1e4ba1] p-3.5 print:text-[13px] print:p-2">
                   Order Summary
                 </h3>
 
-                <div className="space-y-3.5 bg-white text-[14px] p-4 print:text-[12px] print:p-2 print:space-y-1.5">
+                <div className="space-y-3 bg-white text-[13.5px] p-4 print:text-[11.5px] print:p-2 print:space-y-1.5">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Total Line Items:</span>
                     <span className="text-gray-900 font-semibold">{items.length}</span>
@@ -1147,16 +1109,16 @@ export const PurchaseOrderViewPage = () => {
                     <span className="text-gray-500">Total VAT / Tax:</span>
                     <span className="font-mono text-gray-900 font-semibold">{formatValue(po.vat_amount || 0)}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-3 pb-3 border-t border-b border-gray-200 my-2 print:pt-1 print:pb-1 print:my-1">
+                  <div className="flex justify-between items-center pt-2.5 pb-2.5 border-t border-b border-gray-200 my-1.5 print:pt-1 print:pb-1 print:my-1">
                     <span className="text-gray-900 font-bold">Grand Total:</span>
-                    <span className="text-[16px] text-[#1e4ba1] font-bold print:text-[14px] font-mono">
+                    <span className="text-[15px] text-[#1e4ba1] font-bold print:text-[13px] font-mono">
                       {formatValue(po.total_amount || 0)}
                     </span>
                   </div>
 
-                  <div className="mt-4 p-3 bg-emerald-50 rounded-lg border border-emerald-100 flex items-center justify-between">
-                    <span className="text-[13px] font-semibold text-emerald-700">Approval State:</span>
-                    <span className="text-[14px] font-bold text-emerald-800 uppercase">{statusFormatted}</span>
+                  <div className="mt-3 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 flex items-center justify-between print:mt-1.5 print:p-1.5">
+                    <span className="text-[12px] font-semibold text-emerald-700 print:text-[10px]">Approval State:</span>
+                    <span className="text-[13px] font-bold text-emerald-800 uppercase print:text-[11px]">{statusFormatted}</span>
                   </div>
                 </div>
               </div>
@@ -1725,177 +1687,185 @@ export const PurchaseOrderViewPage = () => {
         </div>
       )}
 
-      {/* Receive Goods Modal */}
-      {receiveModal.isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-gray-100">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                  <PackageCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-gray-900">Record Goods Receipt (GRN)</h3>
-                  <p className="text-xs text-gray-500">PO #{po.po_no}</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setReceiveModal({ isOpen: false, items: {} })}
-                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="max-h-[60vh] overflow-y-auto space-y-3">
-              {items.map((it) => {
-                const orderedQty = Number(it.quantity) || 0
-                const receivedQty = Number(it.received_quantity) || 0
-                const remainingQty = Math.max(0, orderedQty - receivedQty)
-                const currentInput = receiveModal.items[it.id] ?? 0
-                const prodName = productMap.get(it.product_id) || it.product?.product_name || it.product?.name || `Product #${it.product_id}`
-
-                return (
-                  <div key={it.id} className="p-3 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between gap-4 text-xs">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-gray-900 truncate">{prodName}</div>
-                      <div className="text-gray-500 text-[11px] mt-0.5">
-                        Ordered: <span className="font-mono font-semibold">{orderedQty}</span> | Already Received: <span className="font-mono font-semibold text-emerald-700">{receivedQty}</span> | Remaining: <span className="font-mono font-bold text-purple-700">{remainingQty}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <label className="text-[11px] font-bold text-gray-600">Receive Qty:</label>
-                      <input
-                        type="number"
-                        min={0}
-                        max={remainingQty}
-                        value={currentInput}
-                        onChange={(e) => {
-                          const val = Math.min(remainingQty, Math.max(0, Number(e.target.value) || 0))
-                          setReceiveModal((prev) => ({
-                            ...prev,
-                            items: { ...prev.items, [it.id]: val },
-                          }))
-                        }}
-                        className="w-24 px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono font-bold text-right outline-none focus:ring-1 focus:ring-primary"
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
-              <button
-                type="button"
-                onClick={() => setReceiveModal({ isOpen: false, items: {} })}
-                disabled={isReceiving}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveReceive}
-                disabled={isReceiving}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-all shadow-md shadow-emerald-500/20 flex items-center gap-1.5 cursor-pointer"
-              >
-                {isReceiving && <Clock className="w-3.5 h-3.5 animate-spin" />}
-                <span>Save Goods Receipt</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Amendment Modal */}
+      {/* Enhanced Amendment Modal */}
       {amendModal.isOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 border border-gray-100">
+          <div className="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-4 border border-gray-100 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-amber-50 text-amber-700 rounded-lg">
                   <RotateCcw className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-gray-900">Create Purchase Order Amendment</h3>
-                  <p className="text-xs text-gray-500">PO #{po.po_no}</p>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-gray-900">Create Purchase Order Amendment</h3>
+                    <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full border border-amber-200">
+                      Revision #{(po.amendments?.length || 0) + 1}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">Order Reference: PO #{po.po_no}</p>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() => setAmendModal({ isOpen: false, reason: '', items: {} })}
-                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg"
+                onClick={() => setAmendModal({ isOpen: false, reason: '', deliveryDate: '', termsAndConditions: '', items: {} })}
+                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+              <div className="md:col-span-8 space-y-1.5">
+                <label className="text-xs font-bold text-gray-700">
+                  Amendment Justification / Reason <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  value={amendModal.reason}
+                  onChange={(e) => setAmendModal((prev) => ({ ...prev, reason: e.target.value }))}
+                  placeholder="Official justification for modifying rates, quantities, or delivery terms..."
+                  rows={2}
+                  className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+                  required
+                />
+              </div>
+              <div className="md:col-span-4 space-y-1.5">
+                <label className="text-xs font-bold text-gray-700">
+                  Revised Delivery Date
+                </label>
+                <input
+                  type="date"
+                  value={amendModal.deliveryDate}
+                  onChange={(e) => setAmendModal((prev) => ({ ...prev, deliveryDate: e.target.value }))}
+                  className="w-full py-1.5 px-3 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                />
+              </div>
+            </div>
+
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-700">
-                Amendment Justification / Reason <span className="text-rose-500">*</span>
-              </label>
-              <textarea
-                value={amendModal.reason}
-                onChange={(e) => setAmendModal((prev) => ({ ...prev, reason: e.target.value }))}
-                placeholder="Reason for modifying rates, quantities or items..."
-                rows={2}
-                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
-              />
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Line Items Revision
+                </label>
+                <span className="text-[11px] text-gray-400">
+                  Quantity cannot be reduced below already received stock
+                </span>
+              </div>
+
+              <div className="max-h-[38vh] overflow-y-auto space-y-2.5 border border-gray-100 rounded-xl p-2 bg-gray-50/50">
+                {items.map((it) => {
+                  const cur = amendModal.items[it.id] || { quantity: Number(it.quantity), rate: Number(it.rate) }
+                  const prodName = productMap.get(it.product_id) || it.product?.product_name || it.product?.name || `Product #${it.product_id}`
+                  const receivedQty = Number(it.received_quantity || 0)
+                  const lineTotal = (Number(cur.quantity) || 0) * (Number(cur.rate) || 0)
+
+                  return (
+                    <div key={it.id} className="p-3 bg-white rounded-xl border border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-3 items-center text-xs shadow-2xs">
+                      <div className="md:col-span-5 min-w-0">
+                        <div className="font-bold text-gray-900 truncate" title={prodName}>{prodName}</div>
+                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-gray-500">
+                          <span>Orig: <strong className="font-mono text-gray-700">{it.quantity}</strong></span>
+                          {receivedQty > 0 && (
+                            <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 text-[10px]">
+                              Received: {receivedQty}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-3">
+                        <label className="block text-[10px] text-gray-500 uppercase font-bold mb-0.5">
+                          Amended Qty:
+                        </label>
+                        <input
+                          type="number"
+                          min={receivedQty > 0 ? receivedQty : 0.01}
+                          step={0.01}
+                          value={cur.quantity}
+                          onChange={(e) => {
+                            const val = Math.max(0, Number(e.target.value) || 0)
+                            setAmendModal((prev) => ({
+                              ...prev,
+                              items: { ...prev.items, [it.id]: { ...cur, quantity: val } },
+                            }))
+                          }}
+                          className={clsx(
+                            'w-full px-2.5 py-1.5 bg-white border rounded-lg text-xs font-mono font-bold text-right outline-none focus:ring-1',
+                            cur.quantity < receivedQty
+                              ? 'border-rose-400 focus:ring-rose-400 bg-rose-50 text-rose-700'
+                              : 'border-gray-300 focus:ring-primary text-gray-800'
+                          )}
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label className="block text-[10px] text-gray-500 uppercase font-bold mb-0.5">
+                          Unit Rate:
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={cur.rate}
+                          onChange={(e) => {
+                            const val = Math.max(0, Number(e.target.value) || 0)
+                            setAmendModal((prev) => ({
+                              ...prev,
+                              items: { ...prev.items, [it.id]: { ...cur, rate: val } },
+                            }))
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono font-bold text-right outline-none focus:ring-1 focus:ring-primary text-gray-800"
+                        />
+                      </div>
+
+                      <div className="md:col-span-2 text-right">
+                        <span className="block text-[10px] text-gray-400 uppercase font-bold mb-0.5">Line Total</span>
+                        <span className="font-mono font-bold text-gray-900 text-xs">
+                          {formatValue(lineTotal)}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
 
-            <div className="max-h-[50vh] overflow-y-auto space-y-3">
-              {items.map((it) => {
+            {/* Financial Impact Bar */}
+            {(() => {
+              let sub = 0
+              items.forEach((it) => {
                 const cur = amendModal.items[it.id] || { quantity: Number(it.quantity), rate: Number(it.rate) }
-                const prodName = productMap.get(it.product_id) || it.product?.product_name || it.product?.name || `Product #${it.product_id}`
+                sub += (Number(cur.quantity) || 0) * (Number(cur.rate) || 0)
+              })
+              const vat = (sub * Number(po?.vat_percentage || 0)) / 100
+              const revisedTotal = sub + vat
+              const origTotal = Number(po.total_amount || 0)
+              const diff = revisedTotal - origTotal
 
-                return (
-                  <div key={it.id} className="p-3 bg-gray-50 rounded-xl border border-gray-200 grid grid-cols-1 md:grid-cols-12 gap-3 items-center text-xs">
-                    <div className="md:col-span-6 font-bold text-gray-900 truncate">{prodName}</div>
-                    <div className="md:col-span-3 flex items-center gap-1.5">
-                      <label className="text-[10px] text-gray-500 uppercase font-bold">Qty:</label>
-                      <input
-                        type="number"
-                        min={1}
-                        value={cur.quantity}
-                        onChange={(e) => {
-                          const val = Number(e.target.value) || 0
-                          setAmendModal((prev) => ({
-                            ...prev,
-                            items: { ...prev.items, [it.id]: { ...cur, quantity: val } },
-                          }))
-                        }}
-                        className="w-full px-2 py-1 bg-white border border-gray-300 rounded text-xs font-mono font-bold text-right"
-                      />
-                    </div>
-                    <div className="md:col-span-3 flex items-center gap-1.5">
-                      <label className="text-[10px] text-gray-500 uppercase font-bold">Rate:</label>
-                      <input
-                        type="number"
-                        min={0}
-                        step={0.01}
-                        value={cur.rate}
-                        onChange={(e) => {
-                          const val = Number(e.target.value) || 0
-                          setAmendModal((prev) => ({
-                            ...prev,
-                            items: { ...prev.items, [it.id]: { ...cur, rate: val } },
-                          }))
-                        }}
-                        className="w-full px-2 py-1 bg-white border border-gray-300 rounded text-xs font-mono font-bold text-right"
-                      />
-                    </div>
+              return (
+                <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-between text-xs">
+                  <div className="space-y-0.5">
+                    <span className="text-gray-500 text-[11px]">Original Grand Total:</span>
+                    <p className="font-mono font-semibold text-gray-700">{formatValue(origTotal)}</p>
                   </div>
-                )
-              })}
-            </div>
+                  <div className="space-y-0.5 text-center">
+                    <span className="text-gray-500 text-[11px]">Variance / Difference:</span>
+                    <p className={clsx('font-mono font-bold', diff > 0 ? 'text-emerald-700' : diff < 0 ? 'text-rose-600' : 'text-gray-600')}>
+                      {diff > 0 ? `+${formatValue(diff)}` : diff < 0 ? `-${formatValue(Math.abs(diff))}` : '৳ 0.00'}
+                    </p>
+                  </div>
+                  <div className="space-y-0.5 text-right">
+                    <span className="text-[#1e4ba1] font-bold text-[11px]">Amended Grand Total:</span>
+                    <p className="font-mono font-black text-[15px] text-[#1e4ba1]">{formatValue(revisedTotal)}</p>
+                  </div>
+                </div>
+              )
+            })()}
 
             <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
               <button
                 type="button"
-                onClick={() => setAmendModal({ isOpen: false, reason: '', items: {} })}
+                onClick={() => setAmendModal({ isOpen: false, reason: '', deliveryDate: '', termsAndConditions: '', items: {} })}
                 disabled={isAmending}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg transition-colors cursor-pointer"
               >

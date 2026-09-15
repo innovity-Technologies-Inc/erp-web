@@ -179,9 +179,20 @@ export const createWarehouseTransfer = async (payload: any) => {
   return data
 }
 
-export const createPickListForTransfer = async (warehouseTransferId: number) => {
+export const createPickListForTransfer = async (
+  warehouseTransferId: number,
+  payload?: {
+    items?: {
+      product_id: number
+      batch_master_id?: number | null
+      rack_bin_id?: number | null
+      quantity_requested: number
+    }[]
+  }
+) => {
   const { data } = await apiClient.post('/inventory/warehouse-management/pick-lists', {
     warehouse_transfer_id: warehouseTransferId,
+    ...(payload || {}),
   })
   return data
 }

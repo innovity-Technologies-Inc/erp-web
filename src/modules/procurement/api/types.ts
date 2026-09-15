@@ -1178,6 +1178,9 @@ export interface AmendPOItemDto {
 
 export interface AmendPODto {
   reason: string
+  delivery_date?: string
+  terms_and_conditions?: string
+  notes?: string
   items: AmendPOItemDto[]
 }
 
@@ -1186,4 +1189,195 @@ export interface SinglePurchaseOrderResponse {
   message: string
   response: PurchaseOrder
 }
+
+// ----------------------------------------------------
+// Goods Receipt Note (GRN) Types & Enums
+// ----------------------------------------------------
+export type GRNStatus = 'draft' | 'submitted' | 'approved' | 'closed' | 'cancelled'
+export type GRNQCStatus = 'pending' | 'passed' | 'rejected'
+export type GRNTrackingType = 'batch' | 'serial'
+
+export interface GRNBatch {
+  id?: number
+  grn_item_id?: number
+  tracking_type: GRNTrackingType
+  batch_no?: string | null
+  serial_no?: string | null
+  expiry_date?: string | null
+  quantity: number
+  created_at?: string
+  updated_at?: string
+}
+
+export interface GRNAllocation {
+  id?: number
+  grn_item_id?: number
+  warehouse_id: number
+  location_aisle?: string | null
+  bin_shelf?: string | null
+  quantity: number
+  warehouse?: {
+    id: number
+    name: string
+    code?: string
+  } | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface GRNItem {
+  id?: number
+  grn_id?: number
+  po_item_id: number
+  product_id: number
+  unit_id: number
+  po_quantity: number
+  received_quantity: number
+  damaged_quantity: number
+  accepted_quantity: number
+  qc_status?: GRNQCStatus
+  product?: {
+    id: number
+    name: string
+    code?: string
+    sku?: string
+    unit?: {
+      id: number
+      name: string
+    }
+  } | null
+  unit?: {
+    id: number
+    name: string
+  } | null
+  po_item?: PurchaseOrderItem | null
+  poItem?: PurchaseOrderItem | null
+  batches?: GRNBatch[]
+  allocations?: GRNAllocation[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface GRN {
+  id: number
+  uuid: string
+  grn_no: string
+  grn_date: string
+  purchase_order_id: number
+  supplier_id: number
+  delivery_challan_no: string
+  invoice_no?: string | null
+  delivery_date: string
+  received_by_id: number
+  inspection_by_id?: number | null
+  inspection_date?: string | null
+  qc_result?: string | null
+  qc_remarks?: string | null
+  status: GRNStatus
+  purchase_order?: PurchaseOrder | null
+  purchaseOrder?: PurchaseOrder | null
+  supplier?: Vendor | null
+  received_by?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  receivedBy?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  inspection_by?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  inspectionBy?: {
+    id: number
+    name: string
+    email?: string
+  } | null
+  items?: GRNItem[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface GRNFilters {
+  purchase_order_id?: number | string
+  status?: string
+  search?: string
+  per_page?: number
+  page?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface CreateGRNBatchDto {
+  tracking_type: GRNTrackingType
+  batch_no?: string | null
+  serial_no?: string | null
+  expiry_date?: string | null
+  quantity: number
+}
+
+export interface CreateGRNAllocationDto {
+  warehouse_id: number
+  location_aisle?: string | null
+  bin_shelf?: string | null
+  quantity: number
+}
+
+export interface CreateGRNItemDto {
+  po_item_id: number
+  received_quantity: number
+  damaged_quantity: number
+  batches?: CreateGRNBatchDto[]
+  allocations?: CreateGRNAllocationDto[]
+}
+
+export interface CreateGRNDto {
+  purchase_order_id: number
+  grn_date: string
+  delivery_challan_no: string
+  invoice_no?: string | null
+  delivery_date: string
+  received_by_id?: number | null
+  items: CreateGRNItemDto[]
+}
+
+export interface UpdateGRNDto extends CreateGRNDto {
+  uuid: string
+}
+
+export interface StoreGRNQCItemDto {
+  grn_item_id: number
+  qc_status: 'passed' | 'rejected'
+}
+
+export interface StoreGRNQCPayload {
+  qc_result: 'passed' | 'failed'
+  qc_remarks?: string | null
+  inspection_by_id: number
+  inspection_date: string
+  items?: StoreGRNQCItemDto[]
+}
+
+export interface SingleGRNResponse {
+  status: string
+  message: string
+  response: GRN
+}
+
+export interface PaginatedGRNResponse {
+  status: string
+  message: string
+  response: GRN[]
+  meta: {
+    current_page: number
+    per_page: number
+    total: number
+    last_page?: number
+  }
+}
+
 

@@ -37,6 +37,7 @@ import { usePermissions } from '@/hooks/usePermissions'
 import { useSettings } from '@/hooks/useSettings'
 import { ReceiveTransferModal } from '../../components/warehouse/ReceiveTransferModal'
 import { PickListModal } from '../../components/warehouse/PickListModal'
+import { GeneratePickListModal } from '../../components/warehouse/GeneratePickListModal'
 import { PackingSlipModal } from '../../components/warehouse/PackingSlipModal'
 import { PackTransferModal } from '../../components/warehouse/PackTransferModal'
 import { DispatchTransferModal } from '../../components/warehouse/DispatchTransferModal'
@@ -73,12 +74,12 @@ export const WarehouseTransferViewPage = () => {
     'Store In-charge'
 
   // Modals state
+  const [isPickGenerateModalOpen, setIsPickGenerateModalOpen] = useState(false)
   const [isPickModalOpen, setIsPickModalOpen] = useState(false)
   const [isPackModalOpen, setIsPackModalOpen] = useState(false)
   const [isPackingSlipModalOpen, setIsPackingSlipModalOpen] = useState(false)
   const [isDispatchModalOpen, setIsDispatchModalOpen] = useState(false)
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
-  const [isPickConfirmOpen, setIsPickConfirmOpen] = useState(false)
   const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false)
 
   const items = useMemo(() => transfer?.items || [], [transfer])
@@ -113,17 +114,6 @@ export const WarehouseTransferViewPage = () => {
 
   const handlePrint = () => {
     window.print()
-  }
-
-  const handleConfirmGeneratePick = () => {
-    if (transferId) {
-      createPickList(transferId, {
-        onSuccess: () => {
-          setIsPickConfirmOpen(false)
-          refetch()
-        },
-      })
-    }
   }
 
   const handleConfirmCancel = () => {
@@ -533,12 +523,12 @@ export const WarehouseTransferViewPage = () => {
                   {currentStage === 1 && canPick && (
                     <button
                       type="button"
-                      onClick={() => setIsPickConfirmOpen(true)}
+                      onClick={() => setIsPickGenerateModalOpen(true)}
                       disabled={isGeneratingPickList}
                       className="w-full py-1.5 bg-primary hover:bg-primary/90 text-white text-[11px] font-bold rounded-lg transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer disabled:opacity-50"
                     >
                       <Boxes className="w-3.5 h-3.5" />
-                      <span>{isGeneratingPickList ? 'Generating...' : 'Generate Pick List'}</span>
+                      <span>Generate Pick List</span>
                     </button>
                   )}
 
@@ -871,16 +861,12 @@ export const WarehouseTransferViewPage = () => {
         transferId={transferId}
       />
 
-      {/* Pick List Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={isPickConfirmOpen}
-        onClose={() => setIsPickConfirmOpen(false)}
-        onConfirm={handleConfirmGeneratePick}
-        title="Generate Pick List"
-        message="Are you sure you want to generate a smart pick list and reserve available stock for this transfer order?"
-        confirmText="Generate Pick List"
-        variant="info"
-        isLoading={isGeneratingPickList}
+      {/* Generate Pick List & Shelf Allocation Modal */}
+      <GeneratePickListModal
+        isOpen={isPickGenerateModalOpen}
+        onClose={() => setIsPickGenerateModalOpen(false)}
+        transfer={transfer}
+        onSuccess={() => refetch()}
       />
 
       {/* Cancel Confirmation Modal */}

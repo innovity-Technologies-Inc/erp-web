@@ -56,6 +56,7 @@ import { Route as AuthenticatedProcurementRfqsIndexRouteImport } from './routes/
 import { Route as AuthenticatedProcurementRfqTemplatesIndexRouteImport } from './routes/_authenticated/procurement/rfq-templates.index'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsIndexRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.index'
 import { Route as AuthenticatedProcurementPurchaseOrdersIndexRouteImport } from './routes/_authenticated/procurement/purchase-orders.index'
+import { Route as AuthenticatedProcurementGrnsIndexRouteImport } from './routes/_authenticated/procurement/grns.index'
 import { Route as AuthenticatedProcurementBudgetsIndexRouteImport } from './routes/_authenticated/procurement/budgets.index'
 import { Route as AuthenticatedInventoryWarehouseIndexRouteImport } from './routes/_authenticated/inventory/warehouse.index'
 import { Route as AuthenticatedInventoryVendorsIndexRouteImport } from './routes/_authenticated/inventory/vendors.index'
@@ -81,6 +82,7 @@ import { Route as AuthenticatedProcurementRfqsCreateRouteImport } from './routes
 import { Route as AuthenticatedProcurementRfqTemplatesCreateRouteImport } from './routes/_authenticated/procurement/rfq-templates.create'
 import { Route as AuthenticatedProcurementPurchaseRequisitionsCreateRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.create'
 import { Route as AuthenticatedProcurementPurchaseOrdersCreateRouteImport } from './routes/_authenticated/procurement/purchase-orders.create'
+import { Route as AuthenticatedProcurementGrnsCreateRouteImport } from './routes/_authenticated/procurement/grns.create'
 import { Route as AuthenticatedProcurementBudgetsHeadsRouteImport } from './routes/_authenticated/procurement/budgets.heads'
 import { Route as AuthenticatedProcurementBudgetsCategoriesRouteImport } from './routes/_authenticated/procurement/budgets.categories'
 import { Route as AuthenticatedInventoryWarehouseZonesRouteImport } from './routes/_authenticated/inventory/warehouse.zones'
@@ -155,6 +157,8 @@ import { Route as AuthenticatedProcurementPurchaseRequisitionsViewIdRouteImport 
 import { Route as AuthenticatedProcurementPurchaseRequisitionsEditIdRouteImport } from './routes/_authenticated/procurement/purchase-requisitions.edit.$id'
 import { Route as AuthenticatedProcurementPurchaseOrdersViewIdRouteImport } from './routes/_authenticated/procurement/purchase-orders.view.$id'
 import { Route as AuthenticatedProcurementPurchaseOrdersEditIdRouteImport } from './routes/_authenticated/procurement/purchase-orders.edit.$id'
+import { Route as AuthenticatedProcurementGrnsViewIdRouteImport } from './routes/_authenticated/procurement/grns.view.$id'
+import { Route as AuthenticatedProcurementGrnsEditIdRouteImport } from './routes/_authenticated/procurement/grns.edit.$id'
 import { Route as AuthenticatedInventoryWarehouseStockMovementCreateRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement.create'
 import { Route as AuthenticatedInventoryWarehouseEditIdRouteImport } from './routes/_authenticated/inventory/warehouse.edit.$id'
 import { Route as AuthenticatedInventoryVendorsEditIdRouteImport } from './routes/_authenticated/inventory/vendors.edit.$id'
@@ -457,6 +461,12 @@ const AuthenticatedProcurementPurchaseOrdersIndexRoute =
     path: '/procurement/purchase-orders/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementGrnsIndexRoute =
+  AuthenticatedProcurementGrnsIndexRouteImport.update({
+    id: '/procurement/grns/',
+    path: '/procurement/grns/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProcurementBudgetsIndexRoute =
   AuthenticatedProcurementBudgetsIndexRouteImport.update({
     id: '/procurement/budgets/',
@@ -605,6 +615,12 @@ const AuthenticatedProcurementPurchaseOrdersCreateRoute =
   AuthenticatedProcurementPurchaseOrdersCreateRouteImport.update({
     id: '/procurement/purchase-orders/create',
     path: '/procurement/purchase-orders/create',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementGrnsCreateRoute =
+  AuthenticatedProcurementGrnsCreateRouteImport.update({
+    id: '/procurement/grns/create',
+    path: '/procurement/grns/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProcurementBudgetsHeadsRoute =
@@ -1051,6 +1067,18 @@ const AuthenticatedProcurementPurchaseOrdersEditIdRoute =
     path: '/procurement/purchase-orders/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProcurementGrnsViewIdRoute =
+  AuthenticatedProcurementGrnsViewIdRouteImport.update({
+    id: '/procurement/grns/view/$id',
+    path: '/procurement/grns/view/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProcurementGrnsEditIdRoute =
+  AuthenticatedProcurementGrnsEditIdRouteImport.update({
+    id: '/procurement/grns/edit/$id',
+    path: '/procurement/grns/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryWarehouseStockMovementCreateRoute =
   AuthenticatedInventoryWarehouseStockMovementCreateRouteImport.update({
     id: '/inventory/warehouse/stock-movement/create',
@@ -1350,6 +1378,7 @@ export interface FileRoutesByFullPath {
   '/inventory/warehouse/zones': typeof AuthenticatedInventoryWarehouseZonesRoute
   '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/procurement/grns/create': typeof AuthenticatedProcurementGrnsCreateRoute
   '/procurement/purchase-orders/create': typeof AuthenticatedProcurementPurchaseOrdersCreateRoute
   '/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   '/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
@@ -1375,6 +1404,7 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/procurement/grns/': typeof AuthenticatedProcurementGrnsIndexRoute
   '/procurement/purchase-orders/': typeof AuthenticatedProcurementPurchaseOrdersIndexRoute
   '/procurement/purchase-requisitions/': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   '/procurement/rfq-templates/': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
@@ -1407,6 +1437,8 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/procurement/grns/edit/$id': typeof AuthenticatedProcurementGrnsEditIdRoute
+  '/procurement/grns/view/$id': typeof AuthenticatedProcurementGrnsViewIdRoute
   '/procurement/purchase-orders/edit/$id': typeof AuthenticatedProcurementPurchaseOrdersEditIdRoute
   '/procurement/purchase-orders/view/$id': typeof AuthenticatedProcurementPurchaseOrdersViewIdRoute
   '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
@@ -1530,6 +1562,7 @@ export interface FileRoutesByTo {
   '/inventory/warehouse/zones': typeof AuthenticatedInventoryWarehouseZonesRoute
   '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/procurement/grns/create': typeof AuthenticatedProcurementGrnsCreateRoute
   '/procurement/purchase-orders/create': typeof AuthenticatedProcurementPurchaseOrdersCreateRoute
   '/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   '/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
@@ -1555,6 +1588,7 @@ export interface FileRoutesByTo {
   '/inventory/vendors': typeof AuthenticatedInventoryVendorsIndexRoute
   '/inventory/warehouse': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/procurement/budgets': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/procurement/grns': typeof AuthenticatedProcurementGrnsIndexRoute
   '/procurement/purchase-orders': typeof AuthenticatedProcurementPurchaseOrdersIndexRoute
   '/procurement/purchase-requisitions': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   '/procurement/rfq-templates': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
@@ -1587,6 +1621,8 @@ export interface FileRoutesByTo {
   '/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/procurement/grns/edit/$id': typeof AuthenticatedProcurementGrnsEditIdRoute
+  '/procurement/grns/view/$id': typeof AuthenticatedProcurementGrnsViewIdRoute
   '/procurement/purchase-orders/edit/$id': typeof AuthenticatedProcurementPurchaseOrdersEditIdRoute
   '/procurement/purchase-orders/view/$id': typeof AuthenticatedProcurementPurchaseOrdersViewIdRoute
   '/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
@@ -1713,6 +1749,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/warehouse/zones': typeof AuthenticatedInventoryWarehouseZonesRoute
   '/_authenticated/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/_authenticated/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
+  '/_authenticated/procurement/grns/create': typeof AuthenticatedProcurementGrnsCreateRoute
   '/_authenticated/procurement/purchase-orders/create': typeof AuthenticatedProcurementPurchaseOrdersCreateRoute
   '/_authenticated/procurement/purchase-requisitions/create': typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   '/_authenticated/procurement/rfq-templates/create': typeof AuthenticatedProcurementRfqTemplatesCreateRoute
@@ -1738,6 +1775,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/': typeof AuthenticatedInventoryVendorsIndexRoute
   '/_authenticated/inventory/warehouse/': typeof AuthenticatedInventoryWarehouseIndexRoute
   '/_authenticated/procurement/budgets/': typeof AuthenticatedProcurementBudgetsIndexRoute
+  '/_authenticated/procurement/grns/': typeof AuthenticatedProcurementGrnsIndexRoute
   '/_authenticated/procurement/purchase-orders/': typeof AuthenticatedProcurementPurchaseOrdersIndexRoute
   '/_authenticated/procurement/purchase-requisitions/': typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   '/_authenticated/procurement/rfq-templates/': typeof AuthenticatedProcurementRfqTemplatesIndexRoute
@@ -1770,6 +1808,8 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/edit/$id': typeof AuthenticatedInventoryVendorsEditIdRoute
   '/_authenticated/inventory/warehouse/edit/$id': typeof AuthenticatedInventoryWarehouseEditIdRoute
   '/_authenticated/inventory/warehouse/stock-movement/create': typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  '/_authenticated/procurement/grns/edit/$id': typeof AuthenticatedProcurementGrnsEditIdRoute
+  '/_authenticated/procurement/grns/view/$id': typeof AuthenticatedProcurementGrnsViewIdRoute
   '/_authenticated/procurement/purchase-orders/edit/$id': typeof AuthenticatedProcurementPurchaseOrdersEditIdRoute
   '/_authenticated/procurement/purchase-orders/view/$id': typeof AuthenticatedProcurementPurchaseOrdersViewIdRoute
   '/_authenticated/procurement/purchase-requisitions/edit/$id': typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
@@ -1895,6 +1935,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/zones'
     | '/procurement/budgets/categories'
     | '/procurement/budgets/heads'
+    | '/procurement/grns/create'
     | '/procurement/purchase-orders/create'
     | '/procurement/purchase-requisitions/create'
     | '/procurement/rfq-templates/create'
@@ -1920,6 +1961,7 @@ export interface FileRouteTypes {
     | '/inventory/vendors/'
     | '/inventory/warehouse/'
     | '/procurement/budgets/'
+    | '/procurement/grns/'
     | '/procurement/purchase-orders/'
     | '/procurement/purchase-requisitions/'
     | '/procurement/rfq-templates/'
@@ -1952,6 +1994,8 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/procurement/grns/edit/$id'
+    | '/procurement/grns/view/$id'
     | '/procurement/purchase-orders/edit/$id'
     | '/procurement/purchase-orders/view/$id'
     | '/procurement/purchase-requisitions/edit/$id'
@@ -2075,6 +2119,7 @@ export interface FileRouteTypes {
     | '/inventory/warehouse/zones'
     | '/procurement/budgets/categories'
     | '/procurement/budgets/heads'
+    | '/procurement/grns/create'
     | '/procurement/purchase-orders/create'
     | '/procurement/purchase-requisitions/create'
     | '/procurement/rfq-templates/create'
@@ -2100,6 +2145,7 @@ export interface FileRouteTypes {
     | '/inventory/vendors'
     | '/inventory/warehouse'
     | '/procurement/budgets'
+    | '/procurement/grns'
     | '/procurement/purchase-orders'
     | '/procurement/purchase-requisitions'
     | '/procurement/rfq-templates'
@@ -2132,6 +2178,8 @@ export interface FileRouteTypes {
     | '/inventory/vendors/edit/$id'
     | '/inventory/warehouse/edit/$id'
     | '/inventory/warehouse/stock-movement/create'
+    | '/procurement/grns/edit/$id'
+    | '/procurement/grns/view/$id'
     | '/procurement/purchase-orders/edit/$id'
     | '/procurement/purchase-orders/view/$id'
     | '/procurement/purchase-requisitions/edit/$id'
@@ -2257,6 +2305,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/warehouse/zones'
     | '/_authenticated/procurement/budgets/categories'
     | '/_authenticated/procurement/budgets/heads'
+    | '/_authenticated/procurement/grns/create'
     | '/_authenticated/procurement/purchase-orders/create'
     | '/_authenticated/procurement/purchase-requisitions/create'
     | '/_authenticated/procurement/rfq-templates/create'
@@ -2282,6 +2331,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/'
     | '/_authenticated/inventory/warehouse/'
     | '/_authenticated/procurement/budgets/'
+    | '/_authenticated/procurement/grns/'
     | '/_authenticated/procurement/purchase-orders/'
     | '/_authenticated/procurement/purchase-requisitions/'
     | '/_authenticated/procurement/rfq-templates/'
@@ -2314,6 +2364,8 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/edit/$id'
     | '/_authenticated/inventory/warehouse/edit/$id'
     | '/_authenticated/inventory/warehouse/stock-movement/create'
+    | '/_authenticated/procurement/grns/edit/$id'
+    | '/_authenticated/procurement/grns/view/$id'
     | '/_authenticated/procurement/purchase-orders/edit/$id'
     | '/_authenticated/procurement/purchase-orders/view/$id'
     | '/_authenticated/procurement/purchase-requisitions/edit/$id'
@@ -2681,6 +2733,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProcurementPurchaseOrdersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/grns/': {
+      id: '/_authenticated/procurement/grns/'
+      path: '/procurement/grns'
+      fullPath: '/procurement/grns/'
+      preLoaderRoute: typeof AuthenticatedProcurementGrnsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/procurement/budgets/': {
       id: '/_authenticated/procurement/budgets/'
       path: '/procurement/budgets'
@@ -2854,6 +2913,13 @@ declare module '@tanstack/react-router' {
       path: '/procurement/purchase-orders/create'
       fullPath: '/procurement/purchase-orders/create'
       preLoaderRoute: typeof AuthenticatedProcurementPurchaseOrdersCreateRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/grns/create': {
+      id: '/_authenticated/procurement/grns/create'
+      path: '/procurement/grns/create'
+      fullPath: '/procurement/grns/create'
+      preLoaderRoute: typeof AuthenticatedProcurementGrnsCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/procurement/budgets/heads': {
@@ -3374,6 +3440,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProcurementPurchaseOrdersEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/procurement/grns/view/$id': {
+      id: '/_authenticated/procurement/grns/view/$id'
+      path: '/procurement/grns/view/$id'
+      fullPath: '/procurement/grns/view/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementGrnsViewIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/procurement/grns/edit/$id': {
+      id: '/_authenticated/procurement/grns/edit/$id'
+      path: '/procurement/grns/edit/$id'
+      fullPath: '/procurement/grns/edit/$id'
+      preLoaderRoute: typeof AuthenticatedProcurementGrnsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/warehouse/stock-movement/create': {
       id: '/_authenticated/inventory/warehouse/stock-movement/create'
       path: '/inventory/warehouse/stock-movement/create'
@@ -3719,6 +3799,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryWarehouseZonesRoute: typeof AuthenticatedInventoryWarehouseZonesRoute
   AuthenticatedProcurementBudgetsCategoriesRoute: typeof AuthenticatedProcurementBudgetsCategoriesRoute
   AuthenticatedProcurementBudgetsHeadsRoute: typeof AuthenticatedProcurementBudgetsHeadsRoute
+  AuthenticatedProcurementGrnsCreateRoute: typeof AuthenticatedProcurementGrnsCreateRoute
   AuthenticatedProcurementPurchaseOrdersCreateRoute: typeof AuthenticatedProcurementPurchaseOrdersCreateRoute
   AuthenticatedProcurementPurchaseRequisitionsCreateRoute: typeof AuthenticatedProcurementPurchaseRequisitionsCreateRoute
   AuthenticatedProcurementRfqTemplatesCreateRoute: typeof AuthenticatedProcurementRfqTemplatesCreateRoute
@@ -3744,6 +3825,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryVendorsIndexRoute: typeof AuthenticatedInventoryVendorsIndexRoute
   AuthenticatedInventoryWarehouseIndexRoute: typeof AuthenticatedInventoryWarehouseIndexRoute
   AuthenticatedProcurementBudgetsIndexRoute: typeof AuthenticatedProcurementBudgetsIndexRoute
+  AuthenticatedProcurementGrnsIndexRoute: typeof AuthenticatedProcurementGrnsIndexRoute
   AuthenticatedProcurementPurchaseOrdersIndexRoute: typeof AuthenticatedProcurementPurchaseOrdersIndexRoute
   AuthenticatedProcurementPurchaseRequisitionsIndexRoute: typeof AuthenticatedProcurementPurchaseRequisitionsIndexRoute
   AuthenticatedProcurementRfqTemplatesIndexRoute: typeof AuthenticatedProcurementRfqTemplatesIndexRoute
@@ -3776,6 +3858,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryVendorsEditIdRoute: typeof AuthenticatedInventoryVendorsEditIdRoute
   AuthenticatedInventoryWarehouseEditIdRoute: typeof AuthenticatedInventoryWarehouseEditIdRoute
   AuthenticatedInventoryWarehouseStockMovementCreateRoute: typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
+  AuthenticatedProcurementGrnsEditIdRoute: typeof AuthenticatedProcurementGrnsEditIdRoute
+  AuthenticatedProcurementGrnsViewIdRoute: typeof AuthenticatedProcurementGrnsViewIdRoute
   AuthenticatedProcurementPurchaseOrdersEditIdRoute: typeof AuthenticatedProcurementPurchaseOrdersEditIdRoute
   AuthenticatedProcurementPurchaseOrdersViewIdRoute: typeof AuthenticatedProcurementPurchaseOrdersViewIdRoute
   AuthenticatedProcurementPurchaseRequisitionsEditIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
@@ -3961,6 +4045,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProcurementBudgetsCategoriesRoute,
   AuthenticatedProcurementBudgetsHeadsRoute:
     AuthenticatedProcurementBudgetsHeadsRoute,
+  AuthenticatedProcurementGrnsCreateRoute:
+    AuthenticatedProcurementGrnsCreateRoute,
   AuthenticatedProcurementPurchaseOrdersCreateRoute:
     AuthenticatedProcurementPurchaseOrdersCreateRoute,
   AuthenticatedProcurementPurchaseRequisitionsCreateRoute:
@@ -4006,6 +4092,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseIndexRoute,
   AuthenticatedProcurementBudgetsIndexRoute:
     AuthenticatedProcurementBudgetsIndexRoute,
+  AuthenticatedProcurementGrnsIndexRoute:
+    AuthenticatedProcurementGrnsIndexRoute,
   AuthenticatedProcurementPurchaseOrdersIndexRoute:
     AuthenticatedProcurementPurchaseOrdersIndexRoute,
   AuthenticatedProcurementPurchaseRequisitionsIndexRoute:
@@ -4068,6 +4156,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseEditIdRoute,
   AuthenticatedInventoryWarehouseStockMovementCreateRoute:
     AuthenticatedInventoryWarehouseStockMovementCreateRoute,
+  AuthenticatedProcurementGrnsEditIdRoute:
+    AuthenticatedProcurementGrnsEditIdRoute,
+  AuthenticatedProcurementGrnsViewIdRoute:
+    AuthenticatedProcurementGrnsViewIdRoute,
   AuthenticatedProcurementPurchaseOrdersEditIdRoute:
     AuthenticatedProcurementPurchaseOrdersEditIdRoute,
   AuthenticatedProcurementPurchaseOrdersViewIdRoute:

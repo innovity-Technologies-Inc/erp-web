@@ -228,9 +228,14 @@ export const PickListModal: React.FC<PickListModalProps> = ({
                   ) : (
                     items.map((item, idx) => {
                       const qty = parseFloat(String(item.quantity_requested)) || 0
-                      const zone = item.rack_bin?.zone?.zone_name || 'Main Zone'
-                      const bin = item.rack_bin?.bin || item.rack_bin?.rack || 'Standard Bin'
-                      const aisle = item.rack_bin?.aisle ? `Aisle ${item.rack_bin.aisle}` : ''
+                      const hasRackBin = !!(item.rack_bin?.zone?.zone_name || item.rack_bin?.bin || item.rack_bin?.rack || item.rack_bin?.aisle)
+                      const zone = item.rack_bin?.zone?.zone_name || transfer?.from_warehouse?.name || 'Source Warehouse'
+                      const bin = item.rack_bin?.bin
+                        ? `Bin ${item.rack_bin.bin}`
+                        : item.rack_bin?.rack
+                        ? `Rack ${item.rack_bin.rack}`
+                        : 'General Storage Floor'
+                      const aisle = item.rack_bin?.aisle && item.rack_bin.aisle !== '0' ? `Aisle ${item.rack_bin.aisle}` : ''
                       const rack = item.rack_bin?.rack ? `Rack ${item.rack_bin.rack}` : ''
 
                       return (
@@ -239,10 +244,17 @@ export const PickListModal: React.FC<PickListModalProps> = ({
                           
                           {/* Location with High-Visibility Badge */}
                           <td className="px-3 py-2.5">
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200/80 rounded-lg font-bold text-[11px]">
-                              <MapPin className="w-3 h-3 text-amber-600 shrink-0" />
-                              <span>{zone} ➔ {bin}</span>
-                            </div>
+                            {hasRackBin ? (
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-200/80 rounded-lg font-bold text-[11px]">
+                                <MapPin className="w-3 h-3 text-amber-600 shrink-0" />
+                                <span>{zone} ➔ {bin}</span>
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg font-medium text-[11px]">
+                                <MapPin className="w-3 h-3 text-slate-500 shrink-0" />
+                                <span>{zone} ➔ General Floor</span>
+                              </div>
+                            )}
                             {(aisle || rack) && (
                               <div className="text-[10px] text-gray-400 font-medium mt-0.5 pl-1">
                                 {[aisle, rack].filter(Boolean).join(' • ')}

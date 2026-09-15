@@ -11,7 +11,6 @@ import {
   Truck,
   FileText,
   DollarSign,
-  PackageCheck,
   Building2,
   Printer,
   Sparkles,
@@ -29,7 +28,6 @@ import {
   useDeletePurchaseOrder,
   useApprovePO,
   useDispatchPurchaseOrder,
-  useReceivePOGoods,
 } from '../../hooks/usePurchaseOrders'
 import { ManagePOScheduleModal } from '../../components/purchaseOrder/ManagePOScheduleModal'
 import type { ColDef } from 'ag-grid-community'
@@ -573,19 +571,6 @@ export const PurchaseOrderListPage = () => {
                   >
                     <Truck className="h-4 w-4" />
                   </button>
-                </PermissionGuard>
-              )}
-
-              {/* Receive Goods Quick Link (Issued / Partially Delivered) */}
-              {isIssued && (
-                <PermissionGuard permission={['edit_po', 'edit_purchase_order']}>
-                  <Link
-                    to={`/procurement/purchase-orders/view/${row.uuid}` as any}
-                    className="p-1.5 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-all cursor-pointer"
-                    title="Receive Goods / Log GRN"
-                  >
-                    <PackageCheck className="h-4 w-4" />
-                  </Link>
                 </PermissionGuard>
               )}
             </div>
