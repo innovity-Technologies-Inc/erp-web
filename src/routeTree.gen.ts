@@ -84,7 +84,6 @@ import { Route as AuthenticatedProcurementPurchaseOrdersCreateRouteImport } from
 import { Route as AuthenticatedProcurementBudgetsHeadsRouteImport } from './routes/_authenticated/procurement/budgets.heads'
 import { Route as AuthenticatedProcurementBudgetsCategoriesRouteImport } from './routes/_authenticated/procurement/budgets.categories'
 import { Route as AuthenticatedInventoryWarehouseZonesRouteImport } from './routes/_authenticated/inventory/warehouse.zones'
-import { Route as AuthenticatedInventoryWarehouseStockMovementRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement'
 import { Route as AuthenticatedInventoryWarehouseRackBinsRouteImport } from './routes/_authenticated/inventory/warehouse.rack-bins'
 import { Route as AuthenticatedInventoryWarehouseCreateRouteImport } from './routes/_authenticated/inventory/warehouse.create'
 import { Route as AuthenticatedInventoryVendorsCreateRouteImport } from './routes/_authenticated/inventory/vendors.create'
@@ -136,6 +135,7 @@ import { Route as AuthenticatedAccountReportsBankReconciliationRouteImport } fro
 import { Route as AuthenticatedAccountReportsBankBookRouteImport } from './routes/_authenticated/account/reports.bank-book'
 import { Route as AuthenticatedAccountReportsBalanceSheetRouteImport } from './routes/_authenticated/account/reports.balance-sheet'
 import { Route as AuthenticatedAccountOpeningBalanceCreateRouteImport } from './routes/_authenticated/account/opening-balance.create'
+import { Route as AuthenticatedInventoryWarehouseStockMovementIndexRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement.index'
 import { Route as AuthenticatedInventorySalesPaymentsIndexRouteImport } from './routes/_authenticated/inventory/sales.payments.index'
 import { Route as AuthenticatedInventoryReturnWastageIndexRouteImport } from './routes/_authenticated/inventory/return.wastage.index'
 import { Route as AuthenticatedInventoryReturnVendorIndexRouteImport } from './routes/_authenticated/inventory/return.vendor.index'
@@ -181,6 +181,7 @@ import { Route as AuthenticatedAccountVoucherDebitCreateRouteImport } from './ro
 import { Route as AuthenticatedAccountVoucherCreditCreateRouteImport } from './routes/_authenticated/account/voucher.credit.create'
 import { Route as AuthenticatedAccountVoucherContraCreateRouteImport } from './routes/_authenticated/account/voucher.contra.create'
 import { Route as AuthenticatedAccountOpeningBalanceEditUuidRouteImport } from './routes/_authenticated/account/opening-balance.edit.$uuid'
+import { Route as AuthenticatedInventoryWarehouseStockMovementViewIdRouteImport } from './routes/_authenticated/inventory/warehouse.stock-movement.view.$id'
 import { Route as AuthenticatedInventoryReturnWastageDetailsIdRouteImport } from './routes/_authenticated/inventory/return.wastage.details.$id'
 import { Route as AuthenticatedInventoryReturnVendorDetailsIdRouteImport } from './routes/_authenticated/inventory/return.vendor.details.$id'
 import { Route as AuthenticatedInventoryReturnMerchantDetailsIdRouteImport } from './routes/_authenticated/inventory/return.merchant.details.$id'
@@ -624,12 +625,6 @@ const AuthenticatedInventoryWarehouseZonesRoute =
     path: '/inventory/warehouse/zones',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedInventoryWarehouseStockMovementRoute =
-  AuthenticatedInventoryWarehouseStockMovementRouteImport.update({
-    id: '/inventory/warehouse/stock-movement',
-    path: '/inventory/warehouse/stock-movement',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedInventoryWarehouseRackBinsRoute =
   AuthenticatedInventoryWarehouseRackBinsRouteImport.update({
     id: '/inventory/warehouse/rack-bins',
@@ -936,6 +931,12 @@ const AuthenticatedAccountOpeningBalanceCreateRoute =
     path: '/account/opening-balance/create',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryWarehouseStockMovementIndexRoute =
+  AuthenticatedInventoryWarehouseStockMovementIndexRouteImport.update({
+    id: '/inventory/warehouse/stock-movement/',
+    path: '/inventory/warehouse/stock-movement/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventorySalesPaymentsIndexRoute =
   AuthenticatedInventorySalesPaymentsIndexRouteImport.update({
     id: '/inventory/sales/payments/',
@@ -1052,9 +1053,9 @@ const AuthenticatedProcurementPurchaseOrdersEditIdRoute =
   } as any)
 const AuthenticatedInventoryWarehouseStockMovementCreateRoute =
   AuthenticatedInventoryWarehouseStockMovementCreateRouteImport.update({
-    id: '/create',
-    path: '/create',
-    getParentRoute: () => AuthenticatedInventoryWarehouseStockMovementRoute,
+    id: '/inventory/warehouse/stock-movement/create',
+    path: '/inventory/warehouse/stock-movement/create',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedInventoryWarehouseEditIdRoute =
   AuthenticatedInventoryWarehouseEditIdRouteImport.update({
@@ -1206,6 +1207,12 @@ const AuthenticatedAccountOpeningBalanceEditUuidRoute =
     path: '/account/opening-balance/edit/$uuid',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedInventoryWarehouseStockMovementViewIdRoute =
+  AuthenticatedInventoryWarehouseStockMovementViewIdRouteImport.update({
+    id: '/inventory/warehouse/stock-movement/view/$id',
+    path: '/inventory/warehouse/stock-movement/view/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedInventoryReturnWastageDetailsIdRoute =
   AuthenticatedInventoryReturnWastageDetailsIdRouteImport.update({
     id: '/inventory/return/wastage/details/$id',
@@ -1340,7 +1347,6 @@ export interface FileRoutesByFullPath {
   '/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/rack-bins': typeof AuthenticatedInventoryWarehouseRackBinsRoute
-  '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/inventory/warehouse/zones': typeof AuthenticatedInventoryWarehouseZonesRoute
   '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
@@ -1420,6 +1426,7 @@ export interface FileRoutesByFullPath {
   '/inventory/return/vendor/': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/inventory/return/wastage/': typeof AuthenticatedInventoryReturnWastageIndexRoute
   '/inventory/sales/payments/': typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  '/inventory/warehouse/stock-movement/': typeof AuthenticatedInventoryWarehouseStockMovementIndexRoute
   '/account/voucher/contra/edit/$uuid': typeof AuthenticatedAccountVoucherContraEditUuidRoute
   '/account/voucher/credit/edit/$uuid': typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   '/account/voucher/debit/edit/$uuid': typeof AuthenticatedAccountVoucherDebitEditUuidRoute
@@ -1427,6 +1434,7 @@ export interface FileRoutesByFullPath {
   '/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   '/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
+  '/inventory/warehouse/stock-movement/view/$id': typeof AuthenticatedInventoryWarehouseStockMovementViewIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -1519,7 +1527,6 @@ export interface FileRoutesByTo {
   '/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/inventory/warehouse/rack-bins': typeof AuthenticatedInventoryWarehouseRackBinsRoute
-  '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/inventory/warehouse/zones': typeof AuthenticatedInventoryWarehouseZonesRoute
   '/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
@@ -1599,6 +1606,7 @@ export interface FileRoutesByTo {
   '/inventory/return/vendor': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/inventory/return/wastage': typeof AuthenticatedInventoryReturnWastageIndexRoute
   '/inventory/sales/payments': typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  '/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementIndexRoute
   '/account/voucher/contra/edit/$uuid': typeof AuthenticatedAccountVoucherContraEditUuidRoute
   '/account/voucher/credit/edit/$uuid': typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   '/account/voucher/debit/edit/$uuid': typeof AuthenticatedAccountVoucherDebitEditUuidRoute
@@ -1606,6 +1614,7 @@ export interface FileRoutesByTo {
   '/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   '/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
+  '/inventory/warehouse/stock-movement/view/$id': typeof AuthenticatedInventoryWarehouseStockMovementViewIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -1701,7 +1710,6 @@ export interface FileRoutesById {
   '/_authenticated/inventory/vendors/create': typeof AuthenticatedInventoryVendorsCreateRoute
   '/_authenticated/inventory/warehouse/create': typeof AuthenticatedInventoryWarehouseCreateRoute
   '/_authenticated/inventory/warehouse/rack-bins': typeof AuthenticatedInventoryWarehouseRackBinsRoute
-  '/_authenticated/inventory/warehouse/stock-movement': typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   '/_authenticated/inventory/warehouse/zones': typeof AuthenticatedInventoryWarehouseZonesRoute
   '/_authenticated/procurement/budgets/categories': typeof AuthenticatedProcurementBudgetsCategoriesRoute
   '/_authenticated/procurement/budgets/heads': typeof AuthenticatedProcurementBudgetsHeadsRoute
@@ -1781,6 +1789,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/return/vendor/': typeof AuthenticatedInventoryReturnVendorIndexRoute
   '/_authenticated/inventory/return/wastage/': typeof AuthenticatedInventoryReturnWastageIndexRoute
   '/_authenticated/inventory/sales/payments/': typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  '/_authenticated/inventory/warehouse/stock-movement/': typeof AuthenticatedInventoryWarehouseStockMovementIndexRoute
   '/_authenticated/account/voucher/contra/edit/$uuid': typeof AuthenticatedAccountVoucherContraEditUuidRoute
   '/_authenticated/account/voucher/credit/edit/$uuid': typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   '/_authenticated/account/voucher/debit/edit/$uuid': typeof AuthenticatedAccountVoucherDebitEditUuidRoute
@@ -1788,6 +1797,7 @@ export interface FileRoutesById {
   '/_authenticated/inventory/return/merchant/details/$id': typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   '/_authenticated/inventory/return/vendor/details/$id': typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   '/_authenticated/inventory/return/wastage/details/$id': typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
+  '/_authenticated/inventory/warehouse/stock-movement/view/$id': typeof AuthenticatedInventoryWarehouseStockMovementViewIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1882,7 +1892,6 @@ export interface FileRouteTypes {
     | '/inventory/vendors/create'
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/rack-bins'
-    | '/inventory/warehouse/stock-movement'
     | '/inventory/warehouse/zones'
     | '/procurement/budgets/categories'
     | '/procurement/budgets/heads'
@@ -1962,6 +1971,7 @@ export interface FileRouteTypes {
     | '/inventory/return/vendor/'
     | '/inventory/return/wastage/'
     | '/inventory/sales/payments/'
+    | '/inventory/warehouse/stock-movement/'
     | '/account/voucher/contra/edit/$uuid'
     | '/account/voucher/credit/edit/$uuid'
     | '/account/voucher/debit/edit/$uuid'
@@ -1969,6 +1979,7 @@ export interface FileRouteTypes {
     | '/inventory/return/merchant/details/$id'
     | '/inventory/return/vendor/details/$id'
     | '/inventory/return/wastage/details/$id'
+    | '/inventory/warehouse/stock-movement/view/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -2061,7 +2072,6 @@ export interface FileRouteTypes {
     | '/inventory/vendors/create'
     | '/inventory/warehouse/create'
     | '/inventory/warehouse/rack-bins'
-    | '/inventory/warehouse/stock-movement'
     | '/inventory/warehouse/zones'
     | '/procurement/budgets/categories'
     | '/procurement/budgets/heads'
@@ -2141,6 +2151,7 @@ export interface FileRouteTypes {
     | '/inventory/return/vendor'
     | '/inventory/return/wastage'
     | '/inventory/sales/payments'
+    | '/inventory/warehouse/stock-movement'
     | '/account/voucher/contra/edit/$uuid'
     | '/account/voucher/credit/edit/$uuid'
     | '/account/voucher/debit/edit/$uuid'
@@ -2148,6 +2159,7 @@ export interface FileRouteTypes {
     | '/inventory/return/merchant/details/$id'
     | '/inventory/return/vendor/details/$id'
     | '/inventory/return/wastage/details/$id'
+    | '/inventory/warehouse/stock-movement/view/$id'
   id:
     | '__root__'
     | '/_auth'
@@ -2242,7 +2254,6 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/vendors/create'
     | '/_authenticated/inventory/warehouse/create'
     | '/_authenticated/inventory/warehouse/rack-bins'
-    | '/_authenticated/inventory/warehouse/stock-movement'
     | '/_authenticated/inventory/warehouse/zones'
     | '/_authenticated/procurement/budgets/categories'
     | '/_authenticated/procurement/budgets/heads'
@@ -2322,6 +2333,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/return/vendor/'
     | '/_authenticated/inventory/return/wastage/'
     | '/_authenticated/inventory/sales/payments/'
+    | '/_authenticated/inventory/warehouse/stock-movement/'
     | '/_authenticated/account/voucher/contra/edit/$uuid'
     | '/_authenticated/account/voucher/credit/edit/$uuid'
     | '/_authenticated/account/voucher/debit/edit/$uuid'
@@ -2329,6 +2341,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inventory/return/merchant/details/$id'
     | '/_authenticated/inventory/return/vendor/details/$id'
     | '/_authenticated/inventory/return/wastage/details/$id'
+    | '/_authenticated/inventory/warehouse/stock-movement/view/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -2864,13 +2877,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInventoryWarehouseZonesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/inventory/warehouse/stock-movement': {
-      id: '/_authenticated/inventory/warehouse/stock-movement'
-      path: '/inventory/warehouse/stock-movement'
-      fullPath: '/inventory/warehouse/stock-movement'
-      preLoaderRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/inventory/warehouse/rack-bins': {
       id: '/_authenticated/inventory/warehouse/rack-bins'
       path: '/inventory/warehouse/rack-bins'
@@ -3228,6 +3234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountOpeningBalanceCreateRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/warehouse/stock-movement/': {
+      id: '/_authenticated/inventory/warehouse/stock-movement/'
+      path: '/inventory/warehouse/stock-movement'
+      fullPath: '/inventory/warehouse/stock-movement/'
+      preLoaderRoute: typeof AuthenticatedInventoryWarehouseStockMovementIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/sales/payments/': {
       id: '/_authenticated/inventory/sales/payments/'
       path: '/inventory/sales/payments'
@@ -3363,10 +3376,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/inventory/warehouse/stock-movement/create': {
       id: '/_authenticated/inventory/warehouse/stock-movement/create'
-      path: '/create'
+      path: '/inventory/warehouse/stock-movement/create'
       fullPath: '/inventory/warehouse/stock-movement/create'
       preLoaderRoute: typeof AuthenticatedInventoryWarehouseStockMovementCreateRouteImport
-      parentRoute: typeof AuthenticatedInventoryWarehouseStockMovementRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/inventory/warehouse/edit/$id': {
       id: '/_authenticated/inventory/warehouse/edit/$id'
@@ -3543,6 +3556,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountOpeningBalanceEditUuidRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inventory/warehouse/stock-movement/view/$id': {
+      id: '/_authenticated/inventory/warehouse/stock-movement/view/$id'
+      path: '/inventory/warehouse/stock-movement/view/$id'
+      fullPath: '/inventory/warehouse/stock-movement/view/$id'
+      preLoaderRoute: typeof AuthenticatedInventoryWarehouseStockMovementViewIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/inventory/return/wastage/details/$id': {
       id: '/_authenticated/inventory/return/wastage/details/$id'
       path: '/inventory/return/wastage/details/$id'
@@ -3608,21 +3628,6 @@ const AuthRouteChildren: AuthRouteChildren = {
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
-interface AuthenticatedInventoryWarehouseStockMovementRouteChildren {
-  AuthenticatedInventoryWarehouseStockMovementCreateRoute: typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
-}
-
-const AuthenticatedInventoryWarehouseStockMovementRouteChildren: AuthenticatedInventoryWarehouseStockMovementRouteChildren =
-  {
-    AuthenticatedInventoryWarehouseStockMovementCreateRoute:
-      AuthenticatedInventoryWarehouseStockMovementCreateRoute,
-  }
-
-const AuthenticatedInventoryWarehouseStockMovementRouteWithChildren =
-  AuthenticatedInventoryWarehouseStockMovementRoute._addFileChildren(
-    AuthenticatedInventoryWarehouseStockMovementRouteChildren,
-  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -3711,7 +3716,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryVendorsCreateRoute: typeof AuthenticatedInventoryVendorsCreateRoute
   AuthenticatedInventoryWarehouseCreateRoute: typeof AuthenticatedInventoryWarehouseCreateRoute
   AuthenticatedInventoryWarehouseRackBinsRoute: typeof AuthenticatedInventoryWarehouseRackBinsRoute
-  AuthenticatedInventoryWarehouseStockMovementRoute: typeof AuthenticatedInventoryWarehouseStockMovementRouteWithChildren
   AuthenticatedInventoryWarehouseZonesRoute: typeof AuthenticatedInventoryWarehouseZonesRoute
   AuthenticatedProcurementBudgetsCategoriesRoute: typeof AuthenticatedProcurementBudgetsCategoriesRoute
   AuthenticatedProcurementBudgetsHeadsRoute: typeof AuthenticatedProcurementBudgetsHeadsRoute
@@ -3771,6 +3775,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryServiceInvoiceViewIdRoute: typeof AuthenticatedInventoryServiceInvoiceViewIdRoute
   AuthenticatedInventoryVendorsEditIdRoute: typeof AuthenticatedInventoryVendorsEditIdRoute
   AuthenticatedInventoryWarehouseEditIdRoute: typeof AuthenticatedInventoryWarehouseEditIdRoute
+  AuthenticatedInventoryWarehouseStockMovementCreateRoute: typeof AuthenticatedInventoryWarehouseStockMovementCreateRoute
   AuthenticatedProcurementPurchaseOrdersEditIdRoute: typeof AuthenticatedProcurementPurchaseOrdersEditIdRoute
   AuthenticatedProcurementPurchaseOrdersViewIdRoute: typeof AuthenticatedProcurementPurchaseOrdersViewIdRoute
   AuthenticatedProcurementPurchaseRequisitionsEditIdRoute: typeof AuthenticatedProcurementPurchaseRequisitionsEditIdRoute
@@ -3790,6 +3795,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryReturnVendorIndexRoute: typeof AuthenticatedInventoryReturnVendorIndexRoute
   AuthenticatedInventoryReturnWastageIndexRoute: typeof AuthenticatedInventoryReturnWastageIndexRoute
   AuthenticatedInventorySalesPaymentsIndexRoute: typeof AuthenticatedInventorySalesPaymentsIndexRoute
+  AuthenticatedInventoryWarehouseStockMovementIndexRoute: typeof AuthenticatedInventoryWarehouseStockMovementIndexRoute
   AuthenticatedAccountVoucherContraEditUuidRoute: typeof AuthenticatedAccountVoucherContraEditUuidRoute
   AuthenticatedAccountVoucherCreditEditUuidRoute: typeof AuthenticatedAccountVoucherCreditEditUuidRoute
   AuthenticatedAccountVoucherDebitEditUuidRoute: typeof AuthenticatedAccountVoucherDebitEditUuidRoute
@@ -3797,6 +3803,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedInventoryReturnMerchantDetailsIdRoute: typeof AuthenticatedInventoryReturnMerchantDetailsIdRoute
   AuthenticatedInventoryReturnVendorDetailsIdRoute: typeof AuthenticatedInventoryReturnVendorDetailsIdRoute
   AuthenticatedInventoryReturnWastageDetailsIdRoute: typeof AuthenticatedInventoryReturnWastageDetailsIdRoute
+  AuthenticatedInventoryWarehouseStockMovementViewIdRoute: typeof AuthenticatedInventoryWarehouseStockMovementViewIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -3948,8 +3955,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryWarehouseCreateRoute,
   AuthenticatedInventoryWarehouseRackBinsRoute:
     AuthenticatedInventoryWarehouseRackBinsRoute,
-  AuthenticatedInventoryWarehouseStockMovementRoute:
-    AuthenticatedInventoryWarehouseStockMovementRouteWithChildren,
   AuthenticatedInventoryWarehouseZonesRoute:
     AuthenticatedInventoryWarehouseZonesRoute,
   AuthenticatedProcurementBudgetsCategoriesRoute:
@@ -4061,6 +4066,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryVendorsEditIdRoute,
   AuthenticatedInventoryWarehouseEditIdRoute:
     AuthenticatedInventoryWarehouseEditIdRoute,
+  AuthenticatedInventoryWarehouseStockMovementCreateRoute:
+    AuthenticatedInventoryWarehouseStockMovementCreateRoute,
   AuthenticatedProcurementPurchaseOrdersEditIdRoute:
     AuthenticatedProcurementPurchaseOrdersEditIdRoute,
   AuthenticatedProcurementPurchaseOrdersViewIdRoute:
@@ -4098,6 +4105,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryReturnWastageIndexRoute,
   AuthenticatedInventorySalesPaymentsIndexRoute:
     AuthenticatedInventorySalesPaymentsIndexRoute,
+  AuthenticatedInventoryWarehouseStockMovementIndexRoute:
+    AuthenticatedInventoryWarehouseStockMovementIndexRoute,
   AuthenticatedAccountVoucherContraEditUuidRoute:
     AuthenticatedAccountVoucherContraEditUuidRoute,
   AuthenticatedAccountVoucherCreditEditUuidRoute:
@@ -4112,6 +4121,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedInventoryReturnVendorDetailsIdRoute,
   AuthenticatedInventoryReturnWastageDetailsIdRoute:
     AuthenticatedInventoryReturnWastageDetailsIdRoute,
+  AuthenticatedInventoryWarehouseStockMovementViewIdRoute:
+    AuthenticatedInventoryWarehouseStockMovementViewIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

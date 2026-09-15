@@ -10,7 +10,7 @@ import { exportToExcel } from '@/utils/exportUtils'
 import { useWarehouseRackBins, useDeleteWarehouseRackBin } from '../../hooks/useWarehouseRackBins'
 import { useWarehouseZones } from '../../hooks/useWarehouseZones'
 import { RackBinModal } from '../../components/warehouse/RackBinModal'
-import { getWarehouseTabs } from './warehouseNavigation'
+import { warehouseTitleOptions } from './warehouseNavigation'
 import type { WarehouseRackBin } from '../../api/warehouseRackBin.api'
 import type { WarehouseZone } from '../../api/warehouseZone.api'
 
@@ -338,8 +338,8 @@ export const WarehouseRackBinListPage = () => {
     <>
       <ListPageLayout
         title="Rack & Bin Locations"
+        titleOptions={warehouseTitleOptions}
         backTo="/"
-        tabs={getWarehouseTabs('rack-bins')}
         onCreate={handleCreate}
         createPermission="create_warehouse"
         searchWidth="max-w-[220px]"

@@ -9,11 +9,13 @@ import {
   MapPin, 
   Phone, 
   Mail, 
-  Info
+  Info,
+  Sliders
 } from 'lucide-react'
 import { warehouseSchema, type WarehouseFormValues } from '../../hooks/validation'
 import { useUpdateWarehouse, useEmployees, useWarehouseDetails } from '../../hooks/useWarehouse'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
+import { WarehouseConfigModal } from '../../components/warehouse/WarehouseConfigModal'
 import { clsx } from 'clsx'
 import { Select2 } from '@/components/Select/Select2'
 import { LoadingState } from '@/components/Loading/LoadingState'
@@ -22,6 +24,7 @@ export const WarehouseEditPage = () => {
   const { id } = useParams({ strict: false })
   const navigate = useNavigate()
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false)
   const warehouseId = id ? parseInt(id as string, 10) : null
   const { data: warehouseResponse, isLoading } = useWarehouseDetails(warehouseId)
   const { mutate: updateWarehouse, isPending: isSaving } = useUpdateWarehouse()
@@ -91,6 +94,14 @@ export const WarehouseEditPage = () => {
               Edit Warehouse <span className="text-gray-400 text-[14px] ml-1">[{warehouseResponse?.data?.name}]</span>
             </h1>
           </div>
+          <button
+            type="button"
+            onClick={() => setIsConfigModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-primary/20 hover:border-primary text-primary hover:bg-primary/5 rounded-lg text-[12px] font-semibold transition-all shadow-sm"
+          >
+            <Sliders className="h-4 w-4" />
+            <span>WMS & Layout Configuration</span>
+          </button>
         </div>
       </div>
 
@@ -296,6 +307,12 @@ export const WarehouseEditPage = () => {
           </div>
         </form>
       </div>
+
+      <WarehouseConfigModal
+        isOpen={isConfigModalOpen}
+        onClose={() => setIsConfigModalOpen(false)}
+        warehouse={warehouseResponse?.data}
+      />
 
       <ConfirmationModal
         isOpen={isDiscardModalOpen}

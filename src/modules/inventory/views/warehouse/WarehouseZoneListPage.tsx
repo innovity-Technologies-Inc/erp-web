@@ -11,7 +11,7 @@ import { formatDate } from '@/utils/formatters'
 import { useWarehouseZones, useDeleteWarehouseZone } from '../../hooks/useWarehouseZones'
 import { useWarehouses } from '../../hooks/useWarehouse'
 import { ZoneModal } from '../../components/warehouse/ZoneModal'
-import { getWarehouseTabs } from './warehouseNavigation'
+import { warehouseTitleOptions } from './warehouseNavigation'
 import type { WarehouseZone } from '../../api/warehouseZone.api'
 
 export const WarehouseZoneListPage = () => {
@@ -281,8 +281,8 @@ export const WarehouseZoneListPage = () => {
     <>
       <ListPageLayout
         title="Warehouse Zones"
+        titleOptions={warehouseTitleOptions}
         backTo="/"
-        tabs={getWarehouseTabs('zones')}
         onCreate={handleCreate}
         createPermission="create_warehouse"
         searchWidth="max-w-[220px]"

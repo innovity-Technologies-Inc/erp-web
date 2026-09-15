@@ -1,31 +1,55 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { 
   ArrowLeft, 
   Check, 
   Trash2, 
   Plus, 
-  Info,
-  Package,
-  X
+  Info, 
+  Package, 
+  X,
+  Calendar,
+  Building2,
+  FileText
 } from 'lucide-react'
-import { stockMovementSchema, type StockMovementFormValues } from '../../hooks/validation'
 import { 
-  useStoreStockMovement, 
   useWarehouses, 
-  useMovementTypes,
-  useBatches,
-  useBatchProducts,
-  useBatchProductQty
+  useBatches, 
+  useBatchProducts, 
+  useBatchProductQty 
 } from '../../hooks/useWarehouse'
+import { useCreateWarehouseTransfer } from '../../hooks/useWarehouseTransfers'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
 import { clsx } from 'clsx'
 import { Select2 } from '@/components/Select/Select2'
 import { useUiStore } from '@/store/useUiStore'
 
+// ─── Zod Schema ─────────────────────────────────────────────────────────────
 
+const transferItemSchema = z.object({
+  product_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Product is required' }),
+  quantity: z.coerce.number().min(0.01, 'Quantity must be greater than 0'),
+  avl_qty: z.coerce.number().optional(),
+})
+
+const transferBatchSchema = z.object({
+  batch_master_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Batch is required' }),
+  items: z.array(transferItemSchema).min(1, 'At least one item is required in batch'),
+})
+
+const warehouseTransferSchema = z.object({
+  from_warehouse_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Source warehouse is required' }),
+  to_warehouse_id: z.any().refine((val) => val !== undefined && val !== null && val !== '' && val !== 0 && val !== '0', { message: 'Destination warehouse is required' }),
+  transfer_date: z.string().min(1, 'Transfer date is required'),
+  transfer_no: z.string().optional(),
+  remarks: z.string().optional(),
+  batches: z.array(transferBatchSchema).min(1, 'At least one batch is required'),
+})
+
+type WarehouseTransferFormValues = z.infer<typeof warehouseTransferSchema>
 
 // ─── Sub-Component for Batch Item Rows ─────────────────────────────────────────
 
@@ -59,7 +83,7 @@ const ItemRow = ({ batchIndex, itemIndex, control, register, remove, canRemove, 
     const val = parseFloat(e.target.value) || 0
     if (val > avlQty) {
       setValue(`batches.${batchIndex}.items.${itemIndex}.quantity`, 0)
-      showNotificationModal('Invalid Quantity', 'Quantity exceeds available stock', 'error')
+      showNotificationModal('Invalid Quantity', 'Transfer quantity exceeds available stock', 'error')
     }
   }
 
@@ -88,7 +112,7 @@ const ItemRow = ({ batchIndex, itemIndex, control, register, remove, canRemove, 
       </td>
       <td className="px-4 py-3 text-center">
         <span className="text-[13px] font-medium text-gray-400">
-           {avlQty || 0}
+          {avlQty || 0}
         </span>
       </td>
       <td className="px-4 py-3">
@@ -250,26 +274,31 @@ const BatchCard = ({ index, control, register, removeBatch, fromWarehouseId, can
   )
 }
 
-// ─── Main Page Component ───────────────────────────────────────────────────────
+// ─── Main Component ────────────────────────────────────────────────────────────
 
-export const StockMovementCreatePage = () => {
+export const WarehouseTransferCreatePage = () => {
   const navigate = useNavigate()
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false)
+  
   const { data: warehouses } = useWarehouses()
-  const { mutate: storeMovement, isPending: isSaving } = useStoreStockMovement()
+  const { mutate: storeTransfer, isPending: isSaving } = useCreateWarehouseTransfer()
   const { showNotificationModal } = useUiStore()
 
   const {
     register,
-    handleSubmit,
     control,
-    watch,
+    handleSubmit,
     setValue,
     reset,
-    formState: { errors, isDirty },
-  } = useForm<StockMovementFormValues>({
-    resolver: zodResolver(stockMovementSchema) as any,
+    formState: { errors, isDirty }
+  } = useForm<WarehouseTransferFormValues>({
+    resolver: zodResolver(warehouseTransferSchema) as any,
     defaultValues: {
+      from_warehouse_id: undefined as any,
+      to_warehouse_id: undefined as any,
+      transfer_date: new Date().toISOString().split('T')[0],
+      transfer_no: '',
+      remarks: '',
       batches: [{
         batch_master_id: undefined as any,
         items: [{ product_id: undefined as any, quantity: 1, avl_qty: 0 }]
@@ -282,40 +311,27 @@ export const StockMovementCreatePage = () => {
     name: 'batches'
   })
 
-  const fromWarehouseId = watch('from_warehouse_id')
-  const movementCategory = watch('movement_category')
-  const watchedBatches = watch('batches') || []
+  const fromWarehouseId = useWatch({ control, name: 'from_warehouse_id' })
+  const watchedBatches = useWatch({ control, name: 'batches' }) || []
 
   const usedBatchIds = useMemo(() => {
     return watchedBatches
-      .map((b: any) => Number(b.batch_master_id))
+      .map((b: any) => Number(b?.batch_master_id))
       .filter((id: number) => !isNaN(id))
   }, [watchedBatches])
 
-  const { data: movementTypes } = useMovementTypes(movementCategory)
-
   const warehouseOptions = useMemo(() => {
-    const data = Array.isArray(warehouses) ? warehouses : []
-    return data.map((w: any) => ({ label: w.text, value: w.id }))
+    return warehouses?.map((w: any) => ({
+      label: w.text,
+      value: w.id
+    })) || []
   }, [warehouses])
 
   const toWarehouseOptions = useMemo(() => {
-    return warehouseOptions.filter(opt => Number(opt.value) !== Number(fromWarehouseId))
+    return warehouseOptions.filter((opt: any) => Number(opt.value) !== Number(fromWarehouseId))
   }, [warehouseOptions, fromWarehouseId])
 
-  const categoryOptions = [
-    { label: 'Inbound', value: 'Inbound' },
-    { label: 'Outbound', value: 'Outbound' },
-    { label: 'Internal', value: 'Internal' },
-    { label: 'Administrative', value: 'Administrative' },
-  ]
-
-  const typeOptions = movementTypes?.map((t: any) => ({
-    label: t.text,
-    value: t.id
-  })) || []
-
-  const onSubmit = (data: StockMovementFormValues) => {
+  const onSubmit = (data: WarehouseTransferFormValues) => {
     const flatItems: any[] = []
     const duplicateCheckSet = new Set<string>()
 
@@ -339,27 +355,15 @@ export const StockMovementCreatePage = () => {
     const payload = {
       from_warehouse_id: data.from_warehouse_id,
       to_warehouse_id: data.to_warehouse_id,
-      movement_category: data.movement_category,
-      movement_type: data.movement_type,
-      reference_no: data.reference_no,
-      remark: data.remark,
+      transfer_date: data.transfer_date,
+      transfer_no: data.transfer_no || undefined,
+      remarks: data.remarks,
       items: flatItems
     }
 
-    storeMovement(payload, {
+    storeTransfer(payload, {
       onSuccess: () => {
-        reset({
-          from_warehouse_id: undefined as any,
-          to_warehouse_id: undefined as any,
-          movement_category: undefined as any,
-          movement_type: undefined as any,
-          reference_no: '',
-          remark: '',
-          batches: [{
-            batch_master_id: undefined as any,
-            items: [{ product_id: undefined as any, quantity: 1, avl_qty: 0 }]
-          }]
-        })
+        navigate({ to: '/inventory/warehouse/stock-movement' })
       },
     })
   }
@@ -387,7 +391,7 @@ export const StockMovementCreatePage = () => {
               <span>Back</span>
             </button>
             <h1 className="text-[20px] font-medium text-primary tracking-tight ml-2">
-              New Stock Movement
+              New Warehouse Transfer
             </h1>
           </div>
         </div>
@@ -402,10 +406,10 @@ export const StockMovementCreatePage = () => {
                 <div className="p-2.5 bg-primary/5 rounded-xl text-primary">
                   <Info className="h-4 w-4" strokeWidth={2.5} />
                 </div>
-                <h2 className="font-semibold text-[16px] text-[#1e293b]">Movement Details</h2>
+                <h2 className="font-semibold text-[16px] text-[#1e293b]">Transfer Details</h2>
               </div>
 
-              <div className="space-y-7">
+              <div className="space-y-7 mt-4">
                 <div className="space-y-2">
                   <label className="text-[13px] font-semibold text-[#475569]">From Warehouse <span className="text-rose-500">*</span></label>
                   <Controller
@@ -424,7 +428,7 @@ export const StockMovementCreatePage = () => {
                           setValue('to_warehouse_id', undefined as any)
                         }}
                         placeholder="Select warehouse"
-                        error={errors.from_warehouse_id?.message}
+                        error={errors.from_warehouse_id?.message as string}
                       />
                     )}
                   />
@@ -442,64 +446,37 @@ export const StockMovementCreatePage = () => {
                         onChange={field.onChange}
                         placeholder="Select warehouse"
                         isDisabled={!fromWarehouseId}
-                        error={errors.to_warehouse_id?.message}
+                        error={errors.to_warehouse_id?.message as string}
                       />
                     )}
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[13px] font-semibold text-[#475569]">Movement Category <span className="text-rose-500">*</span></label>
-                    <Controller
-                      control={control}
-                      name="movement_category"
-                      render={({ field }) => (
-                        <Select2
-                          options={categoryOptions}
-                          value={field.value}
-                          onChange={(val) => {
-                            field.onChange(val)
-                            setValue('movement_type', undefined as any)
-                          }}
-                          placeholder="Select category"
-                          error={errors.movement_category?.message}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[13px] font-semibold text-[#475569]">Movement Type <span className="text-rose-500">*</span></label>
-                    <Controller
-                      control={control}
-                      name="movement_type"
-                      render={({ field }) => (
-                        <Select2
-                          options={typeOptions}
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Select type"
-                          isDisabled={!movementCategory}
-                          error={errors.movement_type?.message}
-                        />
-                      )}
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[13px] font-semibold text-[#475569]">Transfer Date <span className="text-rose-500">*</span></label>
+                  <input
+                    type="date"
+                    {...register('transfer_date')}
+                    className="w-full h-11 px-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium text-[#475569]"
+                  />
+                  {errors.transfer_date && (
+                    <span className="text-rose-500 text-[11px] font-medium">{errors.transfer_date.message}</span>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[13px] font-semibold text-[#475569]">Reference</label>
+                  <label className="text-[13px] font-semibold text-[#475569]">Reference / Transfer No</label>
                   <input
-                    {...register('reference_no')}
+                    {...register('transfer_no')}
                     className="w-full h-11 px-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium"
-                    placeholder="e.g. MVT-2023-001"
+                    placeholder="e.g. TRF-2026-001 (Auto if empty)"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-[13px] font-semibold text-[#475569]">Remark</label>
                   <textarea
-                    {...register('remark')}
+                    {...register('remarks')}
                     rows={4}
                     className="w-full p-4 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary hover:border-gray-300 transition-all font-medium resize-none"
                     placeholder="Additional notes..."

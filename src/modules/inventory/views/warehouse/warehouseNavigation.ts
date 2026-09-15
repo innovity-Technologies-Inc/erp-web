@@ -9,5 +9,5 @@ export const warehouseTitleOptions = [
   { name: 'Warehouse List', to: '/inventory/warehouse', permission: 'view_warehouse' },
   { name: 'Warehouse Zones', to: '/inventory/warehouse/zones', permission: 'view_warehouse' },
   { name: 'Rack & Bin Locations', to: '/inventory/warehouse/rack-bins', permission: 'view_warehouse' },
-  { name: 'Stock Movement', to: '/inventory/warehouse/stock-movement', permission: 'warehouse_stock_movement' },
+  { name: 'Warehouse Transfers', to: '/inventory/warehouse/stock-movement', permission: ['view_warehouse', 'warehouse_stock_movement'] },
 ]

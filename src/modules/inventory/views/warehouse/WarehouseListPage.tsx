@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit, Trash2, Sliders } from 'lucide-react'
 import { useWarehouseDatatable, useDeleteWarehouse } from '../../hooks/useWarehouse'
 import type { ColDef } from 'ag-grid-community'
 import type { WarehouseListItem } from '../../api/warehouse.api'
@@ -9,8 +9,9 @@ import { useNavigate } from '@tanstack/react-router'
 import { PermissionGuard } from '@/components/Permission/PermissionGuard'
 import { usePermissions } from '@/hooks/usePermissions'
 import { ConfirmationModal } from '@/components/Modal/ConfirmationModal'
+import { WarehouseConfigModal } from '../../components/warehouse/WarehouseConfigModal'
 import { exportToExcel } from '@/utils/exportUtils'
-import { getWarehouseTabs } from './warehouseNavigation'
+import { warehouseTitleOptions } from './warehouseNavigation'
 
 export const WarehouseListPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -21,6 +22,8 @@ export const WarehouseListPage = () => {
   const [pageSize, setPageSize] = useState(10)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [selectedWarehouse, setSelectedWarehouse] = useState<{ uuid: string; id: number } | null>(null)
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false)
+  const [configWarehouse, setConfigWarehouse] = useState<any>(null)
   
   const navigate = useNavigate()
   const { hasAnyPermission } = usePermissions()
@@ -52,6 +55,11 @@ export const WarehouseListPage = () => {
 
   const handleCreate = () => {
     navigate({ to: '/inventory/warehouse/create' })
+  }
+
+  const handleOpenConfig = (item: any) => {
+    setConfigWarehouse(item)
+    setIsConfigModalOpen(true)
   }
 
   const handleEdit = (id: number) => {
@@ -99,36 +107,40 @@ export const WarehouseListPage = () => {
       status: item.status,
     }))
 
-    exportToExcel(exportData, exportColumns, 'warehouse-list')
+    exportToExcel(exportData, exportColumns, 'Warehouse_List')
   }
 
   const toggleColumn = (field: string) => {
-    setVisibleColumns(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
+    setVisibleColumns(prev => ({
+      ...prev,
+      [field]: !prev[field as keyof typeof prev]
+    }))
   }
 
-  const columnDefs = useMemo<ColDef<WarehouseListItem>[]>(() => [
+  const columnDefs = useMemo<ColDef[]>(() => [
     {
       headerName: 'SL',
-      valueGetter: (params) => (currentPage - 1) * pageSize + (params.node?.rowIndex ?? 0) + 1,
-      width: 80,
-      flex: 0,
-      pinned: 'left',
+      field: 'id',
+      width: 70,
       hide: !visibleCols.sl,
-      cellClass: 'text-gray-400 font-medium border-r border-primary/30 flex items-center justify-center',
+      cellClass: 'text-[#64748b] font-normal text-center',
+      cellRenderer: (params: any) => {
+        return (currentPage - 1) * pageSize + params.node.rowIndex + 1
+      }
     },
     {
       headerName: 'WAREHOUSE CODE',
       field: 'warehouse_code',
-      width: 150,
+      flex: 1,
       hide: !visibleCols.code,
-      cellClass: 'text-primary font-medium',
+      cellClass: 'font-semibold text-primary',
     },
     {
       headerName: 'WAREHOUSE NAME',
       field: 'name',
       flex: 1.5,
       hide: !visibleCols.name,
-      cellClass: 'text-[#475569] font-medium',
+      cellClass: 'font-normal text-[#1e293b]',
     },
     {
       headerName: 'CONTACT PERSON',
@@ -140,7 +152,7 @@ export const WarehouseListPage = () => {
     {
       headerName: 'CITY',
       field: 'city',
-      width: 120,
+      width: 140,
       hide: !visibleCols.city,
       cellClass: 'text-[#64748b] font-normal',
     },
@@ -178,13 +190,37 @@ export const WarehouseListPage = () => {
     {
       headerName: 'ACTION',
       field: 'id',
-      width: 120,
+      width: 150,
       pinned: 'right',
       sortable: false,
       filter: false,
       hide: !visibleCols.action || !hasAnyPermission(['edit_warehouse', 'delete_warehouse']),
-      cellRenderer: (params: any) => (
-        <div className="flex items-center justify-center gap-2 h-full">
+      cellRenderer: (params: any) => {
+        const isConfigured = Boolean(
+          params.data?.default_picking_zone ||
+          params.data?.default_packing_station
+        )
+
+        return (
+          <div className="flex items-center justify-center gap-2 h-full">
+            <PermissionGuard permission="edit_warehouse">
+              <button
+                onClick={() => handleOpenConfig(params.data)}
+                className={clsx(
+                  "p-2 rounded-xl transition-all border relative group/config",
+                  isConfigured
+                    ? "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0] hover:bg-[#d1fae5] shadow-xs"
+                    : "bg-gray-100/80 text-gray-400 border-gray-200 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200"
+                )}
+                title={isConfigured ? "WMS Configured (Click to edit)" : "Configure WMS & Layout (Not configured)"}
+              >
+                <Sliders className="h-4 w-4" />
+                {isConfigured && (
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#059669] border-2 border-white rounded-full" />
+                )}
+              </button>
+            </PermissionGuard>
+
           <PermissionGuard permission="edit_warehouse">
             <button
               onClick={() => handleEdit(params.data.id)}
@@ -204,8 +240,9 @@ export const WarehouseListPage = () => {
               <Trash2 className="h-4 w-4" />
             </button>
           </PermissionGuard>
-        </div>
-      )
+          </div>
+        )
+      }
     }
   ], [visibleCols, currentPage, pageSize, hasAnyPermission])
 
@@ -227,8 +264,8 @@ export const WarehouseListPage = () => {
     <>
       <ListPageLayout<WarehouseListItem>
         title="Warehouse List"
+        titleOptions={warehouseTitleOptions}
         backTo="/"
-        tabs={getWarehouseTabs('warehouse')}
         onCreate={handleCreate}
         createPermission="create_warehouse"
         showStatusFilter={true}
@@ -252,6 +289,15 @@ export const WarehouseListPage = () => {
         onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1) }}
         searchValue={searchTerm}
         onSearchChange={setSearchTerm}
+      />
+
+      <WarehouseConfigModal
+        isOpen={isConfigModalOpen}
+        onClose={() => {
+          setIsConfigModalOpen(false)
+          setConfigWarehouse(null)
+        }}
+        warehouse={configWarehouse}
       />
 
       <ConfirmationModal

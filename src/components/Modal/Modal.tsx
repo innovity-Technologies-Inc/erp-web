@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
-  title?: string
+  title?: ReactNode
   children: ReactNode
   footer?: ReactNode
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
@@ -57,7 +57,11 @@ export const Modal = ({
         {/* Header */}
         {showHeader && (
           <div className="flex items-center justify-between px-6 py-4 border-b border-primary/30">
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            {typeof title === 'string' ? (
+              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            ) : (
+              title
+            )}
             {showCloseButton && (
               <button
                 onClick={onClose}

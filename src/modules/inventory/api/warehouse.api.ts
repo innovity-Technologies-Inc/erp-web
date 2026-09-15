@@ -10,6 +10,12 @@ export interface WarehouseListItem {
   city: string
   phone: string
   email: string
+  type?: 'Owned' | 'Rented' | '3PL' | 'Transit'
+  default_picking_zone?: string
+  default_packing_station?: string
+  is_barcode_scanning_enabled?: boolean
+  is_auto_location_suggest_enabled?: boolean
+  zones?: any[]
   status: 'Active' | 'Inactive'
 }
 
@@ -78,8 +84,21 @@ export const deleteWarehouse = async (uuid: string, id: number): Promise<ApiResp
   return response.data
 }
 
+export interface WarehouseConfigData {
+  type?: 'Owned' | 'Rented' | '3PL' | 'Transit'
+  default_picking_zone?: string
+  default_packing_station?: string
+  is_barcode_scanning_enabled?: boolean
+  is_auto_location_suggest_enabled?: boolean
+}
+
 export const getWarehouseDetails = async (id: string | number): Promise<ApiResponse<any>> => {
   const response = await apiClient.get<ApiResponse<any>>(`/inventory/warehouse/get-data/${id}`)
+  return response.data
+}
+
+export const updateWarehouseConfig = async (uuid: string, data: WarehouseConfigData): Promise<ApiResponse<any>> => {
+  const response = await apiClient.put<ApiResponse<any>>(`/inventory/warehouse-management/warehouses/${uuid}/config`, data)
   return response.data
 }
 

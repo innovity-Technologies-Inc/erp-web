@@ -13,8 +13,10 @@ import {
   getBatchWiseProductSelect2,
   getBatchProductAvailableQty,
   getWarehouses,
+  updateWarehouseConfig,
   type WarehouseFormData,
-  type StockMovementFormData
+  type StockMovementFormData,
+  type WarehouseConfigData
 } from '../api/warehouse.api'
 import { useUiStore } from '@/store/useUiStore'
 
@@ -86,6 +88,31 @@ export const useUpdateWarehouse = () => {
       showNotificationModal(
         'Update Failed',
         error.response?.data?.message || 'Failed to update warehouse. Please try again.',
+        'error'
+      )
+    }
+  })
+}
+
+export const useUpdateWarehouseConfig = () => {
+  const queryClient = useQueryClient()
+  const { showNotificationModal } = useUiStore()
+
+  return useMutation({
+    mutationFn: ({ uuid, data }: { uuid: string; data: WarehouseConfigData }) => updateWarehouseConfig(uuid, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['warehouse'] })
+      queryClient.invalidateQueries({ queryKey: ['warehouses', 'list'] })
+      showNotificationModal(
+        'WMS Config Saved!',
+        'Warehouse operational configuration has been updated successfully.',
+        'success'
+      )
+    },
+    onError: (error: any) => {
+      showNotificationModal(
+        'Config Update Failed',
+        error.response?.data?.message || 'Failed to update warehouse layout configuration.',
         'error'
       )
     }
